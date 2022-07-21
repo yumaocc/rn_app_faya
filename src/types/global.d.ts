@@ -7,12 +7,7 @@ declare global {
     LANG: string;
   }
   type RootStackParamList = {
-    Home: undefined;
-    Redux: undefined;
-    Map: undefined;
-    Network: undefined;
-    Share: undefined;
-    Push: undefined;
+    Welcome: undefined;
   };
 
   type Props = NativeStackScreenProps<RootStackParamList>;

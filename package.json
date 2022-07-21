@@ -18,9 +18,9 @@
     "react-devtools-core": "4.14.0"
   },
   "dependencies": {
-    "@react-navigation/bottom-tabs": "^6.3.2",
     "@react-navigation/native": "^6.0.11",
     "@react-navigation/native-stack": "^6.7.0",
+    "@react-navigation/bottom-tabs": "^6.3.2",
     "immer": "^9.0.15",
     "moment": "^2.29.4",
     "qs": "^6.11.0",
