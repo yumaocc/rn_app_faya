@@ -7,7 +7,8 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "type-check": "tsc --noEmit"
   },
   "overrides": {
     "react-native": {
@@ -18,10 +19,13 @@
     "react-devtools-core": "4.14.0"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.17.7",
+    "@react-navigation/bottom-tabs": "^6.3.2",
     "@react-navigation/native": "^6.0.11",
     "@react-navigation/native-stack": "^6.7.0",
-    "@react-navigation/bottom-tabs": "^6.3.2",
+    "axios": "^0.27.2",
     "immer": "^9.0.15",
+    "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "qs": "^6.11.0",
     "react": "18.0.0",
@@ -39,6 +43,7 @@
     "@react-native-community/eslint-config": "^2.0.0",
     "@tsconfig/react-native": "^2.0.2",
     "@types/jest": "^26.0.23",
+    "@types/lodash": "^4.14.182",
     "@types/react-native": "^0.69.3",
     "@types/react-test-renderer": "^18.0.0",
     "@typescript-eslint/eslint-plugin": "^5.29.0",
