@@ -1,4 +1,4 @@
-import {all, put, takeLatest} from 'redux-saga/effects';
+import {all, call, put, takeLatest} from 'redux-saga/effects';
 
 import {Actions as UserActions} from '../user/actions';
 import {Actions} from './actions';
@@ -7,19 +7,24 @@ import {resetBaseURL, resetToken} from '../../apis/helper';
 import {ERROR_SHOW_TIME, getBaseURL} from '../../constants';
 import {cache, wait} from '../../helper';
 import {ActionWithPayload} from '../types';
+import * as api from '../../apis';
+import {UserInfo} from '../../models';
 
 function* initApp(): any {
   const url = getBaseURL();
   resetBaseURL(url);
 
-  const token = yield cache.config.getToken();
-  yield put(Actions.setToken(token || ''));
-  yield put(UserActions.init());
-  if (token) {
-    yield put(UserActions.getUserInfo());
-  } else {
-    yield put(Actions.initAppSuccess());
-  }
+  yield put(UserActions.init()); // 去加载用户那边的缓存
+
+  const token = (yield cache.config.getToken()) || '';
+  console.log('token', token);
+  resetToken(token);
+  try {
+    const userInfo = (yield call(api.user.getUserInfo)) as UserInfo;
+    yield put(Actions.setToken(token));
+    yield put(UserActions.setUserInfo(userInfo));
+  } catch (error) {}
+  yield put(Actions.initAppSuccess());
 }
 
 function* dismissMessage() {

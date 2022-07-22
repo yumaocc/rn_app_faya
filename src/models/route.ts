@@ -23,7 +23,8 @@ interface NavigationItemObject {
 export type NavigationItem = NavigationItemObject | string;
 
 export type RootStackParamList = {
-  Welcome: undefined;
+  Home: undefined;
+  Login: undefined;
 };
 
 export type Props = NativeStackScreenProps<RootStackParamList>;

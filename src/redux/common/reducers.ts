@@ -4,7 +4,7 @@ import {CommonActions} from './actions';
 import {ActionType} from './types';
 
 export interface CommonState {
-  appInited: boolean; // 应用是否初始化完成,初始化完成后才能做任何操作
+  isLoading: boolean; // 是否正在初始化加载
   message: string; // 全局消息提示
   token?: string; // 登录token
   messageType: 'error' | 'success' | 'info' | 'none';
@@ -16,7 +16,7 @@ export interface CommonState {
 }
 
 export const initialState: CommonState = {
-  appInited: false,
+  isLoading: true,
   message: '',
   messageType: 'none',
   preview: {
@@ -32,7 +32,7 @@ export default (state = initialState, action: CommonActions): CommonState => {
   switch (type) {
     case ActionType.INIT_APP_SUCCESS:
       return produce(state, draft => {
-        draft.appInited = true;
+        draft.isLoading = false;
       });
     case ActionType.ERROR:
       return produce(state, draft => {

@@ -1,18 +1,18 @@
-import React from 'react';
-import {useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {View, Text} from 'react-native';
 import {useCommonDispatcher} from '../../helper/hooks';
-import {Props} from '../../models';
 
-const Welcome: React.FC<Props> = () => {
+const Loading: React.FC = () => {
   const [commonDispatcher] = useCommonDispatcher();
+
   useEffect(() => {
     commonDispatcher.initApp();
   }, [commonDispatcher]);
+
   return (
-    <View>
-      <Text>Welcome</Text>
+    <View style={{paddingTop: 300, alignItems: 'center'}}>
+      <Text style={{textAlign: 'center'}}>faya is loading...</Text>
     </View>
   );
 };
-export default Welcome;
+export default Loading;

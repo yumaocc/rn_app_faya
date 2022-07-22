@@ -30,13 +30,10 @@ export const Actions = {
   resetLoginState: (): Action<ActionType.RESET_LOGIN_STATE> =>
     createAction(ActionType.RESET_LOGIN_STATE),
 
-  getUserInfo: (): Action<ActionType.GET_USER_INFO> =>
-    createAction(ActionType.GET_USER_INFO),
-
-  getUserInfoSuccess: (
-    userInfo: UserInfo,
-  ): ActionWithPayload<ActionType.GET_USER_INFO_SUCCESS, UserInfo> =>
-    createAction(ActionType.GET_USER_INFO_SUCCESS, userInfo),
+  setUserInfo: (
+    userInfo?: UserInfo,
+  ): ActionWithPayload<ActionType.SET_USER_INFO, UserInfo> =>
+    createAction(ActionType.SET_USER_INFO, userInfo),
 
   logout: (): Action<ActionType.LOGOUT> => createAction(ActionType.LOGOUT),
 

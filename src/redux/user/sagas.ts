@@ -1,7 +1,6 @@
-import {all, call, fork, put, select, takeLatest} from 'redux-saga/effects';
+import {all, call, fork, put, takeLatest} from 'redux-saga/effects';
 
 import {Actions as CommonActions} from '../common/actions';
-import {RootState} from '../reducers';
 import {ActionWithPayload} from '../types';
 import {Actions} from './actions';
 import {ActionType} from './types';
@@ -31,33 +30,12 @@ function* login(action: ActionWithPayload<ActionType, LoginParam>): any {
 }
 
 function* loginSuccess(action: ActionWithPayload<ActionType, UserInfo>): any {
-  const {payload} = action;
-  const token = payload.token || '';
-  yield put(CommonActions.setToken(token));
-  //todo: 如果有其他信息，请放在这里，如用户信息和权限信息
-}
-
-function* getUserInfo(): any {
-  try {
-    const res = yield call(user.getUserInfo);
-    yield put(Actions.getUserInfoSuccess(res));
-    yield put(CommonActions.initAppSuccess());
-  } catch (error) {
-    yield put(CommonActions.error(error));
-    yield put(Actions.logout());
-  }
+  yield put(Actions.setUserInfo(action.payload));
+  yield put(CommonActions.setToken(action.payload?.token));
 }
 
 function* logout(): any {
   yield put(CommonActions.setToken(''));
-
-  // 防止初始化登录失败导致应用状态错误
-  const appInited: boolean = yield select(
-    (state: RootState) => state.common.appInited,
-  );
-  if (!appInited) {
-    yield put(CommonActions.initAppSuccess());
-  }
 }
 
 function* certificate(
@@ -67,7 +45,6 @@ function* certificate(
   try {
     const res = yield call(user.certificate, param);
     if (res) {
-      // yield put(Actions.getUserInfo());
       yield put(CommonActions.success('认证成功!'));
       yield put(Actions.certificateSuccess());
     }
@@ -97,7 +74,6 @@ function* watchUserSagas() {
   yield takeLatest(ActionType.LOGIN, login);
   yield takeLatest(ActionType.LOGOUT, logout);
   yield takeLatest(ActionType.LOGIN_SUCCESS, loginSuccess);
-  yield takeLatest(ActionType.GET_USER_INFO, getUserInfo);
   yield takeLatest(ActionType.USER_CERTIFICATE, certificate);
   yield takeLatest(ActionType.GET_WALLET_INFO, getWalletInfo);
   yield takeLatest(ActionType.GET_SUPPORT_BANK_LIST, getSupportBankList);
