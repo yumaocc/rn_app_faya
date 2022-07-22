@@ -17,7 +17,6 @@ function* initApp(): any {
   yield put(UserActions.init()); // 去加载用户那边的缓存
 
   const token = (yield cache.config.getToken()) || '';
-  console.log('token', token);
   resetToken(token);
   try {
     const userInfo = (yield call(api.user.getUserInfo)) as UserInfo;
