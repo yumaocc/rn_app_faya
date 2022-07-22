@@ -1,0 +1,12 @@
+// 具体变量请参考ant-theme.ts
+
+export const primary = '#546dad';
+export const primaryTap = '#768abd';
+export default {
+  // 全局
+  brand_primary: primary,
+  brand_primary_tap: primaryTap,
+  // button
+  primary_button_fill: primary,
+  primary_button_fill_tap: primaryTap,
+};

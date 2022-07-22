@@ -2,7 +2,7 @@ import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../models';
 
-import Home from '../screen/home/Home';
+import TabNavigator from '../screen/home/TabNavigator';
 import Login from '../screen/common/Login';
 import {useSelector} from 'react-redux';
 import {RootState} from '../redux/reducers';
@@ -16,7 +16,13 @@ const Navigator: React.FC = () => {
     <Stack.Navigator>
       {token ? (
         <>
-          <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen
+            name="Tab"
+            component={TabNavigator}
+            options={{
+              headerShown: false,
+            }}
+          />
         </>
       ) : (
         <>

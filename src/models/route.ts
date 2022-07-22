@@ -25,6 +25,7 @@ export type NavigationItem = NavigationItemObject | string;
 export type RootStackParamList = {
   Home: undefined;
   Login: undefined;
+  Tab: undefined;
 };
 
 export type Props = NativeStackScreenProps<RootStackParamList>;
