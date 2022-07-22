@@ -1,5 +1,10 @@
 // F结尾代表是后端返回的数据结构
-export type {RouteItem, NavigationItem} from './route';
+export type {
+  RouteItem,
+  NavigationItem,
+  RootStackParamList,
+  Props,
+} from './route';
 export type {
   UserInfo,
   LoginParam,
@@ -19,6 +24,10 @@ export type {
   SubmitState,
   TimeDimension,
   DateTimeRange,
+  Environment,
+  BoolNumber,
+  DateTimeString,
+  DateString,
 } from './common';
 export type {HomeStatisticsF, Statistics} from './home';
 export type {

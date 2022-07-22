@@ -7,7 +7,7 @@ export const Actions = {
   initAppSuccess: (): Action<ActionType.INIT_APP_SUCCESS> =>
     createAction(ActionType.INIT_APP_SUCCESS),
   error: (
-    error: ErrorType | string,
+    error: ErrorType | string | any,
   ): ActionWithPayload<ActionType.ERROR, ErrorType | string> =>
     createAction(ActionType.ERROR, error),
   info: (message: string): ActionWithPayload<ActionType.INFO, string> =>

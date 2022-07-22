@@ -1,14 +1,17 @@
 import moment, {Moment} from 'moment';
 import {DATE_TIME_FORMAT} from './constants';
+import {Environment, DateTimeString} from '../models';
 
 // 用来模拟异步操作
 export async function wait(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise(resolve => setTimeout(() => resolve(null), ms));
 }
 
 // 如果后续添加环境，在这里统一配置，项目内判断环境统一用这个入口
 export function getEnv(): Environment {
-  return process.env.NODE_ENV === 'production' ? 'production' : 'development';
+  // fixme: 始终认为是开发环境
+  return 'development';
+  // return process.env.NODE_ENV === 'production' ? 'production' : 'development';
 }
 
 export function isNumberString(numLike: string) {
@@ -72,7 +75,10 @@ export function convertNumber2Han(num: number): string {
   if (!num || isNaN(num)) {
     return '零';
   }
-  const english = num.toString().split('');
+  const english = num
+    .toString()
+    .split('')
+    .map(a => Number(a));
   let result = '';
   for (let i = 0; i < english.length; i++) {
     const des_i = english.length - 1 - i; // 倒序排列设值

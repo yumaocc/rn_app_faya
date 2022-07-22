@@ -8,7 +8,7 @@ import {Actions} from './actions';
 import {ActionType} from './types';
 import * as api from '../../apis';
 
-function* loadCodeType() {
+function* loadCodeType(): any {
   try {
     const res = yield call(api.sku.getCodeTypes);
     yield put(Actions.loadCodeTypeSuccess(res));
@@ -16,7 +16,7 @@ function* loadCodeType() {
     yield put(CommonActions.error(error));
   }
 }
-function* loadSKUCategory() {
+function* loadSKUCategory(): any {
   try {
     const res = yield call(api.sku.getSPUCategories);
     yield put(Actions.loadSKUCategorySuccess(res));
@@ -24,7 +24,7 @@ function* loadSKUCategory() {
     yield put(CommonActions.error(error));
   }
 }
-function* loadSKUBuyNotice() {
+function* loadSKUBuyNotice(): any {
   try {
     const res = yield call(api.sku.getSKUBuyNotice);
     yield put(Actions.loadSKUBuyNoticeSuccess(res));
@@ -32,7 +32,7 @@ function* loadSKUBuyNotice() {
     yield put(CommonActions.error(error));
   }
 }
-function* loadCurrentSPU(action: ActionWithPayload<ActionType, number>) {
+function* loadCurrentSPU(action: ActionWithPayload<ActionType, number>): any {
   const spuId = action.payload;
   try {
     const res = yield call(api.sku.getSPUDetail, spuId);

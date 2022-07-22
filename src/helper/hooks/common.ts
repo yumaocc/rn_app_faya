@@ -36,7 +36,7 @@ export function useFetchData<T>(
   const [data, setData] = useState<T>();
   const [signal, forceUpdate] = useForceUpdate();
   const fetch = useCallback(
-    (param, cb) => {
+    (param: number, cb: (result: any) => void) => {
       call(param).then((res: T) => {
         cb(res);
       });

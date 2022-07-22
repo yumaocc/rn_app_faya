@@ -8,7 +8,7 @@ import {ERROR_SHOW_TIME, getBaseURL} from '../../constants';
 import {cache, wait} from '../../helper';
 import {ActionWithPayload} from '../types';
 
-function* initApp() {
+function* initApp(): any {
   const url = getBaseURL();
   resetBaseURL(url);
 

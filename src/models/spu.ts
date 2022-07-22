@@ -1,5 +1,5 @@
 import {Moment} from 'moment';
-import {BoolEnum} from './common';
+import {BoolEnum, DateTimeString} from './common';
 import {BookingType, BuyLimitType} from './contract';
 
 export enum SPUStatus {

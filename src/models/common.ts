@@ -50,3 +50,14 @@ export enum BoolEnum {
 export type TimeDimension = 'day' | 'week' | 'month' | 'year';
 
 export type DateTimeRange = [DateTimeString, DateTimeString];
+
+export type Environment = 'development' | 'production';
+
+// 后端经常用0和1代表bool
+export type BoolNumber = 0 | 1;
+
+// 形如2020-01-01 00:00:00的时间格式
+export type DateTimeString = string;
+
+// 形如2020-01-01的日期格式
+export type DateString = string;

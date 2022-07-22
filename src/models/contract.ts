@@ -1,5 +1,5 @@
 import {Moment} from 'moment';
-import {BoolEnum} from './common';
+import {BoolEnum, DateTimeString} from './common';
 
 /**
  * 限购类型

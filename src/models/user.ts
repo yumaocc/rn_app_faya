@@ -1,3 +1,4 @@
+import {DateTimeString} from './common';
 export enum UserState {
   UN_CERTIFIED = 0, // 未认证
   CERTIFIED = 1, // 已认证

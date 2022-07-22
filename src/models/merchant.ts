@@ -1,6 +1,6 @@
 // 商户相关类型
 
-import {BoolEnum} from './common';
+import {BoolEnum, DateTimeString, BoolNumber} from './common';
 
 // 通用商家
 export interface MerchantF {

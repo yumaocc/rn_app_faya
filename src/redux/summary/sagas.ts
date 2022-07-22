@@ -7,7 +7,7 @@ import {ActionType} from './types';
 import {summary} from '../../apis';
 import {DateTimeRange} from '../../models';
 
-function* loadHome() {
+function* loadHome(): any {
   try {
     const res = yield call(summary.loadHome);
     yield put(Actions.loadHomeSuccess(res));
@@ -15,7 +15,7 @@ function* loadHome() {
     yield put(CommonActions.error(error));
   }
 }
-function* loadCommissionToday() {
+function* loadCommissionToday(): any {
   try {
     const res = yield call(summary.loadCommissionToday);
     yield put(Actions.loadCommissionTodaySuccess(res));
@@ -24,7 +24,7 @@ function* loadCommissionToday() {
   }
 }
 
-function* loadCommissionExpect() {
+function* loadCommissionExpect(): any {
   try {
     const res = yield call(summary.loadCommissionExpect);
     yield put(Actions.loadCommissionExpectSuccess(res));
@@ -35,7 +35,7 @@ function* loadCommissionExpect() {
 
 function* loadCommissionTop(
   action: ActionWithPayload<ActionType, DateTimeRange>,
-) {
+): any {
   const [start, end] = action.payload;
   try {
     const res = yield call(summary.loadCommissionTop, start, end);
@@ -45,7 +45,9 @@ function* loadCommissionTop(
   }
 }
 
-function* loadSalesTop(action: ActionWithPayload<ActionType, DateTimeRange>) {
+function* loadSalesTop(
+  action: ActionWithPayload<ActionType, DateTimeRange>,
+): any {
   const [start, end] = action.payload;
   try {
     const res = yield call(summary.loadSalesTop, start, end);
@@ -55,7 +57,7 @@ function* loadSalesTop(action: ActionWithPayload<ActionType, DateTimeRange>) {
   }
 }
 
-function* loadCommissionHistory() {
+function* loadCommissionHistory(): any {
   try {
     const res = yield call(summary.loadCommissionHistory);
     yield put(Actions.loadCommissionHistorySuccess(res));

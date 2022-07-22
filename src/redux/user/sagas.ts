@@ -9,12 +9,12 @@ import {user} from '../../apis';
 import {cache, wait} from '../../helper';
 import {CertificateParam, LoginParam, UserInfo} from '../../models';
 
-function* initUser() {
+function* initUser(): any {
   const phone = yield cache.user.getPhone();
   yield put(Actions.initSuccess(phone || ''));
 }
 
-function* login(action: ActionWithPayload<ActionType, LoginParam>) {
+function* login(action: ActionWithPayload<ActionType, LoginParam>): any {
   const {payload} = action;
   try {
     const res = yield call(user.userLogin, payload);
@@ -30,14 +30,14 @@ function* login(action: ActionWithPayload<ActionType, LoginParam>) {
   yield put(Actions.resetLoginState());
 }
 
-function* loginSuccess(action: ActionWithPayload<ActionType, UserInfo>) {
+function* loginSuccess(action: ActionWithPayload<ActionType, UserInfo>): any {
   const {payload} = action;
   const token = payload.token || '';
   yield put(CommonActions.setToken(token));
   //todo: 如果有其他信息，请放在这里，如用户信息和权限信息
 }
 
-function* getUserInfo() {
+function* getUserInfo(): any {
   try {
     const res = yield call(user.getUserInfo);
     yield put(Actions.getUserInfoSuccess(res));
@@ -48,7 +48,7 @@ function* getUserInfo() {
   }
 }
 
-function* logout() {
+function* logout(): any {
   yield put(CommonActions.setToken(''));
 
   // 防止初始化登录失败导致应用状态错误
@@ -60,7 +60,9 @@ function* logout() {
   }
 }
 
-function* certificate(action: ActionWithPayload<ActionType, CertificateParam>) {
+function* certificate(
+  action: ActionWithPayload<ActionType, CertificateParam>,
+): any {
   const param = action.payload;
   try {
     const res = yield call(user.certificate, param);
@@ -73,7 +75,7 @@ function* certificate(action: ActionWithPayload<ActionType, CertificateParam>) {
     yield put(CommonActions.error(error));
   }
 }
-function* getWalletInfo() {
+function* getWalletInfo(): any {
   try {
     const res = yield call(user.getWallet);
     yield put(Actions.getWalletInfoSuccess(res));
@@ -81,7 +83,7 @@ function* getWalletInfo() {
     yield put(CommonActions.error(error));
   }
 }
-function* getSupportBankList() {
+function* getSupportBankList(): any {
   try {
     const res = yield call(user.getSupportBankList);
     yield put(Actions.getSupportBankListSuccess(res));

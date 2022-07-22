@@ -10,7 +10,7 @@ import {ContractDetailF} from '../../models';
 
 function* loadCurrentContract(
   action: ActionWithPayload<ActionType.LOAD_CURRENT_CONTRACT, number>,
-) {
+): any {
   const contractId = action.payload;
   if (isNil(contractId)) {
     return yield put(Actions.loadCurrentContractSuccess(undefined as any));

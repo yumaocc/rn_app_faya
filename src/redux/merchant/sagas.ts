@@ -8,7 +8,7 @@ import {ActionType} from './types';
 import {merchant} from '../../apis';
 import {MerchantSimpleF, PagedData, SearchParam} from '../../models';
 
-function* loadMerchantCategories() {
+function* loadMerchantCategories(): any {
   try {
     const res = yield call(merchant.getMerchantCategories);
     yield put(Actions.loadMerchantCategoriesSuccess(res));
@@ -16,7 +16,9 @@ function* loadMerchantCategories() {
     yield put(CommonActions.error(error));
   }
 }
-function* loadCurrentMerchant(action: ActionWithPayload<ActionType, number>) {
+function* loadCurrentMerchant(
+  action: ActionWithPayload<ActionType, number>,
+): any {
   const id = action.payload;
   if (isNil(id)) {
     return yield put(Actions.loadCurrentMerchantSuccess(null as any));

@@ -15,8 +15,8 @@ axios.interceptors.response.use((response: AxiosResponse) => {
   const {data} = response;
   switch (data.code) {
     case 8000:
-      location.href = '/#/login';
-      // throw new CustomError('登录失效，请重新登录', 8000);
+      // fixme: 导航怎么办
+      // location.href = '/#/login';
       return response;
     default:
       return response;

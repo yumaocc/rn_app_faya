@@ -2,6 +2,7 @@ import React from 'react';
 import {useEffect} from 'react';
 import {View, Text} from 'react-native';
 import {useCommonDispatcher} from '../../helper/hooks';
+import {Props} from '../../models';
 
 const Welcome: React.FC<Props> = () => {
   const [commonDispatcher] = useCommonDispatcher();
