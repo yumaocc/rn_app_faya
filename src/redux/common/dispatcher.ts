@@ -4,19 +4,23 @@ import {Actions} from './actions';
 import {PreviewConfig} from '../../models';
 
 export interface CommonDispatcher {
-  error(message: string): void;
+  error(message: string | any): void;
   success(message: string): void;
+  info(message: string): void;
   initApp(): void;
   previewImages(config: PreviewConfig): void;
   closePreview(): void;
 }
 
 export const getCommonDispatcher = (dispatch: Dispatch): CommonDispatcher => ({
-  error(message: string) {
+  error(message: string | any) {
     dispatch(Actions.error(message));
   },
   success(message) {
     dispatch(Actions.success(message));
+  },
+  info(message) {
+    dispatch(Actions.info(message));
   },
   initApp() {
     dispatch(Actions.initApp());

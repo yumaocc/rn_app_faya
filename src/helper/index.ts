@@ -11,7 +11,7 @@ export {
 export {cache} from './cache';
 
 export {getFirstFormError} from './form';
-export {DATE_TIME_FORMAT, COMPANY_NAME, styles} from './constants';
+export {DATE_TIME_FORMAT, COMPANY_NAME, globalStyles} from './constants';
 export {
   getInitContractForm,
   getInitContractSku,
