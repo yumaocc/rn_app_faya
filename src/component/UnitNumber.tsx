@@ -24,7 +24,7 @@ const UnitNumber: React.FC<UnitNumberProps> = props => {
     valueStr = value;
   }
   return (
-    <Text style={[style, styles.container]}>
+    <Text style={[styles.container, style]}>
       <Text style={styles.value}>{valueStr}</Text>
       <Text style={styles.unit}> {unit}</Text>
     </Text>

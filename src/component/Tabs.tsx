@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {noop} from '../constants';
 import {globalStyleVariables} from '../constants/styles';
+import {StylePropView} from '../models';
 
 interface TabItem {
   title: string;
@@ -13,6 +14,7 @@ interface TabsProps {
   defaultActiveKey?: string;
   currentKey?: string;
   tabs: TabItem[];
+  style?: StylePropView;
 }
 
 const Tabs: React.FC<TabsProps> = props => {
@@ -35,7 +37,7 @@ const Tabs: React.FC<TabsProps> = props => {
     }
   };
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, props.style]}>
       {tabs.map(tab => {
         return (
           <TouchableOpacity
