@@ -3,6 +3,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Icon} from '@ant-design/react-native';
 import Home from './tabs/Home';
 import Merchant from './tabs/Merchant';
+import Mine from './tabs/Mine';
 import {primary} from '../../constants/theme';
 
 const Tab = createBottomTabNavigator();
@@ -31,6 +32,14 @@ const tabOptions = {
         <Icon name="shop" color={color} size={size} />
       ),
       component: Merchant,
+    },
+    {
+      name: 'Mine',
+      label: '我的',
+      renderIcon: ({color, size}: TabItemProps) => (
+        <Icon name="user" color={color} size={size} />
+      ),
+      component: Mine,
     },
   ],
 };
