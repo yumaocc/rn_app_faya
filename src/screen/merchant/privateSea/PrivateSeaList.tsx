@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import * as api from '../../../apis';
 import {PlusButton} from '../../../component';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
@@ -24,8 +24,8 @@ const PrivateSeaList: React.FC = () => {
   useLog(merchantList);
 
   return (
-    <View style={style.container}>
-      <View style={style.header}>
+    <ScrollView style={styles.container}>
+      <View style={styles.header}>
         <Text>
           我的私海
           <Text>{`${summary?.privateSeaNums || 0}/${
@@ -34,23 +34,25 @@ const PrivateSeaList: React.FC = () => {
         </Text>
       </View>
       <View style={{paddingHorizontal: globalStyleVariables.MODULE_SPACE}}>
-        <PlusButton style={style.createButton} title="新增私海商家" />
-        {merchantList.map(merchant => {
-          return (
-            <Card
-              merchant={merchant}
-              key={merchant.id}
-              style={globalStyles.moduleMarginTop}
-            />
-          );
-        })}
+        <PlusButton style={styles.createButton} title="新增私海商家" />
+        <View>
+          {merchantList.map(merchant => {
+            return (
+              <Card
+                merchant={merchant}
+                key={merchant.id}
+                style={globalStyles.moduleMarginTop}
+              />
+            );
+          })}
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 export default PrivateSeaList;
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     // padding: 16,
   },
