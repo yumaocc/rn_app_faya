@@ -34,9 +34,7 @@ const PrivateSeaList: React.FC = () => {
         </Text>
       </View>
       <View style={{paddingHorizontal: globalStyleVariables.MODULE_SPACE}}>
-        <View style={style.createButton}>
-          <PlusButton title="新增私海商家" />
-        </View>
+        <PlusButton style={style.createButton} title="新增私海商家" />
         {merchantList.map(merchant => {
           return (
             <Card

@@ -3,7 +3,9 @@ import {StyleSheet} from 'react-native';
 export const globalStyleVariables = {
   COLOR_PRIMARY: '#546DAD',
   TEXT_COLOR_PRIMARY: '#333',
-  TEXT_COLOR_SECONDARY: '#999',
+  TEXT_COLOR_SECONDARY: '#666',
+  TEXT_COLOR_TERTIARY: '#999',
+  BORDER_COLOR: '#0000001A',
   MODULE_SPACE: 10,
 };
 
@@ -13,6 +15,12 @@ export const globalStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  containerLR: {
+    // 左右结构容器
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   flexCenter: {
     alignContent: 'center',
     justifyContent: 'center',
@@ -20,8 +28,26 @@ export const globalStyles = StyleSheet.create({
   width100: {
     width: '100%',
   },
+  fontPrimary: {
+    // 主要字体样式
+    color: globalStyleVariables.TEXT_COLOR_PRIMARY,
+    fontSize: 15,
+    fontWeight: '500',
+  },
+  fontSecondary: {
+    // 次要字体样式
+    color: globalStyleVariables.TEXT_COLOR_SECONDARY,
+    fontSize: 15,
+    fontWeight: '500',
+  },
+  fontTertiary: {
+    // 辅助字体样式
+    color: globalStyleVariables.TEXT_COLOR_TERTIARY,
+    fontSize: 12,
+    fontWeight: '500',
+  },
   primaryColor: {
-    color: '#546DAD',
+    color: globalStyleVariables.COLOR_PRIMARY,
   },
   primaryBGColor: {
     backgroundColor: globalStyleVariables.COLOR_PRIMARY,
@@ -58,10 +84,18 @@ export const globalStyles = StyleSheet.create({
   },
   lineHorizontal: {
     height: 1,
-    backgroundColor: '#0000001A', // 透明度为0.1的黑色
+    backgroundColor: globalStyleVariables.BORDER_COLOR,
   },
   lineVertical: {
     width: 1,
-    backgroundColor: '#0000001A',
+    backgroundColor: globalStyleVariables.BORDER_COLOR,
+  },
+  borderTop: {
+    borderTopWidth: 0.3,
+    borderTopColor: globalStyleVariables.BORDER_COLOR,
+  },
+  borderBottom: {
+    borderBottomWidth: 0.3,
+    borderBottomColor: globalStyleVariables.BORDER_COLOR,
   },
 });
