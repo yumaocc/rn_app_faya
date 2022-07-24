@@ -1,17 +1,34 @@
-import {Tabs} from '@ant-design/react-native';
+// import {Tabs} from '@ant-design/react-native';
 import React from 'react';
 import {View, Text, ScrollView} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import PrivateSeaList from './privateSea/PrivateSeaList';
+import {Tabs} from '../../component';
 
 const Merchant: React.FC = () => {
-  const tabs = [{title: '私海商家'}, {title: '我的商家'}, {title: '公海商家'}];
+  const [currentTab, setCurrentTab] = React.useState('private');
+  const tabs = [
+    {
+      title: '私海商家',
+      key: 'private',
+    },
+    {
+      title: '我的商家',
+      key: 'mine',
+    },
+    {
+      title: '公海商家',
+      key: 'public',
+    },
+  ];
   return (
-    <SafeAreaView>
-      <ScrollView>
-        <View>
-          <Tabs tabs={tabs}>
+    <>
+      <SafeAreaView style={{backgroundColor: '#fff', flex: 1}} edges={['top']}>
+        <Tabs tabs={tabs} currentKey={currentTab} onChange={setCurrentTab} />
+        <ScrollView style={{backgroundColor: '#f4f4f4', flex: 1}}>
+          <View>
             <View>
-              <Text>私海商家</Text>
+              <PrivateSeaList />
             </View>
             <View>
               <Text>我的商家</Text>
@@ -19,10 +36,10 @@ const Merchant: React.FC = () => {
             <View>
               <Text>公海商家</Text>
             </View>
-          </Tabs>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </>
   );
 };
 export default Merchant;

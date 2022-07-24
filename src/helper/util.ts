@@ -9,9 +9,7 @@ export async function wait(ms: number) {
 
 // 如果后续添加环境，在这里统一配置，项目内判断环境统一用这个入口
 export function getEnv(): Environment {
-  // fixme: 始终认为是开发环境
-  return 'development';
-  // return process.env.NODE_ENV === 'production' ? 'production' : 'development';
+  return __DEV__ ? 'development' : 'production';
 }
 
 export function isNumberString(numLike: string) {
