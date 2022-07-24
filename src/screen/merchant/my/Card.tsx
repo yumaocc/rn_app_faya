@@ -1,17 +1,18 @@
 import React from 'react';
-import {View, Text, Image, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Image} from 'react-native';
+import {BadgeFlag} from '../../../component';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
-import {getDateFromDateTime} from '../../../helper';
-import {BoolEnum, MerchantF, StylePropView} from '../../../models';
+import {MyMerchantF, StylePropView} from '../../../models';
 
 interface CardProps {
-  merchant: MerchantF;
+  merchant: MyMerchantF;
   style?: StylePropView;
 }
 
-const Card: React.FC<CardProps> = ({merchant, style}) => {
+const Card: React.FC<CardProps> = props => {
+  const {merchant, style} = props;
   return (
-    <View style={[style, styles.container]}>
+    <View style={[styles.container, style]}>
       <View style={[globalStyles.borderBottom, styles.header]}>
         <View style={[styles.logo]}>
           <Image
@@ -37,7 +38,7 @@ const Card: React.FC<CardProps> = ({merchant, style}) => {
               </Text>
             </View>
             <View style={styles.tagWrapper}>
-              <Text style={styles.tag}>待签约</Text>
+              <Text style={styles.tag}>合作中</Text>
             </View>
           </View>
           <Text
@@ -49,56 +50,56 @@ const Card: React.FC<CardProps> = ({merchant, style}) => {
           </Text>
         </View>
       </View>
-      <View
-        style={[
-          globalStyles.containerLR,
-          globalStyles.borderBottom,
-          {paddingVertical: globalStyleVariables.MODULE_SPACE},
-        ]}>
-        <Text style={globalStyles.fontSecondary}>商户模式</Text>
-        <Text style={globalStyles.fontSecondary}>
-          {merchant.multiStore === BoolEnum.TRUE ? '连锁' : '单店'}
-        </Text>
-      </View>
-      <View
-        style={[
-          globalStyles.containerLR,
-          globalStyles.borderBottom,
-          {paddingVertical: globalStyleVariables.MODULE_SPACE},
-        ]}>
-        <Text style={globalStyles.fontSecondary}>认领时间</Text>
-        <Text style={globalStyles.fontSecondary}>
-          {getDateFromDateTime(merchant.claimTime)}
-        </Text>
-      </View>
+
       <View
         style={[
           globalStyles.borderBottom,
-          {paddingVertical: globalStyleVariables.MODULE_SPACE},
+          {
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+            paddingVertical: 16,
+          },
         ]}>
-        <View style={globalStyles.containerLR}>
-          <Text style={globalStyles.fontSecondary}>上次跟进</Text>
-          <Text style={globalStyles.fontSecondary}>
-            {getDateFromDateTime(merchant.claimTime)}
+        <View>
+          <Text style={[globalStyles.fontSecondary, styles.centerText]}>
+            商户模式
+          </Text>
+          <Text style={[globalStyles.fontPrimary, styles.centerTextValue]}>
+            {merchant.multiStore ? '连锁' : '单店'}
           </Text>
         </View>
-        <View style={styles.follow}>
-          <Text
-            style={{
-              fontSize: 12,
-              color: globalStyleVariables.TEXT_COLOR_PRIMARY,
-            }}>
-            兄弟听我一句劝，游戏没了还能重玩，媳妇没了游戏就能一直玩了。兄弟听我一句劝，游戏没了还能重玩，媳妇没了游戏就能一直玩了。
+        <View>
+          <Text style={[globalStyles.fontSecondary, styles.centerText]}>
+            店铺数量
+          </Text>
+          <Text style={[globalStyles.fontPrimary, styles.centerTextValue]}>
+            {merchant?.shopNums || 0}
+          </Text>
+        </View>
+        <View>
+          <Text style={[globalStyles.fontSecondary, styles.centerText]}>
+            商品数量
+          </Text>
+          <Text style={[globalStyles.fontPrimary, styles.centerTextValue]}>
+            {merchant?.saleProductNums || 0}
           </Text>
         </View>
       </View>
-      <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-        <Text style={styles.button}>签结算合同</Text>
+
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-around',
+        }}>
+        <Text style={styles.button}>新增商品</Text>
         <Text style={styles.button}>跟进记录(20)</Text>
       </View>
+      {/* 左上角 NEW徽标 */}
+      <BadgeFlag label="NEW" />
     </View>
   );
 };
+
 export default Card;
 
 const styles = StyleSheet.create({
@@ -107,6 +108,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     backgroundColor: '#fff',
     borderRadius: 5,
+    position: 'relative',
+    overflow: 'hidden',
   },
   header: {
     flexDirection: 'row',
@@ -131,15 +134,18 @@ const styles = StyleSheet.create({
     color: '#FFB443FF',
     fontSize: 10,
   },
-  follow: {
-    marginTop: 7,
-    backgroundColor: '#f2f2f2',
-    padding: 10,
-    borderRadius: 5,
-  },
   button: {
     color: globalStyleVariables.COLOR_PRIMARY,
     paddingVertical: 15,
     fontWeight: 'bold',
+  },
+  centerText: {
+    textAlign: 'center',
+  },
+  centerTextValue: {
+    fontSize: 15,
+    fontWeight: '500',
+    textAlign: 'center',
+    marginTop: 10,
   },
 });

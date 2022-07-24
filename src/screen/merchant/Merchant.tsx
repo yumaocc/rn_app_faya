@@ -5,6 +5,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import PrivateSeaList from './privateSea/PrivateSeaList';
 import MyList from './my/MyList';
 import {Tabs} from '../../component';
+import {useRefCallback} from '../../helper/hooks';
 const tabs = [
   {title: '私海商家', key: 'private'},
   {title: '我的商家', key: 'mine'},
@@ -12,17 +13,24 @@ const tabs = [
 ];
 
 const Merchant: React.FC = () => {
-  const [currentTab, setCurrentTab] = React.useState('private');
-  const scrollRef = React.useRef<ScrollView>(null);
+  const [currentTab, setCurrentTab] = React.useState('mine');
   const windowSize = useWindowDimensions();
+  const [ref, setRef, isReady] = useRefCallback<ScrollView>();
+
   useEffect(() => {
+    if (!isReady) {
+      return;
+    }
     const index = tabs.findIndex(item => item.key === currentTab);
-    scrollRef.current?.scrollTo({
-      x: windowSize.width * index,
-      y: 0,
-      animated: true,
-    });
-  }, [currentTab, windowSize.width]);
+    setTimeout(() => {
+      ref.current?.scrollTo({
+        x: windowSize.width * index,
+        y: 0,
+        animated: true,
+      });
+    }, 0);
+  }, [currentTab, windowSize.width, isReady, ref]);
+
   return (
     <>
       <SafeAreaView style={{backgroundColor: '#fff', flex: 1}} edges={['top']}>
@@ -34,7 +42,7 @@ const Merchant: React.FC = () => {
         />
         <ScrollView
           style={{backgroundColor: '#f4f4f4'}}
-          ref={scrollRef}
+          ref={setRef}
           horizontal
           snapToInterval={windowSize.width}
           scrollEnabled={false}>

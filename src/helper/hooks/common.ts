@@ -1,4 +1,11 @@
-import {useCallback, useEffect, useRef, useState, useMemo} from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useMemo,
+  MutableRefObject,
+} from 'react';
 import {getEnv} from '../../helper';
 
 // 用于检测是否已卸载
@@ -63,4 +70,17 @@ export function useLog<T = unknown>(deep: T, label = ''): void {
       console.log(deep);
     }
   }, [deep, labelName]);
+}
+
+export function useRefCallback<T = any>(
+  initValue?: T,
+): [MutableRefObject<T>, (value: T) => void, boolean] {
+  const ref = useRef<T>(initValue || null);
+  const [isReady, setIsReady] = useState(false);
+  const setRef = useCallback((value: T) => {
+    ref.current = value;
+    setIsReady(true);
+  }, []);
+
+  return [ref, setRef, isReady];
 }
