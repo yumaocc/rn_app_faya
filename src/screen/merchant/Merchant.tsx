@@ -24,7 +24,12 @@ const Merchant: React.FC = () => {
   return (
     <>
       <SafeAreaView style={{backgroundColor: '#fff', flex: 1}} edges={['top']}>
-        <Tabs tabs={tabs} currentKey={currentTab} onChange={setCurrentTab} />
+        <Tabs
+          style={{borderBottomWidth: 0.3}}
+          tabs={tabs}
+          currentKey={currentTab}
+          onChange={setCurrentTab}
+        />
         <ScrollView style={{backgroundColor: '#f4f4f4', flex: 1}}>
           <View>
             <View>
