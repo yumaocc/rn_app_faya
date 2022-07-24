@@ -1,3 +1,5 @@
+import {StyleProp, TextStyle, ViewStyle} from 'react-native';
+
 export class CustomError extends Error {
   constructor(message: string, public code: number = 1) {
     super(message);
@@ -61,3 +63,6 @@ export type DateTimeString = string;
 
 // 形如2020-01-01的日期格式
 export type DateString = string;
+
+export type StylePropText = StyleProp<TextStyle>;
+export type StylePropView = StyleProp<ViewStyle>;

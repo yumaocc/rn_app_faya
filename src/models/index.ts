@@ -28,6 +28,8 @@ export type {
   BoolNumber,
   DateTimeString,
   DateString,
+  StylePropText,
+  StylePropView,
 } from './common';
 export type {HomeStatisticsF, Statistics} from './home';
 export type {

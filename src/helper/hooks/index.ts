@@ -23,3 +23,4 @@ export {
 } from './sku';
 export {useMerchantContract, useContractDetail} from './contract';
 export {useWallet, useBankList} from './user';
+export {useHomeSummary} from './summary';
