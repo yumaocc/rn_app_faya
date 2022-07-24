@@ -1,9 +1,9 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Icon} from '@ant-design/react-native';
-import Home from './tabs/Home';
-import Merchant from './tabs/Merchant';
-import Mine from './tabs/Mine';
+import Home from '../home/Home';
+import Merchant from '../merchant/Merchant';
+import Mine from '../mine/Mine';
 import {primary} from '../../constants/theme';
 
 const Tab = createBottomTabNavigator();

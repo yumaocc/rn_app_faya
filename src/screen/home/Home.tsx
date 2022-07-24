@@ -4,9 +4,9 @@ import {Text, View, ScrollView, StyleSheet} from 'react-native';
 import {Header} from '@react-navigation/elements';
 // import {useUserDispatcher} from '../../../helper/hooks';
 import {Icon} from '@ant-design/react-native';
-import {PlusButton, UnitNumber} from '../../../component';
-import {globalStyles} from '../../../constants/styles';
-import {useHomeSummary} from '../../../helper/hooks';
+import {PlusButton, UnitNumber} from '../../component';
+import {globalStyles} from '../../constants/styles';
+import {useHomeSummary} from '../../helper/hooks';
 
 const Home: React.FC = () => {
   const [summary] = useHomeSummary();

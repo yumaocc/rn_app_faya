@@ -2,7 +2,7 @@ import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../models';
 
-import TabNavigator from '../screen/home/TabNavigator';
+import TabNavigator from '../screen/tabs/TabNavigator';
 import Login from '../screen/common/Login';
 import {useSelector} from 'react-redux';
 import {RootState} from '../redux/reducers';
