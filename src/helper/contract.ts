@@ -1,5 +1,5 @@
 import {cleanPrivateProperty} from './common';
-import {COMPANY_NAME} from './constants';
+import {COMPANY_NAME} from '../constants';
 import {formatMoment, momentFromDateTime} from './util';
 import {
   AccountType,

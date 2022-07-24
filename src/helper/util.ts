@@ -1,5 +1,5 @@
 import moment, {Moment} from 'moment';
-import {DATE_TIME_FORMAT} from './constants';
+import {DATE_TIME_FORMAT} from '../constants';
 import {Environment, DateTimeString} from '../models';
 
 // 用来模拟异步操作
