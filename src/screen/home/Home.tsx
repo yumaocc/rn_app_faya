@@ -125,12 +125,6 @@ const Home: React.FC = () => {
             }}
           />
         </View>
-        <View
-          style={[
-            globalStyles.moduleMarginTop,
-            {height: 55, backgroundColor: '#64B5FF', borderRadius: 5},
-          ]}
-        />
       </ScrollView>
     </>
   );
