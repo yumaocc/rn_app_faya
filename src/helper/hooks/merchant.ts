@@ -7,6 +7,7 @@ import {
   MerchantBookingModelF,
   MerchantCategory,
   MerchantDetailF,
+  // SearchParam,
   ShopF,
 } from '../../models';
 import {getMerchantDispatcher} from '../../redux/dispatchers';
@@ -73,3 +74,6 @@ export function useMerchantBookingModel(
 ): [MerchantBookingModelF[], () => void] {
   return useFetchData(api.merchant.getMerchantBookingModel, merchantId);
 }
+
+// export function usePublicMerchantList(search: SearchParam) {
+// }

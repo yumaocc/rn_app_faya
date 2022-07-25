@@ -1,8 +1,9 @@
 // import {Tabs} from '@ant-design/react-native';
 import React, {useEffect} from 'react';
-import {View, Text, ScrollView, useWindowDimensions} from 'react-native';
+import {View, ScrollView, useWindowDimensions} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import PrivateSeaList from './privateSea/PrivateSeaList';
+import PublicSeaList from './publicSea/PublicSeaList';
 import MyList from './my/MyList';
 import {Tabs} from '../../component';
 import {useRefCallback} from '../../helper/hooks';
@@ -13,7 +14,7 @@ const tabs = [
 ];
 
 const Merchant: React.FC = () => {
-  const [currentTab, setCurrentTab] = React.useState('mine');
+  const [currentTab, setCurrentTab] = React.useState('public');
   const windowSize = useWindowDimensions();
   const [ref, setRef, isReady] = useRefCallback<ScrollView>();
 
@@ -53,7 +54,7 @@ const Merchant: React.FC = () => {
             <MyList />
           </View>
           <View style={{width: windowSize.width}}>
-            <Text>公海商家</Text>
+            <PublicSeaList />
           </View>
         </ScrollView>
       </SafeAreaView>

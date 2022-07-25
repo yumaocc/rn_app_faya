@@ -1,11 +1,13 @@
+import {Icon} from '@ant-design/react-native';
 import React from 'react';
 import {View, Text, StyleSheet, Image} from 'react-native';
+import {PlusButton} from '../../../component';
 // import {BadgeFlag} from '../../../component';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
-import {MyMerchantF, StylePropView} from '../../../models';
+import {MerchantF, StylePropView} from '../../../models';
 
 interface CardProps {
-  merchant: MyMerchantF;
+  merchant: MerchantF;
   style?: StylePropView;
 }
 
@@ -37,9 +39,6 @@ const Card: React.FC<CardProps> = props => {
                 {merchant.name}
               </Text>
             </View>
-            <View style={styles.tagWrapper}>
-              <Text style={styles.tag}>合作中</Text>
-            </View>
           </View>
           <Text
             style={{
@@ -50,6 +49,18 @@ const Card: React.FC<CardProps> = props => {
           </Text>
         </View>
       </View>
+      {merchant?.address && (
+        <View
+          style={[
+            globalStyles.borderBottom,
+            {paddingVertical: 16, flexDirection: 'row'},
+          ]}>
+          <Icon name="environment" />
+          <Text style={[globalStyles.fontSecondary, {flex: 1, marginLeft: 5}]}>
+            {merchant?.address}
+          </Text>
+        </View>
+      )}
 
       <View
         style={[
@@ -70,32 +81,18 @@ const Card: React.FC<CardProps> = props => {
         </View>
         <View>
           <Text style={[globalStyles.fontSecondary, styles.centerText]}>
-            店铺数量
+            认证状态
           </Text>
           <Text style={[globalStyles.fontPrimary, styles.centerTextValue]}>
-            {merchant?.shopNums || 0}
-          </Text>
-        </View>
-        <View>
-          <Text style={[globalStyles.fontSecondary, styles.centerText]}>
-            商品数量
-          </Text>
-          <Text style={[globalStyles.fontPrimary, styles.centerTextValue]}>
-            {merchant?.saleProductNums || 0}
+            {merchant?.hasAuth ? '是' : '否'}
           </Text>
         </View>
       </View>
 
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-around',
-        }}>
-        <Text style={styles.button}>新增商品</Text>
-        <Text style={styles.button}>跟进记录(20)</Text>
-      </View>
-      {/* 左上角 NEW徽标 */}
-      {/* <BadgeFlag label="NEW" /> */}
+      <PlusButton
+        title="加入我的私海"
+        style={{justifyContent: 'center', paddingVertical: 15}}
+      />
     </View>
   );
 };
