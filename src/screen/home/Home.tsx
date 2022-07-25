@@ -5,7 +5,7 @@ import {Header} from '@react-navigation/elements';
 // import {useUserDispatcher} from '../../../helper/hooks';
 import {Icon} from '@ant-design/react-native';
 import {PlusButton, UnitNumber} from '../../component';
-import {globalStyles} from '../../constants/styles';
+import {globalStyles, globalStyleVariables} from '../../constants/styles';
 import {useHomeSummary} from '../../helper/hooks';
 
 const Home: React.FC = () => {
@@ -18,7 +18,7 @@ const Home: React.FC = () => {
         headerLeftContainerStyle={{paddingLeft: 16}}
       />
       <ScrollView
-        style={{backgroundColor: '#f4f4f4'}}
+        style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}}
         contentContainerStyle={{padding: 16}}>
         {/* 今日收益 */}
         <View style={styles.cardContainer}>

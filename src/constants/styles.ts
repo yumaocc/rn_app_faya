@@ -7,6 +7,7 @@ export const globalStyleVariables = {
   TEXT_COLOR_TERTIARY: '#999',
   BORDER_COLOR: '#0000001A',
   MODULE_SPACE: 10,
+  COLOR_PAGE_BACKGROUND: '#f4f4f4',
 };
 
 export const globalStyles = StyleSheet.create({
@@ -97,5 +98,17 @@ export const globalStyles = StyleSheet.create({
   borderBottom: {
     borderBottomWidth: 0.3,
     borderBottomColor: globalStyleVariables.BORDER_COLOR,
+  },
+  tagWrapper: {
+    padding: 5,
+    flexDirection: 'row',
+    backgroundColor: '#FFB44333',
+    alignSelf: 'flex-start',
+    alignItems: 'center',
+    borderRadius: 3,
+  },
+  tag: {
+    fontSize: 12,
+    color: '#FFB443',
   },
 });

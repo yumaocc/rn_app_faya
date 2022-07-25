@@ -7,6 +7,7 @@ import PublicSeaList from './publicSea/PublicSeaList';
 import MyList from './my/MyList';
 import {Tabs} from '../../component';
 import {useRefCallback} from '../../helper/hooks';
+import {globalStyleVariables} from '../../constants/styles';
 const tabs = [
   {title: '私海商家', key: 'private'},
   {title: '我的商家', key: 'mine'},
@@ -42,7 +43,7 @@ const Merchant: React.FC = () => {
           onChange={setCurrentTab}
         />
         <ScrollView
-          style={{backgroundColor: '#f4f4f4'}}
+          style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}}
           ref={setRef}
           horizontal
           snapToInterval={windowSize.width}
