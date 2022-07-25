@@ -9,8 +9,13 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../redux/reducers';
 
 import AddMerchant from '../screen/merchant/AddMerchant';
+import EditContract from '../screen/contract/EditContract';
+import EditSPU from '../screen/spu/EditSPU';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
+const commonScreenOptions = {
+  headerBackTitleVisible: false,
+};
 
 const Navigator: React.FC = () => {
   const token = useSelector((state: RootState) => state.common.token);
@@ -31,7 +36,40 @@ const Navigator: React.FC = () => {
             component={AddMerchant}
             initialParams={{type: MerchantCreateType.PUBLIC_SEA}}
             options={{
+              ...commonScreenOptions,
               title: '新增商家',
+            }}
+          />
+          <Stack.Screen
+            name="EditContract"
+            component={EditContract}
+            options={{
+              ...commonScreenOptions,
+              title: '编辑合同',
+            }}
+          />
+          <Stack.Screen
+            name="AddContract"
+            component={EditContract}
+            options={{
+              ...commonScreenOptions,
+              title: '新增合同',
+            }}
+          />
+          <Stack.Screen
+            name="EditSPU"
+            component={EditSPU}
+            options={{
+              ...commonScreenOptions,
+              title: '编辑商品',
+            }}
+          />
+          <Stack.Screen
+            name="AddSPU"
+            component={EditSPU}
+            options={{
+              ...commonScreenOptions,
+              title: '新增商品',
             }}
           />
         </>

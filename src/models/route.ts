@@ -28,6 +28,10 @@ export type RootStackParamList = {
   Login: undefined;
   Tab: undefined;
   AddMerchant: {type: MerchantCreateType} | undefined;
+  EditContract: {id: number};
+  AddContract: undefined;
+  EditSPU: {id: number; bizId?: number};
+  AddSPU: {bizId?: number};
 };
 
 export type Props = NativeStackScreenProps<RootStackParamList>;

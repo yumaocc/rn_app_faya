@@ -7,9 +7,12 @@ import {Icon} from '@ant-design/react-native';
 import {PlusButton, UnitNumber} from '../../component';
 import {globalStyles, globalStyleVariables} from '../../constants/styles';
 import {useHomeSummary} from '../../helper/hooks';
+import {useNavigation} from '@react-navigation/native';
+import {FakeNavigation} from '../../models';
 
 const Home: React.FC = () => {
   const [summary] = useHomeSummary();
+  const navigation = useNavigation() as FakeNavigation;
   return (
     <>
       <Header
@@ -53,6 +56,7 @@ const Home: React.FC = () => {
             <PlusButton
               title="新增商品"
               onPress={() => {
+                navigation.navigate('AddSPU');
                 console.log('on press');
               }}
             />
@@ -75,7 +79,7 @@ const Home: React.FC = () => {
             <PlusButton
               title="新增合同"
               onPress={() => {
-                console.log('on press');
+                navigation.navigate('AddContract');
               }}
             />
           </View>
