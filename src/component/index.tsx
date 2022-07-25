@@ -5,6 +5,7 @@ import Tabs from './Tabs';
 import BadgeFlag from './BadgeFlag';
 import OperateGroup from './OperateGroup';
 import OperateItem from './OperateIItem';
+import Steps from './Steps';
 
 export {
   UnitNumber,
@@ -14,4 +15,5 @@ export {
   BadgeFlag,
   OperateGroup,
   OperateItem,
+  Steps,
 };
