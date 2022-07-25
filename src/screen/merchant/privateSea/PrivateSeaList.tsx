@@ -1,14 +1,16 @@
+import {useNavigation} from '@react-navigation/native';
 import React, {useEffect} from 'react';
 import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import * as api from '../../../apis';
 import {PlusButton} from '../../../component';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {useHomeSummary, useLog} from '../../../helper/hooks';
-import {MerchantF} from '../../../models';
+import {FakeNavigation, MerchantCreateType, MerchantF} from '../../../models';
 import Card from './Card';
 
 const PrivateSeaList: React.FC = () => {
   const [summary] = useHomeSummary();
+  const navigation = useNavigation() as FakeNavigation;
   const [merchantList, setMerchantList] = React.useState<MerchantF[]>([]);
   useEffect(() => {
     async function searchList() {
@@ -34,7 +36,18 @@ const PrivateSeaList: React.FC = () => {
         </Text>
       </View>
       <View style={{paddingHorizontal: globalStyleVariables.MODULE_SPACE}}>
-        <PlusButton style={styles.createButton} title="新增私海商家" />
+        <PlusButton
+          style={styles.createButton}
+          title="新增私海商家"
+          onPress={() => {
+            navigation.navigate({
+              name: 'AddMerchant',
+              params: {
+                type: MerchantCreateType.PRIVATE_SEA,
+              },
+            });
+          }}
+        />
         <View>
           {merchantList.map(merchant => {
             return (

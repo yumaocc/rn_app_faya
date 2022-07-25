@@ -1,3 +1,4 @@
+import {useRoute} from '@react-navigation/native';
 import {
   useCallback,
   useEffect,
@@ -7,6 +8,7 @@ import {
   MutableRefObject,
 } from 'react';
 import {getEnv} from '../../helper';
+import {FakeRoute} from '../../models/route';
 
 // 用于检测是否已卸载
 export function useUnmountRef() {
@@ -35,6 +37,12 @@ export function useForceUpdate(): [unknown, () => void] {
 //   );
 //   return query as unknown as T;
 // }
+
+export function useParams<T = any>(): T {
+  const route = useRoute() as FakeRoute;
+  const param = useMemo(() => route.params || {}, [route]);
+  return param;
+}
 
 export function useFetchData<T>(
   call: (id: number) => Promise<T>,

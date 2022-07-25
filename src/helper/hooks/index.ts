@@ -1,4 +1,10 @@
-export {useUnmountRef, useForceUpdate, useLog, useRefCallback} from './common';
+export {
+  useUnmountRef,
+  useForceUpdate,
+  useLog,
+  useRefCallback,
+  useParams,
+} from './common';
 export {useSearch} from './form';
 export {
   useMerchantCategory,

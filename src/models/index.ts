@@ -4,6 +4,7 @@ export type {
   NavigationItem,
   RootStackParamList,
   Props,
+  FakeNavigation,
 } from './route';
 export type {
   UserInfo,

@@ -1,5 +1,5 @@
 import React from 'react';
-import Router from '../router/Router';
+import Router, {navigationRef} from '../router/Router';
 import {NavigationContainer} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import {RootState} from '../redux/reducers';
@@ -11,7 +11,7 @@ const Main: React.FC = () => {
     return <Loading />;
   }
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <Router />
     </NavigationContainer>
   );

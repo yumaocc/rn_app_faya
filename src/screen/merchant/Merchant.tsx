@@ -15,7 +15,7 @@ const tabs = [
 ];
 
 const Merchant: React.FC = () => {
-  const [currentTab, setCurrentTab] = React.useState('public');
+  const [currentTab, setCurrentTab] = React.useState('private');
   const windowSize = useWindowDimensions();
   const [ref, setRef, isReady] = useRefCallback<ScrollView>();
 
