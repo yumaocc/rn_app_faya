@@ -6,7 +6,7 @@ import {useSelector} from 'react-redux';
 import {globalStyles, globalStyleVariables} from '../../constants/styles';
 import {UserState} from '../../models';
 import {RootState} from '../../redux/reducers';
-import {OperateGroup, OperateItem} from '../../component';
+import {SectionGroup, OperateItem} from '../../component';
 
 const Mine: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.userInfo);
@@ -42,11 +42,11 @@ const Mine: React.FC = () => {
           <Icon name="right" style={globalStyles.iconRight} />
         </View>
 
-        <OperateGroup>
+        <SectionGroup>
           <OperateItem title="我的金库" icon={<Icon name="wallet" />} />
-        </OperateGroup>
+        </SectionGroup>
 
-        <OperateGroup>
+        <SectionGroup>
           <OperateItem title="合同管理" icon={<Icon name="wallet" />} />
           <OperateItem
             title="我的商品"
@@ -61,15 +61,15 @@ const Mine: React.FC = () => {
               </Badge>
             }
           />
-        </OperateGroup>
+        </SectionGroup>
 
-        <OperateGroup>
+        <SectionGroup>
           <OperateItem title="录入的商家" icon={<Icon name="shop" />} />
-        </OperateGroup>
+        </SectionGroup>
 
-        <OperateGroup>
+        <SectionGroup>
           <OperateItem title="设置" icon={<Icon name="setting" />} />
-        </OperateGroup>
+        </SectionGroup>
       </ScrollView>
     </SafeAreaView>
   );

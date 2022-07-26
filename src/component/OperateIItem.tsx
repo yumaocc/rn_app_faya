@@ -30,7 +30,7 @@ OperateItem.defaultProps = {
 export default OperateItem;
 
 const styles = StyleSheet.create({
-  operateGroup: {
+  SectionGroup: {
     marginTop: globalStyleVariables.MODULE_SPACE,
   },
   operateWrapper: {
