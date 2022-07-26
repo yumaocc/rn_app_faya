@@ -14,9 +14,6 @@ const EditSPU: React.FC = () => {
     {title: '套餐设置', key: 'sku'},
     {title: '预约与购买', key: 'booking'},
     {title: '图文详情', key: 'detail'},
-    {title: '图文详情', key: 'detail2'},
-    {title: '图文详情222', key: 'detail3'},
-    {title: '图文详情', key: 'detail5'},
   ];
 
   return (

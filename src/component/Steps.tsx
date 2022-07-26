@@ -72,7 +72,7 @@ const Steps: React.FC<StepsProps> = props => {
     [steps],
   );
 
-  const scrollTo = useCallback(
+  const _scrollTo = useCallback(
     (left: number) => {
       if (isReady) {
         ref.current?.scrollTo({
@@ -84,7 +84,7 @@ const Steps: React.FC<StepsProps> = props => {
     },
     [isReady, ref],
   );
-  const debouncedScrollTo = useMemo(() => debounce(scrollTo, 200), [scrollTo]);
+  const scrollTo = useMemo(() => debounce(_scrollTo, 200), [_scrollTo]);
 
   useEffect(() => {
     if (closeAutoScroll) {
@@ -101,9 +101,9 @@ const Steps: React.FC<StepsProps> = props => {
     const isLeftOverflow = totalWidth - scrollLeft < 0;
     const offset = 15; // 容器的paddingLeft
     if (isLeftOverflow) {
-      debouncedScrollTo(totalWidth + offset);
+      scrollTo(totalWidth + offset);
     } else if (isRightOverflow) {
-      debouncedScrollTo(totalWidth + selfWidth - containerWidth + offset);
+      scrollTo(totalWidth + selfWidth - containerWidth + offset);
     }
   }, [
     activeKey,
@@ -111,7 +111,7 @@ const Steps: React.FC<StepsProps> = props => {
     getIndex,
     scrollLeft,
     containerWidth,
-    debouncedScrollTo,
+    scrollTo,
     steps,
     closeAutoScroll,
   ]);
@@ -128,11 +128,15 @@ const Steps: React.FC<StepsProps> = props => {
     setLayouts({...layouts, [step.key]: width});
   }
 
-  function handleScroll(offsetLeft: number) {
-    // console.log('onScroll');
+  const _handleScroll = useCallback((offsetLeft: number) => {
     setCloseAutoScroll(true);
     setScrollLeft(offsetLeft);
-  }
+  }, []);
+
+  const handleScroll = useMemo(
+    () => debounce(_handleScroll, 200),
+    [_handleScroll],
+  );
 
   function renderDefaultTitle(step: Step, index: number) {
     const title = step.title as string;
@@ -167,7 +171,7 @@ const Steps: React.FC<StepsProps> = props => {
         horizontal
         style={{flex: 1}}
         ref={setRef}
-        scrollEventThrottle={0}
+        scrollEventThrottle={16}
         onScroll={e => handleScroll(e.nativeEvent.contentOffset.x)}>
         <View style={styles.scrollContent}>
           {props.steps.map((step, index) => {
