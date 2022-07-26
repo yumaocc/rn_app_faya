@@ -1,17 +1,17 @@
 import moment, {Moment} from 'moment';
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {useCallback} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {globalStyles, globalStyleVariables} from '../constants/styles';
 import Popup from './Popup';
 import Picker from './Picker';
-// import {useLog} from '../helper/hooks';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {
   DATE_TIME_FORMAT,
   DEFAULT_END_DATE,
   DEFAULT_START_DATE,
 } from '../constants';
+// import {useLog} from '../helper/hooks';
 
 type RenderDateFunction = (date: Moment) => React.ReactElement;
 
@@ -27,8 +27,8 @@ interface DatePickerProps {
 
 const DatePicker: React.FC<DatePickerProps> = props => {
   const {value, min, max, mode, onChange} = props;
-  const [show, setShow] = useState(false);
 
+  const [show, setShow] = useState(false);
   const [chosenYear, setChosenYear] = useState<string>(
     moment(value).format('YYYY'),
   );
@@ -44,10 +44,6 @@ const DatePicker: React.FC<DatePickerProps> = props => {
   const [chosenMinute, setChosenMinute] = useState<string>(
     moment(value).format('mm'),
   );
-
-  const handleClose = useCallback(() => {
-    setShow(false);
-  }, []);
 
   // 计算可用的年份
   const years = useMemo(() => {
@@ -126,44 +122,32 @@ const DatePicker: React.FC<DatePickerProps> = props => {
     }
     return min;
   }, [chosenYear, chosenMonth, chosenDay, chosenHour, chosenMinute, min, max]);
-
-  // // 触发更新时间回调函数
-  useEffect(() => {
-    switch (mode) {
-      case 'datetime':
-        // datetime的精确度只到分
-        if (currentDate.isSame(value, 'minute')) {
-          return;
-        }
-        onChange && onChange(currentDate);
-        break;
-      case 'date':
-        if (currentDate.isSame(value, 'day')) {
-          return;
-        }
-        onChange && onChange(currentDate.startOf('day'));
-        break;
-      default:
-        break;
-    }
-  }, [onChange, currentDate, value, mode]);
-
   // useLog(chosenYear, 'chosenYear');
   // useLog(months, 'months');
   // useLog(days, 'days');
   // useLog(currentDate, 'currentDate');
+  // useLog(value, 'value');
   // useLog(hours, 'hours');
   // useLog(minutes, 'minutes');
 
+  const handleClose = useCallback(() => {
+    setShow(false);
+  }, []);
+
+  function handleOk() {
+    onChange && onChange(currentDate);
+    handleClose();
+  }
+
   const renderChild = useCallback(() => {
     if (!props.children) {
-      return <Text>{currentDate.format('YYYY-MM-DD HH:mm')}</Text>;
+      return <Text>{value.format('YYYY-MM-DD HH:mm')}</Text>;
     }
     if (typeof props.children === 'function') {
-      return props.children(currentDate);
+      return props.children(value);
     }
     return props.children;
-  }, [currentDate, props]);
+  }, [value, props]);
 
   return (
     <>
@@ -180,7 +164,7 @@ const DatePicker: React.FC<DatePickerProps> = props => {
               <Text>取消</Text>
             </TouchableOpacity>
             <Text style={styles.title}>{props.title}</Text>
-            <TouchableOpacity onPress={handleClose}>
+            <TouchableOpacity onPress={handleOk}>
               <Text style={styles.ok}>确定</Text>
             </TouchableOpacity>
           </View>
