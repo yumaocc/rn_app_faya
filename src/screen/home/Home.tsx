@@ -57,7 +57,6 @@ const Home: React.FC = () => {
               title="新增商品"
               onPress={() => {
                 navigation.navigate('AddSPU');
-                console.log('on press');
               }}
             />
           </View>
