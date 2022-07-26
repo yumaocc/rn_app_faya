@@ -13,19 +13,21 @@ import {
   DEFAULT_START_DATE,
 } from '../constants';
 
+type RenderDateFunction = (date: Moment) => React.ReactElement;
+
 interface DatePickerProps {
   value?: Moment;
   mode?: 'datetime' | 'date';
   title?: string;
-  visible: boolean;
   min?: Moment;
   max?: Moment;
-  onClose: () => void;
-  onChange?: (value: Moment) => void;
+  children?: React.ReactNode | RenderDateFunction;
+  onChange?: (date: Moment) => void;
 }
 
 const DatePicker: React.FC<DatePickerProps> = props => {
-  const {value, min, max, mode, onClose, onChange} = props;
+  const {value, min, max, mode, onChange} = props;
+  const [show, setShow] = useState(false);
 
   const [chosenYear, setChosenYear] = useState<string>(
     moment(value).format('YYYY'),
@@ -44,8 +46,8 @@ const DatePicker: React.FC<DatePickerProps> = props => {
   );
 
   const handleClose = useCallback(() => {
-    onClose && onClose();
-  }, [onClose]);
+    setShow(false);
+  }, []);
 
   // 计算可用的年份
   const years = useMemo(() => {
@@ -125,7 +127,7 @@ const DatePicker: React.FC<DatePickerProps> = props => {
     return min;
   }, [chosenYear, chosenMonth, chosenDay, chosenHour, chosenMinute, min, max]);
 
-  // 触发更新时间回调函数
+  // // 触发更新时间回调函数
   useEffect(() => {
     switch (mode) {
       case 'datetime':
@@ -153,56 +155,74 @@ const DatePicker: React.FC<DatePickerProps> = props => {
   // useLog(hours, 'hours');
   // useLog(minutes, 'minutes');
 
+  const renderChild = useCallback(() => {
+    if (!props.children) {
+      return <Text>{currentDate.format('YYYY-MM-DD HH:mm')}</Text>;
+    }
+    if (typeof props.children === 'function') {
+      return props.children(currentDate);
+    }
+    return props.children;
+  }, [currentDate, props]);
+
   return (
-    <Popup visible={props.visible} onClose={handleClose}>
-      <View style={styles.container}>
-        <View style={[globalStyles.borderBottom, styles.headerWrapper]}>
-          <TouchableOpacity onPress={handleClose}>
-            <Text>取消</Text>
-          </TouchableOpacity>
-          <Text style={styles.title}>{props.title}</Text>
-          <TouchableOpacity onPress={handleClose}>
-            <Text style={styles.ok}>确定</Text>
-          </TouchableOpacity>
+    <>
+      <TouchableOpacity
+        onPress={() => {
+          setShow(true);
+        }}>
+        {renderChild()}
+      </TouchableOpacity>
+      <Popup visible={show} onClose={handleClose}>
+        <View style={styles.container}>
+          <View style={[globalStyles.borderBottom, styles.headerWrapper]}>
+            <TouchableOpacity onPress={handleClose}>
+              <Text>取消</Text>
+            </TouchableOpacity>
+            <Text style={styles.title}>{props.title}</Text>
+            <TouchableOpacity onPress={handleClose}>
+              <Text style={styles.ok}>确定</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.pickerContainer}>
+            <Picker
+              style={{flex: 1}}
+              value={chosenYear}
+              onChange={setChosenYear}
+              items={years.map(item => ({label: item, value: item}))}
+            />
+            <Picker
+              style={{flex: 1}}
+              value={chosenMonth}
+              onChange={setChosenMonth}
+              items={months.map(item => ({label: item, value: item}))}
+            />
+            <Picker
+              style={{flex: 1}}
+              value={chosenDay}
+              onChange={setChosenDay}
+              items={days.map(item => ({label: item, value: item}))}
+            />
+            {mode === 'datetime' && (
+              <>
+                <Picker
+                  style={{flex: 1}}
+                  value={chosenHour}
+                  onChange={setChosenHour}
+                  items={hours.map(item => ({label: item, value: item}))}
+                />
+                <Picker
+                  style={{flex: 1}}
+                  value={chosenMinute}
+                  onChange={setChosenMinute}
+                  items={minutes.map(item => ({label: item, value: item}))}
+                />
+              </>
+            )}
+          </View>
         </View>
-        <View style={styles.pickerContainer}>
-          <Picker
-            style={{flex: 1}}
-            value={chosenYear}
-            onChange={setChosenYear}
-            items={years.map(item => ({label: item, value: item}))}
-          />
-          <Picker
-            style={{flex: 1}}
-            value={chosenMonth}
-            onChange={setChosenMonth}
-            items={months.map(item => ({label: item, value: item}))}
-          />
-          <Picker
-            style={{flex: 1}}
-            value={chosenDay}
-            onChange={setChosenDay}
-            items={days.map(item => ({label: item, value: item}))}
-          />
-          {mode === 'datetime' && (
-            <>
-              <Picker
-                style={{flex: 1}}
-                value={chosenHour}
-                onChange={setChosenHour}
-                items={hours.map(item => ({label: item, value: item}))}
-              />
-              <Picker
-                style={{flex: 1}}
-                value={chosenMinute}
-                onChange={setChosenMinute}
-                items={minutes.map(item => ({label: item, value: item}))}
-              />
-            </>
-          )}
-        </View>
-      </View>
-    </Popup>
+      </Popup>
+    </>
   );
 };
 DatePicker.defaultProps = {
