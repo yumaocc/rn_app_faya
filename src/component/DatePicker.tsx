@@ -5,7 +5,7 @@ import {View, Text, StyleSheet} from 'react-native';
 import {globalStyles, globalStyleVariables} from '../constants/styles';
 import Popup from './Popup';
 import Picker from './Picker';
-import {useLog} from '../helper/hooks';
+// import {useLog} from '../helper/hooks';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {
   DATE_TIME_FORMAT,
@@ -151,7 +151,7 @@ const DatePicker: React.FC<DatePickerProps> = props => {
   // useLog(chosenYear, 'chosenYear');
   // useLog(months, 'months');
   // useLog(days, 'days');
-  useLog(currentDate, 'currentDate');
+  // useLog(currentDate, 'currentDate');
   // useLog(hours, 'hours');
   // useLog(minutes, 'minutes');
 
