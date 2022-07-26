@@ -18,6 +18,7 @@ type RenderDateFunction = (date: Moment) => React.ReactElement;
 interface DatePickerProps {
   value?: Moment;
   mode?: 'datetime' | 'date';
+  format?: string; // only use if no children
   title?: string;
   min?: Moment;
   max?: Moment;
@@ -141,7 +142,15 @@ const DatePicker: React.FC<DatePickerProps> = props => {
 
   const renderChild = useCallback(() => {
     if (!props.children) {
-      return <Text>{value.format('YYYY-MM-DD HH:mm')}</Text>;
+      let format = props.format;
+      if (format === 'default') {
+        if (props.mode === 'date') {
+          format = 'YYYY-MM-DD';
+        } else if (props.mode === 'datetime') {
+          format = 'YYYY/MM/DD HH:mm';
+        }
+      }
+      return <Text>{value.format(format)}</Text>;
     }
     if (typeof props.children === 'function') {
       return props.children(value);
@@ -212,6 +221,7 @@ const DatePicker: React.FC<DatePickerProps> = props => {
 DatePicker.defaultProps = {
   title: '选择日期',
   mode: 'date',
+  format: 'default',
   value: moment(),
   min: moment(DEFAULT_START_DATE, DATE_TIME_FORMAT).startOf('day'),
   max: moment(DEFAULT_END_DATE, DATE_TIME_FORMAT).endOf('day'),
