@@ -17,6 +17,11 @@ export interface StepState {
   key: string;
 }
 
+interface ItemLayout {
+  value: number;
+  initialized: boolean;
+}
+
 type RenderTitle = (state: StepState) => React.ReactNode;
 
 export interface Step {
@@ -38,10 +43,13 @@ const Steps: React.FC<StepsProps> = props => {
   const [activeKey, setActiveKey] = useState(
     defaultActiveKey || steps[0]?.key || '',
   );
-  const [layouts, setLayouts] = useState<{[key: string]: number}>(() => {
-    const layouts: {[key: string]: number} = {};
+  const [layouts, setLayouts] = useState<{[key: string]: ItemLayout}>(() => {
+    const layouts: {[key: string]: ItemLayout} = {};
     steps.forEach(step => {
-      layouts[step.key] = 0;
+      layouts[step.key] = {
+        value: 0,
+        initialized: false,
+      };
     });
     return layouts;
   });
@@ -92,10 +100,15 @@ const Steps: React.FC<StepsProps> = props => {
     }
     const index = getIndex(activeKey);
     let totalWidth = 0;
-    const selfWidth = layouts[activeKey];
     for (let i = 0; i < index; i++) {
-      totalWidth += layouts[steps[i].key];
+      const layout = layouts[steps[i].key];
+      if (!layout.initialized) {
+        return;
+      }
+      totalWidth += layout?.value || 0;
     }
+
+    const selfWidth = layouts[activeKey]?.value || 0;
     const isRightOverflow =
       totalWidth + selfWidth - scrollLeft > containerWidth;
     const isLeftOverflow = totalWidth - scrollLeft < 0;
@@ -125,7 +138,13 @@ const Steps: React.FC<StepsProps> = props => {
   };
   function handleViewLoad(e: LayoutChangeEvent, step: Step) {
     const width = e.nativeEvent.layout.width;
-    setLayouts({...layouts, [step.key]: width});
+    setLayouts({
+      ...layouts,
+      [step.key]: {
+        value: width,
+        initialized: true,
+      },
+    });
   }
 
   const _handleScroll = useCallback((offsetLeft: number) => {
