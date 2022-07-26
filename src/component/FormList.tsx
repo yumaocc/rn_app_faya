@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import {Text, StyleSheet, View} from 'react-native';
 import {globalStyles, globalStyleVariables} from '../constants/styles';
 
 interface FormListProps {
@@ -12,7 +12,7 @@ interface FormListProps {
 const FormList: React.FC<FormListProps> = props => {
   const {label} = props;
   return (
-    <ScrollView style={styles.formListWrapper}>
+    <View style={styles.formListWrapper}>
       <View style={[styles.formListLabel]}>
         <View>
           <Text style={[globalStyles.fontPrimary, styles.formListTitle]}>
@@ -20,10 +20,10 @@ const FormList: React.FC<FormListProps> = props => {
           </Text>
           <Text>{props.desc}</Text>
         </View>
-        {props.children}
+        <View style={{flex: 1}}>{props.children}</View>
       </View>
       {props.extra && <View style={styles.formListExtra}>{props.extra}</View>}
-    </ScrollView>
+    </View>
   );
 };
 FormList.defaultProps = {

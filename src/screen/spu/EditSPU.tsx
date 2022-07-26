@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {View, Text, ScrollView, useWindowDimensions} from 'react-native';
 import {Steps, DatePicker} from '../../component';
-import {useParams, useRefCallback} from '../../helper/hooks';
+import {useLog, useParams, useRefCallback, useSearch} from '../../helper/hooks';
 import moment from 'moment';
 import {DATE_TIME_FORMAT} from '../../constants';
 import {globalStyleVariables} from '../../constants/styles';
@@ -25,6 +25,7 @@ const EditSPU: React.FC = () => {
     }
   }
   const [currentKey, setCurrentKey] = React.useState('base');
+  const [form, setField] = useSearch();
   const {width: windowWidth} = useWindowDimensions();
   const [ref, setRef, isReady] = useRefCallback<ScrollView>();
 
@@ -44,6 +45,8 @@ const EditSPU: React.FC = () => {
     }, 0);
   }, [currentKey, isReady, ref, windowWidth]);
 
+  useLog(form);
+
   return (
     <View style={{flex: 1}}>
       <Steps steps={steps} currentKey={currentKey} onChange={setCurrentKey} />
@@ -54,7 +57,7 @@ const EditSPU: React.FC = () => {
         snapToInterval={windowWidth}
         scrollEnabled={false}>
         <View style={{width: windowWidth}}>
-          <Base />
+          <Base form={form} setField={setField} />
         </View>
         <View style={{width: windowWidth}}>
           <SKU />
