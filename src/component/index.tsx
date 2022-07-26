@@ -7,6 +7,8 @@ import OperateGroup from './OperateGroup';
 import OperateItem from './OperateIItem';
 import Steps from './Steps';
 import Popup from './Popup';
+import DatePicker from './DatePicker';
+import Picker from './Picker';
 
 export {
   UnitNumber,
@@ -18,4 +20,6 @@ export {
   OperateItem,
   Steps,
   Popup,
+  DatePicker,
+  Picker,
 };

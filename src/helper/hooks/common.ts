@@ -74,7 +74,7 @@ export function useLog<T = unknown>(deep: T, label = ''): void {
   const labelName = useMemo(() => label, [label]);
   useEffect(() => {
     if (getEnv() === 'development') {
-      console.log(`${labelName || 'dependency'} changed:`);
+      console.log(`【${labelName || 'dependency'}】 changed:`);
       console.log(deep);
     }
   }, [deep, labelName]);
