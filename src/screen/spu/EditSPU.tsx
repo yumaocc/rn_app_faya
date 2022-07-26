@@ -6,6 +6,9 @@ import moment from 'moment';
 import {DATE_TIME_FORMAT} from '../../constants';
 import {globalStyleVariables} from '../../constants/styles';
 
+import Base from './base/Base';
+import SKU from './sku/SKU';
+
 const steps = [
   {title: '基本信息', key: 'base'},
   {title: '套餐设置', key: 'sku'},
@@ -16,6 +19,11 @@ const steps = [
 const EditSPU: React.FC = () => {
   const params = useParams<{id: number}>();
   const isEdit = params.id !== undefined;
+  if (isEdit) {
+    if (!isEdit) {
+      console.log(1);
+    }
+  }
   const [currentKey, setCurrentKey] = React.useState('base');
   const {width: windowWidth} = useWindowDimensions();
   const [ref, setRef, isReady] = useRefCallback<ScrollView>();
@@ -46,10 +54,12 @@ const EditSPU: React.FC = () => {
         snapToInterval={windowWidth}
         scrollEnabled={false}>
         <View style={{width: windowWidth}}>
-          <View style={{alignItems: 'center', justifyContent: 'center'}}>
-            {isEdit && <Text>编辑SPU, SPU ID： {params.id}</Text>}
-            {!isEdit && <Text>新增SPU</Text>}
-          </View>
+          <Base />
+        </View>
+        <View style={{width: windowWidth}}>
+          <SKU />
+        </View>
+        <View style={{width: windowWidth}}>
           <DatePicker value={date} onChange={setDate} mode="datetime">
             <Text style={{textAlign: 'center'}}>
               当前时间:{date.format(DATE_TIME_FORMAT)}
@@ -57,18 +67,11 @@ const EditSPU: React.FC = () => {
           </DatePicker>
         </View>
         <View style={{width: windowWidth}}>
-          <Text>套餐设置</Text>
-        </View>
-        <View style={{width: windowWidth}}>
-          <Text>预约与购买</Text>
           <DatePicker value={date} onChange={setDate} mode="datetime">
             <Text style={{textAlign: 'center'}}>
               当前时间:{date.format(DATE_TIME_FORMAT)}
             </Text>
           </DatePicker>
-        </View>
-        <View style={{width: windowWidth}}>
-          <Text>图文详情</Text>
         </View>
       </ScrollView>
     </View>
