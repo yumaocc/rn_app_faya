@@ -1,18 +1,48 @@
 import React from 'react';
 import {Text, StyleSheet, View} from 'react-native';
-import {globalStyles, globalStyleVariables} from '../constants/styles';
+import {globalStyles, globalStyleVariables} from '../../constants/styles';
+import {useFormInstance} from './hooks';
 
-interface FormListProps {
+export interface FormItemProps {
   children: React.ReactNode;
   label?: string;
   desc?: string;
   extra?: React.ReactNode;
   hiddenBorderTop?: boolean;
   hiddenBorderBottom?: boolean;
+  name?: string;
+  valueKey?: string;
+  onChangeKey?: string;
 }
 
-const FormList: React.FC<FormListProps> = props => {
-  const {label, hiddenBorderBottom, hiddenBorderTop} = props;
+const FormItem: React.FC<FormItemProps> = props => {
+  const {label, hiddenBorderBottom, hiddenBorderTop, valueKey, onChangeKey} =
+    props;
+  const formInstance = useFormInstance();
+
+  function renderChildren() {
+    const name = props.name;
+    if (name) {
+      try {
+        const child = React.Children.only(props.children) as React.ReactElement;
+        const childProps = child.props || {};
+        const oldOnChange = childProps[onChangeKey];
+        const newProps = {
+          ...childProps,
+          [valueKey]: formInstance.getFieldValue(name),
+          [onChangeKey]: (value: any) => {
+            formInstance.setFieldValue(name, value);
+            oldOnChange && oldOnChange(value);
+          },
+        };
+        return React.cloneElement(child, newProps);
+      } catch (error) {
+        return props.children;
+      }
+    }
+    return props.children;
+  }
+
   return (
     <View
       style={[
@@ -35,18 +65,20 @@ const FormList: React.FC<FormListProps> = props => {
             </View>
           )}
         </View>
-        <View style={styles.children}>{props.children}</View>
+        <View style={styles.children}>{renderChildren()}</View>
       </View>
       {props.extra && <View style={styles.extra}>{props.extra}</View>}
     </View>
   );
 };
-FormList.defaultProps = {
+FormItem.defaultProps = {
   label: '',
   hiddenBorderBottom: false,
   hiddenBorderTop: false,
+  valueKey: 'value',
+  onChangeKey: 'onChange',
 };
-export default FormList;
+export default FormItem;
 
 const styles = StyleSheet.create({
   container: {
@@ -71,14 +103,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   label: {
-    lineHeight: 16,
     fontSize: 16,
   },
   children: {
     flex: 1,
     height: 32,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'flex-end',
   },
   extra: {
     marginTop: globalStyleVariables.MODULE_SPACE,

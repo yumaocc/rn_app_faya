@@ -1,19 +1,23 @@
+import {InputItem} from '@ant-design/react-native';
 import React from 'react';
-import {View, Text} from 'react-native';
+import {ScrollView} from 'react-native';
+import {Form} from '../../../component';
+import {defaultInputProps} from '../../../constants';
 
-interface SKUProps {
-  title?: string;
-}
+// interface SKUProps {
+//   title?: string;
+// }
 
-const SKU: React.FC<SKUProps> = props => {
-  const {title} = props;
+const SKU: React.FC = () => {
   return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <Text>{title}</Text>
-    </View>
+    <ScrollView style={{flex: 1}}>
+      <Form.Item name="bizName" label="sku名称">
+        <InputItem {...defaultInputProps} placeholder="请输入sku名称" />
+      </Form.Item>
+    </ScrollView>
   );
 };
-SKU.defaultProps = {
-  title: 'SKU',
-};
+// SKU.defaultProps = {
+//   title: 'SKU',
+// };
 export default SKU;

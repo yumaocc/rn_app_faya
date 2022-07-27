@@ -10,7 +10,7 @@ import Popup from './Popup';
 import DatePicker from './DatePicker';
 import Picker from './Picker';
 import FormTitle from './FormTitle';
-import FormList from './FormList';
+import Form from './Form';
 
 export {
   UnitNumber,
@@ -25,5 +25,5 @@ export {
   DatePicker,
   Picker,
   FormTitle,
-  FormList,
+  Form,
 };
