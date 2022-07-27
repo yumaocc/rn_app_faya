@@ -7,10 +7,7 @@ import Picker from '../../Picker';
 import {PickerItemProps} from '../../Picker/PickerItem';
 import Popup from '../../Popup';
 
-export type RenderPickerChildren = (
-  option: PickerItemProps,
-  index: number,
-) => React.ReactNode;
+export type RenderPickerChildren = (option: PickerItemProps, index: number) => React.ReactNode;
 
 interface SelectProps {
   title?: string;
@@ -18,8 +15,9 @@ interface SelectProps {
   style?: StylePropView;
   options: PickerItemProps[];
   placeholder?: string;
+  disabled?: boolean;
   children?: React.ReactNode | RenderPickerChildren;
-  onChange?: (value: string | number) => void;
+  onChange?: (value: string | number | any) => void;
 }
 
 const Select: React.FC<SelectProps> = props => {
@@ -33,11 +31,7 @@ const Select: React.FC<SelectProps> = props => {
 
       return (
         <View style={styles.childrenWrapper}>
-          {value ? (
-            <Text>{foundOption?.label || value}</Text>
-          ) : (
-            <Text style={styles.placeholder}>{props.placeholder}</Text>
-          )}
+          {value ? <Text>{foundOption?.label || value}</Text> : <Text style={styles.placeholder}>{props.placeholder}</Text>}
           <Icon name="caret-right" style={styles.arrow} />
         </View>
       );
@@ -61,7 +55,9 @@ const Select: React.FC<SelectProps> = props => {
     <>
       <TouchableOpacity
         onPress={() => {
-          setShow(true);
+          if (!props.disabled) {
+            setShow(true);
+          }
         }}>
         {renderChildren()}
       </TouchableOpacity>
@@ -77,12 +73,7 @@ const Select: React.FC<SelectProps> = props => {
             </TouchableOpacity>
           </View>
           <View style={styles.pickerContainer}>
-            <Picker
-              style={{flex: 1}}
-              value={currentValue}
-              onChange={setCurrentValue}
-              items={props.options}
-            />
+            <Picker style={{flex: 1}} value={currentValue} onChange={setCurrentValue} items={props.options} />
           </View>
         </View>
       </Popup>
@@ -93,6 +84,7 @@ Select.defaultProps = {
   title: '',
   value: '',
   placeholder: '请选择',
+  disabled: false,
 };
 export default Select;
 const styles = StyleSheet.create({

@@ -1,26 +1,8 @@
-export {
-  wait,
-  getEnv,
-  isNumberString,
-  getNumberValue,
-  getItemByIndex,
-  formatMoment,
-  convertNumber2Han,
-  findItem,
-} from './util';
+export {wait, getEnv, isNumberString, getNumberValue, getItemByIndex, formatMoment, convertNumber2Han, findItem} from './util';
 export {cache} from './cache';
 
 export {getFirstFormError} from './form';
-export {
-  getInitContractForm,
-  getInitContractSku,
-  cleanContractForm,
-  generateContractFormPatch,
-} from './contract';
-export {
-  cleanSPUForm,
-  convertSKUBuyNotice,
-  generateSPUForm,
-  getInitSPUForm,
-} from './sku';
+export {getInitContractForm, getInitContractSku, cleanContractForm, generateContractFormPatch} from './contract';
+export {cleanSPUForm, convertSKUBuyNotice, generateSPUForm, getInitSPUForm} from './sku';
 export {getDateFromDateTime, cleanPrivateProperty, fuzzyMatch} from './common';
+export {getBookingType} from './dictionary';

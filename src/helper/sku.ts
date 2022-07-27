@@ -1,17 +1,7 @@
 import {isNil} from 'lodash';
 import {cleanPrivateProperty} from './common';
 import {findItem, formatMoment, momentFromDateTime} from './util';
-import {
-  BoolEnum,
-  ContractDetailF,
-  SKUBuyNotice,
-  SKUBuyNoticeF,
-  SKUBuyNoticeType,
-  SPUDetailF,
-  SPUForm,
-  SPUPurchaseNotice,
-  SKU,
-} from '../models';
+import {BoolEnum, ContractDetailF, SKUBuyNotice, SKUBuyNoticeF, SKUBuyNoticeType, SPUDetailF, SPUForm, SPUPurchaseNotice, SKU} from '../models';
 
 export function convertSKUBuyNotice(buyNotices: SKUBuyNoticeF[]): SKUBuyNotice {
   const result: SKUBuyNotice = {
@@ -27,10 +17,7 @@ export function convertSKUBuyNotice(buyNotices: SKUBuyNoticeF[]): SKUBuyNotice {
   return result;
 }
 
-function convertToBuyNotice(
-  type: SKUBuyNoticeType,
-  contents: string[] = [],
-): SPUPurchaseNotice[] {
+function convertToBuyNotice(type: SKUBuyNoticeType, contents: string[] = []): SPUPurchaseNotice[] {
   return contents.map(content => {
     return {
       type,
@@ -50,13 +37,7 @@ export function cleanSPUForm(spu: SPUForm): SPUForm {
   const {_showBeginTime} = spu;
   spu.showBeginTime = formatMoment(_showBeginTime!)!;
 
-  const {
-    _bookingNotice,
-    _policyNotice,
-    _tipsNotice,
-    _useRuleNotice,
-    _saleTimeNotice,
-  } = spu;
+  const {_bookingNotice, _policyNotice, _tipsNotice, _useRuleNotice, _saleTimeNotice} = spu;
   spu.purchaseNoticeEntities = [
     ...convertToBuyNotice('BOOKING', _bookingNotice),
     ...convertToBuyNotice('SALE_TIME', _saleTimeNotice),
@@ -104,25 +85,16 @@ export function getInitSPUForm(): SPUForm {
   };
 }
 
-export function generateSPUForm(
-  contract: ContractDetailF,
-  spuDetail?: SPUDetailF,
-): Partial<SPUForm> {
+export function generateSPUForm(contract: ContractDetailF, spuDetail?: SPUDetailF): Partial<SPUForm> {
   const form: Partial<SPUForm> = {};
 
   const {saleBeginTime, saleEndTime} = spuDetail || {};
   if (saleBeginTime && saleEndTime) {
-    form._saleTime = [
-      momentFromDateTime(saleBeginTime),
-      momentFromDateTime(saleEndTime),
-    ];
+    form._saleTime = [momentFromDateTime(saleBeginTime), momentFromDateTime(saleEndTime)];
   }
 
   form.skuList = contract.skuInfoReq?.skuInfo?.map(contractSku => {
-    const spuDetailSku = findItem(
-      spuDetail?.skuList!,
-      sku => sku.contractSkuId === contractSku.contractSkuId,
-    );
+    const spuDetailSku = findItem(spuDetail?.skuList!, sku => sku.contractSkuId === contractSku.contractSkuId);
     const hasSpuDetail = !isNil(spuDetailSku);
     const formSku: SKU = {
       contractSkuId: contractSku.contractSkuId,

@@ -39,6 +39,8 @@
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>需要您的同意</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>antfill.ttf</string>
