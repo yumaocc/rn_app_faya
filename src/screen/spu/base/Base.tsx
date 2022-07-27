@@ -4,6 +4,7 @@ import React from 'react';
 import {StyleSheet, Text, View, ScrollView} from 'react-native';
 import {FormList, FormTitle, SectionGroup} from '../../../component';
 import {SearchForm} from '../../../models';
+import {defaultInputProps} from '../../../constants';
 
 interface BaseProps {
   form: SearchForm;
@@ -19,30 +20,31 @@ const Base: React.FC<BaseProps> = props => {
         <FormTitle title="商家信息" />
         <FormList label="商家信息">
           <InputItem
-            clear
-            last
+            {...defaultInputProps}
             value={form.name}
-            labelNumber={2}
-            type="text"
             onChange={val => setField('name', val)}
             placeholder="请输入商家名称"
           />
         </FormList>
-        <FormList label="商家信息" desc="限制每次只能选择一个的提示信息占位">
+        <FormList label="商家信息" desc="限制每次只能选择一个的">
           <InputItem
-            clear
-            last
+            {...defaultInputProps}
             value={form.address}
-            labelNumber={2}
-            type="text"
             onChange={val => setField('address', val)}
             placeholder="请输入商家名称"
           />
         </FormList>
         <FormList
           label="商家信息"
-          desc="限制每次只能选择一个的提示信息占位"
+          desc="限制每次只能选择一个的提示信息占位选择一个的提示信息占位"
           extra={<View style={{backgroundColor: '#6cf', height: 100}} />}>
+          <View style={{backgroundColor: '#6cf'}}>
+            <Text>请输入</Text>
+          </View>
+        </FormList>
+        <FormList
+          label="商家信息"
+          desc="限制每次只能选择一个的提示信息占位选择一个的提示信息占位">
           <View style={{backgroundColor: '#6cf'}}>
             <Text>请输入</Text>
           </View>

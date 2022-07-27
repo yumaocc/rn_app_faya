@@ -7,48 +7,80 @@ interface FormListProps {
   label?: string;
   desc?: string;
   extra?: React.ReactNode;
+  hiddenBorderTop?: boolean;
+  hiddenBorderBottom?: boolean;
 }
 
 const FormList: React.FC<FormListProps> = props => {
-  const {label} = props;
+  const {label, hiddenBorderBottom, hiddenBorderTop} = props;
   return (
-    <View style={styles.formListWrapper}>
-      <View style={[styles.formListLabel]}>
-        <View>
-          <Text style={[globalStyles.fontPrimary, styles.formListTitle]}>
-            {label}
-          </Text>
-          <Text>{props.desc}</Text>
+    <View
+      style={[
+        hiddenBorderBottom ? {} : globalStyles.borderBottom,
+        hiddenBorderTop ? {} : globalStyles.borderTop,
+        styles.container,
+      ]}>
+      <View style={[styles.item]}>
+        <View style={styles.labelLeft}>
+          <View style={styles.labelWrapper}>
+            <Text style={[globalStyles.fontPrimary, styles.label]}>
+              {label}
+            </Text>
+          </View>
+          {props.desc && (
+            <View>
+              <Text numberOfLines={1} style={styles.desc}>
+                {props.desc}
+              </Text>
+            </View>
+          )}
         </View>
-        <View style={{flex: 1}}>{props.children}</View>
+        <View style={styles.children}>{props.children}</View>
       </View>
-      {props.extra && <View style={styles.formListExtra}>{props.extra}</View>}
+      {props.extra && <View style={styles.extra}>{props.extra}</View>}
     </View>
   );
 };
 FormList.defaultProps = {
-  label: '请填写操作名字',
+  label: '',
+  hiddenBorderBottom: false,
+  hiddenBorderTop: false,
 };
 export default FormList;
 
 const styles = StyleSheet.create({
-  SectionGroup: {
-    marginTop: globalStyleVariables.MODULE_SPACE,
-  },
-  formListWrapper: {
+  container: {
     backgroundColor: '#fff',
     paddingVertical: 18,
-    paddingHorizontal: 15,
   },
-  formListLabel: {
+  item: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  formListTitle: {
-    flex: 1,
-    marginHorizontal: globalStyleVariables.MODULE_SPACE,
+  labelLeft: {
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+    maxWidth: '80%',
   },
-  formListExtra: {
+  desc: {
+    fontSize: 12,
+    color: globalStyleVariables.TEXT_COLOR_TERTIARY,
+  },
+  labelWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  label: {
+    lineHeight: 16,
+    fontSize: 16,
+  },
+  children: {
+    flex: 1,
+    height: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  extra: {
     marginTop: globalStyleVariables.MODULE_SPACE,
   },
 });
