@@ -1,9 +1,8 @@
 // import moment from 'moment';
-import {InputItem, Button} from '@ant-design/react-native';
+import {Button} from '@ant-design/react-native';
 import React from 'react';
-import {StyleSheet, Text, View, ScrollView} from 'react-native';
-import {DatePicker, FormTitle, SectionGroup, Form} from '../../../component';
-import {DATE_TIME_FORMAT, defaultInputProps} from '../../../constants';
+import {StyleSheet, ScrollView} from 'react-native';
+import {FormTitle, SectionGroup, Form, Input, Select} from '../../../component';
 
 interface BaseProps {
   toDelete?: string; // delete me after
@@ -11,6 +10,10 @@ interface BaseProps {
 
 const Base: React.FC<BaseProps> = () => {
   const form = Form.useFormInstance();
+  const types = [
+    {label: '一类', value: '1'},
+    {label: '二类', value: '2'},
+  ];
   return (
     <ScrollView style={styles.container}>
       <Button
@@ -21,8 +24,11 @@ const Base: React.FC<BaseProps> = () => {
       </Button>
       <SectionGroup style={[{marginTop: 0}, styles.sectionGroupStyle]}>
         <FormTitle title="商家信息" />
-        <Form.Item label="商家信息" name="name">
-          <InputItem {...defaultInputProps} placeholder="请输入商家名称" />
+        <Form.Item label="商家名称" name="name">
+          <Input placeholder="请输入商家名称" />
+        </Form.Item>
+        <Form.Item label="商家简介" name="type">
+          <Select options={types} placeholder="选择商家" />
         </Form.Item>
         {/* <Form.Item label="商家信息" desc="限制每次只能选择一个的">
             <InputItem {...defaultInputProps} placeholder="请输入商家名称" />

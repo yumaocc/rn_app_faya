@@ -9,4 +9,7 @@ export default {
   // button
   primary_button_fill: primary,
   primary_button_fill_tap: primaryTap,
+
+  // input
+  input_font_size: 15,
 };

@@ -3,7 +3,7 @@ import {View, Text, StyleSheet} from 'react-native';
 
 export interface PickerItemProps {
   label: string;
-  value: string;
+  value: string | number;
 }
 export const PICKER_ITEM_HEIGHT = 40;
 

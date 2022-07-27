@@ -11,6 +11,8 @@ import DatePicker from './DatePicker';
 import Picker from './Picker';
 import FormTitle from './FormTitle';
 import Form from './Form';
+import Input from './Form/Input';
+import Select from './Form/Select';
 
 export {
   UnitNumber,
@@ -26,4 +28,6 @@ export {
   Picker,
   FormTitle,
   Form,
+  Input,
+  Select,
 };

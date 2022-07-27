@@ -88,6 +88,7 @@ const styles = StyleSheet.create({
   item: {
     flexDirection: 'row',
     alignItems: 'center',
+    // backgroundColor: '#6cf',
   },
   labelLeft: {
     alignItems: 'flex-start',

@@ -5,10 +5,10 @@ import {StylePropView} from '../../models';
 import PickerItem, {PickerItemProps, PICKER_ITEM_HEIGHT} from './PickerItem';
 
 export interface PickerProps {
-  value: string;
-  onChange?: (value: string) => void;
+  value: string | number;
   style?: StylePropView;
   items: PickerItemProps[];
+  onChange?: (value: string | number) => void;
 }
 
 const Picker: React.FC<PickerProps> & {
