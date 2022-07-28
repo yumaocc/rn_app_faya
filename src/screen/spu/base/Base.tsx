@@ -1,10 +1,10 @@
 // import moment from 'moment';
-import {Button} from '@ant-design/react-native';
+import {Button, Icon} from '@ant-design/react-native';
 import React, {useEffect} from 'react';
 import {ScrollView, Text, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import {FormTitle, SectionGroup, Form, Input, Select, DatePicker, Footer, Cascader} from '../../../component';
-import {globalStyles} from '../../../constants/styles';
+import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {useMerchantDispatcher, useContractDispatcher, useSPUCategories} from '../../../helper/hooks';
 import {BoolEnum} from '../../../models';
 import {RootState} from '../../../redux/reducers';
@@ -68,6 +68,12 @@ const Base: React.FC<BaseProps> = ({onNext}) => {
         </Form.Item>
         <Form.Item name="contractId" label="选择合同">
           <Select onChange={handleChangeContract} options={contractList.map(e => ({label: e.name, value: e.id}))} placeholder="选择合同" />
+        </Form.Item>
+        <Form.Item label="选择店铺">
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Text style={[{fontSize: 15, color: globalStyleVariables.TEXT_COLOR_TERTIARY}]}>请选择</Text>
+            <Icon style={{transform: [{rotate: '90deg'}], marginLeft: 3, color: '#000', fontSize: 10}} name="caret-right" />
+          </View>
         </Form.Item>
         {/* todo: 可用店铺选择 */}
       </SectionGroup>
