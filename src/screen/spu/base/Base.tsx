@@ -3,9 +3,9 @@ import {Button} from '@ant-design/react-native';
 import React, {useEffect} from 'react';
 import {ScrollView, Text, View} from 'react-native';
 import {useSelector} from 'react-redux';
-import {FormTitle, SectionGroup, Form, Input, Select, DatePicker, Footer} from '../../../component';
+import {FormTitle, SectionGroup, Form, Input, Select, DatePicker, Footer, Cascader} from '../../../component';
 import {globalStyles} from '../../../constants/styles';
-import {useMerchantDispatcher, useContractDispatcher} from '../../../helper/hooks';
+import {useMerchantDispatcher, useContractDispatcher, useSPUCategories} from '../../../helper/hooks';
 import {BoolEnum} from '../../../models';
 import {RootState} from '../../../redux/reducers';
 import {styles} from '../style';
@@ -21,7 +21,7 @@ const Base: React.FC<BaseProps> = ({onNext}) => {
   const contractList = useSelector((state: RootState) => state.contract.contractSearchList);
 
   const form = Form.useFormInstance();
-  // const [SPUCategories] = useSPUCategories();
+  const [SPUCategories] = useSPUCategories();
   const [merchantDispatcher] = useMerchantDispatcher();
   const [contractDispatcher] = useContractDispatcher();
 
@@ -75,6 +75,9 @@ const Base: React.FC<BaseProps> = ({onNext}) => {
         <FormTitle title="商品基础信息" />
         <Form.Item label="商家名称" name="spuName">
           <Input placeholder="商品名称" />
+        </Form.Item>
+        <Form.Item label="商品分类">
+          <Cascader value={currentContract?.spuInfoReq?.spuCategoryIds} disabled options={SPUCategories} labelKey="name" valueKey="id" placeholder="商品分类" />
         </Form.Item>
         <Form.Item label="收货地址" name="needExpress" desc="开启后，用户下单需填写收货地址">
           <Select

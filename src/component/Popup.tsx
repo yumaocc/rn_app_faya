@@ -1,13 +1,7 @@
 import React from 'react';
 import {useCallback} from 'react';
 import {useEffect} from 'react';
-import {
-  View,
-  Modal,
-  TouchableWithoutFeedback,
-  StyleSheet,
-  BackHandler,
-} from 'react-native';
+import {View, Modal, TouchableWithoutFeedback, StyleSheet, BackHandler} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {StylePropView} from '../models';
 
@@ -69,5 +63,7 @@ const styles = StyleSheet.create({
   body: {
     width: '100%',
     backgroundColor: '#fff',
+    borderTopColor: '#e5e5e5',
+    borderTopWidth: StyleSheet.hairlineWidth,
   },
 });

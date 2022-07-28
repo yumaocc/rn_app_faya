@@ -28,10 +28,7 @@ export function getItemByIndex<T>(list: T[], index: number): T | undefined {
   return list[index];
 }
 // 从数组安全的获取指定元素
-export function findItem<T>(
-  list: T[],
-  predicate: (item: T) => boolean,
-): T | null {
+export function findItem<T>(list: T[], predicate: (item: T) => boolean): T | null {
   list = list || [];
   return list.find(predicate)!;
 }
@@ -51,25 +48,7 @@ export function momentFromDateTime(timeStr: DateTimeString) {
 // 网上找的。测了100以内的数字，无错误
 export function convertNumber2Han(num: number): string {
   const arr1 = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
-  const arr2 = [
-    '',
-    '十',
-    '百',
-    '千',
-    '万',
-    '十',
-    '百',
-    '千',
-    '亿',
-    '十',
-    '百',
-    '千',
-    '万',
-    '十',
-    '百',
-    '千',
-    '亿',
-  ];
+  const arr2 = ['', '十', '百', '千', '万', '十', '百', '千', '亿', '十', '百', '千', '万', '十', '百', '千', '亿'];
   if (!num || isNaN(num)) {
     return '零';
   }
@@ -91,5 +70,18 @@ export function convertNumber2Han(num: number): string {
   result = result.replace(/零+$/, ''); // 移除末尾的零
   // 将【一十】换成【十】
   result = result.replace(/^一十/g, '十');
+  return result;
+}
+
+export function flattenTree<T>(tree: any[], childrenKey: string = 'children'): T[] {
+  const result: T[] = [];
+  tree.forEach(item => {
+    result.push(item);
+    const children = item[childrenKey];
+    if (children?.length) {
+      const flattenChildren = flattenTree(item[childrenKey], childrenKey) as T[];
+      result.push(...flattenChildren);
+    }
+  });
   return result;
 }

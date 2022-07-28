@@ -1,4 +1,4 @@
-export {wait, getEnv, isNumberString, getNumberValue, getItemByIndex, formatMoment, convertNumber2Han, findItem} from './util';
+export {wait, getEnv, isNumberString, getNumberValue, getItemByIndex, formatMoment, convertNumber2Han, findItem, flattenTree} from './util';
 export {cache} from './cache';
 
 export {getFirstFormError} from './form';

@@ -13,6 +13,7 @@ import FormTitle from './FormTitle';
 import Form from './Form';
 import Input from './Form/Input';
 import Select from './Form/Select';
+import Cascader from './Form/Cascader';
 import Footer from './Form/Footer';
 
-export {UnitNumber, GlobalToast, PlusButton, Tabs, BadgeFlag, SectionGroup, OperateItem, Steps, Popup, DatePicker, Picker, FormTitle, Form, Input, Select, Footer};
+export {UnitNumber, GlobalToast, PlusButton, Tabs, BadgeFlag, SectionGroup, OperateItem, Steps, Popup, DatePicker, Picker, FormTitle, Form, Input, Select, Footer, Cascader};

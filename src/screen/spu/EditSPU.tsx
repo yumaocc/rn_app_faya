@@ -15,6 +15,7 @@ import {RootState} from '../../redux/reducers';
 import * as api from '../../apis';
 import {useNavigation} from '@react-navigation/native';
 import {SPUForm} from '../../models';
+import {Button} from '@ant-design/react-native';
 
 const steps = [
   {title: '基本信息', key: 'base'},
@@ -160,6 +161,13 @@ const EditSPU: React.FC = () => {
             <ImageTextDetail onNext={handleSubmit} />
           </View>
         </ScrollView>
+        <Button
+          onPress={() => {
+            console.log(form.getFieldsValue());
+          }}
+          type="warning">
+          检查
+        </Button>
       </Form>
     </SafeAreaView>
   );
