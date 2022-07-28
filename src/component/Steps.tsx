@@ -1,13 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import debounce from 'lodash/debounce';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-  LayoutChangeEvent,
-} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, ScrollView, LayoutChangeEvent} from 'react-native';
 import {globalStyleVariables} from '../constants/styles';
 import {StylePropText, StylePropView} from '../models';
 import {useRefCallback} from '../helper/hooks';
@@ -40,9 +33,7 @@ interface StepsProps {
 
 const Steps: React.FC<StepsProps> = props => {
   const {steps, defaultActiveKey, currentKey, onChange} = props;
-  const [activeKey, setActiveKey] = useState(
-    defaultActiveKey || steps[0]?.key || '',
-  );
+  const [activeKey, setActiveKey] = useState(defaultActiveKey || steps[0]?.key || '');
   const [layouts, setLayouts] = useState<{[key: string]: ItemLayout}>(() => {
     const layouts: {[key: string]: ItemLayout} = {};
     steps.forEach(step => {
@@ -98,6 +89,9 @@ const Steps: React.FC<StepsProps> = props => {
     if (closeAutoScroll) {
       return;
     }
+    if (containerWidth <= 0) {
+      return;
+    }
     const index = getIndex(activeKey);
     let totalWidth = 0;
     for (let i = 0; i < index; i++) {
@@ -107,27 +101,16 @@ const Steps: React.FC<StepsProps> = props => {
       }
       totalWidth += layout?.value || 0;
     }
-
-    const selfWidth = layouts[activeKey]?.value || 0;
-    const isRightOverflow =
-      totalWidth + selfWidth - scrollLeft > containerWidth;
-    const isLeftOverflow = totalWidth - scrollLeft < 0;
     const offset = 15; // 容器的paddingLeft
+    const selfWidth = layouts[activeKey]?.value || 0;
+    const isRightOverflow = totalWidth + selfWidth - scrollLeft > containerWidth;
+    const isLeftOverflow = totalWidth - scrollLeft < 0;
     if (isLeftOverflow) {
       scrollTo(totalWidth + offset);
     } else if (isRightOverflow) {
       scrollTo(totalWidth + selfWidth - containerWidth + offset);
     }
-  }, [
-    activeKey,
-    layouts,
-    getIndex,
-    scrollLeft,
-    containerWidth,
-    scrollTo,
-    steps,
-    closeAutoScroll,
-  ]);
+  }, [activeKey, layouts, getIndex, scrollLeft, containerWidth, scrollTo, steps, closeAutoScroll]);
 
   const handleChangeKey = (key: string) => {
     if (key !== activeKey) {
@@ -152,46 +135,23 @@ const Steps: React.FC<StepsProps> = props => {
     setScrollLeft(offsetLeft);
   }, []);
 
-  const handleScroll = useMemo(
-    () => debounce(_handleScroll, 200),
-    [_handleScroll],
-  );
+  const handleScroll = useMemo(() => debounce(_handleScroll, 200), [_handleScroll]);
 
   function renderDefaultTitle(step: Step, index: number) {
     const title = step.title as string;
     const isActive = activeKey === step.key;
     return (
       <>
-        <View
-          style={[
-            styles.defaultIndex,
-            isActive ? styles.activeDefaultIndex : {},
-          ]}>
-          <Text
-            style={[styles.indexText, isActive ? styles.activeIndexText : {}]}>
-            {index + 1}
-          </Text>
+        <View style={[styles.defaultIndex, isActive ? styles.activeDefaultIndex : {}]}>
+          <Text style={[styles.indexText, isActive ? styles.activeIndexText : {}]}>{index + 1}</Text>
         </View>
-        <Text
-          style={[
-            styles.defaultTabText,
-            isActive ? styles.activeDefaultTabText : {},
-          ]}>
-          {title}
-        </Text>
+        <Text style={[styles.defaultTabText, isActive ? styles.activeDefaultTabText : {}]}>{title}</Text>
       </>
     );
   }
   return (
-    <View
-      style={[styles.container, props.style]}
-      onLayout={e => setContainerWidth(e.nativeEvent.layout.width)}>
-      <ScrollView
-        horizontal
-        style={{flex: 1}}
-        ref={setRef}
-        scrollEventThrottle={16}
-        onScroll={e => handleScroll(e.nativeEvent.contentOffset.x)}>
+    <View style={[styles.container, props.style]} onLayout={e => setContainerWidth(e.nativeEvent.layout.width)}>
+      <ScrollView horizontal style={{flex: 1}} ref={setRef} scrollEventThrottle={16} onScroll={e => handleScroll(e.nativeEvent.contentOffset.x)}>
         <View style={styles.scrollContent}>
           {props.steps.map((step, index) => {
             const isStringTitle = typeof step.title === 'string';
@@ -204,13 +164,8 @@ const Steps: React.FC<StepsProps> = props => {
             }
 
             return (
-              <TouchableOpacity
-                key={step.key}
-                activeOpacity={0.7}
-                onPress={() => handleChangeKey(step.key)}>
-                <View
-                  style={styles.tabWrapper}
-                  onLayout={e => handleViewLoad(e, step)}>
+              <TouchableOpacity key={step.key} activeOpacity={0.7} onPress={() => handleChangeKey(step.key)}>
+                <View style={styles.tabWrapper} onLayout={e => handleViewLoad(e, step)}>
                   {isStringTitle
                     ? defaultTitle
                     : renderTitle({
