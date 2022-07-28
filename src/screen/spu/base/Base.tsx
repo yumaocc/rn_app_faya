@@ -61,12 +61,6 @@ const Base: React.FC<BaseProps> = ({onNext}) => {
 
   return (
     <ScrollView style={styles.container}>
-      <Button
-        onPress={() => {
-          console.log(form.getFieldsValue());
-        }}>
-        检查
-      </Button>
       <SectionGroup style={[{marginTop: 0}, styles.sectionGroupStyle]}>
         <FormTitle title="商家信息" />
         <Form.Item label="选择商家" name="bizUserId">

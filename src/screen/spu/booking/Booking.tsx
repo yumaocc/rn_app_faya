@@ -88,7 +88,7 @@ const Booking: React.FC<BookingProps> = ({onNext}) => {
 
   return (
     <ScrollView style={styles.container}>
-      <SectionGroup style={styles.sectionGroupStyle}>
+      <SectionGroup style={[{marginTop: 0}, styles.sectionGroupStyle]}>
         <FormTitle title="预约设置" />
         <Form.Item label="预约类型">
           <Text>{getBookingType(contractDetail?.bookingReq?.bookingType)}</Text>

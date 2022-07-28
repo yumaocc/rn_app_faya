@@ -19,7 +19,7 @@ const ImageTextDetail: React.FC<ImageTextDetailProps> = ({onNext}) => {
   }
   return (
     <ScrollView style={styles.container}>
-      <SectionGroup style={styles.sectionGroupStyle}>
+      <SectionGroup style={[{marginTop: 0}, styles.sectionGroupStyle]}>
         <FormTitle title="图片信息" />
         <Form.Item label="海报图" name="_poster" vertical desc="1张图，建议尺寸1200*1600，文件大小10M以内，格式jpg/png">
           <Upload maxCount={1} />

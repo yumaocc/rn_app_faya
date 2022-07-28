@@ -1,7 +1,8 @@
 import {Button} from '@ant-design/react-native';
 import React from 'react';
 import {ScrollView} from 'react-native';
-import {Footer, Form, Input} from '../../../component';
+import {Footer, Form, Input, SectionGroup} from '../../../component';
+import {styles} from '../style';
 
 interface SKUProps {
   onNext?: () => void;
@@ -10,9 +11,12 @@ interface SKUProps {
 const SKU: React.FC<SKUProps> = ({onNext}) => {
   return (
     <ScrollView style={{flex: 1}}>
-      <Form.Item name="bizName" label="sku名称">
-        <Input placeholder="请输入sku名称" />
-      </Form.Item>
+      <SectionGroup style={[{marginTop: 0}, styles.sectionGroupStyle]}>
+        <Form.Item name="bizName" label="sku名称">
+          <Input placeholder="请输入sku名称" />
+        </Form.Item>
+      </SectionGroup>
+
       <Footer />
       <Button onPress={onNext}>下一步</Button>
     </ScrollView>
