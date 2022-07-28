@@ -28,11 +28,12 @@ interface StepsProps {
   steps: Step[];
   defaultActiveKey?: string;
   currentKey?: string;
+  onBeforeChangeKey?: (currentKey: string, targetKey: string) => boolean;
   onChange?: (key: string) => void;
 }
 
 const Steps: React.FC<StepsProps> = props => {
-  const {steps, defaultActiveKey, currentKey, onChange} = props;
+  const {steps, defaultActiveKey, currentKey, onChange, onBeforeChangeKey} = props;
   const [activeKey, setActiveKey] = useState(defaultActiveKey || steps[0]?.key || '');
   const [layouts, setLayouts] = useState<{[key: string]: ItemLayout}>(() => {
     const layouts: {[key: string]: ItemLayout} = {};
@@ -114,6 +115,10 @@ const Steps: React.FC<StepsProps> = props => {
 
   const handleChangeKey = (key: string) => {
     if (key !== activeKey) {
+      const shouldChange = onBeforeChangeKey(activeKey, key);
+      if (!shouldChange) {
+        return;
+      }
       setCloseAutoScroll(false);
       setActiveKey(key);
       onChange && onChange(key);
@@ -181,8 +186,9 @@ const Steps: React.FC<StepsProps> = props => {
     </View>
   );
 };
-// Steps.defaultProps = {
-// };
+Steps.defaultProps = {
+  onBeforeChangeKey: () => true,
+};
 
 export default Steps;
 
