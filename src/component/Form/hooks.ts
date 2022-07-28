@@ -6,7 +6,7 @@ import {FormContext} from './Context';
 import {produce} from 'immer';
 
 export function useForm(initForm: FormStore = {}): [FormInstance] {
-  // fixme: 目前的实现方式会导致form实例会一直更新，有时间研究一下ant的form
+  // fixme: 目前的实现方式会导致form实例一直更新，有时间研究一下ant的form
   const [store, setStore] = useState<FormStore>(initForm);
 
   const setStoreValue = useCallback((namePath: NamePath, value: any) => {
@@ -18,10 +18,11 @@ export function useForm(initForm: FormStore = {}): [FormInstance] {
   }, []);
 
   const setFieldValue = useCallback(
-    (namePath: NamePath, value: any) => {
-      setStoreValue(namePath, value);
+    (namePath: NamePath, value: any | ((storeValue: any) => any)) => {
+      const newValue = typeof value === 'function' ? value(getValue(store, namePath)) : value;
+      setStoreValue(namePath, newValue);
     },
-    [setStoreValue],
+    [store, setStoreValue],
   );
   const setFieldsValue = useCallback(
     (partial: FormStore) => {
@@ -31,10 +32,7 @@ export function useForm(initForm: FormStore = {}): [FormInstance] {
     },
     [setStoreValue],
   );
-  const getFieldValue = useCallback(
-    (namePath: NamePath) => getValue(store, namePath),
-    [store],
-  );
+  const getFieldValue = useCallback((namePath: NamePath) => getValue(store, namePath), [store]);
   const getFieldsValue = useCallback(() => store, [store]);
   return [
     {
