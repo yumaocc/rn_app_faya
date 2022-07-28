@@ -97,7 +97,7 @@ export const globalStyles = StyleSheet.create({
     borderTopColor: globalStyleVariables.BORDER_COLOR,
   },
   borderBottom: {
-    borderBottomWidth: 0.3,
+    borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: globalStyleVariables.BORDER_COLOR,
   },
   tagWrapper: {

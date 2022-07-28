@@ -1,9 +1,9 @@
 // import moment from 'moment';
 import {Button, Icon} from '@ant-design/react-native';
-import React, {useEffect} from 'react';
-import {ScrollView, Text, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {ScrollView, Text, TouchableWithoutFeedback, View} from 'react-native';
 import {useSelector} from 'react-redux';
-import {FormTitle, SectionGroup, Form, Input, Select, DatePicker, Footer, Cascader} from '../../../component';
+import {FormTitle, SectionGroup, Form, Input, Select, DatePicker, Footer, Cascader, Modal} from '../../../component';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {useMerchantDispatcher, useContractDispatcher, useSPUCategories} from '../../../helper/hooks';
 import {BoolEnum} from '../../../models';
@@ -19,6 +19,7 @@ const Base: React.FC<BaseProps> = ({onNext}) => {
   const merchantList = useSelector((state: RootState) => state.merchant.merchantSearchList);
   const currentContract = useSelector((state: RootState) => state.contract.currentContract);
   const contractList = useSelector((state: RootState) => state.contract.contractSearchList);
+  const [showUseShop, setShowUseShop] = useState(false);
 
   const form = Form.useFormInstance();
   const [SPUCategories] = useSPUCategories();
@@ -70,10 +71,12 @@ const Base: React.FC<BaseProps> = ({onNext}) => {
           <Select onChange={handleChangeContract} options={contractList.map(e => ({label: e.name, value: e.id}))} placeholder="选择合同" />
         </Form.Item>
         <Form.Item label="选择店铺">
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Text style={[{fontSize: 15, color: globalStyleVariables.TEXT_COLOR_TERTIARY}]}>请选择</Text>
-            <Icon style={{transform: [{rotate: '90deg'}], marginLeft: 3, color: '#000', fontSize: 10}} name="caret-right" />
-          </View>
+          <TouchableWithoutFeedback onPress={() => setShowUseShop(true)}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={[{fontSize: 15, color: globalStyleVariables.TEXT_COLOR_TERTIARY}]}>请选择</Text>
+              <Icon style={{transform: [{rotate: '90deg'}], marginLeft: 3, color: '#000', fontSize: 10}} name="caret-right" />
+            </View>
+          </TouchableWithoutFeedback>
         </Form.Item>
         {/* todo: 可用店铺选择 */}
       </SectionGroup>
@@ -128,6 +131,9 @@ const Base: React.FC<BaseProps> = ({onNext}) => {
           下一步
         </Button>
       </View>
+      <Modal visible={showUseShop} onClose={() => setShowUseShop(false)} showCancel>
+        <Text>aaa</Text>
+      </Modal>
     </ScrollView>
   );
 };

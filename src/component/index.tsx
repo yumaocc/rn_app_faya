@@ -15,5 +15,6 @@ import Input from './Form/Input';
 import Select from './Form/Select';
 import Cascader from './Form/Cascader';
 import Footer from './Form/Footer';
+import Modal from './Modal';
 
-export {UnitNumber, GlobalToast, PlusButton, Tabs, BadgeFlag, SectionGroup, OperateItem, Steps, Popup, DatePicker, Picker, FormTitle, Form, Input, Select, Footer, Cascader};
+export {UnitNumber, GlobalToast, PlusButton, Tabs, BadgeFlag, SectionGroup, OperateItem, Steps, Popup, DatePicker, Picker, FormTitle, Form, Input, Select, Footer, Cascader, Modal};
