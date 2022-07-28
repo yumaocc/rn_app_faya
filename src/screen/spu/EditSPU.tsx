@@ -48,7 +48,7 @@ const EditSPU: React.FC = () => {
   // useLog(form);
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}} edges={['bottom']}>
+    <SafeAreaView style={{flex: 1, backgroundColor: '#f4f4f4'}} edges={['bottom']}>
       <Form form={form}>
         <Steps steps={steps} currentKey={currentKey} onChange={setCurrentKey} />
         <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>

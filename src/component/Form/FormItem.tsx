@@ -13,11 +13,11 @@ export interface FormItemProps {
   name?: string;
   valueKey?: string;
   onChangeKey?: string;
+  vertical?: boolean;
 }
 
 const FormItem: React.FC<FormItemProps> = props => {
-  const {label, hiddenBorderBottom, hiddenBorderTop, valueKey, onChangeKey} =
-    props;
+  const {label, hiddenBorderBottom, hiddenBorderTop, valueKey, onChangeKey} = props;
   const formInstance = useFormInstance();
 
   function renderChildren() {
@@ -43,19 +43,34 @@ const FormItem: React.FC<FormItemProps> = props => {
     return props.children;
   }
 
+  if (props.vertical) {
+    return (
+      <View style={[hiddenBorderBottom ? {} : globalStyles.borderBottom, hiddenBorderTop ? {} : globalStyles.borderTop, styles.container]}>
+        <View style={[styles.item]}>
+          <View style={styles.labelLeft}>
+            <View style={styles.labelWrapper}>
+              <Text style={[globalStyles.fontPrimary, styles.label]}>{label}</Text>
+            </View>
+            {props.desc && (
+              <View style={{marginTop: 3}}>
+                <Text numberOfLines={1} style={styles.desc}>
+                  {props.desc}
+                </Text>
+              </View>
+            )}
+          </View>
+        </View>
+        <View style={styles.extra}>{renderChildren()}</View>
+      </View>
+    );
+  }
+
   return (
-    <View
-      style={[
-        hiddenBorderBottom ? {} : globalStyles.borderBottom,
-        hiddenBorderTop ? {} : globalStyles.borderTop,
-        styles.container,
-      ]}>
+    <View style={[hiddenBorderBottom ? {} : globalStyles.borderBottom, hiddenBorderTop ? {} : globalStyles.borderTop, styles.container]}>
       <View style={[styles.item]}>
-        <View style={styles.labelLeft}>
+        <View style={[styles.labelLeft, {maxWidth: '100%'}]}>
           <View style={styles.labelWrapper}>
-            <Text style={[globalStyles.fontPrimary, styles.label]}>
-              {label}
-            </Text>
+            <Text style={[globalStyles.fontPrimary, styles.label]}>{label}</Text>
           </View>
           {props.desc && (
             <View>
@@ -77,6 +92,7 @@ FormItem.defaultProps = {
   hiddenBorderTop: false,
   valueKey: 'value',
   onChangeKey: 'onChange',
+  vertical: false,
 };
 export default FormItem;
 

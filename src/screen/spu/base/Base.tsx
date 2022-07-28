@@ -3,7 +3,7 @@ import {Button} from '@ant-design/react-native';
 import React, {useEffect} from 'react';
 import {ScrollView, Text, View} from 'react-native';
 import {useSelector} from 'react-redux';
-import {FormTitle, SectionGroup, Form, Input, Select, DatePicker} from '../../../component';
+import {FormTitle, SectionGroup, Form, Input, Select, DatePicker, Footer} from '../../../component';
 import {globalStyles} from '../../../constants/styles';
 import {useMerchantDispatcher, useContractDispatcher} from '../../../helper/hooks';
 import {BoolEnum} from '../../../models';
@@ -119,6 +119,7 @@ const Base: React.FC<BaseProps> = ({onNext}) => {
           </Text>
         </Form.Item>
       </SectionGroup>
+      <Footer />
       <View style={styles.button}>
         <Button type="primary" onPress={onCheck}>
           下一步

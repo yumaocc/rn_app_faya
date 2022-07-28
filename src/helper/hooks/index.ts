@@ -1,4 +1,4 @@
-export {useUnmountRef, useForceUpdate, useLog, useRefCallback, useParams} from './common';
+export {useUnmountRef, useForceUpdate, useLog, useRefCallback, useParams, useInfinityRotate, useFetchData} from './common';
 export {useSearch, useRNSelectPhoto} from './form';
 export {useMerchantCategory, useMerchantShopList, useMerchantDetail, usePublicMerchantDetail, useMerchantBookingModel} from './merchant';
 export {useCommonDispatcher, useMerchantDispatcher, useSKUDispatcher, useUserDispatcher, useContractDispatcher, useSummaryDispatcher} from './dispatcher';

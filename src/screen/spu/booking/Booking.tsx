@@ -2,7 +2,7 @@ import {Button} from '@ant-design/react-native';
 import React from 'react';
 import {ScrollView, View, Text} from 'react-native';
 import {useSelector} from 'react-redux';
-import {Form, FormTitle, SectionGroup, Select} from '../../../component';
+import {Footer, Form, FormTitle, SectionGroup, Select} from '../../../component';
 import {BoolOptions} from '../../../constants';
 import {getBookingType} from '../../../helper';
 import {useCodeTypes} from '../../../helper/hooks';
@@ -116,6 +116,7 @@ const Booking: React.FC<BookingProps> = ({onNext}) => {
         </Form.Item>
       </SectionGroup>
       {/* todo: 购买须知 */}
+      <Footer />
       <View style={styles.button}>
         <Button type="primary" onPress={onCheck}>
           下一步

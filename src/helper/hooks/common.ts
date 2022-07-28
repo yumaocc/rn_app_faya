@@ -1,12 +1,6 @@
 import {useRoute} from '@react-navigation/native';
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  useMemo,
-  MutableRefObject,
-} from 'react';
+import {useCallback, useEffect, useRef, useState, useMemo, MutableRefObject} from 'react';
+import {Animated, Easing} from 'react-native';
 import {getEnv} from '../../helper';
 import {FakeRoute} from '../../models/route';
 
@@ -44,10 +38,7 @@ export function useParams<T = any>(): T {
   return param;
 }
 
-export function useFetchData<T>(
-  call: (id: number) => Promise<T>,
-  id: number,
-): [T, () => void] {
+export function useFetchData<T>(call: (id: number) => Promise<T>, id: number): [T, () => void] {
   const [data, setData] = useState<T>();
   const [signal, forceUpdate] = useForceUpdate();
   const fetch = useCallback(
@@ -80,9 +71,7 @@ export function useLog<T = unknown>(deep: T, label = ''): void {
   }, [deep, labelName]);
 }
 
-export function useRefCallback<T = any>(
-  initValue?: T,
-): [MutableRefObject<T>, (value: T) => void, boolean] {
+export function useRefCallback<T = any>(initValue?: T): [MutableRefObject<T>, (value: T) => void, boolean] {
   const ref = useRef<T>(initValue || null);
   const [isReady, setIsReady] = useState(false);
   const setRef = useCallback((value: T) => {
@@ -91,4 +80,29 @@ export function useRefCallback<T = any>(
   }, []);
 
   return [ref, setRef, isReady];
+}
+
+export function useInfinityRotate() {
+  const rotateAnim = useRef(new Animated.Value(0)).current; // 初始角度
+  useEffect(() => {
+    const duration = 30000;
+    const animate = Animated.sequence([
+      Animated.timing(rotateAnim, {
+        toValue: 180,
+        duration,
+        easing: Easing.linear,
+        isInteraction: false,
+        useNativeDriver: true,
+      }),
+      Animated.timing(rotateAnim, {
+        toValue: 360,
+        duration,
+        easing: Easing.linear,
+        isInteraction: false,
+        useNativeDriver: true,
+      }),
+    ]);
+    Animated.loop(animate).start();
+  }, [rotateAnim]);
+  return rotateAnim;
 }

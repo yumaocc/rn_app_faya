@@ -1,12 +1,10 @@
-import React, {useCallback, useEffect, useMemo} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
-import {useLog, useRNSelectPhoto} from '../../../helper/hooks';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {View, Text, StyleSheet, TouchableOpacity, Image, Animated} from 'react-native';
+import {useRNSelectPhoto, useInfinityRotate} from '../../../helper/hooks';
 import * as api from '../../../apis';
 import uniqueId from 'lodash/uniqueId';
+import {Icon} from '@ant-design/react-native';
 
-interface URLFile {
-  [key: string]: string;
-}
 export interface UploadFile {
   url?: string;
   uid: string;
@@ -16,31 +14,18 @@ export interface UploadFile {
   // size?: number;
 }
 
-type Value = string[] | string | URLFile | URLFile[] | any;
+type Value = UploadFile[];
 
 interface UploadProps {
   value?: Value;
   maxCount?: number; // 0 代表不限制
-
-  /**
-   * @description value类型 默认为 urls
-   * @property {string} url - 单个url地址，如'https://xxx.com/xxx.png'
-   * @property {string} urls - (默认值)多个url数组，如 ['https://xxx.com/xxx.png', 'https://xxx.com/xxx.png']
-   * @property {string} urlObject - 单个文件对象，如{url: 'https://xxx.com/xxx.png'}
-   * @property {string[]} urlObjects - 多个文件对象数组，如[{url: 'https://xxx.com/xxx.png'}, {url: 'https://xxx.com/xxx.png'}]
-   */
-  valueType?: 'url' | 'urls' | 'urlObjects' | 'urlObject';
-
-  /**
-   * @description value的url键名，当valueType为urlObject或urlObjects时有效，默认为 url
-   */
-  valueKey?: string;
   onChange?: (value: Value) => void;
 }
 
 const Upload: React.FC<UploadProps> = props => {
-  const {maxCount, value, valueKey, valueType, onChange} = props;
-  const [fileList, setFileList] = React.useState<UploadFile[]>([]);
+  const {maxCount, value, onChange} = props;
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const rotateDeg = useInfinityRotate();
   const [selectPhotos] = useRNSelectPhoto();
   const isLimited = useMemo(() => {
     if (maxCount === 0) {
@@ -51,85 +36,17 @@ const Upload: React.FC<UploadProps> = props => {
 
   const handleFileChange = useCallback(
     (fileList: UploadFile[]): void => {
-      let newValue: Value;
-      switch (valueType) {
-        case 'url':
-          newValue = fileList[0]?.url;
-          break;
-        case 'urls':
-          newValue = fileList.map(item => item.url);
-          break;
-        case 'urlObject':
-          newValue = {[valueKey]: fileList[0]?.url};
-          break;
-        case 'urlObjects':
-          newValue = fileList.map(item => ({[valueKey]: item.url}));
-          break;
-      }
       if (onChange) {
-        onChange(newValue);
+        onChange(fileList);
       }
     },
-    [onChange, valueKey, valueType],
-  );
-  useLog(fileList);
-
-  const addFile = useCallback((file: UploadFile) => {
-    setFileList(prev => [...prev, file]);
-  }, []);
-
-  const updateFile = useCallback(
-    (uid: string, partial: Partial<UploadFile>) => {
-      console.log(fileList);
-      const newFileList = fileList.map(file => {
-        if (file.uid === uid) {
-          return {...file, ...partial};
-        }
-        return file;
-      });
-      console.log('newFileList', newFileList);
-      handleFileChange(newFileList);
-      setFileList(newFileList);
-    },
-    [fileList, handleFileChange],
+    [onChange],
   );
 
   // 将value同步为fileList
   useEffect(() => {
-    let newUrlList: string[] = [];
-    let temp; // 临时变量
-    switch (valueType) {
-      case 'url':
-        temp = value as string;
-        if (temp) {
-          newUrlList = [temp];
-        }
-        break;
-      case 'urls':
-        temp = value as string[];
-        newUrlList = temp;
-        break;
-      case 'urlObject':
-        temp = value as URLFile;
-        if (temp) {
-          newUrlList = [temp[valueKey]];
-        }
-        break;
-      case 'urlObjects':
-        temp = value as URLFile[];
-        newUrlList = temp.map(item => item[valueKey]);
-        break;
-    }
-    setFileList(
-      newUrlList.map((url, index) => {
-        return {
-          uid: String(index),
-          name: `image-${index}`,
-          url,
-        };
-      }),
-    );
-  }, [value, valueKey, valueType, setFileList]);
+    setFileList(value || []);
+  }, [value]);
 
   async function handleClickAdd() {
     if (isLimited) {
@@ -137,21 +54,35 @@ const Upload: React.FC<UploadProps> = props => {
     }
     const restCount = maxCount - fileList.length;
     const results = await selectPhotos({selectionLimit: restCount});
-    results.forEach(async asset => {
+    if (results.length === 0) {
+      // 没有选择照片
+      return;
+    }
+    const originFileList = fileList;
+    let newFileList = results.map(asset => {
       const {uri, fileName} = asset;
       const uid = uniqueId('upload-');
-      addFile({
+      return {
         uid,
         uri,
         name: fileName,
         url: '',
         state: 'uploading',
-      });
-      try {
-        const ossURL = await api.common.uploadToOSS(uri, fileName);
-        updateFile(uid, {url: ossURL});
-      } catch (error) {}
+      } as UploadFile;
     });
+    // fixme: 如果一张图片未上传完成，然后立刻选择另一张图片，会出现问题。
+    // 所以最好不要直接setFileList，用回调函数的形式去更新
+    setFileList([...originFileList, ...newFileList]);
+    const uploadedFileList: UploadFile[] = await Promise.all(
+      newFileList.map(async file => {
+        const {uri, name} = file;
+        const url = await api.common.uploadToOSS(uri, name);
+        return {...file, url, state: 'success'};
+      }),
+    );
+    newFileList = [...originFileList, ...uploadedFileList];
+    setFileList(newFileList);
+    handleFileChange(newFileList);
   }
 
   return (
@@ -161,6 +92,13 @@ const Upload: React.FC<UploadProps> = props => {
         return (
           <View style={styles.block} key={`${file.uid}-${index}`}>
             <Image source={{uri}} style={styles.image} />
+            {file.state === 'uploading' && (
+              <View style={styles.uploading}>
+                <Animated.View style={{transform: [{rotate: rotateDeg}]}}>
+                  <Icon name="loading-3-quarters" />
+                </Animated.View>
+              </View>
+            )}
           </View>
         );
       })}
@@ -176,10 +114,10 @@ const Upload: React.FC<UploadProps> = props => {
 };
 Upload.defaultProps = {
   maxCount: 0,
-  valueKey: 'url',
-  valueType: 'urls',
+  value: [],
 };
 export default Upload;
+const blockSize = {width: 75, height: 75};
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -187,16 +125,14 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   block: {
-    width: 75,
-    height: 75,
+    ...blockSize,
     overflow: 'hidden',
     marginRight: 10,
     marginBottom: 10,
     borderRadius: 5,
   },
   image: {
-    width: 75,
-    height: 75,
+    ...blockSize,
   },
   button: {
     alignItems: 'center',
@@ -207,5 +143,14 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: '100',
     color: '#333',
+  },
+  uploading: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    ...blockSize,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#0000002D',
   },
 });
