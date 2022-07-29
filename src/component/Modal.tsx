@@ -14,8 +14,8 @@ interface ModalProps {
   showCancel?: boolean; // only if footer is true
   okText?: string;
   cancelText?: string;
-  onOk?: () => Promise<void>;
-  onCancel?: () => Promise<void>;
+  onOk?: () => Promise<void> | void;
+  onCancel?: () => Promise<void> | void;
   onClose: () => void;
 }
 

@@ -1,5 +1,17 @@
 import {StyleProp, TextStyle, ViewStyle} from 'react-native';
 
+export type OSType = 'ios' | 'android' | 'windows' | 'macos' | 'N/A';
+
+export type PlatformType = 'WXMP' | 'WX' | 'DYMP' | 'APP' | 'WEB' | 'H5' | 'DESKTOP' | 'N/A';
+
+export interface AppHeader {
+  version?: string;
+  platform?: PlatformType;
+  os?: string;
+  project?: 'FAYABD' | 'FAYAOA' | 'FAYABIZ' | 'FAYA' | string;
+  token?: string;
+}
+
 export class CustomError extends Error {
   constructor(message: string, public code: number = 1) {
     super(message);

@@ -1,6 +1,6 @@
 // import moment from 'moment';
 import {Button, Icon} from '@ant-design/react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {ScrollView, Text, TouchableWithoutFeedback, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import {FormTitle, SectionGroup, Form, Input, Select, DatePicker, Footer, Cascader, Modal} from '../../../component';
@@ -9,22 +9,30 @@ import {useMerchantDispatcher, useContractDispatcher, useSPUCategories} from '..
 import {BoolEnum} from '../../../models';
 import {RootState} from '../../../redux/reducers';
 import {styles} from '../style';
+import SelectShop, {ImperativeRef} from './SelectShop';
 
 interface BaseProps {
   onNext?: () => void;
 }
 
 const Base: React.FC<BaseProps> = ({onNext}) => {
-  // const currentMerchant = useSelector((state: RootState) => state.merchant.currentMerchant);
+  const currentMerchant = useSelector((state: RootState) => state.merchant.currentMerchant);
   const merchantList = useSelector((state: RootState) => state.merchant.merchantSearchList);
   const currentContract = useSelector((state: RootState) => state.contract.currentContract);
   const contractList = useSelector((state: RootState) => state.contract.contractSearchList);
   const [showUseShop, setShowUseShop] = useState(false);
+  const canUseShopRef = useRef<ImperativeRef>();
 
   const form = Form.useFormInstance();
   const [SPUCategories] = useSPUCategories();
   const [merchantDispatcher] = useMerchantDispatcher();
   const [contractDispatcher] = useContractDispatcher();
+
+  const canUseShopList = useMemo(() => {
+    const shopList = currentMerchant?.shopList || [];
+    const ids = form.getFieldValue('canUseShopIds') || [];
+    return shopList.filter(e => ids.includes(e.id));
+  }, [currentMerchant, form]);
 
   useEffect(() => {
     merchantDispatcher.loadMerchantSearchList({});
@@ -59,6 +67,10 @@ const Base: React.FC<BaseProps> = ({onNext}) => {
       modelList: [],
     });
   }
+  function handleConfirmShops() {
+    const shopIds = canUseShopRef.current?.getValue() || [];
+    form.setFieldValue('canUseShopIds', shopIds);
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -70,7 +82,26 @@ const Base: React.FC<BaseProps> = ({onNext}) => {
         <Form.Item name="contractId" label="选择合同">
           <Select onChange={handleChangeContract} options={contractList.map(e => ({label: e.name, value: e.id}))} placeholder="选择合同" />
         </Form.Item>
-        <Form.Item label="选择店铺">
+        <Form.Item
+          label="选择店铺"
+          extra={
+            canUseShopList.length ? (
+              <View style={styles.shopList}>
+                <View style={[styles.shopItem, {borderBottomColor: '#e5e5e5', borderBottomWidth: 1}]}>
+                  <Text>已选{form.getFieldValue('canUseShopIds').length || 0}家</Text>
+                </View>
+                <View>
+                  {canUseShopList.map(shop => {
+                    return (
+                      <View key={shop.id} style={styles.shopItem}>
+                        <Text numberOfLines={1}>{shop.shopName}</Text>
+                      </View>
+                    );
+                  })}
+                </View>
+              </View>
+            ) : null
+          }>
           <TouchableWithoutFeedback onPress={() => setShowUseShop(true)}>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Text style={[{fontSize: 15, color: globalStyleVariables.TEXT_COLOR_TERTIARY}]}>请选择</Text>
@@ -78,7 +109,6 @@ const Base: React.FC<BaseProps> = ({onNext}) => {
             </View>
           </TouchableWithoutFeedback>
         </Form.Item>
-        {/* todo: 可用店铺选择 */}
       </SectionGroup>
       <SectionGroup style={styles.sectionGroupStyle}>
         <FormTitle title="商品基础信息" />
@@ -131,8 +161,8 @@ const Base: React.FC<BaseProps> = ({onNext}) => {
           下一步
         </Button>
       </View>
-      <Modal visible={showUseShop} onClose={() => setShowUseShop(false)} showCancel>
-        <Text>aaa</Text>
+      <Modal visible={showUseShop} onClose={() => setShowUseShop(false)} onOk={handleConfirmShops}>
+        <SelectShop value={form.getFieldValue('canUseShopIds')} shopRef={canUseShopRef} />
       </Modal>
     </ScrollView>
   );

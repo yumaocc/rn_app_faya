@@ -14,4 +14,12 @@ export const styles = StyleSheet.create({
     marginTop: globalStyleVariables.MODULE_SPACE,
     paddingHorizontal: globalStyleVariables.MODULE_SPACE,
   },
+  shopList: {
+    backgroundColor: '#f7f7f7',
+    paddingHorizontal: 15,
+  },
+  shopItem: {
+    paddingVertical: 8,
+    alignContent: 'center',
+  },
 });
