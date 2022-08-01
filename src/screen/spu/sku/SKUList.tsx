@@ -185,7 +185,7 @@ const SKUList: React.FC = () => {
       })}
 
       <SectionGroup style={[{paddingVertical: 10, backgroundColor: '#fff'}]}>
-        <PlusButton style={[globalStyles.containerCenter]} onPress={() => packSKU()} title="组合套餐" />
+        <PlusButton style={[globalStyles.containerCenter]} onPress={() => packSKU()} title="组合现有套餐" />
       </SectionGroup>
 
       <Modal title="组合套餐" visible={isShowPackageModal} onOk={onSubmitPack} onClose={() => setIsShowPackageModal(false)}>
