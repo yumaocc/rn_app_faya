@@ -25,12 +25,7 @@ export interface SPUCodeType {
 }
 
 // BOOKING 预约须知，SALE_TIME售卖、营业时间，USE_RULE使用规则，TIPS温馨提示，POLICY取消政策
-export type SKUBuyNoticeType =
-  | 'BOOKING'
-  | 'SALE_TIME'
-  | 'USE_RULE'
-  | 'TIPS'
-  | 'POLICY';
+export type SKUBuyNoticeType = 'BOOKING' | 'SALE_TIME' | 'USE_RULE' | 'TIPS' | 'POLICY';
 
 // 购买须知，后端返回的
 export interface SKUBuyNoticeF {
@@ -79,9 +74,9 @@ export interface SKU {
   show: BoolEnum; // 是否显示
   skuId?: number; // 修改商品时需要给后端
   skuName?: string; // sku名称
-  // 下面的字段从合同生成，用于显示
   _settlementPrice?: number; // 结算价
-  _stock?: number; // 库存
+  _stock?: number; // 合同里的最大库存
+  skuStock?: number; // 套餐库存
   _buyLimitNum: number; // 限购数量
   _buyLimitType: BuyLimitType; // 限购类型
   _fold: BoolEnum; // 是否展开

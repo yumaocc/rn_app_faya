@@ -2,7 +2,7 @@ import React, {useEffect, useMemo} from 'react';
 import {View, ScrollView, useWindowDimensions} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Steps, Form} from '../../component';
-import {useCommonDispatcher, useContractDispatcher, useMerchantDispatcher, useParams, useRefCallback, useSKUDispatcher} from '../../helper/hooks';
+import {useCommonDispatcher, useContractDispatcher, useLog, useMerchantDispatcher, useParams, useRefCallback, useSKUDispatcher} from '../../helper/hooks';
 import {globalStyleVariables} from '../../constants/styles';
 
 import Base from './base/Base';

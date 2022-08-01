@@ -1,11 +1,11 @@
-import {Checkbox} from '@ant-design/react-native';
-import {OnChangeParams} from '@ant-design/react-native/lib/checkbox/PropsType';
+// import {Checkbox} from '@ant-design/react-native';
 import React, {MutableRefObject, useEffect, useImperativeHandle, useMemo, useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {useSelector} from 'react-redux';
 import {globalStyles} from '../../../constants/styles';
 import {useLog} from '../../../helper/hooks';
 import {RootState} from '../../../redux/reducers';
+import {Checkbox} from '../../../component';
 
 export interface ImperativeRef {
   getValue: () => number[];
@@ -15,7 +15,6 @@ interface SelectShopProps {
   value: number[];
   shopRef?: MutableRefObject<ImperativeRef>;
 }
-const CheckboxItem = Checkbox.CheckboxItem;
 
 const SelectShop: React.FC<SelectShopProps> = props => {
   const {value} = props;
@@ -41,16 +40,15 @@ const SelectShop: React.FC<SelectShopProps> = props => {
     setIndeterminate(currentIds.size && currentIds.size < shopList.length);
   }, [currentIds, shopList]);
 
-  function handleChangeCheckAll(e: OnChangeParams) {
-    const checked = e.target.checked;
+  function handleChangeCheckAll(checked: boolean) {
     if (checked) {
       setCurrentIds(new Set(shopList.map(e => e.id)));
     } else {
       setCurrentIds(new Set());
     }
   }
-  function onChange(value: any, e: OnChangeParams) {
-    if (e.target.checked) {
+  function onChange(value: any, checked: boolean) {
+    if (checked) {
       currentIds.add(value);
     } else {
       currentIds.delete(value);
@@ -67,15 +65,15 @@ const SelectShop: React.FC<SelectShopProps> = props => {
         </Text>
       </View>
       <View>
-        <CheckboxItem styles={{Line: styles.item}} indeterminate={indeterminate} checked={checkAll} onChange={handleChangeCheckAll}>
+        <Checkbox indeterminate={indeterminate} checked={checkAll} onChange={handleChangeCheckAll}>
           全选
-        </CheckboxItem>
+        </Checkbox>
       </View>
       <View>
         {shopList.map(item => (
-          <CheckboxItem styles={{Line: styles.item}} key={item.id} checked={currentIds.has(item.id)} onChange={e => onChange(item?.id, e)}>
+          <Checkbox key={item.id} checked={currentIds.has(item.id)} onChange={e => onChange(item?.id, e)}>
             {item.shopName}
-          </CheckboxItem>
+          </Checkbox>
         ))}
       </View>
     </View>
@@ -86,10 +84,5 @@ export default SelectShop;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  item: {
-    borderBottomWidth: 0,
-    height: 30,
-    minHeight: 20,
   },
 });

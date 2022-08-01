@@ -14,4 +14,8 @@ export default {
 
   // input
   input_font_size: 15,
+
+  // switch
+  switch_fill: '#546dad',
+  switch_checked_disabled: '#546dad66', // switch_unchecked的40%透明度
 };

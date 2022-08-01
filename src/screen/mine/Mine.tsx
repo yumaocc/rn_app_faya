@@ -1,4 +1,4 @@
-import {Badge, Icon} from '@ant-design/react-native';
+import {Badge, Icon, Button} from '@ant-design/react-native';
 import React from 'react';
 import {View, Text, ScrollView, StyleSheet, Image} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -7,9 +7,11 @@ import {globalStyles, globalStyleVariables} from '../../constants/styles';
 import {UserState} from '../../models';
 import {RootState} from '../../redux/reducers';
 import {SectionGroup, OperateItem} from '../../component';
+import {useUserDispatcher} from '../../helper/hooks';
 
 const Mine: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.userInfo);
+  const [userDispatcher] = useUserDispatcher();
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}} edges={['top']}>
@@ -21,21 +23,14 @@ const Mine: React.FC = () => {
         <View style={{height: 50, backgroundColor: '#fff'}} />
         <View style={styles.profile}>
           <View style={styles.avatarWrapper}>
-            <Image
-              source={{uri: user?.avatar || 'https://fakeimg.pl/100?text=USER'}}
-              style={{height: 60, width: 60}}
-            />
+            <Image source={{uri: user?.avatar || 'https://fakeimg.pl/100?text=USER'}} style={{height: 60, width: 60}} />
           </View>
           <View style={[styles.nameWrapper]}>
-            <Text style={[globalStyles.fontPrimary, styles.name]}>
-              {user?.name}
-            </Text>
+            <Text style={[globalStyles.fontPrimary, styles.name]}>{user?.name}</Text>
             {user.status === UserState.CERTIFIED && (
               <View style={[globalStyles.tagWrapper, styles.certWrapper]}>
                 <Icon name="safety" color="#4AB87D" size={15} />
-                <Text style={[globalStyles.tag, {color: '#4AB87D'}]}>
-                  已实名认证
-                </Text>
+                <Text style={[globalStyles.tag, {color: '#4AB87D'}]}>已实名认证</Text>
               </View>
             )}
           </View>
@@ -54,9 +49,7 @@ const Mine: React.FC = () => {
             extra={
               <Badge dot>
                 <View style={[globalStyles.tagWrapper]}>
-                  <Text style={[globalStyles.fontTertiary, globalStyles.tag]}>
-                    {5}件商品即将下架
-                  </Text>
+                  <Text style={[globalStyles.fontTertiary, globalStyles.tag]}>{5}件商品即将下架</Text>
                 </View>
               </Badge>
             }
@@ -69,6 +62,15 @@ const Mine: React.FC = () => {
 
         <SectionGroup>
           <OperateItem title="设置" icon={<Icon name="setting" />} />
+        </SectionGroup>
+        <SectionGroup>
+          <Button
+            type="primary"
+            onPress={() => {
+              userDispatcher.logout();
+            }}>
+            退出登录
+          </Button>
         </SectionGroup>
       </ScrollView>
     </SafeAreaView>

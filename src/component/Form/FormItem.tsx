@@ -14,13 +14,14 @@ export interface FormItemProps {
   valueKey?: string;
   onChangeKey?: string;
   vertical?: boolean;
+  noStyle?: boolean;
 }
 
 const FormItem: React.FC<FormItemProps> = props => {
   const {label, hiddenBorderBottom, hiddenBorderTop, valueKey, onChangeKey} = props;
   const formInstance = useFormInstance();
 
-  function renderChildren() {
+  function renderChildren(): React.ReactElement {
     const name = props.name;
     if (name) {
       try {
@@ -37,10 +38,14 @@ const FormItem: React.FC<FormItemProps> = props => {
         };
         return React.cloneElement(child, newProps);
       } catch (error) {
-        return props.children;
+        return props.children as React.ReactElement;
       }
     }
-    return props.children;
+    return props.children as React.ReactElement;
+  }
+
+  if (props.noStyle) {
+    return renderChildren();
   }
 
   if (props.vertical) {
@@ -93,13 +98,14 @@ FormItem.defaultProps = {
   valueKey: 'value',
   onChangeKey: 'onChange',
   vertical: false,
+  noStyle: false,
 };
 export default FormItem;
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    paddingVertical: 18,
+    paddingVertical: 16,
   },
   item: {
     flexDirection: 'row',
