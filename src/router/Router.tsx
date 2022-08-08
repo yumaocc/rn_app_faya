@@ -1,22 +1,17 @@
 import React from 'react';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {MerchantCreateType, RootStackParamList} from '../models';
+import {MerchantCreateType} from '../models';
 import {createNavigationContainerRef} from '@react-navigation/native';
 
 import TabNavigator from '../screen/tabs/TabNavigator';
 import Login from '../screen/common/Login';
 import {useSelector} from 'react-redux';
 import {RootState} from '../redux/reducers';
+import {Stack, commonScreenOptions} from './config';
 
 import AddMerchant from '../screen/merchant/AddMerchant';
 import EditContract from '../screen/contract/EditContract';
-import SPUEdit from '../screen/spu/SPUEdit';
-import SPUList from '../screen/spu/SPUList';
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
-const commonScreenOptions = {
-  headerBackTitleVisible: false,
-};
+import RouterSPU from './RouterSPU';
 
 const Navigator: React.FC = () => {
   const token = useSelector((state: RootState) => state.common.token);
@@ -57,30 +52,7 @@ const Navigator: React.FC = () => {
               title: '新增合同',
             }}
           />
-          <Stack.Screen
-            name="EditSPU"
-            component={SPUEdit}
-            options={{
-              ...commonScreenOptions,
-              title: '编辑商品',
-            }}
-          />
-          <Stack.Screen
-            name="AddSPU"
-            component={SPUEdit}
-            options={{
-              ...commonScreenOptions,
-              title: '新增商品',
-            }}
-          />
-          <Stack.Screen
-            name="SPUList"
-            component={SPUList}
-            options={{
-              ...commonScreenOptions,
-              title: '商品列表',
-            }}
-          />
+          {RouterSPU}
         </>
       ) : (
         <>

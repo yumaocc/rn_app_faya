@@ -5,7 +5,7 @@ import {Button} from '@ant-design/react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 
-import {Steps, Form} from '../../../component';
+import {Steps, Form, NavigationBar} from '../../../component';
 import {useCommonDispatcher, useContractDispatcher, useMerchantDispatcher, useParams, useRefCallback, useSKUDispatcher} from '../../../helper/hooks';
 import {globalStyleVariables} from '../../../constants/styles';
 
@@ -153,28 +153,31 @@ const EditSPU: React.FC = () => {
   }
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: '#f4f4f4'}} edges={['bottom']}>
-      <Form form={form}>
-        <Steps steps={steps} currentKey={currentKey} onChange={setCurrentKey} onBeforeChangeKey={handleChangeStep} />
-        <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
-          <View style={{width: windowWidth}}>
-            <Base onNext={() => setCurrentKey('sku')} />
-          </View>
-          <View style={{width: windowWidth}}>
-            <SKU onNext={() => setCurrentKey('booking')} />
-          </View>
-          <View style={{width: windowWidth}}>
-            <Booking onNext={() => setCurrentKey('detail')} />
-          </View>
-          <View style={{width: windowWidth}}>
-            <ImageTextDetail onNext={handleSubmit} />
-          </View>
-        </ScrollView>
-        <Button onPress={check} type="warning">
-          检查
-        </Button>
-      </Form>
-    </SafeAreaView>
+    <>
+      <NavigationBar title={isEdit ? '编辑商品' : '新增商品'} />
+      <SafeAreaView style={{flex: 1, backgroundColor: '#f4f4f4'}} edges={['bottom']}>
+        <Form form={form}>
+          <Steps steps={steps} currentKey={currentKey} onChange={setCurrentKey} onBeforeChangeKey={handleChangeStep} />
+          <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
+            <View style={{width: windowWidth}}>
+              <Base onNext={() => setCurrentKey('sku')} />
+            </View>
+            <View style={{width: windowWidth}}>
+              <SKU onNext={() => setCurrentKey('booking')} />
+            </View>
+            <View style={{width: windowWidth}}>
+              <Booking onNext={() => setCurrentKey('detail')} />
+            </View>
+            <View style={{width: windowWidth}}>
+              <ImageTextDetail onNext={handleSubmit} />
+            </View>
+          </ScrollView>
+          <Button onPress={check} type="warning">
+            检查
+          </Button>
+        </Form>
+      </SafeAreaView>
+    </>
   );
 };
 export default EditSPU;

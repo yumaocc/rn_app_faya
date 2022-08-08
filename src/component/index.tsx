@@ -10,6 +10,7 @@ import Popup from './Popup';
 import Picker from './Picker';
 import FormTitle from './FormTitle';
 import Modal from './Modal';
+import NavigationBar from './NavigationBar';
 
 import Form from './Form';
 import Input from './Form/Input';
@@ -28,6 +29,7 @@ export {
   BadgeFlag,
   SectionGroup,
   OperateItem,
+  NavigationBar,
   Steps,
   Popup,
   DatePicker,
