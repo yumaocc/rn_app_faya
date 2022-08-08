@@ -11,6 +11,7 @@ import {RootState} from '../redux/reducers';
 import AddMerchant from '../screen/merchant/AddMerchant';
 import EditContract from '../screen/contract/EditContract';
 import SPUEdit from '../screen/spu/SPUEdit';
+import SPUList from '../screen/spu/SPUList';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const commonScreenOptions = {
@@ -70,6 +71,14 @@ const Navigator: React.FC = () => {
             options={{
               ...commonScreenOptions,
               title: '新增商品',
+            }}
+          />
+          <Stack.Screen
+            name="SPUList"
+            component={SPUList}
+            options={{
+              ...commonScreenOptions,
+              title: '商品列表',
             }}
           />
         </>
