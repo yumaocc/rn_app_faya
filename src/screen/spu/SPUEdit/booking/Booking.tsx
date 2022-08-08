@@ -2,12 +2,12 @@ import {Button} from '@ant-design/react-native';
 import React, {useMemo, useState} from 'react';
 import {ScrollView, View, Text} from 'react-native';
 import {useSelector} from 'react-redux';
-import {Checkbox, Footer, Form, FormTitle, Modal, PlusButton, SectionGroup, Select} from '../../../component';
-import {BoolOptions} from '../../../constants';
-import {findItem, getBookingType} from '../../../helper';
-import {useCodeTypes, useCommonDispatcher, useMerchantBookingModel} from '../../../helper/hooks';
-import {BookingModel, BoolEnum} from '../../../models';
-import {RootState} from '../../../redux/reducers';
+import {Checkbox, Footer, Form, FormTitle, Modal, PlusButton, SectionGroup, Select} from '../../../../component';
+import {BoolOptions} from '../../../../constants';
+import {findItem, getBookingType} from '../../../../helper';
+import {useCodeTypes, useCommonDispatcher, useMerchantBookingModel} from '../../../../helper/hooks';
+import {BookingModel, BoolEnum} from '../../../../models';
+import {RootState} from '../../../../redux/reducers';
 import {styles} from '../style';
 
 import BuyNotice from './BuyNotice';

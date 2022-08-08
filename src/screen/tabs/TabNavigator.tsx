@@ -20,25 +20,19 @@ const tabOptions = {
     {
       name: 'Home',
       label: '首页',
-      renderIcon: ({color, size}: TabItemProps) => (
-        <Icon name="home" color={color} size={size} />
-      ),
+      renderIcon: ({color, size}: TabItemProps) => <Icon name="home" color={color} size={size} />,
       component: Home,
     },
     {
       name: 'Merchant',
       label: '商家',
-      renderIcon: ({color, size}: TabItemProps) => (
-        <Icon name="shop" color={color} size={size} />
-      ),
+      renderIcon: ({color, size}: TabItemProps) => <Icon name="shop" color={color} size={size} />,
       component: Merchant,
     },
     {
       name: 'Mine',
       label: '我的',
-      renderIcon: ({color, size}: TabItemProps) => (
-        <Icon name="user" color={color} size={size} />
-      ),
+      renderIcon: ({color, size}: TabItemProps) => <Icon name="user" color={color} size={size} />,
       component: Mine,
     },
   ],

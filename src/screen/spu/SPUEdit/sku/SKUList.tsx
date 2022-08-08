@@ -3,11 +3,11 @@ import {View, Text, StyleSheet} from 'react-native';
 import {useSelector} from 'react-redux';
 import {Stepper, SwipeAction} from '@ant-design/react-native';
 
-import {Checkbox, Form, FormTitle, Input, Modal, PlusButton, SectionGroup} from '../../../component';
-import {globalStyles, globalStyleVariables} from '../../../constants/styles';
-import {convertNumber2Han, getBuyLimitStr, getItemByIndex} from '../../../helper';
-import {BoolEnum, PackagedSKU, PackagedSKUForm, PackagedSKUItem, SKU} from '../../../models';
-import {RootState} from '../../../redux/reducers';
+import {Checkbox, Form, FormTitle, Input, Modal, PlusButton, SectionGroup} from '../../../../component';
+import {globalStyles, globalStyleVariables} from '../../../../constants/styles';
+import {convertNumber2Han, getBuyLimitStr, getItemByIndex} from '../../../../helper';
+import {BoolEnum, PackagedSKU, PackagedSKUForm, PackagedSKUItem, SKU} from '../../../../models';
+import {RootState} from '../../../../redux/reducers';
 import {styles} from '../style';
 
 const SKUList: React.FC = () => {

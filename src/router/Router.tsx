@@ -10,7 +10,7 @@ import {RootState} from '../redux/reducers';
 
 import AddMerchant from '../screen/merchant/AddMerchant';
 import EditContract from '../screen/contract/EditContract';
-import EditSPU from '../screen/spu/EditSPU';
+import SPUEdit from '../screen/spu/SPUEdit';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const commonScreenOptions = {
@@ -58,7 +58,7 @@ const Navigator: React.FC = () => {
           />
           <Stack.Screen
             name="EditSPU"
-            component={EditSPU}
+            component={SPUEdit}
             options={{
               ...commonScreenOptions,
               title: '编辑商品',
@@ -66,7 +66,7 @@ const Navigator: React.FC = () => {
           />
           <Stack.Screen
             name="AddSPU"
-            component={EditSPU}
+            component={SPUEdit}
             options={{
               ...commonScreenOptions,
               title: '新增商品',
@@ -95,9 +95,6 @@ export const navigationRef = createNavigationContainerRef();
 // 编程式导航
 export function navigate<Params = any>(name: string, params?: Params) {
   if (navigationRef.isReady()) {
-    navigationRef.current?.navigate(
-      name as unknown as never,
-      params as unknown as never,
-    );
+    navigationRef.current?.navigate(name as unknown as never, params as unknown as never);
   }
 }

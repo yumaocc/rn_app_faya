@@ -1,12 +1,12 @@
 import React, {useCallback, useState} from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
-import {SectionGroup, FormTitle, Form, PlusButton, Modal} from '../../../component';
 import {SwipeAction, TextareaItem} from '@ant-design/react-native';
-import {useSKUBuyNotice} from '../../../helper/hooks';
-import {SKUBuyNoticeType} from '../../../models';
+import {SectionGroup, FormTitle, Form, PlusButton, Modal} from '../../../../component';
+import {useSKUBuyNotice} from '../../../../helper/hooks';
+import {SKUBuyNoticeType} from '../../../../models';
 import {styles} from '../style';
-import {globalStyleVariables} from '../../../constants/styles';
-import {getBuyNoticeTitle} from '../../../helper';
+import {globalStyleVariables} from '../../../../constants/styles';
+import {getBuyNoticeTitle} from '../../../../helper';
 
 interface BuyNoticeProps {
   title?: string;

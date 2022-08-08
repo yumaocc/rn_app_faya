@@ -1,10 +1,10 @@
 import {Button} from '@ant-design/react-native';
 import React from 'react';
 import {View, ScrollView, Text} from 'react-native';
-import {Form, FormTitle, SectionGroup, Footer} from '../../../component';
+import {Form, FormTitle, SectionGroup, Footer} from '../../../../component';
 import {styles} from '../style';
-import Upload from '../../../component/Form/Upload';
-import {globalStyles} from '../../../constants/styles';
+import Upload from '../../../../component/Form/Upload';
+import {globalStyles} from '../../../../constants/styles';
 
 interface ImageTextDetailProps {
   onNext?: () => void;

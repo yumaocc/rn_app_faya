@@ -2,9 +2,9 @@ import {Button} from '@ant-design/react-native';
 import React from 'react';
 import {ScrollView, View} from 'react-native';
 import {useSelector} from 'react-redux';
-import {Footer, Form, FormTitle, Input, SectionGroup, Switch} from '../../../component';
-import {BoolEnum} from '../../../models';
-import {RootState} from '../../../redux/reducers';
+import {Footer, Form, FormTitle, Input, SectionGroup, Switch} from '../../../../component';
+import {BoolEnum} from '../../../../models';
+import {RootState} from '../../../../redux/reducers';
 import {styles} from '../style';
 
 import SKUList from './SKUList';

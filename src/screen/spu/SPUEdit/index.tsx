@@ -2,20 +2,21 @@ import React, {useEffect, useMemo} from 'react';
 import {View, ScrollView, useWindowDimensions} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Button} from '@ant-design/react-native';
-import {Steps, Form} from '../../component';
-import {useCommonDispatcher, useContractDispatcher, useMerchantDispatcher, useParams, useRefCallback, useSKUDispatcher} from '../../helper/hooks';
-import {globalStyleVariables} from '../../constants/styles';
+import {useNavigation} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
+
+import {Steps, Form} from '../../../component';
+import {useCommonDispatcher, useContractDispatcher, useMerchantDispatcher, useParams, useRefCallback, useSKUDispatcher} from '../../../helper/hooks';
+import {globalStyleVariables} from '../../../constants/styles';
 
 import Base from './base/Base';
 import SKU from './sku/SKU';
 import Booking from './booking/Booking';
 import ImageTextDetail from './detail/ImageTextDetail';
-import {useSelector} from 'react-redux';
-import {getInitSPUForm, generateSPUForm, cleanSPUForm} from '../../helper';
-import {RootState} from '../../redux/reducers';
-import * as api from '../../apis';
-import {useNavigation} from '@react-navigation/native';
-import {SPUForm} from '../../models';
+import {getInitSPUForm, generateSPUForm, cleanSPUForm} from '../../../helper';
+import {RootState} from '../../../redux/reducers';
+import * as api from '../../../apis';
+import {SPUForm} from '../../../models';
 
 const steps = [
   {title: '基本信息', key: 'base'},

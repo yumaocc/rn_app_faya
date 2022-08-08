@@ -2,9 +2,9 @@
 import React, {MutableRefObject, useEffect, useImperativeHandle, useMemo, useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {useSelector} from 'react-redux';
-import {globalStyles} from '../../../constants/styles';
-import {RootState} from '../../../redux/reducers';
-import {Checkbox} from '../../../component';
+import {globalStyles} from '../../../../constants/styles';
+import {RootState} from '../../../../redux/reducers';
+import {Checkbox} from '../../../../component';
 
 export interface ImperativeRef {
   getValue: () => number[];
