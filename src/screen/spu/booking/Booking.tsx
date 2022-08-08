@@ -98,7 +98,7 @@ const Booking: React.FC<BookingProps> = ({onNext}) => {
                     <Text>{bookingItem.name}</Text>
                     {model.contractSkuIds?.map(skuId => {
                       const skuItem = findItem(contractDetail?.skuInfoReq?.skuInfo, item => item.contractSkuId === skuId);
-                      return <Text key={skuId}>{skuItem.skuName}</Text>;
+                      return <Text key={skuId}>{skuItem?.skuName}</Text>;
                     })}
                   </View>
                 );

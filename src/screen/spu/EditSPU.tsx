@@ -156,10 +156,10 @@ const EditSPU: React.FC = () => {
         <Steps steps={steps} currentKey={currentKey} onChange={setCurrentKey} onBeforeChangeKey={handleChangeStep} />
         <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
           <View style={{width: windowWidth}}>
-            <Base onNext={() => setCurrentKey('booking')} />
+            <Base onNext={() => setCurrentKey('sku')} />
           </View>
           <View style={{width: windowWidth}}>
-            <SKU />
+            <SKU onNext={() => setCurrentKey('booking')} />
           </View>
           <View style={{width: windowWidth}}>
             <Booking onNext={() => setCurrentKey('detail')} />

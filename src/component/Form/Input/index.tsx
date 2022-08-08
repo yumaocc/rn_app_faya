@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback, useMemo} from 'react';
 import {InputItem} from '@ant-design/react-native';
 import {InputItemProps} from '@ant-design/react-native/lib/input-item';
 import {globalStyleVariables} from '../../../constants/styles';
@@ -6,19 +6,31 @@ import isNil from 'lodash/isNil';
 
 const Input: React.FC<InputItemProps> = props => {
   const {value, type, onChange, styles, ...restProps} = props;
-  let wrappedValue = value;
-  let wrappedOnChange = onChange;
-  if (type === 'number') {
-    wrappedValue = isNil(value) ? '' : String(value);
-    wrappedOnChange = (value: string) => {
-      if (!value) {
-        onChange('');
-        return;
+  const shouldWrap = useMemo(() => type === 'number', [type]);
+  const wrappedValue = useMemo(() => {
+    if (shouldWrap) {
+      return isNil(value) ? '' : String(value);
+    } else {
+      return value;
+    }
+  }, [value, shouldWrap]);
+
+  const wrappedOnChange = useCallback(
+    (value: string) => {
+      if (shouldWrap) {
+        if (!value) {
+          onChange('');
+          return;
+        }
+        const number = Number(value) as unknown as string;
+        onChange(number);
+      } else {
+        onChange(value);
       }
-      const number = Number(value) as unknown as string;
-      onChange(number);
-    };
-  }
+    },
+    [shouldWrap, onChange],
+  );
+
   return (
     <InputItem
       placeholderTextColor={globalStyleVariables.TEXT_COLOR_TERTIARY}

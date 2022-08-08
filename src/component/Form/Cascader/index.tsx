@@ -7,7 +7,6 @@ import {StylePropView} from '../../../models';
 import Picker from '../../Picker';
 import Popup from '../../Popup';
 import {flattenTree} from '../../../helper';
-import {useLog} from '../../../helper/hooks';
 
 interface BaseType {
   [name: string]: any;
@@ -52,8 +51,6 @@ const Cascader: React.FC<CascaderProps> = props => {
     }
     setPickerData(res);
   }, [depth, options, childrenKey, currentValue, valueKey]);
-
-  useLog(pickerData);
 
   const renderChildren = useCallback(() => {
     if (!props.children) {

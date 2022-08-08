@@ -4,7 +4,7 @@ import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import * as api from '../../../apis';
 import {PlusButton} from '../../../component';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
-import {useHomeSummary, useLog} from '../../../helper/hooks';
+import {useHomeSummary} from '../../../helper/hooks';
 import {FakeNavigation, MerchantCreateType, MerchantF} from '../../../models';
 import Card from './Card';
 
@@ -23,16 +23,12 @@ const PrivateSeaList: React.FC = () => {
     searchList();
   }, []);
 
-  useLog(merchantList);
-
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Text>
           我的私海
-          <Text>{`${summary?.privateSeaNums || 0}/${
-            summary?.privateSeaLimit || 0
-          }`}</Text>
+          <Text>{`${summary?.privateSeaNums || 0}/${summary?.privateSeaLimit || 0}`}</Text>
         </Text>
       </View>
       <View style={{paddingHorizontal: globalStyleVariables.MODULE_SPACE}}>
@@ -50,13 +46,7 @@ const PrivateSeaList: React.FC = () => {
         />
         <View>
           {merchantList.map(merchant => {
-            return (
-              <Card
-                merchant={merchant}
-                key={merchant.id}
-                style={globalStyles.moduleMarginTop}
-              />
-            );
+            return <Card merchant={merchant} key={merchant.id} style={globalStyles.moduleMarginTop} />;
           })}
         </View>
       </View>

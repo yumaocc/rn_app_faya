@@ -113,7 +113,9 @@ export interface SPUForm {
   _tipsNotice: string[];
   _policyNotice: string[];
   saleBeginTime?: DateTimeString; // 开售时间
+  _saleBeginTime?: Moment;
   saleEndTime?: DateTimeString; // 售卖结束时间
+  _saleEndTime?: Moment;
   _saleTime?: [Moment, Moment]; // 售卖时间，用于前端表单，使用时需转化成saleBeginTime和saleEndTime
   shareCount?: number; // 分享次数
   baseShareCount: number; // 基础分享数
@@ -123,6 +125,8 @@ export interface SPUForm {
   stockAmount: number; // 库存
   useBeginTime?: DateTimeString; // 使用开始时间
   useEndTime?: DateTimeString; // 使用结束时间
+  _useBeginTime?: Moment;
+  _useEndTime?: Moment;
   _useTime?: [Moment, Moment]; // 使用时间，用于前端表单，使用时需转化成useBeginTime和useEndTime
   showBeginTime?: DateTimeString; // 显示时间
   _showBeginTime?: Moment;

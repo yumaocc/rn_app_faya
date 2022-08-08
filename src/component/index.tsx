@@ -7,17 +7,18 @@ import SectionGroup from './SectionGroup';
 import OperateItem from './OperateIItem';
 import Steps from './Steps';
 import Popup from './Popup';
-import DatePicker from './DatePicker';
 import Picker from './Picker';
 import FormTitle from './FormTitle';
+import Modal from './Modal';
+
 import Form from './Form';
 import Input from './Form/Input';
 import Select from './Form/Select';
 import Cascader from './Form/Cascader';
 import Footer from './Form/Footer';
-import Modal from './Modal';
 import Switch from './Form/Switch';
 import Checkbox from './Form/Checkbox';
+import DatePicker from './Form/DatePicker';
 
 export {
   UnitNumber,

@@ -3,7 +3,6 @@ import React, {MutableRefObject, useEffect, useImperativeHandle, useMemo, useSta
 import {View, Text, StyleSheet} from 'react-native';
 import {useSelector} from 'react-redux';
 import {globalStyles} from '../../../constants/styles';
-import {useLog} from '../../../helper/hooks';
 import {RootState} from '../../../redux/reducers';
 import {Checkbox} from '../../../component';
 
@@ -55,7 +54,6 @@ const SelectShop: React.FC<SelectShopProps> = props => {
     }
     setCurrentIds(new Set(currentIds));
   }
-  useLog(currentIds);
 
   return (
     <View style={styles.container}>

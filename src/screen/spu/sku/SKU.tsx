@@ -27,7 +27,7 @@ const SKU: React.FC<SKUProps> = ({onNext}) => {
       <SectionGroup style={[{marginTop: 0}, styles.sectionGroupStyle]}>
         <FormTitle title="套餐设置" />
         <Form.Item name="stockAmount" label="商品总库存" desc={`总库存${contractDetail?.skuInfoReq?.spuStock}份`}>
-          <Input placeholder="请输入商品库存" />
+          <Input type="number" placeholder="请输入商品库存" />
         </Form.Item>
         {/* <Form.Item label="设置多套餐">
           <Switch checked={contractDetail?.skuInfoReq?.skuInfo.length > 0} disabled />
