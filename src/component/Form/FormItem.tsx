@@ -1,6 +1,7 @@
 import React from 'react';
 import {Text, StyleSheet, View} from 'react-native';
 import {globalStyles, globalStyleVariables} from '../../constants/styles';
+import {StylePropView} from '../../models';
 import {useFormInstance} from './hooks';
 
 export interface FormItemProps {
@@ -15,6 +16,7 @@ export interface FormItemProps {
   onChangeKey?: string;
   vertical?: boolean;
   noStyle?: boolean;
+  style?: StylePropView;
 }
 
 const FormItem: React.FC<FormItemProps> = props => {
@@ -50,9 +52,9 @@ const FormItem: React.FC<FormItemProps> = props => {
 
   if (props.vertical) {
     return (
-      <View style={[hiddenBorderBottom ? {} : globalStyles.borderBottom, hiddenBorderTop ? {} : globalStyles.borderTop, styles.container]}>
+      <View style={[hiddenBorderBottom ? {} : globalStyles.borderBottom, hiddenBorderTop ? {} : globalStyles.borderTop, styles.container, props.style]}>
         <View style={[styles.item]}>
-          <View style={styles.labelLeft}>
+          <View style={[styles.labelLeft, {maxWidth: '100%'}]}>
             <View style={styles.labelWrapper}>
               <Text style={[globalStyles.fontPrimary, styles.label]}>{label}</Text>
             </View>
@@ -71,7 +73,7 @@ const FormItem: React.FC<FormItemProps> = props => {
   }
 
   return (
-    <View style={[hiddenBorderBottom ? {} : globalStyles.borderBottom, hiddenBorderTop ? {} : globalStyles.borderTop, styles.container]}>
+    <View style={[hiddenBorderBottom ? {} : globalStyles.borderBottom, hiddenBorderTop ? {} : globalStyles.borderTop, styles.container, props.style]}>
       <View style={[styles.item]}>
         <View style={[styles.labelLeft, {maxWidth: '100%'}]}>
           <View style={styles.labelWrapper}>
@@ -99,6 +101,7 @@ FormItem.defaultProps = {
   onChangeKey: 'onChange',
   vertical: false,
   noStyle: false,
+  style: {},
 };
 export default FormItem;
 

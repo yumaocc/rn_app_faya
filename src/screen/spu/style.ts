@@ -35,4 +35,12 @@ export const styles = StyleSheet.create({
   modelCard: {
     borderWidth: 1,
   },
+  composeItemWrapper: {
+    paddingHorizontal: 10,
+    backgroundColor: '#f7f7f7',
+    borderRadius: 5,
+  },
+  composeItem: {
+    backgroundColor: '#f7f7f7',
+  },
 });

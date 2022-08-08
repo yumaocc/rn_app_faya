@@ -4,7 +4,7 @@ import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {ScrollView, Text, TouchableWithoutFeedback, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import {FormTitle, SectionGroup, Form, Input, Select, DatePicker, Footer, Cascader, Modal} from '../../../component';
-import {globalStyles, globalStyleVariables} from '../../../constants/styles';
+import {globalStyleVariables} from '../../../constants/styles';
 import {useMerchantDispatcher, useContractDispatcher, useSPUCategories} from '../../../helper/hooks';
 import {BoolEnum} from '../../../models';
 import {RootState} from '../../../redux/reducers';
@@ -143,16 +143,29 @@ const Base: React.FC<BaseProps> = ({onNext}) => {
       </SectionGroup>
       <SectionGroup style={styles.sectionGroupStyle}>
         <FormTitle title="上线时间" />
-        <Form.Item label="售卖开始时间" name="_saleBeginTime">
-          <DatePicker mode="datetime" />
+        <Form.Item label="售卖时间" vertical desc={`合同时间：${currentContract?.bookingReq?.saleBeginTime || 'N/A'}-${currentContract?.bookingReq?.saleEndTime || 'N/A'}`}>
+          <View style={styles.composeItemWrapper}>
+            <Form.Item label="开始时间" name="_saleBeginTime" style={styles.composeItem} hiddenBorderBottom hiddenBorderTop>
+              <DatePicker mode="datetime" />
+            </Form.Item>
+            <Form.Item label="结束时间" name="_saleEndTime" style={styles.composeItem} hiddenBorderBottom>
+              <DatePicker mode="datetime" />
+            </Form.Item>
+          </View>
         </Form.Item>
-        <Form.Item label="售卖结束时间" name="_saleEndTime">
-          <DatePicker mode="datetime" />
+
+        <Form.Item label="使用时间" vertical desc={`合同日期：${currentContract?.bookingReq?.useBeginTime || 'N/A'}-${currentContract?.bookingReq?.useEndTime || 'N/A'}`}>
+          <View style={styles.composeItemWrapper}>
+            <Form.Item label="开始时间" name="_useBeginTime" style={styles.composeItem} hiddenBorderBottom hiddenBorderTop>
+              <DatePicker mode="datetime" />
+            </Form.Item>
+            <Form.Item label="结束时间" name="_useEndTime" style={styles.composeItem} hiddenBorderBottom>
+              <DatePicker mode="datetime" />
+            </Form.Item>
+          </View>
         </Form.Item>
-        <Form.Item label="使用时间">
-          <Text style={globalStyles.fontTertiary} numberOfLines={1}>
-            {currentContract?.bookingReq?.useBeginTime}-{currentContract?.bookingReq?.useEndTime}
-          </Text>
+        <Form.Item label="展示时间" name="_showBeginTime" desc="用于提前展示，不提前展示的商品无需设置">
+          <DatePicker mode="datetime" />
         </Form.Item>
       </SectionGroup>
       <Footer />
