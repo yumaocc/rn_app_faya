@@ -1,7 +1,7 @@
 import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 interface NavigationBarProps {
   title?: string | React.ReactNode;
@@ -11,6 +11,7 @@ interface NavigationBarProps {
 
 const NavigationBar: React.FC<NavigationBarProps> = props => {
   const navigation = useNavigation();
+  const safeArea = useSafeAreaInsets();
 
   function handleBack() {
     navigation.canGoBack && navigation.goBack();
@@ -52,13 +53,13 @@ const NavigationBar: React.FC<NavigationBarProps> = props => {
   }
 
   return (
-    <SafeAreaView edges={['top']} style={{backgroundColor: '#fff'}}>
+    <View style={{backgroundColor: '#fff', paddingTop: safeArea.top}}>
       <View style={styles.container}>
         <View style={styles.title}>{renderTitle()}</View>
         <View style={styles.left}>{renderHeaderLeft()}</View>
         <View style={styles.right}>{renderHeaderRight()}</View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 NavigationBar.defaultProps = {
