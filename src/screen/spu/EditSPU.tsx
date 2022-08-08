@@ -2,7 +2,7 @@ import React, {useEffect, useMemo} from 'react';
 import {View, ScrollView, useWindowDimensions} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Steps, Form} from '../../component';
-import {useCommonDispatcher, useContractDispatcher, useLog, useMerchantDispatcher, useParams, useRefCallback, useSKUDispatcher} from '../../helper/hooks';
+import {useCommonDispatcher, useContractDispatcher, useMerchantDispatcher, useParams, useRefCallback, useSKUDispatcher} from '../../helper/hooks';
 import {globalStyleVariables} from '../../constants/styles';
 
 import Base from './base/Base';
@@ -109,21 +109,28 @@ const EditSPU: React.FC = () => {
     };
   }, [skuDispatcher]);
 
+  function check() {
+    const formData = form.getFieldsValue() as SPUForm;
+    console.log(formData);
+    const cleanData = cleanSPUForm(formData);
+    console.log('cleaned', cleanData);
+  }
+
   async function handleSubmit() {
     //todo: 校验表单
     const formData = form.getFieldsValue() as SPUForm;
     const cleanData = cleanSPUForm(formData);
     console.log(cleanData);
     try {
-      // if (isEdit) {
-      //   await api.sku.updateSPU(cleanData);
-      // } else {
-      //   await api.sku.createSPU(cleanData);
-      // }
+      if (isEdit) {
+        await api.sku.updateSPU(cleanData);
+      } else {
+        await api.sku.createSPU(cleanData);
+      }
       commonDispatcher.success('保存成功！');
       if (!isEdit) {
         // 新增完成立即返回
-        // navigation.canGoBack() && navigation.goBack();
+        navigation.canGoBack() && navigation.goBack();
       }
     } catch (error) {
       commonDispatcher.error(error);
@@ -131,15 +138,15 @@ const EditSPU: React.FC = () => {
   }
 
   function handleChangeStep(currentKey: string, nextKey: string) {
-    // if (nextKey !== 'base') {
-    //   const merchantId = form.getFieldValue('bizUserId');
-    //   const contractId = form.getFieldValue('contractId');
-    //   const valid = merchantId && contractId;
-    //   if (!valid) {
-    //     commonDispatcher.info('请先选择商家和合同！');
-    //   }
-    //   return valid;
-    // }
+    if (nextKey !== 'base') {
+      const merchantId = form.getFieldValue('bizUserId');
+      const contractId = form.getFieldValue('contractId');
+      const valid = merchantId && contractId;
+      if (!valid) {
+        commonDispatcher.info('请先选择商家和合同！');
+      }
+      return valid;
+    }
     return true;
   }
 
@@ -161,11 +168,7 @@ const EditSPU: React.FC = () => {
             <ImageTextDetail onNext={handleSubmit} />
           </View>
         </ScrollView>
-        <Button
-          onPress={() => {
-            console.log(form.getFieldsValue());
-          }}
-          type="warning">
+        <Button onPress={check} type="warning">
           检查
         </Button>
       </Form>

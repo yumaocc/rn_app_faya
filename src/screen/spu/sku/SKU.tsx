@@ -1,6 +1,6 @@
 import {Button} from '@ant-design/react-native';
 import React from 'react';
-import {ScrollView} from 'react-native';
+import {ScrollView, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import {Footer, Form, FormTitle, Input, SectionGroup, Switch} from '../../../component';
 import {BoolEnum} from '../../../models';
@@ -41,7 +41,11 @@ const SKU: React.FC<SKUProps> = ({onNext}) => {
       <SKUList />
 
       <Footer />
-      <Button onPress={onCheck}>下一步</Button>
+      <View style={styles.button}>
+        <Button type="primary" onPress={onCheck}>
+          下一步
+        </Button>
+      </View>
     </ScrollView>
   );
 };

@@ -1,5 +1,5 @@
 import {Moment} from 'moment';
-import {BoolEnum, DateTimeString} from './common';
+import {BoolEnum, DateTimeString, FileWithURL} from './common';
 import {BookingType, BuyLimitType} from './contract';
 
 export enum SPUStatus {
@@ -105,6 +105,7 @@ export interface SPUForm {
   needIdCard: BoolEnum; // 下单时是否需要身份证
   packageList?: PackagedSKU[]; // 组合sku
   poster: string; // 封面图
+  _poster?: FileWithURL[];
   purchaseNoticeEntities: SPUPurchaseNotice[]; // 购买须知
   _bookingNotice: string[];
   _saleTimeNotice: string[];

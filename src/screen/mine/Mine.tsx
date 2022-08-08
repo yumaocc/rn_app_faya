@@ -65,7 +65,7 @@ const Mine: React.FC = () => {
         </SectionGroup>
         <SectionGroup>
           <Button
-            type="primary"
+            type="warning"
             onPress={() => {
               userDispatcher.logout();
             }}>

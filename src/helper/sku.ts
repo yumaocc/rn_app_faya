@@ -1,4 +1,4 @@
-import {isNil} from 'lodash';
+import {isNil, uniqueId} from 'lodash';
 import {cleanPrivateProperty} from './common';
 import {findItem, formatMoment, momentFromDateTime} from './util';
 import {BoolEnum, ContractDetailF, SKUBuyNotice, SKUBuyNoticeF, SKUBuyNoticeType, SPUDetailF, SPUForm, SPUPurchaseNotice, SKU} from '../models';
@@ -27,18 +27,19 @@ function convertToBuyNotice(type: SKUBuyNoticeType, contents: string[] = []): SP
 }
 
 export function cleanSPUForm(spu: SPUForm): SPUForm {
+  const newSPU = {...spu};
   const {_saleTime} = spu;
   if (_saleTime && _saleTime.length) {
     const [saleBeginTime, saleEndTime] = _saleTime.map(formatMoment);
-    spu.saleBeginTime = saleBeginTime!;
-    spu.saleEndTime = saleEndTime!;
+    newSPU.saleBeginTime = saleBeginTime!;
+    newSPU.saleEndTime = saleEndTime!;
   }
 
   const {_showBeginTime} = spu;
-  spu.showBeginTime = formatMoment(_showBeginTime!)!;
+  newSPU.showBeginTime = formatMoment(_showBeginTime!)!;
 
-  const {_bookingNotice, _policyNotice, _tipsNotice, _useRuleNotice, _saleTimeNotice} = spu;
-  spu.purchaseNoticeEntities = [
+  const {_bookingNotice, _policyNotice, _tipsNotice, _useRuleNotice, _saleTimeNotice} = newSPU;
+  newSPU.purchaseNoticeEntities = [
     ...convertToBuyNotice('BOOKING', _bookingNotice),
     ...convertToBuyNotice('SALE_TIME', _saleTimeNotice),
     ...convertToBuyNotice('USE_RULE', _useRuleNotice),
@@ -46,7 +47,10 @@ export function cleanSPUForm(spu: SPUForm): SPUForm {
     ...convertToBuyNotice('POLICY', _policyNotice),
   ];
 
-  return cleanPrivateProperty(spu);
+  const {_poster} = spu;
+  newSPU.poster = _poster?.[0]?.url;
+
+  return cleanPrivateProperty(newSPU);
 }
 
 // 默认的新增商品表单
@@ -113,5 +117,21 @@ export function generateSPUForm(contract: ContractDetailF, spuDetail?: SPUDetail
     return formSku;
   });
   form._openShareStock = contract?.skuInfoReq?.openSkuStock === BoolEnum.TRUE;
+  // rn需要处理图片
+  const {bannerPhotos, poster} = spuDetail || {};
+  form.bannerPhotos =
+    bannerPhotos?.map(photo => {
+      return {
+        url: photo.url,
+        uid: photo.id || uniqueId(),
+      };
+    }) || [];
+
+  if (poster) {
+    form._poster = [{url: poster, uid: uniqueId()}];
+  } else {
+    form._poster = [];
+  }
+
   return form;
 }

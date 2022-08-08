@@ -78,3 +78,8 @@ export type DateString = string;
 
 export type StylePropText = StyleProp<TextStyle>;
 export type StylePropView = StyleProp<ViewStyle>;
+
+export interface FileWithURL {
+  url: string;
+  uid?: string;
+}

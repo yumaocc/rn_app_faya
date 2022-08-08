@@ -29,11 +29,7 @@ const Form: FormType = props => {
       setFormInstance(form);
     }
   }, [form, newFormInstance]);
-  return (
-    <FormContext.Provider value={formInstance}>
-      {props.children}
-    </FormContext.Provider>
-  );
+  return <FormContext.Provider value={formInstance}>{props.children}</FormContext.Provider>;
 };
 Form.defaultProps = {
   // title: 'Form',

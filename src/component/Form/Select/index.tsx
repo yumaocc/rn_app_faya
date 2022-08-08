@@ -6,6 +6,7 @@ import {StylePropView} from '../../../models';
 import Picker from '../../Picker';
 import {PickerItemProps} from '../../Picker/PickerItem';
 import Popup from '../../Popup';
+import isNil from 'lodash/isNil';
 
 export type RenderPickerChildren = (option: PickerItemProps, index: number) => React.ReactNode;
 
@@ -31,7 +32,7 @@ const Select: React.FC<SelectProps> = props => {
 
       return (
         <View style={styles.childrenWrapper}>
-          {value ? <Text>{foundOption?.label || value}</Text> : <Text style={styles.placeholder}>{props.placeholder}</Text>}
+          {!isNil(value) ? <Text>{foundOption?.label || value}</Text> : <Text style={styles.placeholder}>{props.placeholder}</Text>}
           <Icon name="caret-right" style={styles.arrow} />
         </View>
       );

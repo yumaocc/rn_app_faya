@@ -1,3 +1,4 @@
+import isNil from 'lodash/isNil';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {View, StyleSheet, ScrollView} from 'react-native';
 import {useRefCallback} from '../../helper/hooks';
@@ -35,9 +36,7 @@ const Picker: React.FC<PickerProps> & {
   );
 
   const currentIndex = useMemo(() => {
-    const foundIndex = props.items.findIndex(
-      item => item.value === currentValue,
-    );
+    const foundIndex = props.items.findIndex(item => item.value === currentValue);
     return foundIndex === -1 ? 0 : foundIndex;
   }, [currentValue, props.items]);
 
@@ -49,7 +48,7 @@ const Picker: React.FC<PickerProps> & {
   // 索引改变时，触发change
   useEffect(() => {
     const findValue = props.items[currentIndex]?.value;
-    if (findValue && findValue !== value) {
+    if (!isNil(findValue) && findValue !== value) {
       onChange && onChange(findValue);
     }
   }, [currentIndex, onChange, props.items, value]);
@@ -65,7 +64,7 @@ const Picker: React.FC<PickerProps> & {
     measureIndex = Math.min(props.items.length - 1, measureIndex);
 
     if (measureIndex !== currentIndex) {
-      const findValue = props.items[measureIndex]?.value || null;
+      const findValue = props.items[measureIndex]?.value;
       setCurrentValue(findValue);
     } else {
       scrollTo(currentIndex * PICKER_ITEM_HEIGHT);
@@ -78,9 +77,7 @@ const Picker: React.FC<PickerProps> & {
         showsHorizontalScrollIndicator={false}
         style={{flex: 1}}
         ref={setRef}
-        onScrollEndDrag={e =>
-          handleEndScroll(Math.max(0, e.nativeEvent.contentOffset.y))
-        }>
+        onScrollEndDrag={e => handleEndScroll(Math.max(0, e.nativeEvent.contentOffset.y))}>
         <View style={styles.fakeItem} />
         {props.items.map(item => (
           <PickerItem key={item.value} label={item.label} value={item.value} />
