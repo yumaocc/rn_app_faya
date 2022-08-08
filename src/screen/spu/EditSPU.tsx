@@ -131,15 +131,15 @@ const EditSPU: React.FC = () => {
   }
 
   function handleChangeStep(currentKey: string, nextKey: string) {
-    if (nextKey !== 'base') {
-      const merchantId = form.getFieldValue('bizUserId');
-      const contractId = form.getFieldValue('contractId');
-      const valid = merchantId && contractId;
-      if (!valid) {
-        commonDispatcher.info('请先选择商家和合同！');
-      }
-      return valid;
-    }
+    // if (nextKey !== 'base') {
+    //   const merchantId = form.getFieldValue('bizUserId');
+    //   const contractId = form.getFieldValue('contractId');
+    //   const valid = merchantId && contractId;
+    //   if (!valid) {
+    //     commonDispatcher.info('请先选择商家和合同！');
+    //   }
+    //   return valid;
+    // }
     return true;
   }
 

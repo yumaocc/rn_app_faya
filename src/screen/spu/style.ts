@@ -22,4 +22,17 @@ export const styles = StyleSheet.create({
     paddingVertical: 8,
     alignContent: 'center',
   },
+  buyNoticeTemplate: {
+    padding: 15,
+    borderRadius: 5,
+    borderStyle: 'dashed',
+    borderWidth: 1,
+    borderColor: globalStyleVariables.BORDER_COLOR,
+  },
+  templateText: {
+    fontSize: 15,
+  },
+  modelCard: {
+    borderWidth: 1,
+  },
 });

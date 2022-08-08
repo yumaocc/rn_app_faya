@@ -1,4 +1,4 @@
-import {BookingType, BuyLimitType} from '../models';
+import {BookingType, BuyLimitType, SKUBuyNoticeType} from '../models';
 
 export function getBookingType(type: BookingType) {
   switch (type) {
@@ -23,5 +23,20 @@ export function getBuyLimitStr(buyLimitType: BuyLimitType, buyLimitNum: number) 
       return `1张身份证限购${buyLimitNum}份`;
     default:
       return '-';
+  }
+}
+
+export function getBuyNoticeTitle(type: SKUBuyNoticeType) {
+  switch (type) {
+    case 'BOOKING':
+      return '预约须知';
+    case 'SALE_TIME':
+      return '营业时间';
+    case 'USE_RULE':
+      return '使用规则';
+    case 'POLICY':
+      return '取消政策';
+    case 'TIPS':
+      return '温馨提示';
   }
 }
