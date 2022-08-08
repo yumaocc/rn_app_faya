@@ -29,10 +29,11 @@ const Select: React.FC<SelectProps> = props => {
   const renderChildren = useCallback(() => {
     if (!props.children) {
       const foundOption = props.options.find(option => option.value === value);
+      const showPlaceholder = isNil(value) || value === '';
 
       return (
         <View style={styles.childrenWrapper}>
-          {!isNil(value) ? <Text>{foundOption?.label || value}</Text> : <Text style={styles.placeholder}>{props.placeholder}</Text>}
+          {!showPlaceholder ? <Text>{foundOption?.label || value}</Text> : <Text style={styles.placeholder}>{props.placeholder}</Text>}
           <Icon name="caret-right" style={styles.arrow} />
         </View>
       );
