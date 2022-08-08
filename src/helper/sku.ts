@@ -46,6 +46,12 @@ export function cleanSPUForm(spu: SPUForm): SPUForm {
   const {_showBeginTime} = spu;
   newSPU.showBeginTime = formatMoment(_showBeginTime);
 
+  const {_useBeginTime, _useEndTime} = spu;
+  if (_useBeginTime && _useEndTime) {
+    newSPU.useBeginTime = formatMoment(_useBeginTime);
+    newSPU.useEndTime = formatMoment(_useEndTime);
+  }
+
   const {_bookingNotice, _policyNotice, _tipsNotice, _useRuleNotice, _saleTimeNotice} = newSPU;
   newSPU.purchaseNoticeEntities = [
     ...convertToBuyNotice('BOOKING', _bookingNotice),
@@ -104,12 +110,19 @@ export function getInitSPUForm(): SPUForm {
 export function generateSPUForm(contract: ContractDetailF, spuDetail?: SPUDetailF): Partial<SPUForm> {
   const form: Partial<SPUForm> = {};
 
-  const {saleBeginTime, saleEndTime} = spuDetail || {};
+  const {saleBeginTime, saleEndTime, useBeginTime, useEndTime, showBeginTime} = spuDetail || {};
   if (saleBeginTime && saleEndTime) {
-    form._saleTime = [momentFromDateTime(saleBeginTime), momentFromDateTime(saleEndTime)];
-    // rn需要拆开
     form._saleBeginTime = momentFromDateTime(saleBeginTime);
     form._saleEndTime = momentFromDateTime(saleEndTime);
+    form._saleTime = [form._saleBeginTime, form._saleEndTime];
+  }
+  if (useBeginTime && useEndTime) {
+    form._useBeginTime = momentFromDateTime(useBeginTime);
+    form._useEndTime = momentFromDateTime(useEndTime);
+    form._useTime = [form._useBeginTime, form._useEndTime];
+  }
+  if (showBeginTime) {
+    form._showBeginTime = momentFromDateTime(showBeginTime);
   }
 
   form.skuList = contract.skuInfoReq?.skuInfo?.map(contractSku => {

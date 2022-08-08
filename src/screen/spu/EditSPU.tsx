@@ -133,6 +133,7 @@ const EditSPU: React.FC = () => {
         navigation.canGoBack() && navigation.goBack();
       }
     } catch (error) {
+      console.log(error);
       commonDispatcher.error(error);
     }
   }

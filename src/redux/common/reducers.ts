@@ -39,7 +39,7 @@ export default (state = initialState, action: CommonActions): CommonState => {
         const {payload} = action;
         const isString = typeof payload === 'string';
         const message = isString ? payload : payload.message;
-        draft.message = message || '';
+        draft.message = message || '呀哎，出错啦～';
         draft.messageType = 'error';
       });
     case ActionType.SUCCESS:
