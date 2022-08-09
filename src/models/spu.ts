@@ -13,6 +13,9 @@ export interface SPUCategory {
   name: string;
   children?: SPUCategory[];
 }
+/**
+ * @deprecated 已废弃，请使用SKUBuyNoticeF
+ */
 export interface SPUPurchaseNotice {
   id?: number;
   type: SKUBuyNoticeType;
@@ -29,7 +32,7 @@ export type SKUBuyNoticeType = 'BOOKING' | 'SALE_TIME' | 'USE_RULE' | 'TIPS' | '
 
 // 购买须知，后端返回的
 export interface SKUBuyNoticeF {
-  id: number;
+  id?: number;
   type: SKUBuyNoticeType;
   content: string;
 }
@@ -54,6 +57,7 @@ export interface PackagedSKU {
 export interface PackagedSKUItem {
   contractSkuId: number;
   nums: number;
+  skuId?: number;
   _skuName?: string;
   _selected?: boolean;
 }
@@ -106,7 +110,7 @@ export interface SPUForm {
   packageList?: PackagedSKU[]; // 组合sku
   poster: string; // 封面图
   _poster?: FileWithURL[];
-  purchaseNoticeEntities: SPUPurchaseNotice[]; // 购买须知
+  purchaseNoticeEntities: SKUBuyNoticeF[]; // 购买须知
   _bookingNotice: string[];
   _saleTimeNotice: string[];
   _useRuleNotice: string[];

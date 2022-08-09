@@ -42,5 +42,5 @@ export function useSKUBuyNotice(): [SKUBuyNotice] {
 
 // 获取spu详情
 export function useSPUDetail(spuId?: number): [SPUDetailF, () => void] {
-  return useFetchData(api.sku.getSPUDetail, spuId!);
+  return useFetchData(api.sku.getSPUDetail, spuId);
 }

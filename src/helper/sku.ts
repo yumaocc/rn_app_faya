@@ -1,7 +1,7 @@
 import {isNil, uniqueId} from 'lodash';
 import {cleanPrivateProperty} from './common';
 import {findItem, formatMoment, momentFromDateTime} from './util';
-import {BoolEnum, ContractDetailF, SKUBuyNotice, SKUBuyNoticeF, SKUBuyNoticeType, SPUDetailF, SPUForm, SPUPurchaseNotice, SKU} from '../models';
+import {BoolEnum, ContractDetailF, SKUBuyNotice, SKUBuyNoticeF, SKUBuyNoticeType, SPUDetailF, SPUForm, SKU} from '../models';
 
 export function convertSKUBuyNotice(buyNotices: SKUBuyNoticeF[]): SKUBuyNotice {
   const result: SKUBuyNotice = {
@@ -17,7 +17,7 @@ export function convertSKUBuyNotice(buyNotices: SKUBuyNoticeF[]): SKUBuyNotice {
   return result;
 }
 
-function convertToBuyNotice(type: SKUBuyNoticeType, contents: string[] = []): SPUPurchaseNotice[] {
+function convertToBuyNotice(type: SKUBuyNoticeType, contents: string[] = []): SKUBuyNoticeF[] {
   return contents.map(content => {
     return {
       type,
