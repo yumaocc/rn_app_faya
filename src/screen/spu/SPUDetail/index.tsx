@@ -3,7 +3,7 @@ import {View, ScrollView, useWindowDimensions} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {NavigationBar, Tabs} from '../../../component';
 import {globalStyleVariables} from '../../../constants/styles';
-import {useContractDetail, useLog, useMerchantDetail, useParams, useRefCallback, useSPUDetail} from '../../../helper/hooks';
+import {useContractDetail, useMerchantDetail, useParams, useRefCallback, useSPUDetail} from '../../../helper/hooks';
 import Base from './Base';
 import Booking from './Booking';
 import ImageDetail from './ImageDetail';
@@ -24,7 +24,6 @@ const SPUDetail: React.FC = () => {
   const [spuDetail] = useSPUDetail(params.id);
   const [merchantDetail] = useMerchantDetail(spuDetail?.bizUserId);
   const [contractDetail] = useContractDetail(spuDetail?.contractId);
-  useLog(spuDetail, 'spuDetail');
 
   // 自动切换到指定step
   useEffect(() => {
