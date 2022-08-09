@@ -1,7 +1,7 @@
 import {isNil, uniqueId} from 'lodash';
 import {cleanPrivateProperty} from './common';
 import {findItem, formatMoment, momentFromDateTime} from './util';
-import {BoolEnum, ContractDetailF, SKUBuyNotice, SKUBuyNoticeF, SKUBuyNoticeType, SPUDetailF, SPUForm, SKU} from '../models';
+import {BoolEnum, ContractDetailF, SKUBuyNotice, SKUBuyNoticeF, SKUBuyNoticeType, SPUDetailF, SPUForm, SKU, PackagedSKUItem} from '../models';
 
 export function convertSKUBuyNotice(buyNotices: SKUBuyNoticeF[]): SKUBuyNotice {
   const result: SKUBuyNotice = {
@@ -130,6 +130,7 @@ export function generateSPUForm(contract: ContractDetailF, spuDetail?: SPUDetail
     const hasSpuDetail = !isNil(spuDetailSku);
     const formSku: SKU = {
       contractSkuId: contractSku.contractSkuId,
+      skuId: spuDetailSku?.skuId,
       list: contractSku.skuDetails,
       originPrice: spuDetailSku?.originPrice,
       salePrice: spuDetailSku?.salePrice,
@@ -144,6 +145,16 @@ export function generateSPUForm(contract: ContractDetailF, spuDetail?: SPUDetail
     };
     return formSku;
   });
+
+  const detailSKUList = spuDetail?.skuList || [];
+  form.packageList = spuDetail?.packageList?.map(skuPackage => {
+    const packSKUList: PackagedSKUItem[] = skuPackage.skus.map(packageSKU => {
+      const sku = findItem(detailSKUList, sku => sku.skuId === packageSKU.skuId);
+      return {...packageSKU, contractSkuId: sku?.contractSkuId};
+    });
+    return {...skuPackage, skus: packSKUList};
+  });
+
   form._openShareStock = contract?.skuInfoReq?.openSkuStock === BoolEnum.TRUE;
   // rn需要处理图片
   const {bannerPhotos, poster} = spuDetail || {};

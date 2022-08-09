@@ -5,7 +5,7 @@ import {Stepper, SwipeAction} from '@ant-design/react-native';
 
 import {Checkbox, Form, FormTitle, Input, Modal, PlusButton, SectionGroup} from '../../../../component';
 import {globalStyles, globalStyleVariables} from '../../../../constants/styles';
-import {convertNumber2Han, getBuyLimitStr, getItemByIndex} from '../../../../helper';
+import {convertNumber2Han, findItem, getBuyLimitStr, getItemByIndex} from '../../../../helper';
 import {BoolEnum, PackagedSKU, PackagedSKUForm, PackagedSKUItem, SKU} from '../../../../models';
 import {RootState} from '../../../../redux/reducers';
 import {styles} from '../style';
@@ -80,7 +80,7 @@ const SKUList: React.FC = () => {
       ...packageFormData,
       skus: packageFormData.skus.filter(sku => sku._selected),
     };
-    const originPackageList: PackagedSKU[] = form.getFieldValue('packageList');
+    const originPackageList: PackagedSKU[] = form.getFieldValue('packageList') || [];
     let newPackageList: PackagedSKU[] = [];
     if (editIndex === -1) {
       newPackageList = [...originPackageList, packageItem];
@@ -171,9 +171,10 @@ const SKUList: React.FC = () => {
                 </View>
                 <View style={{paddingLeft: 20}}>
                   {pack.skus.map((sku, index) => {
+                    const foundSKU = findItem(skuList, item => item.skuId === sku.skuId);
                     return (
                       <View key={index}>
-                        <Text style={globalStyles.fontTertiary}>{`${sku._skuName} * ${sku.nums}`}</Text>
+                        <Text style={globalStyles.fontTertiary}>{`${foundSKU?.skuName || sku._skuName} * ${sku.nums}`}</Text>
                       </View>
                     );
                   })}
