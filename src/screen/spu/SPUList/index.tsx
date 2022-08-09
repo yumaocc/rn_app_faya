@@ -110,11 +110,11 @@ export default SPUList;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: -80,
+    // marginTop: -80,
   },
   freshHeader: {
     height: 80,
-    justifyContent: 'flex-end',
+    // justifyContent: 'flex-end',
   },
   spuContainer: {
     marginTop: globalStyleVariables.MODULE_SPACE,
@@ -126,8 +126,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 32,
-    // borderTopWidth: StyleSheet.hairlineWidth,
-    // borderBottomColor: globalStyleVariables.BORDER_COLOR,
     height: 36,
   },
   setting: {
