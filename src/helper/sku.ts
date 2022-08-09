@@ -46,12 +46,6 @@ export function cleanSPUForm(spu: SPUForm): SPUForm {
   const {_showBeginTime} = spu;
   newSPU.showBeginTime = formatMoment(_showBeginTime);
 
-  const {_useBeginTime, _useEndTime} = spu;
-  if (_useBeginTime && _useEndTime) {
-    newSPU.useBeginTime = formatMoment(_useBeginTime);
-    newSPU.useEndTime = formatMoment(_useEndTime);
-  }
-
   const {_bookingNotice, _policyNotice, _tipsNotice, _useRuleNotice, _saleTimeNotice} = newSPU;
   newSPU.purchaseNoticeEntities = [
     ...convertToBuyNotice('BOOKING', _bookingNotice),
