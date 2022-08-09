@@ -1,9 +1,13 @@
+import {Icon} from '@ant-design/react-native';
+import {useNavigation} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {View, ScrollView, useWindowDimensions} from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {NavigationBar, Tabs} from '../../../component';
 import {globalStyleVariables} from '../../../constants/styles';
 import {useContractDetail, useMerchantDetail, useParams, useRefCallback, useSPUDetail} from '../../../helper/hooks';
+import {FakeNavigation} from '../../../models';
 import Base from './Base';
 import Booking from './Booking';
 import ImageDetail from './ImageDetail';
@@ -20,6 +24,7 @@ const SPUDetail: React.FC = () => {
   const [currentKey, setCurrentKey] = useState('base');
   const {width: windowWidth} = useWindowDimensions();
   const [ref, setRef, isReady] = useRefCallback<ScrollView>();
+  const navigation = useNavigation<FakeNavigation>();
 
   const [spuDetail] = useSPUDetail(params.id);
   const [merchantDetail] = useMerchantDetail(spuDetail?.bizUserId);
@@ -40,10 +45,23 @@ const SPUDetail: React.FC = () => {
     }, 0);
   }, [currentKey, isReady, ref, windowWidth]);
 
+  function handleEdit() {
+    navigation.navigate('EditSPU', {id: params.id});
+  }
+
   return (
     <>
       <SafeAreaView style={{flex: 1}} edges={['bottom']}>
-        <NavigationBar title="商品详情" />
+        <NavigationBar
+          title="商品详情"
+          headerRight={
+            <TouchableOpacity activeOpacity={0.5} onPress={handleEdit}>
+              <View style={{height: '100%', justifyContent: 'center', paddingHorizontal: 10}}>
+                <Icon name="ellipsis" size={26} color={globalStyleVariables.TEXT_COLOR_PRIMARY} />
+              </View>
+            </TouchableOpacity>
+          }
+        />
         <View style={{flex: 1}}>
           <Tabs style={{backgroundColor: '#fff'}} tabs={steps} currentKey={currentKey} onChange={setCurrentKey} />
           <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
