@@ -1,5 +1,4 @@
 import React from 'react';
-import {MerchantCreateType} from '../models';
 import {createNavigationContainerRef} from '@react-navigation/native';
 
 import TabNavigator from '../screen/tabs/TabNavigator';
@@ -8,10 +7,10 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../redux/reducers';
 import {Stack, commonScreenOptions} from './config';
 
-import AddMerchant from '../screen/merchant/AddMerchant';
 import EditContract from '../screen/contract/EditContract';
 
 import RouterSPU from './RouterSPU';
+import RouterMerchant from './RouterMerchant';
 
 const Navigator: React.FC = () => {
   const token = useSelector((state: RootState) => state.common.token);
@@ -25,15 +24,6 @@ const Navigator: React.FC = () => {
             component={TabNavigator}
             options={{
               headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="AddMerchant"
-            component={AddMerchant}
-            initialParams={{type: MerchantCreateType.PUBLIC_SEA}}
-            options={{
-              ...commonScreenOptions,
-              title: '新增商家',
             }}
           />
           <Stack.Screen
@@ -53,6 +43,7 @@ const Navigator: React.FC = () => {
             }}
           />
           {RouterSPU}
+          {RouterMerchant}
         </>
       ) : (
         <>
