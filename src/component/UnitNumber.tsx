@@ -4,13 +4,14 @@ import {StyleProp, StyleSheet, Text, TextStyle} from 'react-native';
 interface UnitNumberProps {
   value: number | string;
   desensitization?: boolean; // 数据是否脱敏
-  type?: 'money' | 'number'; // 数据类型, money类型会做千分位隔断
+  type?: 'money' | 'number' | string; // 数据类型, money类型会做千分位隔断
   unit?: string;
   style?: StyleProp<TextStyle>;
+  prefix?: string;
 }
 
 const UnitNumber: React.FC<UnitNumberProps> = props => {
-  const {value, unit, type, desensitization, style} = props;
+  const {value, unit, type, desensitization, style, prefix} = props;
   const numValue = Number(value) || 0;
   let valueStr = '';
   if (desensitization) {
@@ -21,10 +22,12 @@ const UnitNumber: React.FC<UnitNumberProps> = props => {
     valueStr = String(value);
   }
   if (typeof value === 'string') {
+    console.warn(value)
     valueStr = value;
   }
   return (
     <Text style={[styles.container, style]}>
+      <Text> {prefix}</Text>
       <Text style={styles.value}>{valueStr}</Text>
       <Text style={styles.unit}> {unit}</Text>
     </Text>

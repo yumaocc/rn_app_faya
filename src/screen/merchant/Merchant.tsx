@@ -36,18 +36,8 @@ const Merchant: React.FC = () => {
   return (
     <>
       <SafeAreaView style={{backgroundColor: '#fff', flex: 1}} edges={['top']}>
-        <Tabs
-          style={{borderBottomWidth: 0.3}}
-          tabs={tabs}
-          currentKey={currentTab}
-          onChange={setCurrentTab}
-        />
-        <ScrollView
-          style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}}
-          ref={setRef}
-          horizontal
-          snapToInterval={windowSize.width}
-          scrollEnabled={false}>
+        <Tabs style={{borderBottomWidth: 0.3}} tabs={tabs} currentKey={currentTab} onChange={setCurrentTab} />
+        <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowSize.width} scrollEnabled={false}>
           <View style={{width: windowSize.width}}>
             <PrivateSeaList />
           </View>

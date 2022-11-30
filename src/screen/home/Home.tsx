@@ -12,7 +12,7 @@ import {FakeNavigation} from '../../models';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const Home: React.FC = () => {
-  const [summary] = useHomeSummary();
+  const [summary, commissionToday, myContractNums] = useHomeSummary();
   const navigation = useNavigation() as FakeNavigation;
   return (
     <>
@@ -24,7 +24,7 @@ const Home: React.FC = () => {
             <Text style={[globalStyles.textColorPrimary, styles.cardTitle]}>今日收益</Text>
             <Icon name="right" style={globalStyles.iconRight} />
           </View>
-          <UnitNumber style={{paddingTop: 10}} type="money" value="----" />
+          <UnitNumber style={{paddingTop: 10}} type="money" value={commissionToday?.moneyYuan} />
         </View>
 
         <View style={[globalStyles.flexNormal, globalStyles.moduleMarginTop]}>
@@ -36,7 +36,7 @@ const Home: React.FC = () => {
                   <Text style={[globalStyles.textColorPrimary, styles.cardTitle]}>我的商品</Text>
                   <Icon name="right" style={globalStyles.iconRight} />
                 </View>
-                <UnitNumber style={{paddingTop: 10}} value={summary?.muSpus || 0} unit="件" />
+                <UnitNumber style={{paddingTop: 10}} value={summary?.mySpus || 0} unit="件" />
               </View>
             </TouchableOpacity>
             <View style={[globalStyles.lineHorizontal, {marginVertical: 10}]} />
@@ -49,16 +49,18 @@ const Home: React.FC = () => {
           </View>
           {/* 我的合同 */}
           <View style={[globalStyles.moduleMarginLeft, styles.cardContainer, {flex: 1}]}>
-            <View style={styles.cardTitleContainer}>
-              <Text style={[globalStyles.textColorPrimary, styles.cardTitle]}>我的合同</Text>
-              <Icon name="right" style={globalStyles.iconRight} />
-            </View>
-            <UnitNumber style={{paddingTop: 10}} value="---" unit="份" />
-            <View style={[globalStyles.lineHorizontal, {marginVertical: 10}]} />
+            <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Contract')}>
+              <View style={styles.cardTitleContainer}>
+                <Text style={[globalStyles.textColorPrimary, styles.cardTitle]}>我的合同</Text>
+                <Icon name="right" style={globalStyles.iconRight} />
+              </View>
+              <UnitNumber style={{paddingTop: 10}} value={myContractNums || 0} unit="份" />
+              <View style={[globalStyles.lineHorizontal, {marginVertical: 10}]} />
+            </TouchableOpacity>
             <PlusButton
-              title="新增合同"
+              title="我的合同"
               onPress={() => {
-                navigation.navigate('AddContract');
+                navigation.navigate('Contract');
               }}
             />
           </View>
@@ -95,6 +97,7 @@ const Home: React.FC = () => {
     </>
   );
 };
+
 export default Home;
 
 export const styles = StyleSheet.create({

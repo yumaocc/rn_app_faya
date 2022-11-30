@@ -6,7 +6,7 @@ import Login from '../screen/common/Login';
 import {useSelector} from 'react-redux';
 import {RootState} from '../redux/reducers';
 import {Stack, commonScreenOptions} from './config';
-
+import Contract from '../screen/contract/Contract';
 import EditContract from '../screen/contract/EditContract';
 
 import RouterSPU from './RouterSPU';
@@ -40,6 +40,14 @@ const Navigator: React.FC = () => {
             options={{
               ...commonScreenOptions,
               title: '新增合同',
+            }}
+          />
+          <Stack.Screen
+            name="Contract"
+            component={Contract}
+            options={{
+              ...commonScreenOptions,
+              title: '我的合同',
             }}
           />
           {RouterSPU}

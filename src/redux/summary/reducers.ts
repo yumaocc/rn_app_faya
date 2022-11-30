@@ -1,14 +1,7 @@
 import produce from 'immer';
 import {SummaryActions} from './actions';
 import {ActionType} from './types';
-import {
-  CommissionExpect,
-  CommissionHistory,
-  CommissionToday,
-  CommissionTop,
-  HomeStatisticsF,
-  SaleTop,
-} from '../../models';
+import {CommissionExpect, CommissionHistory, CommissionToday, CommissionTop, HomeStatisticsF, SaleTop} from '../../models';
 
 export interface SummaryState {
   home?: HomeStatisticsF;

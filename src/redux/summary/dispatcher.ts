@@ -12,15 +12,11 @@ export interface SummaryDispatcher {
   loadCommissionHistory(): void;
 }
 
-export const getSummaryDispatcher = (
-  dispatch: Dispatch,
-): SummaryDispatcher => ({
+export const getSummaryDispatcher = (dispatch: Dispatch): SummaryDispatcher => ({
   loadHome: () => dispatch(Actions.loadHome()),
   loadCommissionToday: () => dispatch(Actions.loadCommissionToday()),
   loadCommissionExpect: () => dispatch(Actions.loadCommissionExpect()),
-  loadCommissionTop: (dateTimeRange: DateTimeRange) =>
-    dispatch(Actions.loadCommissionTop(dateTimeRange)),
-  loadSalesTop: (dateTimeRange: DateTimeRange) =>
-    dispatch(Actions.loadSalesTop(dateTimeRange)),
+  loadCommissionTop: (dateTimeRange: DateTimeRange) => dispatch(Actions.loadCommissionTop(dateTimeRange)),
+  loadSalesTop: (dateTimeRange: DateTimeRange) => dispatch(Actions.loadSalesTop(dateTimeRange)),
   loadCommissionHistory: () => dispatch(Actions.loadCommissionHistory()),
 });

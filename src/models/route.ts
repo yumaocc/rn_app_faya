@@ -34,6 +34,7 @@ export type RootStackParamList = {
   AddSPU: {bizId?: number};
   SPUList: undefined;
   SPUDetail: {id: number};
+  Contract: undefined;
 };
 
 export type Props = NativeStackScreenProps<RootStackParamList>;

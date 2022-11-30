@@ -33,9 +33,7 @@ function* loadCommissionExpect(): any {
   }
 }
 
-function* loadCommissionTop(
-  action: ActionWithPayload<ActionType, DateTimeRange>,
-): any {
+function* loadCommissionTop(action: ActionWithPayload<ActionType, DateTimeRange>): any {
   const [start, end] = action.payload;
   try {
     const res = yield call(summary.loadCommissionTop, start, end);
@@ -45,9 +43,7 @@ function* loadCommissionTop(
   }
 }
 
-function* loadSalesTop(
-  action: ActionWithPayload<ActionType, DateTimeRange>,
-): any {
+function* loadSalesTop(action: ActionWithPayload<ActionType, DateTimeRange>): any {
   const [start, end] = action.payload;
   try {
     const res = yield call(summary.loadSalesTop, start, end);

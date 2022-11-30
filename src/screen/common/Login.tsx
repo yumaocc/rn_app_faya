@@ -68,20 +68,11 @@ const Login: React.FC = () => {
       <Text style={styles.title}>登录/注册</Text>
       <View style={styles.form}>
         <View style={styles.formItem}>
-          <InputItem
-            clear
-            last
-            value={phone}
-            labelNumber={2}
-            type="text"
-            onChange={setPhone}
-            placeholder="请输入手机号">
+          <InputItem clear last value={phone} labelNumber={2} type="text" onChange={setPhone} placeholder="请输入手机号">
             <Text style={styles.phoneLabel}>+86</Text>
           </InputItem>
         </View>
-        <Text style={styles.formExplain}>
-          未注册的手机号验证通过后将自动注册
-        </Text>
+        <Text style={styles.formExplain}>未注册的手机号验证通过后将自动注册</Text>
         <View style={[styles.formItem, styles.formItemCode]}>
           <InputItem
             clear
@@ -102,11 +93,7 @@ const Login: React.FC = () => {
             placeholder="请输入验证码"
           />
         </View>
-        <Button
-          style={styles.login}
-          type="primary"
-          onPress={handleLogin}
-          loading={loginState === LoginState.Loading}>
+        <Button style={styles.login} type="primary" onPress={handleLogin} loading={loginState === LoginState.Loading}>
           登录
         </Button>
       </View>

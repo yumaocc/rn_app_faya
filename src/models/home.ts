@@ -1,7 +1,7 @@
 // F 代表从后端返回的数据类型
 export interface HomeStatisticsF {
   myBizUsers: number;
-  muSpus: number;
+  mySpus: number;
   privateSeaLimit: number;
   privateSeaNums: number;
 }

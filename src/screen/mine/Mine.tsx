@@ -1,18 +1,21 @@
 import React from 'react';
 import {Badge, Icon, Button} from '@ant-design/react-native';
-import {View, Text, ScrollView, StyleSheet, Image} from 'react-native';
+import {useNavigation } from '@react-navigation/native';
+import {View, Text, ScrollView, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useSelector} from 'react-redux';
 import {globalStyles, globalStyleVariables} from '../../constants/styles';
 import {UserState} from '../../models';
 import {RootState} from '../../redux/reducers';
+
+import {FakeNavigation} from '../../models';
 import {SectionGroup, OperateItem} from '../../component';
 import {useUserDispatcher} from '../../helper/hooks';
 
 const Mine: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.userInfo);
   const [userDispatcher] = useUserDispatcher();
-
+  const navigation = useNavigation() as FakeNavigation;
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}} edges={['top']}>
       <ScrollView
@@ -42,7 +45,10 @@ const Mine: React.FC = () => {
         </SectionGroup>
 
         <SectionGroup>
-          <OperateItem title="合同管理" icon={<Icon name="wallet" />} />
+          <TouchableOpacity onPress={() => navigation.navigate('Contract')}>
+            <OperateItem title="合同管理" icon={<Icon name="wallet" />} />
+          </TouchableOpacity>
+
           <OperateItem
             title="我的商品"
             icon={<Icon name="wallet" />}

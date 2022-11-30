@@ -17,10 +17,7 @@ const PlusButton: React.FC<PlusButtonProps> = props => {
   return (
     <TouchableOpacity onPress={props.onPress} activeOpacity={0.6}>
       <View style={[styles.container, props.style]}>
-        <Icon
-          name="plus-circle"
-          style={[globalStyles.primaryColor, styles.icon]}
-        />
+        <Icon name="plus-circle" style={[globalStyles.primaryColor, styles.icon]} />
         <Text style={[globalStyles.primaryColor, styles.title]}>{title}</Text>
       </View>
     </TouchableOpacity>
