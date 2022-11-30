@@ -15,31 +15,23 @@ import {
 } from '../models';
 
 // 获取公海商家（分页）
-export async function getPublicSeaMerchants(
-  params: SearchParam,
-): Promise<PagedData<MerchantF[]>> {
+export async function getPublicSeaMerchants(params: SearchParam): Promise<PagedData<MerchantF[]>> {
   return await getPaged<MerchantF[]>('/biz/user/broad/ocean/page', {params});
 }
 
 // 获取私海商家（分页）
-export async function getPrivateSeaMerchants(
-  params: SearchParam,
-): Promise<PagedData<MerchantF[]>> {
+export async function getPrivateSeaMerchants(params: SearchParam): Promise<PagedData<MerchantF[]>> {
   return await getPaged<MerchantF[]>('/biz/user/my/broad/ocean/page', {
     params,
   });
 }
 
 // 获取我的商家（分页）
-export async function getMyMerchants(
-  params: SearchParam,
-): Promise<PagedData<MyMerchantF[]>> {
+export async function getMyMerchants(params: SearchParam): Promise<PagedData<MyMerchantF[]>> {
   return await getPaged<MyMerchantF[]>('/biz/user/mine/page', {params});
 }
 // 获取我的商家（轻量，返回部分数据）
-export async function getMyMerchantSimple(
-  params: SearchParam,
-): Promise<PagedData<MyMerchantSimpleF[]>> {
+export async function getMyMerchantSimple(params: SearchParam): Promise<PagedData<MyMerchantSimpleF[]>> {
   return await getPaged<MyMerchantSimpleF[]>('/biz/user/mine/page/simple', {
     params,
   });
@@ -61,40 +53,26 @@ export async function drawMerchant(merchantId: number): Promise<boolean> {
 }
 
 // 获取私海商家详情
-export async function getMerchantDetail(
-  merchantId: number,
-): Promise<MerchantDetailF> {
+export async function getMerchantDetail(merchantId: number): Promise<MerchantDetailF> {
   return await get<MerchantDetailF>(`/biz/user/details?id=${merchantId}`);
 }
 
 // 获取公海商家详情
-export async function getPublicMerchantDetail(
-  merchantId: number,
-): Promise<MerchantDetailF> {
-  return await get<MerchantDetailF>(
-    `/biz/user/details/for/public?id=${merchantId}`,
-  );
+export async function getPublicMerchantDetail(merchantId: number): Promise<MerchantDetailF> {
+  return await get<MerchantDetailF>(`/biz/user/details/for/public?id=${merchantId}`);
 }
 
 // 修改商户信息
-export async function updateMerchant(
-  merchant: MerchantDetailF,
-): Promise<boolean> {
+export async function updateMerchant(merchant: MerchantDetailF): Promise<boolean> {
   return await post<boolean, MerchantDetailF>('/biz/user/modify', merchant);
 }
 
 // 新增店铺
-export async function createShop(
-  shop: ShopForm,
-  merchantId: number,
-): Promise<boolean> {
-  return await post<boolean, ShopForm & {bizUserId: number}>(
-    '/biz/user/shop/add/one',
-    {
-      ...shop,
-      bizUserId: merchantId,
-    },
-  );
+export async function createShop(shop: ShopForm, merchantId: number): Promise<boolean> {
+  return await post<boolean, ShopForm & {bizUserId: number}>('/biz/user/shop/add/one', {
+    ...shop,
+    bizUserId: merchantId,
+  });
 }
 
 // 修改店铺
@@ -115,28 +93,19 @@ export async function getShops(merchantId: number): Promise<ShopF[]> {
 }
 
 // 获取商家的预约型号
-export async function getMerchantBookingModel(
-  merchantId: number,
-): Promise<MerchantBookingModelF[]> {
-  return await get<MerchantBookingModelF[]>(
-    `/sku/model/list/with/biz?id=${merchantId}`,
-  );
+export async function getMerchantBookingModel(merchantId: number): Promise<MerchantBookingModelF[]> {
+  return await get<MerchantBookingModelF[]>(`/sku/model/list/with/biz?id=${merchantId}`);
 }
 
 // 添加预约型号
-export async function addMerchantBookingModel(
-  name: string,
-  merchantId: number,
-): Promise<boolean> {
+export async function addMerchantBookingModel(name: string, merchantId: number): Promise<boolean> {
   return await post('/sku/model/add/one', {
     bizUserId: merchantId,
     name,
   });
 }
 
-export async function deleteMerchantBookingModel(
-  modelId: number,
-): Promise<boolean> {
+export async function deleteMerchantBookingModel(modelId: number): Promise<boolean> {
   return await post('/sku/model/del/one', {
     id: modelId,
   });

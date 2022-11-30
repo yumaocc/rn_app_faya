@@ -1,0 +1,9 @@
+[submodule "src/util"]
+	path = src/util
+	url = git@e.coding.net:styy/faya-biz/util.git
+[submodule "src/fds"]
+	path = src/fds
+	url = git@e.coding.net:styy/faya-fe/fds.git
+[submodule "src/fst"]
+	path = src/fst
+	url = git@e.coding.net:styy/faya-fe/fst.git
