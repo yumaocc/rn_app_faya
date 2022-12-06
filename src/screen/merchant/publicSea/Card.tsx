@@ -3,16 +3,29 @@ import React from 'react';
 import {View, Text, StyleSheet, Image} from 'react-native';
 import {PlusButton} from '../../../component';
 // import {BadgeFlag} from '../../../component';
+import {useCommonDispatcher} from '../../../helper/hooks';
+import * as api from '../../../apis';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {MerchantF, StylePropView} from '../../../models';
 
 interface CardProps {
   merchant: MerchantF;
   style?: StylePropView;
+  update: () => void;
 }
 
 const Card: React.FC<CardProps> = props => {
-  const {merchant, style} = props;
+  const {merchant, style, update} = props;
+  const [commonDispatcher] = useCommonDispatcher();
+  const addMyPrivateSeas = async (id: number) => {
+    try {
+      await api.merchant.drawMerchant(id);
+      commonDispatcher.success('添加成功');
+      update();
+    } catch (error) {
+      commonDispatcher.error((error as string) || '添加失败');
+    }
+  };
   return (
     <View style={[styles.container, style]}>
       <View style={[globalStyles.borderBottom, styles.header]}>
@@ -62,7 +75,7 @@ const Card: React.FC<CardProps> = props => {
         </View>
       </View>
 
-      <PlusButton title="加入我的私海" style={{justifyContent: 'center', paddingVertical: 15}} />
+      <PlusButton title="加入我的私海" onPress={() => addMyPrivateSeas(merchant.id)} style={{justifyContent: 'center', paddingVertical: 15}} />
     </View>
   );
 };

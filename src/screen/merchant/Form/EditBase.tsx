@@ -10,6 +10,7 @@ import Upload from '../../../component/Form/Upload';
 interface EditBaseProps {
   type: MerchantCreateType;
 }
+
 const EditBase: React.FC<EditBaseProps> = ({type}) => {
   const {data} = useRequest(async () => {
     const res = await api.merchant.getMerchantCategories();
@@ -19,6 +20,7 @@ const EditBase: React.FC<EditBaseProps> = ({type}) => {
     }));
     return Promise.resolve(category);
   });
+
   return (
     <>
       <SectionGroup style={styles.sectionGroup}>
@@ -77,6 +79,7 @@ const EditBase: React.FC<EditBaseProps> = ({type}) => {
     </>
   );
 };
+
 export default EditBase;
 
 const styles = StyleSheet.create({

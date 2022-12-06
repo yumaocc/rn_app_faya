@@ -1,31 +1,26 @@
 import {useNavigation} from '@react-navigation/native';
-import React, {useEffect, useState} from 'react';
+import {useRequest} from 'ahooks';
+import React from 'react';
 import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import * as api from '../../../apis';
 import {PlusButton} from '../../../component';
 import {globalStyleVariables} from '../../../constants/styles';
-import {FakeNavigation, MerchantCreateType, MerchantF} from '../../../models';
+import {FakeNavigation, MerchantCreateType} from '../../../models';
 import Card from './Card';
 
 const PublicSeaList: React.FC = () => {
-  const [merchantList, setMerchantList] = React.useState<MerchantF[]>([]);
-  const [total, setTotal] = useState(0);
   const navigation = useNavigation() as FakeNavigation;
-  useEffect(() => {
-    async function asyncFunc() {
-      const res = await api.merchant.getPublicSeaMerchants({
-        pageIndex: 1,
-        pageSize: 10,
-      });
-      setTotal(res.page.pageTotal);
-      setMerchantList(res.content);
-    }
-    asyncFunc();
-  }, []);
+  const {data, run} = useRequest(async () => {
+    return await api.merchant.getPublicSeaMerchants({
+      pageIndex: 1,
+      pageSize: 10,
+    });
+  });
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <Text>共{total}家</Text>
+        <Text>共{data?.page?.pageTotal}家</Text>
       </View>
       <View style={{paddingHorizontal: globalStyleVariables.MODULE_SPACE}}>
         <PlusButton
@@ -41,8 +36,8 @@ const PublicSeaList: React.FC = () => {
           }}
         />
         <View>
-          {merchantList.map(merchant => {
-            return <Card merchant={merchant} key={merchant.id} style={{marginTop: globalStyleVariables.MODULE_SPACE}} />;
+          {data?.content?.map(merchant => {
+            return <Card update={run} merchant={merchant} key={merchant.id} style={{marginTop: globalStyleVariables.MODULE_SPACE}} />;
           })}
         </View>
       </View>
@@ -55,6 +50,7 @@ const styles = StyleSheet.create({
   container: {},
   header: {
     height: 45,
+    paddingLeft: 20,
     justifyContent: 'center',
     backgroundColor: '#fff',
   },
