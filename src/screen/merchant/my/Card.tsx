@@ -15,25 +15,12 @@ const Card: React.FC<CardProps> = props => {
     <View style={[styles.container, style]}>
       <View style={[globalStyles.borderBottom, styles.header]}>
         <View style={[styles.logo]}>
-          <Image
-            source={{uri: 'https://fakeimg.pl/100'}}
-            style={{width: 40, height: 40}}
-          />
+          <Image source={{uri: 'https://fakeimg.pl/100'}} style={{width: 40, height: 40}} />
         </View>
         <View style={styles.headerRight}>
-          <View
-            style={[
-              globalStyles.flexNormal,
-              {justifyContent: 'space-between'},
-            ]}>
+          <View style={[globalStyles.flexNormal, {justifyContent: 'space-between'}]}>
             <View style={{flex: 1, flexDirection: 'row'}}>
-              <Text
-                style={[
-                  globalStyles.textColorPrimary,
-                  styles.merchantName,
-                  {flex: 1},
-                ]}
-                numberOfLines={1}>
+              <Text style={[globalStyles.textColorPrimary, styles.merchantName, {flex: 1}]} numberOfLines={1}>
                 {merchant.name}
               </Text>
             </View>
@@ -61,28 +48,16 @@ const Card: React.FC<CardProps> = props => {
           },
         ]}>
         <View>
-          <Text style={[globalStyles.fontSecondary, styles.centerText]}>
-            商户模式
-          </Text>
-          <Text style={[globalStyles.fontPrimary, styles.centerTextValue]}>
-            {merchant.multiStore ? '连锁' : '单店'}
-          </Text>
+          <Text style={[globalStyles.fontSecondary, styles.centerText]}>商户模式</Text>
+          <Text style={[globalStyles.fontPrimary, styles.centerTextValue]}>{merchant.multiStore ? '连锁' : '单店'}</Text>
         </View>
         <View>
-          <Text style={[globalStyles.fontSecondary, styles.centerText]}>
-            店铺数量
-          </Text>
-          <Text style={[globalStyles.fontPrimary, styles.centerTextValue]}>
-            {merchant?.shopNums || 0}
-          </Text>
+          <Text style={[globalStyles.fontSecondary, styles.centerText]}>店铺数量</Text>
+          <Text style={[globalStyles.fontPrimary, styles.centerTextValue]}>{merchant?.shopNums || 0}</Text>
         </View>
         <View>
-          <Text style={[globalStyles.fontSecondary, styles.centerText]}>
-            商品数量
-          </Text>
-          <Text style={[globalStyles.fontPrimary, styles.centerTextValue]}>
-            {merchant?.saleProductNums || 0}
-          </Text>
+          <Text style={[globalStyles.fontSecondary, styles.centerText]}>商品数量</Text>
+          <Text style={[globalStyles.fontPrimary, styles.centerTextValue]}>{merchant?.saleProductNums || 0}</Text>
         </View>
       </View>
 

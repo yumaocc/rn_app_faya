@@ -1,5 +1,5 @@
 import {useNavigation} from '@react-navigation/native';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import * as api from '../../../apis';
 import {PlusButton} from '../../../component';
@@ -9,6 +9,7 @@ import Card from './Card';
 
 const PublicSeaList: React.FC = () => {
   const [merchantList, setMerchantList] = React.useState<MerchantF[]>([]);
+  const [total, setTotal] = useState(0);
   const navigation = useNavigation() as FakeNavigation;
   useEffect(() => {
     async function asyncFunc() {
@@ -16,7 +17,7 @@ const PublicSeaList: React.FC = () => {
         pageIndex: 1,
         pageSize: 10,
       });
-      console.log(res);
+      setTotal(res.page.pageTotal);
       setMerchantList(res.content);
     }
     asyncFunc();
@@ -24,7 +25,7 @@ const PublicSeaList: React.FC = () => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <Text>共{999}家</Text>
+        <Text>共{total}家</Text>
       </View>
       <View style={{paddingHorizontal: globalStyleVariables.MODULE_SPACE}}>
         <PlusButton
@@ -41,13 +42,7 @@ const PublicSeaList: React.FC = () => {
         />
         <View>
           {merchantList.map(merchant => {
-            return (
-              <Card
-                merchant={merchant}
-                key={merchant.id}
-                style={{marginTop: globalStyleVariables.MODULE_SPACE}}
-              />
-            );
+            return <Card merchant={merchant} key={merchant.id} style={{marginTop: globalStyleVariables.MODULE_SPACE}} />;
           })}
         </View>
       </View>

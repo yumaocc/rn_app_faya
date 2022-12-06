@@ -5,13 +5,12 @@ import TabNavigator from '../screen/tabs/TabNavigator';
 import Login from '../screen/common/Login';
 import {useSelector} from 'react-redux';
 import {RootState} from '../redux/reducers';
-import {Stack, commonScreenOptions} from './config';
-import Contract from '../screen/contract/Contract';
-import EditContract from '../screen/contract/EditContract';
-
+import {Stack} from './config'; //commonScreenOptions
+// import ContractList from '../screen/contract/ContractList';
+// import EditContract from '../screen/contract/EditContract';
 import RouterSPU from './RouterSPU';
 import RouterMerchant from './RouterMerchant';
-
+import RouteContract from './RouterContract';
 const Navigator: React.FC = () => {
   const token = useSelector((state: RootState) => state.common.token);
   const isLogout = useSelector((state: RootState) => state.user.isLogout);
@@ -26,32 +25,9 @@ const Navigator: React.FC = () => {
               headerShown: false,
             }}
           />
-          <Stack.Screen
-            name="EditContract"
-            component={EditContract}
-            options={{
-              ...commonScreenOptions,
-              title: '编辑合同',
-            }}
-          />
-          <Stack.Screen
-            name="AddContract"
-            component={EditContract}
-            options={{
-              ...commonScreenOptions,
-              title: '新增合同',
-            }}
-          />
-          <Stack.Screen
-            name="Contract"
-            component={Contract}
-            options={{
-              ...commonScreenOptions,
-              title: '我的合同',
-            }}
-          />
           {RouterSPU}
           {RouterMerchant}
+          {RouteContract}
         </>
       ) : (
         <>

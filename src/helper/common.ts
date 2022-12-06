@@ -2,7 +2,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import isArray from 'lodash/isArray';
 import isNil from 'lodash/isNil';
 import isObject from 'lodash/isObject';
-import {DateTimeString, DateString} from '../models';
+// import {DateTimeString, DateString} from '../models';
 
 // 清理模糊匹配的输入
 function reshapeInput(
@@ -32,11 +32,7 @@ function reshapeInput(
 }
 
 // 模糊匹配。算法来自[这里](https://github.com/gjuchault/fuzzyjs)
-export function fuzzyMatch(
-  source: string,
-  query: string,
-  opts: {caseSensitive?: boolean} = {},
-): boolean {
+export function fuzzyMatch(source: string, query: string, opts: {caseSensitive?: boolean} = {}): boolean {
   const [reshapedQuery, reshapedSource] = reshapeInput(query, source, opts);
 
   // if no source, then only return true if query is also empty
@@ -103,6 +99,6 @@ export function cleanPrivateProperty<T = any>(obj: T): T {
   return copiedObj as T;
 }
 
-export function getDateFromDateTime(date: DateTimeString): DateString {
-  return date.split(' ')[0];
-}
+// export function getDateFromDateTime(date: DateTimeString): DateString {
+//   return date.split(' ')[0];
+// }

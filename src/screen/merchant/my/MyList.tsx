@@ -26,13 +26,7 @@ const MyList: React.FC = () => {
       <View style={{paddingHorizontal: globalStyleVariables.MODULE_SPACE}}>
         <View>
           {merchantList.map(merchant => {
-            return (
-              <Card
-                merchant={merchant}
-                key={merchant.id}
-                style={{marginTop: globalStyleVariables.MODULE_SPACE}}
-              />
-            );
+            return <Card merchant={merchant} key={merchant.id} style={{marginTop: globalStyleVariables.MODULE_SPACE}} />;
           })}
         </View>
       </View>

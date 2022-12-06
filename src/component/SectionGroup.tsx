@@ -9,10 +9,6 @@ interface SectionGroupProps {
 }
 
 const SectionGroup: React.FC<SectionGroupProps> = props => {
-  return (
-    <View style={[{marginTop: globalStyleVariables.MODULE_SPACE}, props.style]}>
-      {props.children}
-    </View>
-  );
+  return <View style={[{marginTop: globalStyleVariables.MODULE_SPACE}, props.style]}>{props.children}</View>;
 };
 export default SectionGroup;

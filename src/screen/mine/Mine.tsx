@@ -1,6 +1,6 @@
 import React from 'react';
 import {Badge, Icon, Button} from '@ant-design/react-native';
-import {useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {View, Text, ScrollView, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useSelector} from 'react-redux';
@@ -45,7 +45,7 @@ const Mine: React.FC = () => {
         </SectionGroup>
 
         <SectionGroup>
-          <TouchableOpacity onPress={() => navigation.navigate('Contract')}>
+          <TouchableOpacity onPress={() => navigation.navigate('ContractList')}>
             <OperateItem title="合同管理" icon={<Icon name="wallet" />} />
           </TouchableOpacity>
 

@@ -1,8 +1,6 @@
 import React from 'react';
 import {Text, View, ScrollView, StyleSheet} from 'react-native';
-// import {SafeAreaView} from 'react-native-safe-area-context';
 import {Header} from '@react-navigation/elements';
-// import {useUserDispatcher} from '../../../helper/hooks';
 import {Icon} from '@ant-design/react-native';
 import {PlusButton, UnitNumber} from '../../component';
 import {globalStyles, globalStyleVariables} from '../../constants/styles';
@@ -49,7 +47,7 @@ const Home: React.FC = () => {
           </View>
           {/* 我的合同 */}
           <View style={[globalStyles.moduleMarginLeft, styles.cardContainer, {flex: 1}]}>
-            <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Contract')}>
+            <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('ContractList')}>
               <View style={styles.cardTitleContainer}>
                 <Text style={[globalStyles.textColorPrimary, styles.cardTitle]}>我的合同</Text>
                 <Icon name="right" style={globalStyles.iconRight} />
@@ -58,9 +56,9 @@ const Home: React.FC = () => {
               <View style={[globalStyles.lineHorizontal, {marginVertical: 10}]} />
             </TouchableOpacity>
             <PlusButton
-              title="我的合同"
+              title="新增合同"
               onPress={() => {
-                navigation.navigate('Contract');
+                navigation.navigate('AddContract');
               }}
             />
           </View>

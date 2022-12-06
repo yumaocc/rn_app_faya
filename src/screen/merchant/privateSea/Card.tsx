@@ -1,7 +1,6 @@
 import React from 'react';
 import {View, Text, Image, StyleSheet} from 'react-native';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
-import {getDateFromDateTime} from '../../../helper';
 import {BoolEnum, MerchantF, StylePropView} from '../../../models';
 
 interface CardProps {
@@ -14,25 +13,12 @@ const Card: React.FC<CardProps> = ({merchant, style}) => {
     <View style={[style, styles.container]}>
       <View style={[globalStyles.borderBottom, styles.header]}>
         <View style={[styles.logo]}>
-          <Image
-            source={{uri: 'https://fakeimg.pl/100'}}
-            style={{width: 40, height: 40}}
-          />
+          <Image source={{uri: 'https://fakeimg.pl/100'}} style={{width: 40, height: 40}} />
         </View>
         <View style={styles.headerRight}>
-          <View
-            style={[
-              globalStyles.flexNormal,
-              {justifyContent: 'space-between'},
-            ]}>
+          <View style={[globalStyles.flexNormal, {justifyContent: 'space-between'}]}>
             <View style={{flex: 1, flexDirection: 'row'}}>
-              <Text
-                style={[
-                  globalStyles.textColorPrimary,
-                  styles.merchantName,
-                  {flex: 1},
-                ]}
-                numberOfLines={1}>
+              <Text style={[globalStyles.textColorPrimary, styles.merchantName, {flex: 1}]} numberOfLines={1}>
                 {merchant.name}
               </Text>
             </View>
@@ -49,38 +35,18 @@ const Card: React.FC<CardProps> = ({merchant, style}) => {
           </Text>
         </View>
       </View>
-      <View
-        style={[
-          globalStyles.containerLR,
-          globalStyles.borderBottom,
-          {paddingVertical: globalStyleVariables.MODULE_SPACE},
-        ]}>
+      <View style={[globalStyles.containerLR, globalStyles.borderBottom, {paddingVertical: globalStyleVariables.MODULE_SPACE}]}>
         <Text style={globalStyles.fontSecondary}>商户模式</Text>
-        <Text style={globalStyles.fontSecondary}>
-          {merchant.multiStore === BoolEnum.TRUE ? '连锁' : '单店'}
-        </Text>
+        <Text style={globalStyles.fontSecondary}>{merchant.multiStore === BoolEnum.TRUE ? '连锁' : '单店'}</Text>
       </View>
-      <View
-        style={[
-          globalStyles.containerLR,
-          globalStyles.borderBottom,
-          {paddingVertical: globalStyleVariables.MODULE_SPACE},
-        ]}>
+      <View style={[globalStyles.containerLR, globalStyles.borderBottom, {paddingVertical: globalStyleVariables.MODULE_SPACE}]}>
         <Text style={globalStyles.fontSecondary}>认领时间</Text>
-        <Text style={globalStyles.fontSecondary}>
-          {getDateFromDateTime(merchant.claimTime)}
-        </Text>
+        {/* <Text style={globalStyles.fontSecondary}>{getDateFromDateTime(merchant.claimTime)}</Text> */}
       </View>
-      <View
-        style={[
-          globalStyles.borderBottom,
-          {paddingVertical: globalStyleVariables.MODULE_SPACE},
-        ]}>
+      <View style={[globalStyles.borderBottom, {paddingVertical: globalStyleVariables.MODULE_SPACE}]}>
         <View style={globalStyles.containerLR}>
           <Text style={globalStyles.fontSecondary}>上次跟进</Text>
-          <Text style={globalStyles.fontSecondary}>
-            {getDateFromDateTime(merchant.claimTime)}
-          </Text>
+          {/* <Text style={globalStyles.fontSecondary}>{getDateFromDateTime(merchant.claimTime)}</Text> */}
         </View>
         <View style={styles.follow}>
           <Text

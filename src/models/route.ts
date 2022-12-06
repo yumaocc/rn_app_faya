@@ -30,11 +30,11 @@ export type RootStackParamList = {
   AddMerchant: {type: MerchantCreateType} | undefined;
   EditContract: {id: number};
   AddContract: undefined;
+  ContractList: undefined;
   EditSPU: {id: number; bizId?: number};
   AddSPU: {bizId?: number};
   SPUList: undefined;
   SPUDetail: {id: number};
-  Contract: undefined;
 };
 
 export type Props = NativeStackScreenProps<RootStackParamList>;

@@ -2,14 +2,14 @@ import React from 'react';
 import {FC} from 'react';
 import {useRequest} from 'ahooks';
 import {Icon} from '@ant-design/react-native';
-import {NavigationBar} from '../../component';
-import {getMyContractList} from '../../apis/contract';
+import {NavigationBar} from '../../../component';
+import {getMyContractList} from '../../../apis/contract';
 import {View, Text, StyleSheet, SectionList} from 'react-native';
-import Loading from '../common/Loading';
-import {UnitNumber} from '../../component';
-import {globalStyleVariables, globalStyles} from '../../constants/styles';
+import Loading from '../../common/Loading';
+import {UnitNumber} from '../../../component';
+import {globalStyleVariables, globalStyles} from '../../../constants/styles';
 
-const Contract: FC = () => {
+const ContractList: FC = () => {
   const {data, loading, run} = useRequest(getMyContractList);
   console.log(data?.page, run);
 
@@ -98,4 +98,4 @@ const style = StyleSheet.create({
   },
 });
 
-export default Contract;
+export default ContractList;

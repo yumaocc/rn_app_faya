@@ -5,7 +5,7 @@ import {Stepper, SwipeAction} from '@ant-design/react-native';
 
 import {Checkbox, Form, FormTitle, Input, Modal, PlusButton, SectionGroup} from '../../../../component';
 import {globalStyles, globalStyleVariables} from '../../../../constants/styles';
-import {convertNumber2Han, findItem, getBuyLimitStr, getItemByIndex} from '../../../../helper';
+import {findItem, getBuyLimitStr, getItemByIndex} from '../../../../helper';
 import {BoolEnum, PackagedSKU, PackagedSKUForm, PackagedSKUItem, SKU} from '../../../../models';
 import {RootState} from '../../../../redux/reducers';
 import {styles} from '../style';
@@ -105,7 +105,7 @@ const SKUList: React.FC = () => {
       {skuList.map((sku, index) => {
         return (
           <SectionGroup key={index} style={styles.sectionGroupStyle}>
-            <FormTitle title={`套餐${convertNumber2Han(index + 1)}设置`} />
+            <FormTitle title={`套餐${index + 1}设置`} />
             <Form.Item label="套餐名称">
               <Text>{sku.skuName}</Text>
             </Form.Item>
@@ -127,7 +127,7 @@ const SKUList: React.FC = () => {
               desc={contractDetail?.skuInfoReq?.openSkuStock === BoolEnum.TRUE ? '' : `${sku._stock}份`}
               extra={
                 <View style={[{borderRadius: 5, backgroundColor: '#00000008', padding: 10}]}>
-                  <FormTitle style={{backgroundColor: 'transparent'}} title={`套餐${convertNumber2Han(index + 1)}内容`} />
+                  <FormTitle style={{backgroundColor: 'transparent'}} title={`套餐${index + 1}内容`} />
                   {sku.list?.map((detail, index) => {
                     return (
                       <View style={[globalStyles.containerLR, {paddingVertical: 4}]} key={index}>
@@ -148,7 +148,7 @@ const SKUList: React.FC = () => {
       {packList.map((pack, index) => {
         return (
           <SectionGroup key={index} style={styles.sectionGroupStyle}>
-            <FormTitle title={`组合套餐${convertNumber2Han(index + 1)}`} />
+            <FormTitle title={`组合套餐${index + 1}`} />
 
             <SwipeAction
               right={[

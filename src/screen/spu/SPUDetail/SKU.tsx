@@ -2,7 +2,7 @@ import React from 'react';
 import {Text, ScrollView, View} from 'react-native';
 import {Footer, Form, FormTitle, SectionGroup, Switch} from '../../../component';
 import {globalStyles} from '../../../constants/styles';
-import {convertNumber2Han, findItem, getBuyLimitStr} from '../../../helper';
+import {findItem, getBuyLimitStr} from '../../../helper';
 import {BoolEnum, ContractDetailF, MerchantDetailF, SPUDetailF} from '../../../models';
 import {styles} from './style';
 
@@ -34,7 +34,7 @@ const SKU: React.FC<SKUProps> = props => {
         const isShareStock = contractDetail?.skuInfoReq?.openSkuStock === BoolEnum.TRUE;
         return (
           <SectionGroup key={sku.skuId} style={styles.sectionGroupStyle}>
-            <FormTitle title={`套餐${convertNumber2Han(index + 1)}信息`} />
+            <FormTitle title={`套餐${index + 1}信息`} />
             <Form.Item label="套餐名称">
               <Text>{sku.skuName}</Text>
             </Form.Item>
@@ -55,7 +55,7 @@ const SKU: React.FC<SKUProps> = props => {
               extra={
                 sku?.list?.length > 0 ? (
                   <View style={[{borderRadius: 5, backgroundColor: '#00000008', padding: 10}]}>
-                    <FormTitle style={{backgroundColor: 'transparent'}} title={`套餐${convertNumber2Han(index + 1)}内容`} />
+                    <FormTitle style={{backgroundColor: 'transparent'}} title={`套餐${index + 1}内容`} />
                     {sku?.list?.map((detail, index) => {
                       return (
                         <View style={[globalStyles.containerLR, {paddingVertical: 4}]} key={index}>
@@ -77,7 +77,7 @@ const SKU: React.FC<SKUProps> = props => {
       {packList.map((pack, index) => {
         return (
           <SectionGroup key={pack.id} style={styles.sectionGroupStyle}>
-            <FormTitle title={`组合套餐${convertNumber2Han(index + 1)}信息`} />
+            <FormTitle title={`组合套餐${index + 1}信息`} />
             <View style={{padding: 10}}>
               <View>
                 <Text style={globalStyles.fontSecondary}>名称：{pack?.packageName}</Text>
