@@ -39,6 +39,7 @@
     "qs": "^6.11.0",
     "rc-util": "^5.23.0",
     "react": "18.0.0",
+    "react-hook-form": "^7.40.0",
     "react-native": "0.69.2",
     "react-native-dropdown-picker": "^5.4.3",
     "react-native-gesture-handler": "^2.5.0",

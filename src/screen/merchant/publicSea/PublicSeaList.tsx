@@ -5,7 +5,7 @@ import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import * as api from '../../../apis';
 import {PlusButton} from '../../../component';
 import {globalStyleVariables} from '../../../constants/styles';
-import {FakeNavigation, MerchantCreateType} from '../../../models';
+import {FakeNavigation, MerchantCreateType, MerchantAction} from '../../../models';
 import Card from './Card';
 
 const PublicSeaList: React.FC = () => {
@@ -30,7 +30,8 @@ const PublicSeaList: React.FC = () => {
             navigation.navigate({
               name: 'AddMerchant',
               params: {
-                type: MerchantCreateType.PUBLIC_SEA,
+                id: MerchantCreateType.PUBLIC_SEA,
+                action: MerchantAction.ADD,
               },
             });
           }}

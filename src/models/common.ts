@@ -83,3 +83,17 @@ export interface FileWithURL {
   url: string;
   uid?: string;
 }
+
+//城市三级分类
+
+export interface Site {
+  id: number;
+  name: string;
+  children: Site[];
+}
+
+export interface City {
+  value: number;
+  label: string;
+  children?: City[];
+}

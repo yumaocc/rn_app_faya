@@ -17,6 +17,7 @@ export interface FormItemProps {
   vertical?: boolean;
   noStyle?: boolean;
   style?: StylePropView;
+  horizontal?: boolean; //图片和label 上下居中， 两端对齐
 }
 
 const FormItem: React.FC<FormItemProps> = props => {
@@ -65,6 +66,34 @@ const FormItem: React.FC<FormItemProps> = props => {
                 </Text>
               </View>
             )}
+          </View>
+        </View>
+        <View style={styles.extra}>{renderChildren()}</View>
+      </View>
+    );
+  }
+  if (props.horizontal) {
+    return (
+      <View
+        style={[
+          hiddenBorderBottom ? {} : globalStyles.borderBottom,
+          hiddenBorderTop ? {} : globalStyles.borderTop,
+          styles.container,
+          props.style,
+          {flexDirection: 'row', justifyContent: 'space-between'},
+        ]}>
+        <View style={[styles.item]}>
+          <View style={[styles.labelLeft, {maxWidth: '100%'}]}>
+            <View style={styles.labelWrapper}>
+              <Text style={[globalStyles.fontPrimary, styles.label, {marginBottom: 0}]}>{label}</Text>
+              {props.desc && (
+                <View style={{marginTop: 5}}>
+                  <Text numberOfLines={1} style={styles.desc}>
+                    {props.desc}
+                  </Text>
+                </View>
+              )}
+            </View>
           </View>
         </View>
         <View style={styles.extra}>{renderChildren()}</View>
@@ -139,5 +168,9 @@ const styles = StyleSheet.create({
   },
   extra: {
     marginTop: globalStyleVariables.MODULE_SPACE,
+  },
+  horizontal: {
+    marginTop: 0,
+    alignItems: 'flex-end',
   },
 });

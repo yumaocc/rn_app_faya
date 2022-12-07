@@ -18,9 +18,22 @@ export type {
   StylePropText,
   StylePropView,
   AppHeader,
+  Site,
 } from './common';
 export type {HomeStatisticsF, Statistics} from './home';
-export type {MerchantF, MerchantCategory, ShopForm, MerchantForm, MyMerchantF, MerchantDetailF, MyMerchantSimpleF, MerchantSimpleF, ShopF, MerchantBookingModelF} from './merchant';
+export type {
+  MerchantF,
+  MerchantCategory,
+  ShopForm,
+  MerchantForm,
+  MyMerchantF,
+  MerchantDetailF,
+  MyMerchantSimpleF,
+  MerchantSimpleF,
+  ShopF,
+  MerchantBookingModelF,
+  FormMerchant,
+} from './merchant';
 export type {PagedData, Response, FetchData, IDBody} from './api';
 export type {ContractBookingInfo, ContractFile, ContractForm, ContractSKU, ContractSKUDetail, ContractSKUInfo, ContractSPU, ContractF, ContractDetailF} from './contract';
 export type {
@@ -44,5 +57,5 @@ export type {CommissionToday, CommissionExpect, Commission, CommissionTop, SaleT
 
 export {LoginState, UserState, UserType, UserWithdrawalRecordStatus} from './user';
 export {CustomError, CustomErrorWithPayload, BoolEnum} from './common';
-export {MerchantType, MerchantCreateType, MerchantAgentType} from './merchant';
+export {MerchantType, MerchantCreateType, MerchantAgentType, MerchantAction} from './merchant';
 export {BuyLimitType, SettlementType, AccountType, ProtocolType, InvoiceType, BookingType} from './contract';

@@ -1,12 +1,14 @@
 import {Button} from '@ant-design/react-native';
+import {useNavigation} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {View, StyleSheet, ScrollView, useWindowDimensions} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {createMerchant} from '../../../apis/merchant';
 import {Form, FormTitle, Input, NavigationBar, SectionGroup, Tabs, Select} from '../../../component';
 import Upload from '../../../component/Form/Upload';
 import {globalStyleVariables} from '../../../constants/styles';
-import {useParams, useRefCallback} from '../../../helper/hooks';
-import {MerchantCreateType, MerchantAgentType} from '../../../models';
+import {useParams, useRefCallback, useCommonDispatcher} from '../../../helper/hooks';
+import {MerchantCreateType, MerchantAgentType, MerchantAction, FormMerchant, FakeNavigation} from '../../../models';
 import EditBase from '../Form/EditBase';
 
 const tabs = [
@@ -14,15 +16,20 @@ const tabs = [
   {title: '资质信息', key: 'qualification'},
 ];
 
+// add 新增  edit 编辑 view 查看
+// 当id === MerchantCreateType.PRIVATE_SEA, 并且 action === view的时候不能编辑
+// 当id === MerchantCreateType.PRIVATE_SEA, 并且 action === edit 或者add的时候可以编辑
+
 const AddMerchant: React.FC = () => {
-  const {type} = useParams<{type: MerchantCreateType}>();
-  console.log(type);
-  const [legalAuthType, setLegalAuthType] = useState('法人');
+  const {identity, action, id = 0} = useParams<{identity: MerchantCreateType; action: MerchantAction; id: number}>();
+  console.log(action, id);
+  const [commonDispatcher] = useCommonDispatcher();
+  const [legalAuthType, setLegalAuthType] = useState<MerchantAgentType>(MerchantAgentType.LEGAL);
   const [currentKey, setCurrentKey] = React.useState('base');
   const {width: windowWidth} = useWindowDimensions();
   const [ref, setRef, isReady] = useRefCallback<ScrollView>();
   const [form] = Form.useForm();
-
+  const navigation = useNavigation() as FakeNavigation;
   // 自动切换到指定step
   useEffect(() => {
     if (!isReady) {
@@ -37,25 +44,36 @@ const AddMerchant: React.FC = () => {
       });
     }, 0);
   }, [currentKey, isReady, ref, windowWidth]);
-
   useEffect(() => {
-    const res = form.getFieldValue('legalAuthType');
-    if (res?.legalAuthType === MerchantAgentType.AGENT) {
-      setLegalAuthType('经办人');
-    } else {
-      setLegalAuthType('法人');
+    if (!isReady) {
+      return;
     }
-  }, [form]);
+    form.setFieldsValue({
+      legalAuthType: MerchantAgentType.LEGAL,
+    });
+  }, [form, isReady]);
+  const onSubmit = async () => {
+    try {
+      const formData = form.getFieldsValue() as FormMerchant;
+      const {avatar, businessLicense, locationWithCompanyId} = formData;
+      await createMerchant({...formData, avatar: avatar[0].url, businessLicense: businessLicense[0].url, locationWithCompanyId: locationWithCompanyId[2], type: 0});
+      commonDispatcher.success('添加成功');
+      navigation.navigate('Tab');
+    } catch (error) {
+      commonDispatcher.success((JSON.stringify(error) as string) || '添加失败');
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
-      <NavigationBar title={type === MerchantCreateType.PUBLIC_SEA ? '新建公海商家' : '新建私海商家'} />
+      <NavigationBar title={identity === MerchantCreateType.PUBLIC_SEA ? '新建公海商家' : '新建私海商家'} />
       <Form form={form}>
         <View style={styles.container}>
           <Tabs tabs={tabs} currentKey={currentKey} onChange={setCurrentKey} style={{backgroundColor: '#fff'}} />
           <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
             <View style={{width: windowWidth}}>
               <ScrollView>
-                <EditBase type={type} />
+                <EditBase type={identity} />
               </ScrollView>
             </View>
             <View style={{width: windowWidth}}>
@@ -70,37 +88,34 @@ const AddMerchant: React.FC = () => {
                   </Form.Item>
                   <Form.Item label="认证方式" name="legalAuthType">
                     <Select
+                      value={currentKey}
                       options={[
                         {label: '法人', value: MerchantAgentType.LEGAL},
                         {label: ' 经办人', value: MerchantAgentType.AGENT},
                       ]}
+                      onChange={e => {
+                        setLegalAuthType(e);
+                      }}
                     />
                   </Form.Item>
-                  <Form.Item name="legalPhone" label={`请输入${legalAuthType}手机号`}>
+                  <Form.Item name="legalPhone" label={`${legalAuthType === MerchantAgentType.LEGAL ? '法人' : '经办人'}手机号`}>
                     <Input />
                   </Form.Item>
-                  <Form.Item name="legalName" label={`${legalAuthType}姓名`}>
+                  <Form.Item name="legalName" label={`${legalAuthType === MerchantAgentType.LEGAL ? '法人' : '经办人'}姓名`}>
                     <Input />
                   </Form.Item>
-                  <Form.Item name="legalNumber" label={`${legalAuthType}身份证号`}>
+                  <Form.Item name="legalNumber" label={`${legalAuthType === MerchantAgentType.LEGAL ? '法人' : '经办人'}身份证号`}>
                     <Input />
                   </Form.Item>
-                  {/* <Form.Item name="businessLicense" label="营业执照">
-                    <Upload maxCount={1} />
-                  </Form.Item> */}
-                  <Form.Item label="营业执照" vertical desc="大于300px*300px jpg/png/gif" name="businessLicense">
+                  <Form.Item label="营业执照" horizontal name="businessLicense">
                     <Upload maxCount={1} />
                   </Form.Item>
                 </SectionGroup>
               </ScrollView>
             </View>
           </ScrollView>
-          <Button
-            type="warning"
-            onPress={() => {
-              console.log(form.getFieldsValue());
-            }}>
-            检查
+          <Button style={{margin: 10}} type="primary" onPress={onSubmit}>
+            保存
           </Button>
         </View>
       </Form>

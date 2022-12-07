@@ -12,6 +12,7 @@ import {
   SearchParam,
   ShopF,
   ShopForm,
+  Site,
 } from '../models';
 
 // 获取公海商家（分页）
@@ -43,8 +44,8 @@ export async function getMerchantCategories(): Promise<MerchantCategory[]> {
 }
 
 // 创建商户
-export async function createMerchant(merchant: MerchantForm): Promise<number> {
-  return await post<number, MerchantForm>('/biz/user/add/one', merchant);
+export async function createMerchant(merchant: MerchantForm): Promise<boolean> {
+  return await post<boolean, MerchantForm>('/biz/user/add/one', merchant);
 }
 
 // 领取到我的私海
@@ -116,4 +117,9 @@ export async function inviteAuth(merchantId: number): Promise<boolean> {
   return await post<boolean, IDBody>('/biz/user/initiate/authentication', {
     id: merchantId,
   });
+}
+
+// 城市列表
+export async function cityList(): Promise<Site[]> {
+  return await get('/location/with/company/three/list');
 }

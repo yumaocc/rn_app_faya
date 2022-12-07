@@ -1,19 +1,24 @@
 import {useRequest} from 'ahooks';
-import React from 'react';
+import React, {useState} from 'react';
 import {StyleSheet} from 'react-native';
 import {BoolEnum} from '../../../models/common';
-import {SectionGroup, FormTitle, Form, Input, Select, PlusButton} from '../../../component';
+import {SectionGroup, FormTitle, Form, Input, Select, PlusButton, Cascader} from '../../../component';
 import * as api from '../../../apis';
 import {MerchantCreateType, MerchantType} from '../../../models';
 import Upload from '../../../component/Form/Upload';
+import {useLoadCity} from '../../../helper/hooks';
 
 interface EditBaseProps {
   type: MerchantCreateType;
 }
 
 const EditBase: React.FC<EditBaseProps> = ({type}) => {
+  const {cityList} = useLoadCity();
+  const [city, setCity] = useState<(string | number)[]>();
+  console.log(cityList, city, setCity);
   const {data} = useRequest(async () => {
     const res = await api.merchant.getMerchantCategories();
+
     const category = res.map(item => ({
       value: item.id,
       label: item.name,
@@ -25,7 +30,7 @@ const EditBase: React.FC<EditBaseProps> = ({type}) => {
     <>
       <SectionGroup style={styles.sectionGroup}>
         <FormTitle title="基本信息" />
-        <Form.Item label="商家LOGO" vertical desc="大于300px*300px jpg/png/gif" name="avatar">
+        <Form.Item label="商家LOGO" horizontal desc="大于300px*300px jpg/png/gif" name="avatar">
           <Upload maxCount={1} />
         </Form.Item>
         <Form.Item label="商家名称" name="name">
@@ -51,12 +56,10 @@ const EditBase: React.FC<EditBaseProps> = ({type}) => {
           />
         </Form.Item>
         <Form.Item name="areaInfo" label="商家城市">
-          <Select
-            options={[
-              {value: BoolEnum.FALSE, label: '单店'},
-              {value: BoolEnum.TRUE, label: '多店'},
-            ]}
-          />
+          <Cascader options={cityList || []} placeholder="请输入" />
+        </Form.Item>
+        <Form.Item label="站点" name="locationWithCompanyId">
+          <Cascader options={cityList || []} placeholder="请输入" />
         </Form.Item>
         <Form.Item label="商家地址" name="address">
           <Input placeholder="请输入商家地址" />

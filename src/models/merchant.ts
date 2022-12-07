@@ -49,7 +49,7 @@ export interface MerchantForm {
   categoryId: number; // 行业（分类）ID
   multiStore: BoolEnum; // 店铺类型，1是单店，2是多店
   businessType: MerchantType;
-  avatar?: string; // 商家logo
+  avatar?: string | [{url: string}]; // 商家logo
   address?: string; // 商家地址
   businessLicense?: string; // 营业执照图片地址
   businessName: string; // 企业名称
@@ -60,6 +60,25 @@ export interface MerchantForm {
   legalPhone: string; // 法人电话
   type?: MerchantCreateType; // 默认0公海用户，1私海用户
   shopList?: ShopForm[]; // 店铺列表
+  locationWithCompanyId?: number; //站点
+}
+export interface FormMerchant {
+  name: string; // 商家名称
+  categoryId: number; // 行业（分类）ID
+  multiStore: BoolEnum; // 店铺类型，1是单店，2是多店
+  businessType: MerchantType;
+  avatar?: [{url: string}]; // 商家logo
+  address?: string; // 商家地址
+  businessLicense?: [{url: string}]; // 营业执照图片地址
+  businessName: string; // 企业名称
+  enterpriseUsci?: string; // 统一社会信用代码
+  legalAuthType: MerchantAgentType; // 认证类型,法人还是经办人
+  legalName: string; // 法人姓名
+  legalNumber: string; // 法人身份证号
+  legalPhone: string; // 法人电话
+  type?: MerchantCreateType; // 默认0公海用户，1私海用户
+  shopList?: ShopForm[]; // 店铺列表
+  locationWithCompanyId?: number[]; //站点
 }
 
 export interface MerchantDetailF extends MerchantForm {
@@ -89,4 +108,10 @@ export enum MerchantType {
 export enum MerchantAgentType {
   LEGAL = 0, // 法人
   AGENT = 1, // 经办人
+}
+
+export enum MerchantAction {
+  ADD = 0, //新增
+  EDIT = 1, //编辑
+  VIEW = 2, // 查看
 }

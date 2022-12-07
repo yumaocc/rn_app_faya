@@ -26,7 +26,7 @@ const PrivateSeaList: React.FC = () => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <Text>
+        <Text style={{marginLeft: 10}}>
           我的私海
           <Text>{`${summary?.privateSeaNums || 0}/${summary?.privateSeaLimit || 0}`}</Text>
         </Text>

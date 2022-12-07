@@ -6,7 +6,7 @@ import {PlusButton, UnitNumber} from '../../component';
 import {globalStyles, globalStyleVariables} from '../../constants/styles';
 import {useHomeSummary} from '../../helper/hooks';
 import {useNavigation} from '@react-navigation/native';
-import {FakeNavigation} from '../../models';
+import {FakeNavigation, MerchantAction, MerchantCreateType} from '../../models';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const Home: React.FC = () => {
@@ -67,19 +67,25 @@ const Home: React.FC = () => {
         <View style={[globalStyles.moduleMarginTop, styles.cardContainer]}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <View style={{flex: 1, paddingRight: 10}}>
-              <View style={styles.cardTitleContainer}>
-                <Text style={[globalStyles.textColorPrimary, styles.cardTitle]}>我的私海</Text>
-                <Icon name="right" style={globalStyles.iconRight} />
-              </View>
-              <UnitNumber style={{paddingTop: 10}} value={summary?.privateSeaNums || 0} unit={`/${summary?.privateSeaLimit || 0}`} />
+              <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Tab')}>
+                <View style={styles.cardTitleContainer}>
+                  <Text style={[globalStyles.textColorPrimary, styles.cardTitle]}>我的私海</Text>
+                  <Icon name="right" style={globalStyles.iconRight} />
+                </View>
+                <UnitNumber style={{paddingTop: 10}} value={summary?.privateSeaNums || 0} unit={`/${summary?.privateSeaLimit || 0}`} />
+              </TouchableOpacity>
             </View>
+
             <View style={[globalStyles.lineVertical, {marginHorizontal: 5, height: 29}]} />
+
             <View style={{flex: 1, paddingLeft: 10}}>
-              <View style={styles.cardTitleContainer}>
-                <Text style={[globalStyles.textColorPrimary, styles.cardTitle]}>我的商家</Text>
-                <Icon name="right" style={globalStyles.iconRight} />
-              </View>
-              <UnitNumber style={{paddingTop: 10}} value={summary?.myBizUsers || 0} unit="家" />
+              <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Tab')}>
+                <View style={styles.cardTitleContainer}>
+                  <Text style={[globalStyles.textColorPrimary, styles.cardTitle]}>我的商家</Text>
+                  <Icon name="right" style={globalStyles.iconRight} />
+                </View>
+                <UnitNumber style={{paddingTop: 10}} value={summary?.myBizUsers || 0} unit="家" />
+              </TouchableOpacity>
             </View>
           </View>
           <View style={[globalStyles.lineHorizontal, {marginVertical: 10}]} />
@@ -87,7 +93,13 @@ const Home: React.FC = () => {
             style={{justifyContent: 'center'}}
             title="新增私海商家"
             onPress={() => {
-              console.log('on press');
+              navigation.navigate({
+                name: 'AddMerchant',
+                params: {
+                  type: MerchantCreateType.PRIVATE_SEA,
+                  action: MerchantAction.ADD,
+                },
+              });
             }}
           />
         </View>

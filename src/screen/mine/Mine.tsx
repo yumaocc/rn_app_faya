@@ -48,18 +48,19 @@ const Mine: React.FC = () => {
           <TouchableOpacity onPress={() => navigation.navigate('ContractList')}>
             <OperateItem title="合同管理" icon={<Icon name="wallet" />} />
           </TouchableOpacity>
-
-          <OperateItem
-            title="我的商品"
-            icon={<Icon name="wallet" />}
-            extra={
-              <Badge dot>
-                <View style={[globalStyles.tagWrapper]}>
-                  <Text style={[globalStyles.fontTertiary, globalStyles.tag]}>{5}件商品即将下架</Text>
-                </View>
-              </Badge>
-            }
-          />
+          <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('SPUList')}>
+            <OperateItem
+              title="我的商品"
+              icon={<Icon name="wallet" />}
+              extra={
+                <Badge dot>
+                  <View style={[globalStyles.tagWrapper]}>
+                    <Text style={[globalStyles.fontTertiary, globalStyles.tag]}>{5}件商品即将下架</Text>
+                  </View>
+                </Badge>
+              }
+            />
+          </TouchableOpacity>
         </SectionGroup>
 
         <SectionGroup>
