@@ -4,6 +4,7 @@ export const globalStyleVariables = {
   COLOR_PRIMARY: '#546DAD',
   COLOR_WARNING: '#FFC107',
   COLOR_DANGER: '#F44336',
+  COLOR_ERROR: '#FF6060',
   TEXT_COLOR_PRIMARY: '#333',
   TEXT_COLOR_SECONDARY: '#666',
   TEXT_COLOR_TERTIARY: '#999',
@@ -13,6 +14,11 @@ export const globalStyleVariables = {
 };
 
 export const globalStyles = StyleSheet.create({
+  error: {
+    color: '#FF6060', //表单错误的提示信息
+    fontSize: 12,
+    fontWeight: '500',
+  },
   containerForTmp: {
     flex: 1,
     alignItems: 'center',

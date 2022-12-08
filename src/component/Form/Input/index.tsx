@@ -1,11 +1,24 @@
-import React, {useCallback, useMemo} from 'react';
+import React, {useCallback, useMemo, forwardRef} from 'react';
 import {InputItem} from '@ant-design/react-native';
 import {InputItemProps} from '@ant-design/react-native/lib/input-item';
 import {globalStyleVariables} from '../../../constants/styles';
 import isNil from 'lodash/isNil';
+interface InputProps extends InputItemProps {
+  onBlur?: () => void;
+  name?: string;
+}
 
-const Input: React.FC<InputItemProps> = props => {
-  const {value, type, onChange, styles, ...restProps} = props;
+// Input.defaultProps = {
+//   clear: true,
+//   textAlign: 'right',
+//   last: true,
+//   type: 'text',
+//   placeholder: '请输入',
+//   labelNumber: 2,
+//   styles: {},
+// };
+const Input = (props: InputProps, ref?: any) => {
+  const {value, type = 'text', onChange, styles = {}, clear = true, textAlign = 'right', last = true, placeholder = '请输入', labelNumber = 2, ...restProps} = props;
   const shouldWrap = useMemo(() => type === 'number', [type]);
   const wrappedValue = useMemo(() => {
     if (shouldWrap) {
@@ -33,6 +46,12 @@ const Input: React.FC<InputItemProps> = props => {
 
   return (
     <InputItem
+      ref={ref}
+      textAlign={textAlign}
+      clear={clear}
+      last={last}
+      placeholder={placeholder}
+      labelNumber={labelNumber}
       placeholderTextColor={globalStyleVariables.TEXT_COLOR_TERTIARY}
       value={wrappedValue}
       {...restProps}
@@ -44,13 +63,5 @@ const Input: React.FC<InputItemProps> = props => {
     />
   );
 };
-Input.defaultProps = {
-  clear: true,
-  textAlign: 'right',
-  last: true,
-  type: 'text',
-  placeholder: '请输入',
-  labelNumber: 2,
-  styles: {},
-};
-export default Input;
+
+export default forwardRef<any, InputProps>(Input);

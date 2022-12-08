@@ -37,6 +37,8 @@ export type MerchantSimpleF = MyMerchantSimpleF;
 export interface ShopForm {
   id?: number;
   shopName?: string;
+  latitude: string | number;
+  longitude: string | number;
   contactPhone?: string; // 店铺电话
   addressDetail?: string; // 店铺地址
 }
@@ -44,12 +46,21 @@ export interface ShopF extends ShopForm {
   id: number;
 }
 
+export interface UploadFile {
+  url?: string;
+  uid: string;
+  uri?: string;
+  name?: string;
+  state?: 'success' | 'uploading';
+  // size?: number;
+}
+
 export interface MerchantForm {
   name: string; // 商家名称
   categoryId: number; // 行业（分类）ID
   multiStore: BoolEnum; // 店铺类型，1是单店，2是多店
   businessType: MerchantType;
-  avatar?: string | [{url: string}]; // 商家logo
+  avatar?: string; // 商家logo
   address?: string; // 商家地址
   businessLicense?: string; // 营业执照图片地址
   businessName: string; // 企业名称
@@ -60,6 +71,7 @@ export interface MerchantForm {
   legalPhone: string; // 法人电话
   type?: MerchantCreateType; // 默认0公海用户，1私海用户
   shopList?: ShopForm[]; // 店铺列表
+  areaInfo: number[]; //地区
   locationWithCompanyId?: number; //站点
 }
 export interface FormMerchant {
@@ -67,9 +79,9 @@ export interface FormMerchant {
   categoryId: number; // 行业（分类）ID
   multiStore: BoolEnum; // 店铺类型，1是单店，2是多店
   businessType: MerchantType;
-  avatar?: [{url: string}]; // 商家logo
+  avatar?: UploadFile[]; // 商家logo
   address?: string; // 商家地址
-  businessLicense?: [{url: string}]; // 营业执照图片地址
+  businessLicense?: UploadFile[]; // 营业执照图片地址
   businessName: string; // 企业名称
   enterpriseUsci?: string; // 统一社会信用代码
   legalAuthType: MerchantAgentType; // 认证类型,法人还是经办人
@@ -78,6 +90,7 @@ export interface FormMerchant {
   legalPhone: string; // 法人电话
   type?: MerchantCreateType; // 默认0公海用户，1私海用户
   shopList?: ShopForm[]; // 店铺列表
+  areaInfo: number[]; //地区
   locationWithCompanyId?: number[]; //站点
 }
 

@@ -1,5 +1,5 @@
 import {StyleProp, TextStyle, ViewStyle} from 'react-native';
-
+import {Control, ControllerProps, FieldErrorsImpl, FieldValues, Path, UseFormSetValue, UseFormWatch} from 'react-hook-form';
 export type OSType = 'ios' | 'android' | 'windows' | 'macos' | 'N/A';
 
 export type PlatformType = 'WXMP' | 'WX' | 'DYMP' | 'APP' | 'WEB' | 'H5' | 'DESKTOP' | 'N/A';
@@ -97,3 +97,22 @@ export interface City {
   label: string;
   children?: City[];
 }
+
+/// react-hook-form类型别名
+// C代表组件
+export type FormControlC = <TFieldValues extends FieldValues = FieldValues, TName extends Path<TFieldValues> = Path<TFieldValues>>(
+  props: ControllerProps<TFieldValues, TName>,
+) => import('react').ReactElement<any, string | import('react').JSXElementConstructor<any>>;
+//表单控制器
+export type FormControl = Control<FieldValues, any>;
+//表单监听
+export type FormWatch = UseFormWatch<FieldValues>;
+//表单错误信息
+export type FormErrors = Partial<
+  FieldErrorsImpl<{
+    [x: string]: any;
+  }>
+>;
+
+//表单设置属性
+export type FormSetValue = UseFormSetValue<FieldValues>;
