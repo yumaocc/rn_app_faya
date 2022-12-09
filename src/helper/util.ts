@@ -1,6 +1,6 @@
 import moment, {Moment} from 'moment';
 import {DATE_TIME_FORMAT} from '../constants';
-import {Environment, DateTimeString} from '../models';
+import {Environment, DateTimeString, FormMerchant, MerchantForm, MerchantCreateType, UploadFile, SPUCategory, SPUCodeType} from '../models';
 
 // 用来模拟异步操作
 export async function wait(ms: number) {
@@ -84,4 +84,60 @@ export function flattenTree<T>(tree: any[], childrenKey: string = 'children'): T
     }
   });
   return result;
+}
+
+// 格式化商家发送请求的数据
+export function formattingMerchantRequest(data: FormMerchant, type: MerchantCreateType) {
+  const {avatar, businessLicense} = data;
+  const newData: MerchantForm = {...data, avatar: avatar[0].url, businessLicense: businessLicense[0].url, type};
+  return newData;
+}
+
+//格式化商家用于编辑和查看的数据
+export function formattingMerchantEdit(data: MerchantForm) {
+  const {avatar, businessLicense} = data;
+  const newAvatar: UploadFile[] = [{url: avatar, uid: avatar}];
+  const newBusinessLicense: UploadFile[] = [{url: businessLicense, uid: businessLicense}];
+  const newData: FormMerchant = {...data, businessLicense: newBusinessLicense, avatar: newAvatar};
+  return newData;
+}
+
+//格式化商品分类的数据
+export function formattingGoodsCategory(list: SPUCategory[]) {
+  return list.map(item => {
+    let children;
+    if (item.children) {
+      children = item.children.map(element => {
+        let children;
+        if (element.children) {
+          children = element.children.map(e => {
+            return {
+              label: e.name,
+              value: e.id,
+              children: e.children,
+            };
+          });
+        }
+        return {
+          label: element.name,
+          value: element.id,
+          children,
+        };
+      });
+    }
+    return {
+      label: item.name,
+      value: item.id,
+      children,
+    };
+  });
+}
+//格式化发码方式数据
+export function formattingCodeType(data: SPUCodeType[]) {
+  return data.map(item => {
+    return {
+      label: item.name,
+      value: item.codeType,
+    };
+  });
 }

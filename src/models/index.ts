@@ -38,9 +38,23 @@ export type {
   ShopF,
   MerchantBookingModelF,
   FormMerchant,
+  MerchantFormMenu,
+  UploadFile,
 } from './merchant';
 export type {PagedData, Response, FetchData, IDBody} from './api';
-export type {ContractBookingInfo, ContractFile, ContractForm, ContractSKU, ContractSKUDetail, ContractSKUInfo, ContractSPU, ContractF, ContractDetailF} from './contract';
+export type {
+  ContractBookingInfo,
+  ContractFile,
+  ContractForm,
+  ContractSKU,
+  ContractSKUDetail,
+  ContractSKUInfo,
+  ContractSPU,
+  ContractF,
+  ContractDetailF,
+  ContractDetailEnum,
+  Contract,
+} from './contract';
 export type {
   SPUCategory,
   SPUCodeType,

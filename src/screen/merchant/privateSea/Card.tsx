@@ -1,7 +1,8 @@
+import {useNavigation} from '@react-navigation/native';
 import React from 'react';
-import {View, Text, Image, StyleSheet} from 'react-native';
+import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
-import {BoolEnum, MerchantF, StylePropView} from '../../../models';
+import {BoolEnum, FakeNavigation, MerchantAction, MerchantCreateType, MerchantF, StylePropView} from '../../../models';
 
 interface CardProps {
   merchant: MerchantF;
@@ -9,60 +10,74 @@ interface CardProps {
 }
 
 const Card: React.FC<CardProps> = ({merchant, style}) => {
+  const navigation = useNavigation() as FakeNavigation;
   return (
-    <View style={[style, styles.container]}>
-      <View style={[globalStyles.borderBottom, styles.header]}>
-        <View style={[styles.logo]}>
-          <Image source={{uri: 'https://fakeimg.pl/100'}} style={{width: 40, height: 40}} />
-        </View>
-        <View style={styles.headerRight}>
-          <View style={[globalStyles.flexNormal, {justifyContent: 'space-between'}]}>
-            <View style={{flex: 1, flexDirection: 'row'}}>
-              <Text style={[globalStyles.textColorPrimary, styles.merchantName, {flex: 1}]} numberOfLines={1}>
-                {merchant.name}
-              </Text>
-            </View>
-            <View style={styles.tagWrapper}>
-              <Text style={styles.tag}>待签约</Text>
-            </View>
+    <TouchableOpacity
+      activeOpacity={0.5}
+      onPress={() =>
+        navigation.navigate({
+          name: 'AddMerchant',
+          params: {
+            action: MerchantAction.EDIT,
+            privateId: merchant.id,
+            identity: MerchantCreateType.PRIVATE_SEA,
+          },
+        })
+      }>
+      <View style={[style, styles.container]}>
+        <View style={[globalStyles.borderBottom, styles.header]}>
+          <View style={[styles.logo]}>
+            <Image source={{uri: 'https://fakeimg.pl/100'}} style={{width: 40, height: 40}} />
           </View>
-          <Text
-            style={{
-              fontSize: 12,
-              color: globalStyleVariables.TEXT_COLOR_TERTIARY,
-            }}>
-            {merchant.categoryName}
-          </Text>
+          <View style={styles.headerRight}>
+            <View style={[globalStyles.flexNormal, {justifyContent: 'space-between'}]}>
+              <View style={{flex: 1, flexDirection: 'row'}}>
+                <Text style={[globalStyles.textColorPrimary, styles.merchantName, {flex: 1}]} numberOfLines={1}>
+                  {merchant.name}
+                </Text>
+              </View>
+              <View style={styles.tagWrapper}>
+                <Text style={styles.tag}>待签约</Text>
+              </View>
+            </View>
+            <Text
+              style={{
+                fontSize: 12,
+                color: globalStyleVariables.TEXT_COLOR_TERTIARY,
+              }}>
+              {merchant.categoryName}
+            </Text>
+          </View>
         </View>
-      </View>
-      <View style={[globalStyles.containerLR, globalStyles.borderBottom, {paddingVertical: globalStyleVariables.MODULE_SPACE}]}>
-        <Text style={globalStyles.fontSecondary}>商户模式</Text>
-        <Text style={globalStyles.fontSecondary}>{merchant.multiStore === BoolEnum.TRUE ? '连锁' : '单店'}</Text>
-      </View>
-      <View style={[globalStyles.containerLR, globalStyles.borderBottom, {paddingVertical: globalStyleVariables.MODULE_SPACE}]}>
-        <Text style={globalStyles.fontSecondary}>认领时间</Text>
-        {/* <Text style={globalStyles.fontSecondary}>{getDateFromDateTime(merchant.claimTime)}</Text> */}
-      </View>
-      <View style={[globalStyles.borderBottom, {paddingVertical: globalStyleVariables.MODULE_SPACE}]}>
-        <View style={globalStyles.containerLR}>
-          <Text style={globalStyles.fontSecondary}>上次跟进</Text>
+        <View style={[globalStyles.containerLR, globalStyles.borderBottom, {paddingVertical: globalStyleVariables.MODULE_SPACE}]}>
+          <Text style={globalStyles.fontSecondary}>商户模式</Text>
+          <Text style={globalStyles.fontSecondary}>{merchant.multiStore === BoolEnum.TRUE ? '连锁' : '单店'}</Text>
+        </View>
+        <View style={[globalStyles.containerLR, globalStyles.borderBottom, {paddingVertical: globalStyleVariables.MODULE_SPACE}]}>
+          <Text style={globalStyles.fontSecondary}>认领时间</Text>
           {/* <Text style={globalStyles.fontSecondary}>{getDateFromDateTime(merchant.claimTime)}</Text> */}
         </View>
-        <View style={styles.follow}>
-          <Text
+        <View style={[globalStyles.borderBottom, {paddingVertical: globalStyleVariables.MODULE_SPACE}]}>
+          <View style={globalStyles.containerLR}>
+            {/* <Text style={globalStyles.fontSecondary}>上次跟进</Text> */}
+            {/* <Text style={globalStyles.fontSecondary}>{getDateFromDateTime(merchant.claimTime)}</Text> */}
+          </View>
+          <View style={styles.follow}>
+            {/* <Text
             style={{
               fontSize: 12,
               color: globalStyleVariables.TEXT_COLOR_PRIMARY,
             }}>
             兄弟听我一句劝，游戏没了还能重玩，媳妇没了游戏就能一直玩了。兄弟听我一句劝，游戏没了还能重玩，媳妇没了游戏就能一直玩了。
-          </Text>
+          </Text> */}
+          </View>
+        </View>
+        <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+          <Text style={styles.button}>签结算合同</Text>
+          {/* <Text style={styles.button}>跟进记录(20)</Text> */}
         </View>
       </View>
-      <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-        <Text style={styles.button}>签结算合同</Text>
-        <Text style={styles.button}>跟进记录(20)</Text>
-      </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 export default Card;

@@ -30,8 +30,9 @@ const PublicSeaList: React.FC = () => {
             navigation.navigate({
               name: 'AddMerchant',
               params: {
-                id: MerchantCreateType.PUBLIC_SEA,
                 action: MerchantAction.ADD,
+                publicId: MerchantCreateType.PUBLIC_SEA,
+                identity: MerchantCreateType.PUBLIC_SEA,
               },
             });
           }}

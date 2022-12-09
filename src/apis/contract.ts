@@ -1,5 +1,5 @@
 import {post, getPaged, get} from './helper';
-import {ContractDetailF, ContractF, ContractForm, PagedData, SearchParam} from '../models';
+import {Contract, ContractF, ContractForm, PagedData, SearchParam} from '../models';
 
 export async function createContract(form: ContractForm): Promise<boolean> {
   return await post<boolean, ContractForm>('/contract/sign/product', form);
@@ -19,6 +19,6 @@ export async function getMyContractList(params: SearchParam): Promise<PagedData<
   return await getPaged<ContractF[]>('/contract/list/with/mine', {params});
 }
 
-export async function getContractDetail(id: number): Promise<ContractDetailF> {
-  return await get<ContractDetailF>('/contract/details?id=' + id);
+export async function getContractDetail(id: number): Promise<Contract> {
+  return await get<Contract>('/contract/details?id=' + id);
 }

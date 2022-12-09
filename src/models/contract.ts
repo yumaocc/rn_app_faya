@@ -42,7 +42,7 @@ export enum ProtocolType {
  * @property {number} SettlementType.T0 T+0结算
  */
 export enum SettlementType {
-  T0 = 0,
+  T1 = 0,
 }
 
 /**
@@ -342,6 +342,7 @@ export interface ContractDetailF extends ContractForm {
   id: number;
 }
 
+export type ContractDetailEnum = keyof ContractDetailF;
 /**
  * 列表里的合同信息
  */
@@ -354,4 +355,73 @@ export interface ContractF {
   statusStr: string;
   type: number; // todo: ？
   typeStr: string;
+}
+
+// 新增合同
+export interface Contract {
+  bizUserId: number;
+  contractName: string;
+  id: number;
+  bookingReq: BookingReq;
+  partyAAccountType: number;
+  partyABankAccount: number;
+  partyABankAccountName: string;
+  partyABankAddress: string;
+  partyAIsLegalPerson: number;
+  partyAName: string;
+  partyBName: string;
+  protocolType: number;
+  settlementType: number;
+  status: number;
+  type: number;
+  spuInfoReq: SpuInfoReq;
+  skuInfoReq: SkuInfoReq;
+}
+export interface SpuInfoReq {
+  bizUserName: string;
+  canUseBizShopIds: string[];
+  contractSpuId: number;
+  invoiceType: number;
+  spuCategoryIds: number[];
+  spuName: string;
+  storeMutualExclusion: number;
+}
+export interface SkuInfoReq {
+  openSkuStock: number;
+  skuInfo: SkuInfo;
+  spuStock: string;
+}
+export interface SkuInfo {
+  buyLimitNum: number;
+  buyLimitType: number;
+  contractSkuId: number;
+  skuDetails: SkuDetails;
+  skuName: string;
+  skuSettlementPrice: number;
+  skuStock: number;
+}
+export interface SkuDetails {
+  id: number;
+  name: string;
+  nums: number;
+  price: number;
+  skuId: number;
+}
+
+export interface BookingReq {
+  bookingBeginTime: string;
+  bookingCanCancel: string;
+  bookingCancelDay: string;
+  bookingEarlyDay: string;
+  bookingType: string;
+  codeTime: string;
+  codeType: string;
+  delayedSending: string;
+  needShowTime: string;
+  saleBeginTime: string;
+  saleEndTime: string;
+  showBeginTime: string;
+  showEndTime: string;
+  useBeginTime: string;
+  useEndTime: string;
 }

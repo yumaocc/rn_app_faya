@@ -1,12 +1,13 @@
 import {Icon} from '@ant-design/react-native';
 import React from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
+import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import {PlusButton} from '../../../component';
 // import {BadgeFlag} from '../../../component';
 import {useCommonDispatcher} from '../../../helper/hooks';
 import * as api from '../../../apis';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
-import {MerchantF, StylePropView} from '../../../models';
+import {FakeNavigation, MerchantAction, MerchantCreateType, MerchantF, StylePropView} from '../../../models';
+import {useNavigation} from '@react-navigation/native';
 
 interface CardProps {
   merchant: MerchantF;
@@ -17,6 +18,7 @@ interface CardProps {
 const Card: React.FC<CardProps> = props => {
   const {merchant, style, update} = props;
   const [commonDispatcher] = useCommonDispatcher();
+  const navigation = useNavigation() as FakeNavigation;
   const addMyPrivateSeas = async (id: number) => {
     try {
       await api.merchant.drawMerchant(id);
@@ -26,57 +28,71 @@ const Card: React.FC<CardProps> = props => {
       commonDispatcher.error((error as string) || '添加失败');
     }
   };
+
   return (
-    <View style={[styles.container, style]}>
-      <View style={[globalStyles.borderBottom, styles.header]}>
-        <View style={[styles.logo]}>
-          <Image source={{uri: 'https://fakeimg.pl/100'}} style={{width: 40, height: 40}} />
-        </View>
-        <View style={styles.headerRight}>
-          <View style={[globalStyles.flexNormal, {justifyContent: 'space-between'}]}>
-            <View style={{flex: 1, flexDirection: 'row'}}>
-              <Text style={[globalStyles.textColorPrimary, styles.merchantName, {flex: 1}]} numberOfLines={1}>
-                {merchant.name}
-              </Text>
-            </View>
-          </View>
-          <Text
-            style={{
-              fontSize: 12,
-              color: globalStyleVariables.TEXT_COLOR_TERTIARY,
-            }}>
-            {merchant.categoryName}
-          </Text>
-        </View>
-      </View>
-      {merchant?.address && (
-        <View style={[globalStyles.borderBottom, {paddingVertical: 16, flexDirection: 'row'}]}>
-          <Icon name="environment" />
-          <Text style={[globalStyles.fontSecondary, {flex: 1, marginLeft: 5}]}>{merchant?.address}</Text>
-        </View>
-      )}
-
-      <View
-        style={[
-          globalStyles.borderBottom,
-          {
-            flexDirection: 'row',
-            justifyContent: 'space-around',
-            paddingVertical: 16,
+    <TouchableOpacity
+      activeOpacity={0.5}
+      onPress={() =>
+        navigation.navigate({
+          name: 'AddMerchant',
+          params: {
+            action: MerchantAction.EDIT,
+            publicId: merchant.id,
+            identity: MerchantCreateType.PRIVATE_SEA,
           },
-        ]}>
-        <View>
-          <Text style={[globalStyles.fontSecondary, styles.centerText]}>商户模式</Text>
-          <Text style={[globalStyles.fontPrimary, styles.centerTextValue]}>{merchant.multiStore ? '连锁' : '单店'}</Text>
+        })
+      }>
+      <View style={[styles.container, style]}>
+        <View style={[globalStyles.borderBottom, styles.header]}>
+          <View style={[styles.logo]}>
+            <Image source={{uri: 'https://fakeimg.pl/100'}} style={{width: 40, height: 40}} />
+          </View>
+          <View style={styles.headerRight}>
+            <View style={[globalStyles.flexNormal, {justifyContent: 'space-between'}]}>
+              <View style={{flex: 1, flexDirection: 'row'}}>
+                <Text style={[globalStyles.textColorPrimary, styles.merchantName, {flex: 1}]} numberOfLines={1}>
+                  {merchant.name}
+                </Text>
+              </View>
+            </View>
+            <Text
+              style={{
+                fontSize: 12,
+                color: globalStyleVariables.TEXT_COLOR_TERTIARY,
+              }}>
+              {merchant.categoryName}
+            </Text>
+          </View>
         </View>
-        <View>
-          <Text style={[globalStyles.fontSecondary, styles.centerText]}>认证状态</Text>
-          <Text style={[globalStyles.fontPrimary, styles.centerTextValue]}>{merchant?.hasAuth ? '是' : '否'}</Text>
-        </View>
-      </View>
+        {merchant?.address && (
+          <View style={[globalStyles.borderBottom, {paddingVertical: 16, flexDirection: 'row'}]}>
+            <Icon name="environment" />
+            <Text style={[globalStyles.fontSecondary, {flex: 1, marginLeft: 5}]}>{merchant?.address}</Text>
+          </View>
+        )}
 
-      <PlusButton title="加入我的私海" onPress={() => addMyPrivateSeas(merchant.id)} style={{justifyContent: 'center', paddingVertical: 15}} />
-    </View>
+        <View
+          style={[
+            globalStyles.borderBottom,
+            {
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+              paddingVertical: 16,
+            },
+          ]}>
+          <View>
+            <Text style={[globalStyles.fontSecondary, styles.centerText]}>商户模式</Text>
+            <Text style={[globalStyles.fontPrimary, styles.centerTextValue]}>{merchant.multiStore ? '连锁' : '单店'}</Text>
+          </View>
+          <View>
+            <Text style={[globalStyles.fontSecondary, styles.centerText]}>认证状态</Text>
+            <Text style={[globalStyles.fontPrimary, styles.centerTextValue]}>{merchant?.hasAuth ? '是' : '否'}</Text>
+          </View>
+        </View>
+
+        <PlusButton title="加入我的私海" onPress={() => addMyPrivateSeas(merchant.id)} style={{justifyContent: 'center', paddingVertical: 15}} />
+      </View>
+    </TouchableOpacity>
   );
 };
 

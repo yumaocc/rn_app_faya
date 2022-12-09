@@ -119,7 +119,12 @@ export async function inviteAuth(merchantId: number): Promise<boolean> {
   });
 }
 
-// 城市列表
+// 城市列表,三级分类
 export async function cityList(): Promise<Site[]> {
   return await get('/location/with/company/three/list');
+}
+
+// 站点
+export async function getLocationWithCompanyId() {
+  return await get('/location/with/company/all');
 }

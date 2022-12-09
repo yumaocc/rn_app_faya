@@ -72,7 +72,7 @@ export interface MerchantForm {
   type?: MerchantCreateType; // 默认0公海用户，1私海用户
   shopList?: ShopForm[]; // 店铺列表
   areaInfo: number[]; //地区
-  locationWithCompanyId?: number; //站点
+  locationWithCompanyId?: number[]; //站点
 }
 export interface FormMerchant {
   name: string; // 商家名称
@@ -93,6 +93,8 @@ export interface FormMerchant {
   areaInfo: number[]; //地区
   locationWithCompanyId?: number[]; //站点
 }
+// MerchantForm的枚举类型
+export type MerchantFormMenu = keyof FormMerchant;
 
 export interface MerchantDetailF extends MerchantForm {
   id: number;

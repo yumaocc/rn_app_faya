@@ -21,7 +21,6 @@ const Group: React.FC<GroupProps> = props => {
   return (
     <View style={styles.container}>
       {options.map(option => {
-        // console.log(option);
         return (
           <Checkbox
             key={option.value}

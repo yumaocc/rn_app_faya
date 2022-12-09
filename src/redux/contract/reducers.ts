@@ -15,10 +15,7 @@ export const initialState: ContractState = {
   contractSearchList: [],
 };
 
-export default (
-  state = initialState,
-  action: ContractActions,
-): ContractState => {
+export default (state = initialState, action: ContractActions): ContractState => {
   switch (action.type) {
     case ActionType.LOAD_CURRENT_CONTRACT:
       return produce(state, draft => {

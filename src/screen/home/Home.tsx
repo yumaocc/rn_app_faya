@@ -96,8 +96,8 @@ const Home: React.FC = () => {
               navigation.navigate({
                 name: 'AddMerchant',
                 params: {
-                  type: MerchantCreateType.PRIVATE_SEA,
-                  action: MerchantAction.ADD,
+                  action: MerchantAction.EDIT,
+                  identity: MerchantCreateType.PRIVATE_SEA,
                 },
               });
             }}

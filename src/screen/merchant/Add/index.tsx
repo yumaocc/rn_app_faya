@@ -1,16 +1,17 @@
 import {Button} from '@ant-design/react-native';
 import {useNavigation} from '@react-navigation/native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {View, StyleSheet, ScrollView, useWindowDimensions} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {createMerchant, getMerchantDetail} from '../../../apis/merchant';
+import {createMerchant, getMerchantDetail, getPublicMerchantDetail} from '../../../apis/merchant';
 import {Form, NavigationBar, Tabs} from '../../../component';
 import {globalStyleVariables} from '../../../constants/styles';
 import {useParams, useRefCallback, useCommonDispatcher} from '../../../helper/hooks';
-import {MerchantCreateType, MerchantAction, FakeNavigation, FormMerchant, MerchantForm} from '../../../models'; // FormMerchant
+import {MerchantCreateType, MerchantAction, FakeNavigation, FormMerchant, MerchantFormMenu} from '../../../models'; // FormMerchant
 import EditBase from '../Form/EditBase';
 import {useForm, Controller} from 'react-hook-form';
 import Certification from '../Form/Certification';
+import {formattingMerchantRequest, formattingMerchantEdit} from '../../../helper/util';
 const tabs = [
   {title: '基础信息', key: 'base'},
   {title: '资质信息', key: 'qualification'},
@@ -21,8 +22,7 @@ const tabs = [
 // 当id === MerchantCreateType.PRIVATE_SEA, 并且 action === edit 或者add的时候可以编辑
 
 const AddMerchant: React.FC = () => {
-  const {identity, action, id = 0} = useParams<{identity: MerchantCreateType; action: MerchantAction; id: number}>();
-  const [defaultValues, setDefaultValues] = useState<FormMerchant>();
+  const {identity, publicId, privateId} = useParams<{identity: MerchantCreateType; action: MerchantAction; publicId: number; privateId: number}>();
   const [commonDispatcher] = useCommonDispatcher();
   const [currentKey, setCurrentKey] = React.useState('base');
   const {width: windowWidth} = useWindowDimensions();
@@ -37,18 +37,35 @@ const AddMerchant: React.FC = () => {
     handleSubmit,
   } = useForm<FormMerchant>({
     mode: 'onBlur',
-    defaultValues: defaultValues,
   });
   const navigation = useNavigation() as FakeNavigation;
   useEffect(() => {
-    if (id && identity === MerchantCreateType.PRIVATE_SEA) {
-      getMerchantDetail(id)
+    if (privateId) {
+      getMerchantDetail(privateId)
         .then(res => {
-          setDefaultValues(res);
+          const formData = formattingMerchantEdit(res);
+          const keys = Object.keys(formData);
+          keys.forEach(item => {
+            const key = item as MerchantFormMenu;
+            setValue(key, res[key]);
+          });
         })
         .catch(err => commonDispatcher.error(err));
+    } else if (publicId) {
+      getPublicMerchantDetail(publicId)
+        .then(res => {
+          const formData = formattingMerchantEdit(res);
+          const keys = Object.keys(formData);
+          keys.forEach(item => {
+            const key = item as MerchantFormMenu;
+            setValue(key, res[key]);
+          });
+        })
+        .catch(err => {
+          console.log(err);
+        });
     }
-  }, [commonDispatcher, id, identity, setValue]);
+  }, [commonDispatcher, privateId, publicId, setValue]);
 
   // 自动切换到指定step
   useEffect(() => {
@@ -68,14 +85,12 @@ const AddMerchant: React.FC = () => {
   //新建商家
   const onSubmit = async () => {
     try {
-      const res = getValues() as unknown as FormMerchant;
-      console.log(res);
-      const {avatar, businessLicense, locationWithCompanyId} = res;
-      await createMerchant({...res, avatar: avatar[0].url, businessLicense: businessLicense[0].url, locationWithCompanyId: locationWithCompanyId[1], type: 0});
+      const formData = getValues();
+      const newFormData = formattingMerchantRequest(formData, identity);
+      await createMerchant(newFormData);
       commonDispatcher.success('添加成功');
       navigation.navigate('Tab');
     } catch (error) {
-      console.log(error);
       commonDispatcher.success((JSON.stringify(error) as string) || '添加失败');
     }
   };

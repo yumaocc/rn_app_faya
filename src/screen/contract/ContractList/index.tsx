@@ -1,17 +1,19 @@
 import React from 'react';
-import {TextInput} from 'react-native';
+import {TextInput, TouchableOpacity} from 'react-native';
 import {FC} from 'react';
 import {useRequest} from 'ahooks';
-import {Icon, List} from '@ant-design/react-native';
+import {Button, Icon, List} from '@ant-design/react-native';
 import {NavigationBar} from '../../../component';
 import {getMyContractList} from '../../../apis/contract';
 import {View, StyleSheet, ScrollView, Text} from 'react-native';
 import Loading from '../../common/Loading';
 import {UnitNumber} from '../../../component';
 import {globalStyleVariables, globalStyles} from '../../../constants/styles';
-import {BoolEnum, SearchParam} from '../../../models';
+import {BoolEnum, FakeNavigation, SearchParam} from '../../../models';
+import {useNavigation} from '@react-navigation/native';
 
 const ContractList: FC = () => {
+  const navigation = useNavigation() as FakeNavigation;
   const {data, loading, run} = useRequest(
     async (params: SearchParam) => {
       return getMyContractList(params);
@@ -60,19 +62,42 @@ const ContractList: FC = () => {
       <ScrollView style={{marginTop: 10}}>
         <List>
           {data?.content?.map(item => (
-            <List.Item key={item.id} style={{marginTop: 10, paddingBottom: 10}}>
-              <View>
-                <Text style={{fontSize: 20, fontWeight: 'bold', marginBottom: 10}}>{item?.name}</Text>
-              </View>
-              <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                {item?.status === BoolEnum.TRUE ? (
-                  <Text style={{color: '#4AB87D'}}>生效中{item?.createdTime}</Text>
-                ) : (
-                  <Text style={{color: '#999999'}}>已失效{item?.createdTime}</Text>
-                )}
-                <Text>{item?.createdTime}</Text>
-              </View>
-            </List.Item>
+            <TouchableOpacity
+              key={item.id}
+              activeOpacity={0.5}
+              onPress={() => {
+                navigation.navigate({
+                  name: 'AddContract',
+                  params: {
+                    id: item.id,
+                  },
+                });
+              }}>
+              <List.Item style={{marginTop: 10, paddingBottom: 10}}>
+                <View>
+                  <Text style={{fontSize: 20, fontWeight: 'bold', marginBottom: 10}}>{item?.name}</Text>
+                </View>
+                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                  {item?.status === BoolEnum.TRUE ? (
+                    <Text style={{color: '#4AB87D'}}>生效中{item?.createdTime}</Text>
+                  ) : (
+                    <Text style={{color: '#999999'}}>已失效{item?.createdTime}</Text>
+                  )}
+                  <Text>{item?.createdTime}</Text>
+                  <Button
+                    onPress={() =>
+                      navigation.navigate({
+                        name: 'AddContract',
+                        params: {
+                          id: item.id,
+                        },
+                      })
+                    }>
+                    点击
+                  </Button>
+                </View>
+              </List.Item>
+            </TouchableOpacity>
           ))}
         </List>
       </ScrollView>
@@ -118,21 +143,3 @@ const styles = StyleSheet.create({
 });
 
 export default ContractList;
-
-// {data?.page?.pageTotal ? (
-//   <View>
-//     <View style={style.contract_search}>
-//       <UnitNumber prefix="共" value={data?.page?.pageTotal} unit="份" />
-//     </View>
-//     <View style={style.list}>
-//       <Text>123</Text>
-//     </View>
-//   </View>
-// ) : (
-//   <View style={style.contract}>
-//     <View style={style.contract_dot}>
-//       <Icon name="solution" color="black" size="md" />
-//     </View>
-//     <Text style={{color: globalStyleVariables.TEXT_COLOR_SECONDARY}}>还没有商家哦，快去公海看看吧</Text>
-//   </View>
-// )}
