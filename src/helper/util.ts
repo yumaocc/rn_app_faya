@@ -95,10 +95,10 @@ export function formattingMerchantRequest(data: FormMerchant, type: MerchantCrea
 
 //格式化商家用于编辑和查看的数据
 export function formattingMerchantEdit(data: MerchantForm) {
-  const {avatar, businessLicense} = data;
+  const {avatar, businessLicense, areaInfo = []} = data;
   const newAvatar: UploadFile[] = [{url: avatar, uid: avatar}];
   const newBusinessLicense: UploadFile[] = [{url: businessLicense, uid: businessLicense}];
-  const newData: FormMerchant = {...data, businessLicense: newBusinessLicense, avatar: newAvatar};
+  const newData: FormMerchant = {...data, businessLicense: newBusinessLicense, avatar: newAvatar, areaInfo};
   return newData;
 }
 

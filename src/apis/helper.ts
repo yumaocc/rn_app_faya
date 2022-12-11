@@ -1,6 +1,6 @@
 import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
 import {REQUEST_TIMEOUT} from '../constants';
-import {CustomError, PagedData, Response, AppHeader} from '../models';
+import {PagedData, Response, AppHeader} from '../models';
 import {Platform} from 'react-native';
 import packageJSON from '../../package.json';
 
@@ -13,7 +13,7 @@ const headers: AppHeader = {
 };
 axios.defaults.headers.common = {...currentHeader, ...headers};
 
-console.log('headers', headers);
+// console.log('headers', headers);
 
 axios.defaults.timeout = REQUEST_TIMEOUT;
 
@@ -42,7 +42,8 @@ export async function getPaged<T>(url: string, config?: AxiosRequestConfig): Pro
   if (res.data.code === 1) {
     return res.data.data;
   }
-  throw new CustomError(res.data.msg, res.data.code);
+  // throw new CustomError(res.data.msg, res.data.code);
+  return Promise.reject(res.data.msg);
 }
 
 export async function postPaged<T, P>(url: string, data?: P, config?: AxiosRequestConfig): Promise<PagedData<T>> {
@@ -50,7 +51,8 @@ export async function postPaged<T, P>(url: string, data?: P, config?: AxiosReque
   if (res.data.code === 1) {
     return res.data.data;
   }
-  throw new CustomError(res.data.msg, res.data.code);
+  // throw new CustomError(res.data.msg, res.data.code);
+  return Promise.reject(res.data.msg);
 }
 
 export async function get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {

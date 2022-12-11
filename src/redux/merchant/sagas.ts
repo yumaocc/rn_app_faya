@@ -7,6 +7,7 @@ import {Actions} from './actions';
 import {ActionType} from './types';
 import {merchant} from '../../apis';
 import {MerchantSimpleF, PagedData, SearchParam} from '../../models';
+import {formattingMerchantEdit} from '../../helper';
 
 function* loadMerchantCategories(): any {
   try {
@@ -16,32 +17,41 @@ function* loadMerchantCategories(): any {
     yield put(CommonActions.error(error));
   }
 }
-function* loadCurrentMerchant(
-  action: ActionWithPayload<ActionType, number>,
-): any {
+//加载私海
+function* loadCurrentMerchantPrivate(action: ActionWithPayload<ActionType, number>): any {
   const id = action.payload;
   if (isNil(id)) {
-    return yield put(Actions.loadCurrentMerchantSuccess(null as any));
+    return yield put(Actions.loadCurrentMerchantPrivateSuccess(null as any));
   }
   try {
     const res = yield call(merchant.getMerchantDetail, id);
-    yield put(Actions.loadCurrentMerchantSuccess(res));
+    const data = formattingMerchantEdit(res);
+    yield put(Actions.loadCurrentMerchantPrivateSuccess(data));
   } catch (error) {
     yield put(CommonActions.error(error));
   }
 }
-function* loadMerchantSearchList(
-  action: ActionWithPayload<ActionType, SearchParam>,
-) {
+//加载公海
+function* loadCurrentMerchantPublic(action: ActionWithPayload<ActionType, number>): any {
+  const id = action.payload;
+  if (isNil(id)) {
+    return yield put(Actions.loadCurrentMerchantPrivateSuccess(null as any));
+  }
+  try {
+    const res = yield call(merchant.getMerchantDetail, id);
+    const data = formattingMerchantEdit(res);
+    yield put(Actions.loadCurrentMerchantPublicSuccess(data));
+  } catch (error) {
+    yield put(CommonActions.error(error));
+  }
+}
+function* loadMerchantSearchList(action: ActionWithPayload<ActionType, SearchParam>) {
   const param = action.payload;
   try {
-    const res: PagedData<MerchantSimpleF[]> = yield call(
-      merchant.getMyMerchantSimple,
-      {
-        ...param,
-        pageSize: 50,
-      },
-    );
+    const res: PagedData<MerchantSimpleF[]> = yield call(merchant.getMyMerchantSimple, {
+      ...param,
+      pageSize: 50,
+    });
     yield put(Actions.loadMerchantSearchListSuccess(res.content));
   } catch (error) {
     yield put(CommonActions.error(error));
@@ -50,11 +60,9 @@ function* loadMerchantSearchList(
 
 export function* watchMerchantSagas() {
   yield takeLatest(ActionType.LOAD_MERCHANT_CATEGORIES, loadMerchantCategories);
-  yield takeLatest(ActionType.LOAD_CURRENT_MERCHANT, loadCurrentMerchant);
-  yield takeLatest(
-    ActionType.LOAD_MERCHANT_SEARCH_LIST,
-    loadMerchantSearchList,
-  );
+  yield takeLatest(ActionType.LOAD_CURRENT_MERCHANT_PRIVATE, loadCurrentMerchantPrivate);
+  yield takeLatest(ActionType.LOAD_CURRENT_MERCHANT_PUBLIC, loadCurrentMerchantPublic);
+  yield takeLatest(ActionType.LOAD_MERCHANT_SEARCH_LIST, loadMerchantSearchList);
 }
 
 export default function* merchantSagas() {

@@ -286,7 +286,7 @@ export interface ContractForm {
    * 合同附件
    * @type {ContractFile[]}
    */
-  fileList: ContractFile[];
+  fileList?: ContractFile[];
 
   /**
    * 甲方收款账户类型
@@ -342,11 +342,11 @@ export interface ContractDetailF extends ContractForm {
   id: number;
 }
 
-export type ContractDetailEnum = keyof ContractDetailF;
+export type ContractDetailEnum = keyof Contract;
 /**
  * 列表里的合同信息
  */
-export interface ContractF {
+export interface ContractList {
   id: number;
   createdTime: DateTimeString;
   name: string;
@@ -356,72 +356,112 @@ export interface ContractF {
   type: number; // todo: ？
   typeStr: string;
 }
+export interface ContractF {
+  bizUserId: number;
+  bookingReq: any;
+  contractName: string;
+  id?: number;
+  // partyAAccountType?: number;
+  // partyABankAccount?: number;
+  // partyABankAccountName?: string;
+  // partyABankAddress?: string;
+  // partyAIsLegalPerson?: number;
+  partyAName?: string;
+  partyBName?: string;
+  protocolType?: number;
+  settlementType?: number;
+  // status?: number;
+  // type?: number;
+  spuInfoReq: SpuInfoReq;
+  skuInfoReq: SkuInfoReqF;
+}
 
-// 新增合同
+// 新增合同, form需要的值
 export interface Contract {
   bizUserId: number;
+  bookingReq: any;
   contractName: string;
-  id: number;
-  bookingReq: BookingReq;
-  partyAAccountType: number;
-  partyABankAccount: number;
-  partyABankAccountName: string;
-  partyABankAddress: string;
-  partyAIsLegalPerson: number;
-  partyAName: string;
-  partyBName: string;
-  protocolType: number;
-  settlementType: number;
-  status: number;
-  type: number;
+  id?: number;
+  partyAAccountType?: number;
+  partyABankAccount?: number;
+  partyABankAccountName?: string;
+  partyABankAddress?: string;
+  partyAIsLegalPerson?: number;
+  partyAName?: string;
+  partyBName?: string;
+  protocolType?: number;
+  settlementType?: number;
+  status?: number;
+  type?: number;
   spuInfoReq: SpuInfoReq;
   skuInfoReq: SkuInfoReq;
 }
+
 export interface SpuInfoReq {
-  bizUserName: string;
-  canUseBizShopIds: string[];
+  // bizUserName: string;
+  // canUseBizShopIds: string[];
   contractSpuId: number;
   invoiceType: number;
   spuCategoryIds: number[];
   spuName: string;
-  storeMutualExclusion: number;
+  // storeMutualExclusion: number;
 }
 export interface SkuInfoReq {
-  openSkuStock: number;
-  skuInfo: SkuInfo;
+  openSkuStock: boolean;
+  skuInfo: SkuInfo[];
   spuStock: string;
 }
-export interface SkuInfo {
-  buyLimitNum: number;
-  buyLimitType: number;
-  contractSkuId: number;
-  skuDetails: SkuDetails;
+export interface SkuInfoReqF {
+  openSkuStock: number;
+  skuInfo: SkuInfoF[];
+  spuStock: number;
+}
+export interface SkuInfoF {
+  buyLimitNum?: number;
+  buyLimitType?: number;
+  contractSkuId?: number[];
+  skuDetails: SkuDetails[];
   skuName: string;
-  skuSettlementPrice: number;
-  skuStock: number;
+  skuSettlementPrice: string;
+  skuStock: string;
+}
+export interface SkuInfo {
+  buyLimitNum?: string;
+  buyLimitType?: number;
+  contractSkuId?: number[];
+  skuDetails: SkuDetails[];
+  skuName: string;
+  skuSettlementPrice: string;
+  skuStock: string;
 }
 export interface SkuDetails {
-  id: number;
+  id?: string;
   name: string;
-  nums: number;
-  price: number;
-  skuId: number;
+  nums: string;
+  price: string;
+  skuId?: string;
 }
 
 export interface BookingReq {
-  bookingBeginTime: string;
-  bookingCanCancel: string;
-  bookingCancelDay: string;
-  bookingEarlyDay: string;
-  bookingType: string;
-  codeTime: string;
-  codeType: string;
-  delayedSending: string;
-  needShowTime: string;
-  saleBeginTime: string;
-  saleEndTime: string;
-  showBeginTime: string;
-  showEndTime: string;
-  useBeginTime: string;
-  useEndTime: string;
+  bookingBeginTime?: Moment; //预约开始时间
+  bookingCanCancel?: number; //是否可以取消
+  bookingCancelDay?: string;
+  bookingEarlyDay?: string;
+  bookingType?: number;
+  // codeTime?: Moment;
+  codeType?: number;
+  // delayedSending?: string;
+  // needShowTime?: Moment;
+  saleBeginTime?: Moment;
+  saleEndTime?: Moment;
+  // showBeginTime?: Moment;
+  // showEndTime?: Moment;
+  useBeginTime?: Moment;
+  useEndTime?: Moment;
+}
+
+export enum ContractAction {
+  ADD = 0,
+  EDIT = 1,
+  VIEW = 2,
 }

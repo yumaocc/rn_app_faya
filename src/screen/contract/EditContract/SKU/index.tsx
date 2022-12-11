@@ -1,48 +1,79 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {Control, useFieldArray, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import {Cascader, Form, FormTitle, Input, SectionGroup, Select, Switch} from '../../../../component';
 import {globalStyleVariables} from '../../../../constants/styles';
 import {useSPUCategories} from '../../../../helper/hooks';
 import {convertNumber2Han, formattingGoodsCategory} from '../../../../helper/util';
-import {BuyLimitType, Contract, FormControlC, InvoiceType} from '../../../../models';
-import { SkuInfo } from '../../../../models/contract';
+import {BuyLimitType, Contract, ContractAction, InvoiceType} from '../../../../models';
 import SKUContent from './SKUContent';
+
+import {Controller} from 'react-hook-form';
+import {Button} from '@ant-design/react-native';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../../redux/reducers';
 interface SKUProps {
   onNext: () => void;
-  Controller: FormControlC;
   control: Control<Contract, any>;
   setValue: UseFormSetValue<Contract>;
   getValues: UseFormGetValues<Contract>;
   watch: UseFormWatch<Contract>;
+  action: ContractAction;
 }
-const SKU: FC<SKUProps> = ({Controller, control, watch}) => {
-  const [SPUCategories] = useSPUCategories();
-  const [moreMeals, setMoreMeals] = useState(true);
-  const openSkuStock = watch('skuInfoReq.openSkuStock');
-  const {fields, append, remove} = useFieldArray<SkuInfo>({
-    control,
-    name: 'skuInfoReq.skuInfo',
+
+const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action}) => {
+  useSPUCategories();
+  const SPUCategories = useSelector((state: RootState) => {
+    return formattingGoodsCategory(state.sku.categories);
   });
+  const [moreMeals, setMoreMeals] = useState(true);
+  const {fields, remove, append} = useFieldArray({
+    name: 'skuInfoReq.skuInfo',
+    control: control,
+  });
+
+  const openSkuStock = watch('skuInfoReq.openSkuStock');
+
+  //设置商品分类
+  const spuCategoryIds = useSelector<RootState, number[]>(state => state.contract.currentContract?.spuInfoReq.spuCategoryIds);
+  useEffect(() => {
+    if (SPUCategories && action === ContractAction.EDIT) {
+      setValue('spuInfoReq.spuCategoryIds', spuCategoryIds);
+    }
+  }, [SPUCategories, action, setValue, spuCategoryIds]);
   //增加一个套餐
   const addSkuInfo = () => {
     append({
-      skuInfo: [
+      skuName: 'asdf',
+      skuDetails: [
         {
-          skuName: '默认套餐',
-          skuSettlementPrice: '',
-          skuStock: '',
-          buyLimitType: BuyLimitType.PHONE,
+          name: '',
+          nums: '',
+          price: '',
         },
       ],
+      skuSettlementPrice: '',
+      skuStock: '',
     });
   };
+  // 预约
+  const buyLimitTypeIsShow = (index: number) => {
+    const {
+      skuInfoReq: {skuInfo},
+    } = getValues();
+    if (skuInfo[index].buyLimitType === BuyLimitType.NONE) {
+      return false;
+    }
+    return true;
+  };
+
   //删除一个套餐
   const delSkuInfo = (index: number) => {
     remove(index);
   };
+
   return (
-    <>
+    <View style={{paddingBottom: 10, backgroundColor: 'white'}}>
       <SectionGroup style={styles.sectionGroup}>
         <FormTitle title="商品基础信息" />
         <Controller
@@ -59,7 +90,7 @@ const SKU: FC<SKUProps> = ({Controller, control, watch}) => {
           name="spuInfoReq.spuCategoryIds"
           render={({field: {value, onChange}}) => (
             <Form.Item label="商品分类">
-              <Cascader value={value} onChange={onChange} options={formattingGoodsCategory(SPUCategories)} />
+              <Cascader value={value} onChange={onChange} options={SPUCategories} />
             </Form.Item>
           )}
         />
@@ -107,12 +138,16 @@ const SKU: FC<SKUProps> = ({Controller, control, watch}) => {
                 title={`套餐${convertNumber2Han(index + 1)}设置`}
                 headerRight={
                   <View style={{flexDirection: 'row'}}>
-                    <TouchableOpacity onPress={addSkuInfo}>
-                      <Text style={{marginRight: globalStyleVariables.MODULE_SPACE, color: globalStyleVariables.COLOR_PRIMARY}}>复制</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => delSkuInfo(index)}>
-                      <Text style={{color: globalStyleVariables.COLOR_ERROR}}>删除</Text>
-                    </TouchableOpacity>
+                    {moreMeals && (
+                      <>
+                        <TouchableOpacity onPress={addSkuInfo}>
+                          <Text style={{marginRight: globalStyleVariables.MODULE_SPACE, color: globalStyleVariables.COLOR_PRIMARY}}>复制</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => delSkuInfo(index)}>
+                          <Text style={{color: globalStyleVariables.COLOR_ERROR}}>删除</Text>
+                        </TouchableOpacity>
+                      </>
+                    )}
                   </View>
                 }
               />
@@ -148,14 +183,15 @@ const SKU: FC<SKUProps> = ({Controller, control, watch}) => {
                   )}
                 />
               )}
+
               <Controller
                 control={control}
                 rules={{required: true}}
-                defaultValue={BuyLimitType.NONE}
+                defaultValue={BuyLimitType.NONE || 0}
                 name={`skuInfoReq.skuInfo.${index}.buyLimitType`}
                 render={({field: {value, onChange}}) => (
-                  <>
-                    <Form.Item label="购买上限">
+                  <Form.Item label="购买上限">
+                    <View style={styles.buyLimitType}>
                       <Select
                         value={value}
                         onChange={onChange}
@@ -174,26 +210,27 @@ const SKU: FC<SKUProps> = ({Controller, control, watch}) => {
                           },
                         ]}
                       />
-                    </Form.Item>
-                  </>
-                )}
-              />
-              <Controller
-                control={control}
-                rules={{required: true}}
-                name={`skuInfoReq.skuInfo.${index}.buyLimitNum`}
-                render={({field: {value, onChange}}) => (
-                  <Form.Item label="限购">
-                    <Input value={value} onChange={onChange} />
+                      {buyLimitTypeIsShow(index) && (
+                        <Controller
+                          control={control}
+                          rules={{required: true}}
+                          name={`skuInfoReq.skuInfo.${index}.buyLimitNum`}
+                          render={({field: {value, onChange}}) => <Input style={{backgroundColor: 'red', width: 30}} value={value} onChange={onChange} />}
+                        />
+                      )}
+                    </View>
                   </Form.Item>
                 )}
               />
-              <SKUContent Controller={Controller} control={control} next={index} />
+              <SKUContent title={`套餐${convertNumber2Han(index + 1)}内容`} control={control} next={index} />
             </SectionGroup>
           );
         })}
       </SectionGroup>
-    </>
+      <Button style={{margin: 10}} type="primary" onPress={onNext}>
+        下一步
+      </Button>
+    </View>
   );
 };
 export default SKU;
@@ -203,5 +240,10 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: '#fff',
     paddingTop: 13,
+  },
+  buyLimitType: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

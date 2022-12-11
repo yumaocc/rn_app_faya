@@ -5,7 +5,7 @@ import * as api from '../../../apis';
 import {PlusButton} from '../../../component';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {useHomeSummary} from '../../../helper/hooks';
-import {FakeNavigation, MerchantCreateType, MerchantF} from '../../../models';
+import {FakeNavigation, MerchantAction, MerchantCreateType, MerchantF} from '../../../models';
 import Card from './Card';
 
 const PrivateSeaList: React.FC = () => {
@@ -40,6 +40,7 @@ const PrivateSeaList: React.FC = () => {
               name: 'AddMerchant',
               params: {
                 type: MerchantCreateType.PRIVATE_SEA,
+                action: MerchantAction.ADD,
               },
             });
           }}

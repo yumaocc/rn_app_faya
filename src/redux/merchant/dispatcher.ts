@@ -5,22 +5,28 @@ import {SearchParam} from '../../models';
 
 export interface MerchantDispatcher {
   loadMerchantCategories(): void;
-  loadCurrentMerchant(payload: number): void;
+  loadCurrentMerchantPrivate(payload: number): void;
+  loadCurrentMerchantPublic(payload: number): void;
   loadMerchantSearchList(payload: SearchParam): void;
+  exitMerchantPage(): void;
 }
 
-export const getMerchantDispatcher = (
-  dispatch: Dispatch,
-): MerchantDispatcher => {
+export const getMerchantDispatcher = (dispatch: Dispatch): MerchantDispatcher => {
   return {
     loadMerchantCategories() {
       dispatch(Actions.loadMerchantCategories());
     },
-    loadCurrentMerchant(payload: number) {
-      dispatch(Actions.loadCurrentMerchant(payload));
+    loadCurrentMerchantPrivate(payload: number) {
+      dispatch(Actions.loadCurrentMerchantPrivate(payload));
+    },
+    loadCurrentMerchantPublic(payload: number) {
+      dispatch(Actions.loadCurrentMerchantPrivate(payload));
     },
     loadMerchantSearchList(payload: SearchParam) {
       dispatch(Actions.loadMerchantSearchList(payload));
+    },
+    exitMerchantPage() {
+      dispatch(Actions.endEdit());
     },
   };
 };

@@ -8,14 +8,7 @@ import summarySagas from './summary/sagas';
 import userSagas from './user/sagas';
 
 function* rootSaga() {
-  yield all([
-    fork(userSagas),
-    fork(commonSagas),
-    fork(merchantSagas),
-    fork(SKUSagas),
-    fork(contractSagas),
-    fork(summarySagas),
-  ]);
+  yield all([fork(userSagas), fork(commonSagas), fork(merchantSagas), fork(SKUSagas), fork(contractSagas), fork(summarySagas)]);
 }
 
 export {rootSaga};

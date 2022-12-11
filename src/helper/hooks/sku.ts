@@ -11,10 +11,11 @@ export function useSPUCategories(): [SPUCategory[]] {
   const SPUCategories = useSelector((state: RootState) => state.sku.categories);
   const [SKUDispatcher] = useSKUDispatcher();
   useEffect(() => {
-    if (SPUCategories.length === 0) {
+    if (SPUCategories.length <= 0) {
       SKUDispatcher.loadSKUCategory();
     }
   }, [SKUDispatcher, SPUCategories]);
+
   return [SPUCategories];
 }
 
@@ -22,7 +23,7 @@ export function useCodeTypes(): [SPUCodeType[]] {
   const SPUCodeTypes = useSelector((state: RootState) => state.sku.codeTypes);
   const [SKUDispatcher] = useSKUDispatcher();
   useEffect(() => {
-    if (SPUCodeTypes.length === 0) {
+    if (SPUCodeTypes.length <= 0) {
       SKUDispatcher.loadCodeType();
     }
   }, [SKUDispatcher, SPUCodeTypes]);

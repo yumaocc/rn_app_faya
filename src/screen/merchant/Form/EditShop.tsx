@@ -24,7 +24,6 @@ const EditShop: FC<EditShopProps> = ({open, setOpen, setValue}) => {
 
   const onOk = (value: any) => {
     const errorLength = Object.keys(errors);
-    console.log(errorLength);
     if (errorLength.length <= 0) {
       setValue(value);
       setOpen(false);

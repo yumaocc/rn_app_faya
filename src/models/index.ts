@@ -38,7 +38,7 @@ export type {
   ShopF,
   MerchantBookingModelF,
   FormMerchant,
-  MerchantFormMenu,
+  MerchantFormEnum,
   UploadFile,
 } from './merchant';
 export type {PagedData, Response, FetchData, IDBody} from './api';
@@ -54,6 +54,7 @@ export type {
   ContractDetailF,
   ContractDetailEnum,
   Contract,
+  ContractList,
 } from './contract';
 export type {
   SPUCategory,
@@ -77,4 +78,4 @@ export type {CommissionToday, CommissionExpect, Commission, CommissionTop, SaleT
 export {LoginState, UserState, UserType, UserWithdrawalRecordStatus} from './user';
 export {CustomError, CustomErrorWithPayload, BoolEnum} from './common';
 export {MerchantType, MerchantCreateType, MerchantAgentType, MerchantAction} from './merchant';
-export {BuyLimitType, SettlementType, AccountType, ProtocolType, InvoiceType, BookingType} from './contract';
+export {BuyLimitType, SettlementType, AccountType, ProtocolType, InvoiceType, BookingType, ContractAction} from './contract';

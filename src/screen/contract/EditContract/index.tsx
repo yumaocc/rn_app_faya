@@ -1,17 +1,19 @@
 import React, {useEffect} from 'react';
 import {View, ScrollView, useWindowDimensions, StyleSheet} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {Button} from '@ant-design/react-native';
 
-import {Steps, Form, NavigationBar} from '../../../component';
-import {useParams, useRefCallback} from '../../../helper/hooks';
+import {Steps, NavigationBar} from '../../../component';
+import {useCommonDispatcher, useParams, useRefCallback, useContractDispatcher} from '../../../helper/hooks';
 import {globalStyleVariables} from '../../../constants/styles';
 import {useForm, Controller} from 'react-hook-form';
 import Base from './Base';
 import SKU from './SKU';
 import Booking from './Booking';
-import * as api from '../../../apis';
-import {Contract} from '../../../models';
+import {BookingType, BoolEnum, Contract, ContractAction, ContractDetailEnum, ContractF} from '../../../models';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../redux/reducers';
+import {COMPANY_NAME} from '../../../constants';
+import {generateContractFormPatch} from '../../../helper';
 // import {ContractDetailEnum} from '../../../models';
 
 const steps = [
@@ -19,30 +21,43 @@ const steps = [
   {title: '商品设置', key: 'sku'},
   {title: '预约与购买', key: 'booking'},
 ];
+const defaultValues = {
+  partyAName: COMPANY_NAME,
+  bookingReq: {
+    bookingType: BookingType.URL,
+    bookingCanCancel: BoolEnum.TRUE,
+  },
+  skuInfoReq: {
+    skuInfo: [
+      {
+        skuName: '',
+        skuDetails: [
+          {
+            name: '',
+            nums: '',
+            price: '',
+          },
+        ],
+        skuSettlementPrice: '',
+        skuStock: '',
+      },
+    ],
+  },
+};
 
 const EditSPU: React.FC = () => {
-  const {id} = useParams<{id: number}>();
+  const {id, action} = useParams<{id: number; action: ContractAction}>();
   const [currentKey, setCurrentKey] = React.useState('base');
-  const [form] = Form.useForm();
   const {width: windowWidth} = useWindowDimensions();
+  const [commonDispatcher] = useCommonDispatcher();
   const [ref, setRef, isReady] = useRefCallback<ScrollView>();
   const {control, getValues, setValue, watch} = useForm<Contract>({
-    mode: 'onBlur',
+    defaultValues,
   });
 
-  //查看模式，获取指定商家的合同数据
-  useEffect(() => {
-    api.contract.getContractDetail(id).then(res => {
-      setValue('bookingReq', res.bookingReq);
-      // setValue('bookingReq', res.bookingReq);
-      // const keys = Object.keys(res);
-      // keys.forEach(item => {
-      //   const key = item as ContractDetailEnum;
-      //   setValue(key, res[key]);
-      // });
-    });
-  }, [id, setValue]);
-
+  const [contractDispatcher] = useContractDispatcher();
+  const contractDetail = useSelector<RootState, ContractF>(state => state.contract.currentContract);
+  const bizUserId = watch('bizUserId');
   // 自动切换到指定step
   useEffect(() => {
     if (!isReady) {
@@ -58,51 +73,64 @@ const EditSPU: React.FC = () => {
     }, 0);
   }, [currentKey, isReady, ref, windowWidth]);
 
+  useEffect(() => {
+    contractDispatcher.loadCurrentContract(id);
+    return () => {
+      contractDispatcher.endEdit();
+    };
+  }, [contractDispatcher, id]);
+
+  useEffect(() => {
+    if (contractDetail) {
+      const formData = generateContractFormPatch(contractDetail);
+      setValue('bookingReq.saleBeginTime', formData.bookingReq.saleBeginTime);
+      setValue('bookingReq.saleEndTime', formData.bookingReq.saleEndTime);
+      setValue('bookingReq.useEndTime', formData.bookingReq.useEndTime);
+      setValue('bookingReq.useBeginTime', formData.bookingReq.useBeginTime);
+      setValue('bookingReq.bookingBeginTime', formData.bookingReq.bookingBeginTime);
+      setValue('skuInfoReq.skuInfo', formData.skuInfoReq.skuInfo);
+      const keys = Object.keys(formData);
+      keys.forEach(item => {
+        const key = item as ContractDetailEnum;
+        setValue(key, formData[key]);
+      });
+    }
+  }, [contractDetail, setValue]);
+
   function handleChangeStep(currentKey: string, nextKey: string) {
-    // if (nextKey !== 'base') {
-    //   const merchantId = form.getFieldValue('bizUserId');
-    //   const contractId = form.getFieldValue('contractId');
-    //   const valid = merchantId && contractId;
-    //   if (!valid) {
-    //     // commonDispatcher.info('请先选择商家和合同！');
-    //   }
-    //   return valid;
-    // }
-    console.log(currentKey, nextKey);
+    if (nextKey !== 'base') {
+      const valid = bizUserId;
+      if (!valid) {
+        commonDispatcher.info('请先选择商家和合同！');
+      }
+      return false;
+    }
+    setCurrentKey(currentKey);
     return true;
   }
-  const check = () => {
-    const res = getValues();
-    console.log(res);
-  };
 
   return (
     <>
       <SafeAreaView style={{flex: 1, backgroundColor: '#f4f4f4'}} edges={['bottom']}>
         <NavigationBar title={'签结算合同'} />
-        <Form form={form}>
-          <Steps steps={steps} currentKey={currentKey} onChange={setCurrentKey} onBeforeChangeKey={handleChangeStep} />
-          <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
-            <View style={[{width: windowWidth, padding: globalStyleVariables.MODULE_SPACE}]}>
-              <ScrollView>
-                <Base watch={watch} setValue={setValue} getValues={getValues} control={control} Controller={Controller} onNext={() => setCurrentKey('sku')} />
-              </ScrollView>
-            </View>
-            <View style={{width: windowWidth}}>
-              <ScrollView>
-                <SKU watch={watch} setValue={setValue} getValues={getValues} Controller={Controller} control={control} onNext={() => setCurrentKey('booking')} />
-              </ScrollView>
-            </View>
-            <View style={{width: windowWidth}}>
-              <ScrollView>
-                <Booking watch={watch} setValue={setValue} getValues={getValues} control={control} Controller={Controller} onNext={() => setCurrentKey('detail')} />
-              </ScrollView>
-            </View>
-          </ScrollView>
-          <Button onPress={check} type="warning">
-            检查
-          </Button>
-        </Form>
+        <Steps steps={steps} currentKey={currentKey} onChange={setCurrentKey} onBeforeChangeKey={handleChangeStep} />
+        <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
+          <View style={[{width: windowWidth, padding: globalStyleVariables.MODULE_SPACE}]}>
+            <ScrollView>
+              <Base watch={watch} setValue={setValue} getValues={getValues} control={control} Controller={Controller} onNext={() => setCurrentKey('sku')} />
+            </ScrollView>
+          </View>
+          <View style={{width: windowWidth}}>
+            <ScrollView>
+              <SKU watch={watch} action={action} setValue={setValue} getValues={getValues} control={control} onNext={() => setCurrentKey('booking')} />
+            </ScrollView>
+          </View>
+          <View style={{width: windowWidth}}>
+            <ScrollView>
+              <Booking action={action} watch={watch} setValue={setValue} getValues={getValues} control={control} Controller={Controller} onNext={() => setCurrentKey('detail')} />
+            </ScrollView>
+          </View>
+        </ScrollView>
       </SafeAreaView>
     </>
   );

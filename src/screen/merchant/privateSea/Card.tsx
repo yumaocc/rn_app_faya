@@ -14,16 +14,25 @@ const Card: React.FC<CardProps> = ({merchant, style}) => {
   return (
     <TouchableOpacity
       activeOpacity={0.5}
-      onPress={() =>
-        navigation.navigate({
-          name: 'AddMerchant',
-          params: {
-            action: MerchantAction.EDIT,
-            privateId: merchant.id,
-            identity: MerchantCreateType.PRIVATE_SEA,
-          },
-        })
-      }>
+      onPress={() => {
+        if (merchant?.hasAuth !== 1) {
+          navigation.navigate({
+            name: 'ViewMerchant',
+            params: {
+              privateId: merchant.id,
+            },
+          });
+        } else {
+          navigation.navigate({
+            name: 'AddMerchant',
+            params: {
+              action: MerchantAction.EDIT,
+              privateId: merchant.id,
+              identity: MerchantCreateType.PRIVATE_SEA,
+            },
+          });
+        }
+      }}>
       <View style={[style, styles.container]}>
         <View style={[globalStyles.borderBottom, styles.header]}>
           <View style={[styles.logo]}>

@@ -54,7 +54,7 @@ export interface UploadFile {
   state?: 'success' | 'uploading';
   // size?: number;
 }
-
+//这是后端返回的数据
 export interface MerchantForm {
   name: string; // 商家名称
   categoryId: number; // 行业（分类）ID
@@ -74,6 +74,7 @@ export interface MerchantForm {
   areaInfo: number[]; //地区
   locationWithCompanyId?: number[]; //站点
 }
+//这是表单需要的数据
 export interface FormMerchant {
   name: string; // 商家名称
   categoryId: number; // 行业（分类）ID
@@ -91,10 +92,14 @@ export interface FormMerchant {
   type?: MerchantCreateType; // 默认0公海用户，1私海用户
   shopList?: ShopForm[]; // 店铺列表
   areaInfo: number[]; //地区
+  id?: number;
   locationWithCompanyId?: number[]; //站点
+  test?: {
+    name: string;
+  };
 }
 // MerchantForm的枚举类型
-export type MerchantFormMenu = keyof FormMerchant;
+export type MerchantFormEnum = keyof FormMerchant;
 
 export interface MerchantDetailF extends MerchantForm {
   id: number;

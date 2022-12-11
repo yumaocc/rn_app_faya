@@ -58,6 +58,7 @@ const Cascader: React.FC<CascaderProps> = props => {
         const foundOption = flattenOptions.find(option => option[valueKey] === value);
         return foundOption?.[labelKey] || value;
       });
+
       return (
         <View style={styles.childrenWrapper}>
           {value?.length ? <Text>{labels.join('/')}</Text> : <Text style={styles.placeholder}>{props.placeholder}</Text>}

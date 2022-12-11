@@ -9,7 +9,7 @@ import {View, StyleSheet, ScrollView, Text} from 'react-native';
 import Loading from '../../common/Loading';
 import {UnitNumber} from '../../../component';
 import {globalStyleVariables, globalStyles} from '../../../constants/styles';
-import {BoolEnum, FakeNavigation, SearchParam} from '../../../models';
+import {BoolEnum, ContractAction, FakeNavigation, SearchParam} from '../../../models';
 import {useNavigation} from '@react-navigation/native';
 
 const ContractList: FC = () => {
@@ -67,12 +67,25 @@ const ContractList: FC = () => {
               activeOpacity={0.5}
               onPress={() => {
                 navigation.navigate({
-                  name: 'AddContract',
+                  name: 'EditContract',
                   params: {
                     id: item.id,
+                    action: item.status,
                   },
                 });
               }}>
+              <Button
+                onPress={() =>
+                  navigation.navigate({
+                    name: 'AddContract',
+                    params: {
+                      id: item.id,
+                      action: item.status ? ContractAction.VIEW : ContractAction.EDIT,
+                    },
+                  })
+                }>
+                点击
+              </Button>
               <List.Item style={{marginTop: 10, paddingBottom: 10}}>
                 <View>
                   <Text style={{fontSize: 20, fontWeight: 'bold', marginBottom: 10}}>{item?.name}</Text>
@@ -84,17 +97,6 @@ const ContractList: FC = () => {
                     <Text style={{color: '#999999'}}>已失效{item?.createdTime}</Text>
                   )}
                   <Text>{item?.createdTime}</Text>
-                  <Button
-                    onPress={() =>
-                      navigation.navigate({
-                        name: 'AddContract',
-                        params: {
-                          id: item.id,
-                        },
-                      })
-                    }>
-                    点击
-                  </Button>
                 </View>
               </List.Item>
             </TouchableOpacity>

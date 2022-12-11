@@ -32,8 +32,8 @@ const Base: FC<BaseProps> = ({Controller, control, watch, setValue, onNext, getV
   //根据合同设置乙方的值
   useEffect(() => {
     if (bizUserId) {
-      const partyAName = merchantList.filter(item => item.value === bizUserId);
-      setValue('partyAName', partyAName[0].partyAName);
+      const [partyAName] = merchantList.filter(item => item.value === bizUserId);
+      setValue('partyBName', partyAName?.partyAName);
     }
   }, [bizUserId, merchantList, setValue]);
 
@@ -53,7 +53,7 @@ const Base: FC<BaseProps> = ({Controller, control, watch, setValue, onNext, getV
           name="bizUserId"
           control={control}
           render={({field: {value, onChange}}) => (
-            <Form.Item label="商家名称">
+            <Form.Item label="商家">
               <Select value={value} onChange={onChange} options={merchantList || []} />
             </Form.Item>
           )}
@@ -62,7 +62,16 @@ const Base: FC<BaseProps> = ({Controller, control, watch, setValue, onNext, getV
           name="partyAName"
           control={control}
           render={({field: {value}}) => (
-            <Form.Item label="选择商家">
+            <Form.Item label="甲方">
+              <SelfText value={value} />
+            </Form.Item>
+          )}
+        />
+        <Controller
+          name="partyBName"
+          control={control}
+          render={({field: {value}}) => (
+            <Form.Item label="乙方">
               <SelfText value={value} />
             </Form.Item>
           )}

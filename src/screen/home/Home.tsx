@@ -6,7 +6,7 @@ import {PlusButton, UnitNumber} from '../../component';
 import {globalStyles, globalStyleVariables} from '../../constants/styles';
 import {useHomeSummary} from '../../helper/hooks';
 import {useNavigation} from '@react-navigation/native';
-import {FakeNavigation, MerchantAction, MerchantCreateType} from '../../models';
+import {ContractAction, FakeNavigation, MerchantAction, MerchantCreateType} from '../../models';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const Home: React.FC = () => {
@@ -58,7 +58,12 @@ const Home: React.FC = () => {
             <PlusButton
               title="新增合同"
               onPress={() => {
-                navigation.navigate('AddContract');
+                navigation.navigate({
+                  name: 'AddContract',
+                  params: {
+                    action: ContractAction.ADD,
+                  },
+                });
               }}
             />
           </View>
@@ -96,7 +101,7 @@ const Home: React.FC = () => {
               navigation.navigate({
                 name: 'AddMerchant',
                 params: {
-                  action: MerchantAction.EDIT,
+                  action: MerchantAction.ADD,
                   identity: MerchantCreateType.PRIVATE_SEA,
                 },
               });

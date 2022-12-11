@@ -62,10 +62,13 @@ export async function getMerchantDetail(merchantId: number): Promise<MerchantDet
 export async function getPublicMerchantDetail(merchantId: number): Promise<MerchantDetailF> {
   return await get<MerchantDetailF>(`/biz/user/details/for/public?id=${merchantId}`);
 }
+export async function returnPublic(id: number): Promise<boolean> {
+  return await post<boolean, {id: number}>('/biz/user/del/my/broad/ocean', {id});
+}
 
 // 修改商户信息
-export async function updateMerchant(merchant: MerchantDetailF): Promise<boolean> {
-  return await post<boolean, MerchantDetailF>('/biz/user/modify', merchant);
+export async function updateMerchant(merchant: MerchantForm): Promise<boolean> {
+  return await post<boolean, MerchantForm>('/biz/user/modify', merchant);
 }
 
 // 新增店铺
@@ -118,7 +121,6 @@ export async function inviteAuth(merchantId: number): Promise<boolean> {
     id: merchantId,
   });
 }
-
 // 城市列表,三级分类
 export async function cityList(): Promise<Site[]> {
   return await get('/location/with/company/three/list');

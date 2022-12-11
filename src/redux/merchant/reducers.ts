@@ -1,12 +1,12 @@
 import produce from 'immer';
 import {MerchantActions} from './actions';
 import {ActionType} from './types';
-import {MerchantCategory, MerchantDetailF, MerchantSimpleF} from '../../models';
+import {MerchantCategory, FormMerchant, MerchantSimpleF} from '../../models';
 
 export interface MerchantState {
   merchantCategories: MerchantCategory[];
   loadingCurrentMerchant: boolean;
-  currentMerchant?: MerchantDetailF;
+  currentMerchant?: FormMerchant;
   merchantSearchList: MerchantSimpleF[];
 }
 
@@ -16,20 +16,17 @@ export const initialState: MerchantState = {
   merchantSearchList: [],
 };
 
-export default (
-  state = initialState,
-  action: MerchantActions,
-): MerchantState => {
+export default (state = initialState, action: MerchantActions): MerchantState => {
   switch (action.type) {
     case ActionType.LOAD_MERCHANT_CATEGORIES_SUCCESS:
       return produce(state, draft => {
         draft.merchantCategories = action.payload;
       });
-    case ActionType.LOAD_CURRENT_MERCHANT:
+    case ActionType.LOAD_CURRENT_MERCHANT_PRIVATE:
       return produce(state, draft => {
         draft.loadingCurrentMerchant = true;
       });
-    case ActionType.LOAD_CURRENT_MERCHANT_SUCCESS:
+    case ActionType.LOAD_CURRENT_MERCHANT_PRIVATE_SUCCESS:
       return produce(state, draft => {
         draft.loadingCurrentMerchant = false;
         draft.currentMerchant = action.payload;
@@ -40,7 +37,7 @@ export default (
       });
     case ActionType.END_EDIT:
       return produce(state, draft => {
-        draft.currentMerchant = undefined;
+        draft.currentMerchant = null;
         draft.merchantSearchList = [];
       });
     default:

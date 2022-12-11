@@ -25,7 +25,7 @@ const Certification: React.FC<CertificationProps> = ({Controller, control, watch
           name="businessName"
           control={control}
           render={({field}) => (
-            <Form.Item label="商家主体名称" name="businessName">
+            <Form.Item label="商家主体名称">
               <Input placeholder="请输入" {...field} />
             </Form.Item>
           )}
@@ -34,7 +34,7 @@ const Certification: React.FC<CertificationProps> = ({Controller, control, watch
           name="enterpriseUsci"
           control={control}
           render={({field}) => (
-            <Form.Item label="统一社会信用代码" name="enterpriseUsci">
+            <Form.Item label="统一社会信用代码">
               <Input placeholder="请输入" value={field.value} onChange={field.onChange} />
             </Form.Item>
           )}
@@ -80,7 +80,7 @@ const Certification: React.FC<CertificationProps> = ({Controller, control, watch
           name="legalNumber"
           control={control}
           render={({field}) => (
-            <Form.Item label={`${legalAuthType === MerchantAgentType.LEGAL ? '法人' : '经办人'}姓名`}>
+            <Form.Item label={`${legalAuthType === MerchantAgentType.LEGAL ? '法人' : '经办人'}身份证`}>
               <Input {...field} />
             </Form.Item>
           )}

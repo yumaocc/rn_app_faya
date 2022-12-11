@@ -1,6 +1,6 @@
 // 基础信息
 import {useRequest} from 'ahooks';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {BoolEnum, FormSetValue} from '../../../models/common';
 import {SectionGroup, FormTitle, Form, Input, Select, PlusButton, Cascader, SelfText} from '../../../component';
@@ -11,21 +11,30 @@ import {useLoadCity} from '../../../helper/hooks';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import EditShop from './EditShop';
 import {Control, useFieldArray} from 'react-hook-form';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../redux/reducers';
+import {Icon} from '@ant-design/react-native';
 interface EditBaseProps {
   type: MerchantCreateType; //用户的身份，公海还是私海
   control: Control<FormMerchant, any>;
   Controller: FormControlC;
   errors: FormErrors;
   setValue: FormSetValue;
+  isHidden: boolean;
 }
 
-const EditBase: React.FC<EditBaseProps> = ({Controller, control, errors}) => {
+const EditBase: React.FC<EditBaseProps> = ({Controller, control, errors, setValue, isHidden}) => {
   const {cityList} = useLoadCity();
   const [modalIsShow, setModalIsShow] = useState(false);
+  const areaInfo = useSelector<RootState, number[]>(state => {
+    return state.merchant.currentMerchant?.areaInfo;
+  });
+  const categoryId = useSelector<RootState, number>(state => state.merchant.currentMerchant?.categoryId);
   const {fields, append} = useFieldArray({
     control,
     name: 'shopList',
   });
+  //商家类型
   const {data} = useRequest(async () => {
     const res = await api.merchant.getMerchantCategories();
 
@@ -33,13 +42,24 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, control, errors}) => {
       value: item.id,
       label: item.name,
     }));
-    return Promise.resolve(category);
+    return category;
   });
+  useEffect(() => {
+    if (cityList?.length > 0 && areaInfo?.length > 0) {
+      setValue('areaInfo', areaInfo);
+    }
+  }, [areaInfo, cityList, setValue]);
+
+  useEffect(() => {
+    if (data?.length > 0) {
+      setValue('categoryId', categoryId);
+    }
+  }, [categoryId, data, setValue]);
+
   return (
     <>
       <SectionGroup style={styles.sectionGroup}>
         <FormTitle title="基本信息" />
-
         <Controller
           control={control}
           name="avatar"
@@ -61,23 +81,24 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, control, errors}) => {
           )}
         />
 
-        <Controller
-          control={control}
-          name="categoryId"
-          defaultValue={BoolEnum.FALSE}
-          render={({field}) => (
-            <Form.Item label="商家行业" name="categoryId">
-              <Select options={data || []} value={field.value} onChange={field.onChange} />
-            </Form.Item>
-          )}
-        />
+        {data?.length && (
+          <Controller
+            control={control}
+            name="categoryId"
+            render={({field}) => (
+              <Form.Item label="商家行业">
+                <Select options={data} value={field.value} onChange={field.onChange} />
+              </Form.Item>
+            )}
+          />
+        )}
 
         <Controller
           control={control}
           name="multiStore"
           defaultValue={BoolEnum.FALSE}
           render={({field}) => (
-            <Form.Item label="商家模式" name="multiStore">
+            <Form.Item label="商家模式">
               <Select
                 value={field.value}
                 onChange={field.onChange}
@@ -107,18 +128,20 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, control, errors}) => {
             </Form.Item>
           )}
         />
+        {cityList?.length && (
+          <Controller
+            control={control}
+            name="areaInfo"
+            rules={{required: true}}
+            render={({field}) => (
+              <Form.Item label="商家城市">
+                <Cascader value={field.value} onChange={field.onChange} options={cityList} placeholder="请输入" />
+              </Form.Item>
+            )}
+          />
+        )}
 
-        <Controller
-          control={control}
-          name="areaInfo"
-          rules={{required: true}}
-          render={({field}) => (
-            <Form.Item label="商家城市">
-              <Cascader value={field.value} onChange={field.onChange} options={cityList || []} placeholder="请输入" />
-            </Form.Item>
-          )}
-        />
-        <Controller
+        {/* <Controller
           control={control}
           name="locationWithCompanyId"
           rules={{required: true}}
@@ -127,7 +150,7 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, control, errors}) => {
               <Cascader options={cityList || []} placeholder="请输入" value={field.value} onChange={field.onChange} />
             </Form.Item>
           )}
-        />
+        /> */}
 
         <Controller
           control={control}
@@ -140,31 +163,50 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, control, errors}) => {
             </Form.Item>
           )}
         />
-        <FormTitle
-          title="店铺信息"
-          style={{height: 40, alignItems: 'center'}}
-          headerRight={
-            <PlusButton
-              title="新增店铺"
-              onPress={() => {
-                setModalIsShow(true);
-              }}
+
+        {isHidden ? (
+          <>
+            <FormTitle
+              title="店铺信息"
+              style={{height: 40, alignItems: 'center'}}
+              headerRight={
+                <PlusButton
+                  title="新增店铺"
+                  onPress={() => {
+                    setModalIsShow(true);
+                  }}
+                />
+              }
             />
-          }
-        />
-        {fields.map((item, index) => {
-          return (
-            <View key={item.id} style={styles.shop}>
-              <Controller
-                control={control}
-                name={`shopList.${index}.shopName`}
-                render={({field: {value}}) => <SelfText value={value} style={[globalStyles.fontPrimary, globalStyles.borderBottom]} />}
-              />
-              <Controller control={control} name={`shopList.${index}.addressDetail`} render={({field: {value}}) => <SelfText value={value} style={globalStyles.fontTertiary} />} />
-              <Controller control={control} name={`shopList.${index}.contactPhone`} render={({field: {value}}) => <SelfText value={value} style={globalStyles.fontTertiary} />} />
-            </View>
-          );
-        })}
+            {fields.map((item, index) => {
+              return (
+                <View key={item.id} style={styles.shop}>
+                  <Controller
+                    control={control}
+                    name={`shopList.${index}.shopName`}
+                    render={({field: {value}}) => <SelfText value={value} style={[globalStyles.fontPrimary, globalStyles.borderBottom]} />}
+                  />
+                  <Controller
+                    control={control}
+                    name={`shopList.${index}.addressDetail`}
+                    render={({field: {value}}) => <SelfText value={value} style={globalStyles.fontTertiary} />}
+                  />
+                  <Controller
+                    control={control}
+                    name={`shopList.${index}.contactPhone`}
+                    render={({field: {value}}) => <SelfText value={value} style={globalStyles.fontTertiary} />}
+                  />
+                </View>
+              );
+            })}
+          </>
+        ) : (
+          <SectionGroup style={[styles.sectionGroup, styles.tabs]}>
+            <Icon style={{color: globalStyleVariables.COLOR_PRIMARY}} name="lock" />
+            <Text style={{color: globalStyleVariables.COLOR_PRIMARY}}>认领后可见</Text>
+          </SectionGroup>
+        )}
+
         <EditShop open={modalIsShow} setOpen={setModalIsShow} setValue={append} />
       </SectionGroup>
     </>
@@ -187,5 +229,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.03)',
     padding: globalStyleVariables.MODULE_SPACE,
+  },
+  tabs: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: globalStyleVariables.MODULE_SPACE,
   },
 });

@@ -2,12 +2,12 @@ import produce from 'immer';
 
 import {ContractActions} from './actions';
 import {ActionType} from './types';
-import {ContractDetailF, ContractF} from '../../models';
+import {ContractF, ContractList} from '../../models';
 
 export interface ContractState {
-  currentContract?: ContractDetailF;
+  currentContract?: ContractF;
   loadingCurrentContract: boolean;
-  contractSearchList: ContractF[];
+  contractSearchList: ContractList[];
 }
 
 export const initialState: ContractState = {
