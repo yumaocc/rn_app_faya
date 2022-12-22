@@ -2,15 +2,19 @@ import React from 'react';
 import {TextInput, TouchableOpacity} from 'react-native';
 import {FC} from 'react';
 import {useRequest} from 'ahooks';
-import {Button, Icon, List} from '@ant-design/react-native';
+import {Icon, ListView} from '@ant-design/react-native';
 import {NavigationBar} from '../../../component';
 import {getMyContractList} from '../../../apis/contract';
-import {View, StyleSheet, ScrollView, Text} from 'react-native';
+import {View, StyleSheet, Text} from 'react-native';
 import Loading from '../../common/Loading';
 import {UnitNumber} from '../../../component';
 import {globalStyleVariables, globalStyles} from '../../../constants/styles';
-import {BoolEnum, ContractAction, FakeNavigation, SearchParam} from '../../../models';
+import {BoolEnum, FakeNavigation, SearchParam, ContractList as ContractListType} from '../../../models';
 import {useNavigation} from '@react-navigation/native';
+import * as api from '../../../apis';
+
+type StartFetchFunction = (rowData: any[], pageSize: number) => void;
+type abortFetchFunction = () => void;
 
 const ContractList: FC = () => {
   const navigation = useNavigation() as FakeNavigation;
@@ -23,18 +27,19 @@ const ContractList: FC = () => {
     },
   );
 
+  async function fetchData(pageIndex = 1, startFetch: StartFetchFunction, abortFetch: abortFetchFunction) {
+    try {
+      const pageSize = 10;
+      const res = await api.contract.getMyContractList({pageIndex, pageSize});
+      const rowData: ContractListType[] = res.content;
+      startFetch(rowData, pageSize);
+    } catch (error) {
+      abortFetch();
+    }
+  }
+
   if (loading) {
     return <Loading />;
-  }
-  if (!data?.page?.pageTotal) {
-    return (
-      <View style={styles.contract}>
-        <View style={styles.contract_dot}>
-          <Icon name="solution" color="black" size="md" />
-        </View>
-        <Text style={{color: globalStyleVariables.TEXT_COLOR_SECONDARY}}>还没有商家哦，快去公海看看吧</Text>
-      </View>
-    );
   }
 
   const headerRight = (
@@ -43,67 +48,64 @@ const ContractList: FC = () => {
       <Icon size="lg" name="plus-circle" style={[globalStyles.primaryColor, styles.header_icon]} />
     </>
   );
-  return (
-    <View style={{flex: 1}}>
-      <NavigationBar title="合同列表" headerRight={headerRight} />
-      <View style={[globalStyles.lineHorizontal]} />
-      <View style={[styles.header]}>
-        <View>
-          <UnitNumber prefix="共" value={data?.page?.pageTotal} unit="份" />
-        </View>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Text style={{fontSize: 20, marginRight: 20}}>筛选</Text>
-          <View style={{flexDirection: 'row'}}>
-            <TextInput placeholder="搜索" onChangeText={name => run({name})} />
-            <Icon name="search" />
+
+  const renderItem = (item: ContractListType) => {
+    return (
+      <TouchableOpacity
+        key={item.id}
+        activeOpacity={0.5}
+        onPress={() => {
+          navigation.navigate({
+            name: 'EditContract',
+            params: {
+              id: item.id,
+              action: item.status,
+            },
+          });
+        }}>
+        <View style={{marginTop: 10, paddingBottom: 10}}>
+          <View>
+            <Text style={{fontSize: 20, fontWeight: 'bold', marginBottom: 10}}>{item?.name}</Text>
+          </View>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+            {item?.status === BoolEnum.TRUE ? <Text style={{color: '#4AB87D'}}>生效中{item?.createdTime}</Text> : <Text style={{color: '#999999'}}>已失效{item?.createdTime}</Text>}
+            <Text>{item?.createdTime}</Text>
           </View>
         </View>
+      </TouchableOpacity>
+    );
+  };
+  return (
+    <>
+      <View style={{flex: 1}}>
+        <NavigationBar title="合同列表" headerRight={headerRight} />
+        <View style={[globalStyles.lineHorizontal]} />
+        <View style={[styles.header]}>
+          <View>
+            <UnitNumber prefix="共" value={data?.page?.pageTotal} unit="份" />
+          </View>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Text style={{fontSize: 20, marginRight: 20}}>筛选</Text>
+            <View style={{flexDirection: 'row'}}>
+              <TextInput placeholder="搜索" onChangeText={name => run({name})} />
+              <Icon name="search" />
+            </View>
+          </View>
+        </View>
+        {data?.page?.pageTotal ? (
+          <View style={styles.content}>
+            <ListView refreshViewStyle={styles.freshHeader} renderItem={renderItem} onFetch={fetchData} keyExtractor={key => key.id + ''} numColumns={1} />
+          </View>
+        ) : (
+          <View style={styles.contract}>
+            <View style={styles.contract_dot}>
+              <Icon name="solution" color="black" size="md" />
+            </View>
+            <Text style={{color: globalStyleVariables.TEXT_COLOR_SECONDARY}}>还没有商家哦，快去公海看看吧</Text>
+          </View>
+        )}
       </View>
-      <ScrollView style={{marginTop: 10}}>
-        <List>
-          {data?.content?.map(item => (
-            <TouchableOpacity
-              key={item.id}
-              activeOpacity={0.5}
-              onPress={() => {
-                navigation.navigate({
-                  name: 'EditContract',
-                  params: {
-                    id: item.id,
-                    action: item.status,
-                  },
-                });
-              }}>
-              <Button
-                onPress={() =>
-                  navigation.navigate({
-                    name: 'AddContract',
-                    params: {
-                      id: item.id,
-                      action: item.status ? ContractAction.VIEW : ContractAction.EDIT,
-                    },
-                  })
-                }>
-                点击
-              </Button>
-              <List.Item style={{marginTop: 10, paddingBottom: 10}}>
-                <View>
-                  <Text style={{fontSize: 20, fontWeight: 'bold', marginBottom: 10}}>{item?.name}</Text>
-                </View>
-                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                  {item?.status === BoolEnum.TRUE ? (
-                    <Text style={{color: '#4AB87D'}}>生效中{item?.createdTime}</Text>
-                  ) : (
-                    <Text style={{color: '#999999'}}>已失效{item?.createdTime}</Text>
-                  )}
-                  <Text>{item?.createdTime}</Text>
-                </View>
-              </List.Item>
-            </TouchableOpacity>
-          ))}
-        </List>
-      </ScrollView>
-    </View>
+    </>
   );
 };
 
@@ -113,10 +115,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  freshHeader: {
+    height: 40,
+  },
   header_icon: {
     fontSize: 25,
     color: 'black',
     marginRight: globalStyleVariables.MODULE_SPACE,
+  },
+  content: {
+    flex: 1,
+    paddingLeft: 15,
+    paddingRight: 15,
+    backgroundColor: '#fff',
   },
   contract_dot: {
     width: 50,

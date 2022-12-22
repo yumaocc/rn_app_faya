@@ -117,7 +117,9 @@ const BuyNotice: React.FC<BuyNoticeProps> = () => {
         visible={showAddNotice}
         onClose={() => setShowAddNotice(false)}
         onOk={() => {
-          onAddNotice(template.type, customNotice);
+          if (customNotice !== '') {
+            onAddNotice(template.type, customNotice);
+          }
         }}>
         <View>
           {template?.list?.length > 0 && (

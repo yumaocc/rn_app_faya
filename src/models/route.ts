@@ -37,6 +37,7 @@ export type RootStackParamList = {
   SPUDetail: {id: number};
   Demo: undefined;
   ViewMerchant: {id: number};
+  Cash: undefined;
 };
 
 export type Props = NativeStackScreenProps<RootStackParamList>;

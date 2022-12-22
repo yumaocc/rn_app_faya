@@ -15,9 +15,7 @@ const OperateItem: React.FC<OperateItemProps> = props => {
     <View style={styles.operateWrapper}>
       <View style={[styles.operateBody]}>
         {props.icon}
-        <Text style={[globalStyles.fontPrimary, styles.operateTitle]}>
-          {title}
-        </Text>
+        <Text style={[globalStyles.fontPrimary, styles.operateTitle]}>{title}</Text>
         <Icon name="right" style={globalStyles.iconRight} />
       </View>
       {props.extra && <View style={styles.operateExtra}>{props.extra}</View>}

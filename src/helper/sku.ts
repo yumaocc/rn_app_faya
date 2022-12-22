@@ -36,6 +36,7 @@ export function cleanSPUForm(spu: SPUForm): SPUForm {
     newSPU.saleBeginTime = saleBeginTime!;
     newSPU.saleEndTime = saleEndTime!;
   }
+  newSPU.bannerPhotos = newSPU?.bannerPhotos?.map(item => ({url: item.url}));
   // rn处理售卖时间
   const {_saleBeginTime, _saleEndTime} = spu;
   if (_saleBeginTime && _saleEndTime) {

@@ -124,3 +124,9 @@ export const globalStyles = StyleSheet.create({
     color: '#FFB443',
   },
 });
+
+export const FontSize = StyleSheet.create({
+  f15: {
+    fontSize: 15,
+  },
+});

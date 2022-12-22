@@ -60,7 +60,7 @@ const EditSPU: React.FC = () => {
     if (!spuDetail) {
       return;
     }
-    merchantDispatcher.loadCurrentMerchant(spuDetail.bizUserId);
+    merchantDispatcher.loadCurrentMerchantPrivate(spuDetail.bizUserId);
     merchantDispatcher.loadMerchantSearchList({});
     contractDispatcher.loadCurrentContract(spuDetail.contractId);
     contractDispatcher.loadContractSearchList({id: spuDetail.bizUserId});
@@ -110,11 +110,16 @@ const EditSPU: React.FC = () => {
     };
   }, [skuDispatcher]);
 
-  function check() {
-    const formData = form.getFieldsValue() as SPUForm;
-    console.log(formData);
-    const cleanData = cleanSPUForm(formData);
-    console.log('cleaned', cleanData);
+  async function check() {
+    try {
+      const formData = form.getFieldsValue() as SPUForm;
+      console.log(formData);
+      const cleanData = cleanSPUForm(formData);
+      console.log('cleaned', cleanData);
+      await api.sku.createSPU(cleanData);
+    } catch (error) {
+      commonDispatcher.error(error);
+    }
   }
 
   async function handleSubmit() {

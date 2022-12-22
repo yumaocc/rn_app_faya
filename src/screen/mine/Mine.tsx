@@ -41,7 +41,9 @@ const Mine: React.FC = () => {
         </View>
 
         <SectionGroup>
-          <OperateItem title="我的金库" icon={<Icon name="wallet" />} />
+          <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Cash')}>
+            <OperateItem title="我的金库" icon={<Icon name="wallet" />} />
+          </TouchableOpacity>
         </SectionGroup>
 
         <SectionGroup>

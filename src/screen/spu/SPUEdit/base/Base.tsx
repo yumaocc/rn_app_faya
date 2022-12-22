@@ -44,7 +44,7 @@ const Base: React.FC<BaseProps> = ({onNext}) => {
   }
 
   function handleChangeMerchant(merchantId?: number) {
-    merchantDispatcher.loadCurrentMerchant(merchantId);
+    merchantDispatcher.loadCurrentMerchantPrivate(merchantId);
     form.setFieldsValue({
       contractId: undefined,
       canUseShopIds: [],
@@ -112,8 +112,11 @@ const Base: React.FC<BaseProps> = ({onNext}) => {
       </SectionGroup>
       <SectionGroup style={styles.sectionGroupStyle}>
         <FormTitle title="商品基础信息" />
-        <Form.Item label="商家名称" name="spuName">
+        <Form.Item label="商品名称" name="spuName">
           <Input placeholder="商品名称" />
+        </Form.Item>
+        <Form.Item label="商品副标题" name="subName">
+          <Input placeholder="商品副标题" />
         </Form.Item>
         <Form.Item label="商品分类">
           <Cascader value={currentContract?.spuInfoReq?.spuCategoryIds} disabled options={SPUCategories} labelKey="name" valueKey="id" placeholder="商品分类" />
