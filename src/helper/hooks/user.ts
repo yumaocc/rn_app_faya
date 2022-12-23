@@ -26,9 +26,7 @@ export function useWallet(): [WalletInfo, () => void] {
 }
 
 export function useBankList(): [Bank[]] {
-  const bankList = useSelector(
-    (state: RootState) => state.user.supportBankList,
-  );
+  const bankList = useSelector((state: RootState) => state.user.supportBankList);
   const [userDispatcher] = useUserDispatcher();
 
   useEffect(() => {

@@ -28,7 +28,7 @@ const UnitNumber: React.FC<UnitNumberProps> = props => {
   return (
     <Text style={[styles.container, style]}>
       <Text> {prefix}</Text>
-      <Text style={styles.value}>{valueStr}</Text>
+      <Text style={[styles.value, style]}>{valueStr}</Text>
       <Text style={styles.unit}> {unit}</Text>
     </Text>
   );

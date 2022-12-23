@@ -164,3 +164,13 @@ export interface SPUF {
   spuName: string;
   skuList: SPUTableSKU[];
 }
+
+//商品销售前十
+export interface SalesList {
+  allCommission: number;
+  allSaleAmount: number;
+  name: string;
+  saleBeginTime: string;
+  saleEndTime: string;
+  spuId: number;
+}

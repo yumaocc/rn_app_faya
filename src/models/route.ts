@@ -38,6 +38,8 @@ export type RootStackParamList = {
   Demo: undefined;
   ViewMerchant: {id: number};
   Cash: undefined;
+  Withdraw: undefined;
+  Success: undefined;
 };
 
 export type Props = NativeStackScreenProps<RootStackParamList>;

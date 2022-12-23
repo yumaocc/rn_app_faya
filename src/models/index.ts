@@ -1,6 +1,6 @@
 // F结尾代表是后端返回的数据结构
 export type {RouteItem, NavigationItem, RootStackParamList, Props, FakeNavigation} from './route';
-export type {UserInfo, LoginParam, CertificateParam, WalletInfo, UserWithdrawalRecord, ChangeBankForm, Bank} from './user';
+export type {UserInfo, LoginParam, CertificateParam, WalletInfo, UserWithdrawalRecord, ChangeBankForm, Bank, WithdrawalFrom} from './user';
 export type {
   ErrorType,
   CacheKeys,
@@ -24,6 +24,8 @@ export type {
   FormWatch,
   FormErrors,
   FormSetValue,
+  BeginTimeAndEndTime,
+  Picker,
 } from './common';
 export type {HomeStatisticsF, Statistics} from './home';
 export type {
@@ -72,10 +74,11 @@ export type {
   SKUDetail,
   BookingModel,
   SPUDetailF,
+  SalesList,
 } from './spu';
 export type {CommissionToday, CommissionExpect, Commission, CommissionTop, SaleTop, CommissionHistory, CommissionDetail} from './summary';
 
-export {LoginState, UserState, UserType, UserWithdrawalRecordStatus} from './user';
+export {LoginState, UserState, UserType, UserWithdrawalRecordStatus, BankCardStatus} from './user';
 export {CustomError, CustomErrorWithPayload, BoolEnum} from './common';
 export {MerchantType, MerchantCreateType, MerchantAgentType, MerchantAction} from './merchant';
 export {BuyLimitType, SettlementType, AccountType, ProtocolType, InvoiceType, BookingType, ContractAction} from './contract';

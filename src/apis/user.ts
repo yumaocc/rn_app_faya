@@ -1,5 +1,5 @@
 import {post, get, getPaged} from './helper';
-import {Bank, CertificateParam, ChangeBankForm, LoginParam, PagedData, PageParam, UserInfo, UserWithdrawalRecord, WalletInfo} from '../models';
+import {Bank, CertificateParam, ChangeBankForm, LoginParam, PagedData, PageParam, UserInfo, UserWithdrawalRecord, WalletInfo, WithdrawalFrom} from '../models';
 
 export async function userLogin(params: LoginParam): Promise<UserInfo> {
   return await post<UserInfo, LoginParam>('/crm/user/login', {
@@ -31,6 +31,9 @@ export async function getWallet(): Promise<WalletInfo> {
 // 提现记录
 export async function getWithdrawalRecords(param: PageParam): Promise<PagedData<UserWithdrawalRecord[]>> {
   return await getPaged<UserWithdrawalRecord[]>('/crm/user/withdrawal/log/page', {params: param});
+}
+export async function getWithdrawal(param: WithdrawalFrom): Promise<boolean> {
+  return await post<boolean, WithdrawalFrom>('/yeepay/withdraw/money', param);
 }
 // 更换银行卡
 export async function changeBank(param: ChangeBankForm) {

@@ -84,6 +84,17 @@ export interface FileWithURL {
   uid?: string;
 }
 
+//时间搜索的参数
+export interface BeginTimeAndEndTime {
+  beginTime: string;
+  endTime: string;
+}
+
+//时间选择类型
+export interface Picker {
+  value: TimeDimension;
+  label: string;
+}
 //城市三级分类
 
 export interface Site {

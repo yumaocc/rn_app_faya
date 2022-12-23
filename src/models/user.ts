@@ -49,7 +49,9 @@ export interface WalletInfo {
   bankTelephone: string; // 银行预留手机号
   cardholder: string; // 持卡人
   crmUserId: number; // crm用户id
+  status: number; // 认证状态
   idCard: string; // 实名身份证号
+  bankCompanyName: string;
 }
 
 export enum UserWithdrawalRecordStatus {
@@ -80,4 +82,17 @@ export interface Bank {
   id?: number;
   bankCode: string;
   bankName: string;
+}
+
+export enum BankCardStatus {
+  unverified = 0,
+  authenticated = 1,
+  authenticating = 3,
+  seriousFailure = 2,
+}
+
+//提现
+export interface WithdrawalFrom {
+  money: string;
+  type: string;
 }

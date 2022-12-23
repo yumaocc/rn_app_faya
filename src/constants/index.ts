@@ -17,5 +17,23 @@ export const BoolOptions = [
   {label: '是', value: BoolEnum.TRUE},
   {label: '否', value: BoolEnum.FALSE},
 ];
-
+//年月日周选择器
+export const date = [
+  {
+    value: 'day',
+    label: '日',
+  },
+  {
+    value: 'week',
+    label: '周',
+  },
+  {
+    value: 'month',
+    label: '月',
+  },
+  {
+    value: 'year',
+    label: '年',
+  },
+];
 export {getBaseURL} from './url';
