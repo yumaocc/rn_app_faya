@@ -1,6 +1,7 @@
 import {Button} from '@ant-design/react-native';
 import React, {FC} from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, Text} from 'react-native';
+import {globalStyles} from '../constants/styles';
 
 interface LinkButtonProps {
   title: string;
@@ -8,8 +9,8 @@ interface LinkButtonProps {
 }
 const LinkButton: FC<LinkButtonProps> = ({title, onPress}) => {
   return (
-    <Button style={styles.button} onPress={onPress} type="ghost">
-      {title}
+    <Button style={[styles.button]} onPress={onPress} type="ghost">
+      <Text style={[globalStyles.fontSize12, globalStyles.primaryColor]}> {title}</Text>
     </Button>
   );
 };
@@ -19,6 +20,5 @@ const styles = StyleSheet.create({
   button: {
     borderColor: 'none',
     borderWidth: 0,
-    color: '#546DAD',
   },
 });

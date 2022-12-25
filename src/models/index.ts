@@ -26,6 +26,7 @@ export type {
   FormSetValue,
   BeginTimeAndEndTime,
   Picker,
+  Options,
 } from './common';
 export type {HomeStatisticsF, Statistics} from './home';
 export type {

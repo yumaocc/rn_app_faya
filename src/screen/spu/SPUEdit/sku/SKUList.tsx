@@ -6,11 +6,18 @@ import {Stepper, SwipeAction} from '@ant-design/react-native';
 import {Checkbox, Form, FormTitle, Input, Modal, PlusButton, SectionGroup} from '../../../../component';
 import {globalStyles, globalStyleVariables} from '../../../../constants/styles';
 import {findItem, getBuyLimitStr, getItemByIndex} from '../../../../helper';
-import {BoolEnum, PackagedSKU, PackagedSKUForm, PackagedSKUItem, SKU} from '../../../../models';
+import {BoolEnum, PackagedSKU, PackagedSKUForm, PackagedSKUItem, SKU, SPUForm} from '../../../../models';
 import {RootState} from '../../../../redux/reducers';
 import {styles} from '../style';
+import {Control, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
 
-const SKUList: React.FC = () => {
+interface SKUListProps {
+  control?: Control<SPUForm, any>;
+  setValue?: UseFormSetValue<SPUForm>;
+  getValues?: UseFormGetValues<SPUForm>;
+  watch?: UseFormWatch<SPUForm>;
+}
+const SKUList: React.FC<SKUListProps> = () => {
   const [isShowPackageModal, setIsShowPackageModal] = useState(false);
   const [editIndex, setEditIndex] = useState<number>(-1); // 用索引标识当前正在编辑的组合套餐
 

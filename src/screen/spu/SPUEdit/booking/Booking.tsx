@@ -1,12 +1,13 @@
 import {Button} from '@ant-design/react-native';
 import React, {useMemo, useState} from 'react';
+import {Control, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
 import {ScrollView, View, Text} from 'react-native';
 import {useSelector} from 'react-redux';
 import {Checkbox, Footer, Form, FormTitle, Modal, PlusButton, SectionGroup, Select} from '../../../../component';
 import {BoolOptions} from '../../../../constants';
 import {findItem, getBookingType} from '../../../../helper';
 import {useCodeTypes, useCommonDispatcher, useMerchantBookingModel} from '../../../../helper/hooks';
-import {BookingModel, BoolEnum} from '../../../../models';
+import {BookingModel, BoolEnum, SPUForm} from '../../../../models';
 import {RootState} from '../../../../redux/reducers';
 import {styles} from '../style';
 
@@ -14,6 +15,10 @@ import BuyNotice from './BuyNotice';
 
 interface BookingProps {
   onNext?: () => void;
+  control?: Control<SPUForm, any>;
+  setValue?: UseFormSetValue<SPUForm>;
+  getValues?: UseFormGetValues<SPUForm>;
+  watch?: UseFormWatch<SPUForm>;
 }
 
 const Booking: React.FC<BookingProps> = ({onNext}) => {
@@ -87,8 +92,7 @@ const Booking: React.FC<BookingProps> = ({onNext}) => {
           )}
           <Form.Item label="绑定预约型号" vertical>
             <View style={{flexDirection: 'row'}}>
-              <PlusButton title="添加绑定" style={{marginRight: 20}} onPress={openBindingModal} />
-              <PlusButton title="预约型号管理" />
+              <PlusButton title="绑定预约型号" style={{marginRight: 20}} onPress={openBindingModal} />
             </View>
             <View>
               {modelList.map((model, index) => {

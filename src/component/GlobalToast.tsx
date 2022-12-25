@@ -17,7 +17,7 @@ const GlobalToast: React.FC = () => {
         Toast.success(message, duration);
         break;
       case 'error':
-        Toast.fail(message, duration);
+        Toast.fail(message || '哎呀，出错了~', duration);
         break;
       default:
         Toast.info(message, duration);

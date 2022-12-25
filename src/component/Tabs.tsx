@@ -15,14 +15,14 @@ interface TabsProps {
   currentKey?: string;
   tabs: TabItem[];
   style?: StylePropView;
+  topBorder?: boolean;
+  underline?: boolean;
 }
 
 const Tabs: React.FC<TabsProps> = props => {
-  const {onChange, defaultActiveKey, tabs, currentKey} = props;
+  const {onChange, defaultActiveKey, tabs, currentKey, topBorder, underline} = props;
 
-  const [activeKey, setActiveKey] = useState(
-    defaultActiveKey || tabs[0]?.key || '',
-  );
+  const [activeKey, setActiveKey] = useState(defaultActiveKey || tabs[0]?.key || '');
 
   useEffect(() => {
     if (currentKey) {
@@ -37,22 +37,14 @@ const Tabs: React.FC<TabsProps> = props => {
     }
   };
   return (
-    <View style={[styles.container, props.style]}>
+    <View style={[styles.container, props.style, topBorder ? styles.topBorder : {}]}>
       {tabs.map(tab => {
         return (
-          <TouchableOpacity
-            key={tab.key}
-            activeOpacity={0.7}
-            onPress={() => changeTab(tab.key)}>
-            <View>
-              <Text
-                style={[
-                  styles.tabText,
-                  activeKey === tab.key ? styles.activeTabText : {},
-                ]}>
-                {tab.title}
-              </Text>
+          <TouchableOpacity key={tab.key} activeOpacity={0.7} onPress={() => changeTab(tab.key)}>
+            <View style={[underline ? (activeKey === tab.key ? styles.activeBottom : {}) : {}]}>
+              <Text style={[styles.tabText, activeKey === tab.key ? styles.activeTabText : {}]}>{tab.title}</Text>
               {/* 指示器 */}
+
               {/* <View /> */}
             </View>
           </TouchableOpacity>
@@ -75,6 +67,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
     height: 40,
+    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
+    borderBottomWidth: 1,
+  },
+  topBorder: {
+    borderTopColor: 'rgba(0, 0, 0, 0.1)',
+    borderTopWidth: 1,
   },
   tabText: {
     fontSize: 15,
@@ -83,5 +81,10 @@ const styles = StyleSheet.create({
   },
   activeTabText: {
     color: globalStyleVariables.COLOR_PRIMARY,
+  },
+  activeBottom: {
+    borderBottomColor: globalStyleVariables.COLOR_PRIMARY,
+    borderBottomWidth: 2,
+    padding: globalStyleVariables.MODULE_SPACE,
   },
 });

@@ -92,18 +92,9 @@ const ContractList: FC = () => {
             </View>
           </View>
         </View>
-        {data?.page?.pageTotal ? (
-          <View style={styles.content}>
-            <ListView refreshViewStyle={styles.freshHeader} renderItem={renderItem} onFetch={fetchData} keyExtractor={key => key.id + ''} numColumns={1} />
-          </View>
-        ) : (
-          <View style={styles.contract}>
-            <View style={styles.contract_dot}>
-              <Icon name="solution" color="black" size="md" />
-            </View>
-            <Text style={{color: globalStyleVariables.TEXT_COLOR_SECONDARY}}>还没有商家哦，快去公海看看吧</Text>
-          </View>
-        )}
+        <View style={styles.content}>
+          <ListView refreshViewStyle={styles.freshHeader} renderItem={renderItem} onFetch={fetchData} keyExtractor={key => key.id + ''} numColumns={1} />
+        </View>
       </View>
     </>
   );

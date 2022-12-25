@@ -100,9 +100,9 @@ export interface BookingModel {
 export interface SPUForm {
   id?: number; // 如果是新增，则不会有id
   bizUserId?: number; // 商户ID
-  bannerPhotos: SPUBanner[];
+  bannerPhotos: string[] | SPUBanner[];
   baseSaleAmount: number; // 初始销量
-  canUseShopIds: number[]; // 可用的店铺id
+  canUseShopIds: any[]; // 可用的店铺id
   contractId?: number; // 合同id
   modelList: BookingModel[];
   needExpress: BoolEnum; // 下单时是否需要快递
@@ -134,7 +134,9 @@ export interface SPUForm {
   _useTime?: [Moment, Moment]; // 使用时间，用于前端表单，使用时需转化成useBeginTime和useEndTime
   showBeginTime?: DateTimeString; // 显示时间
   _showBeginTime?: Moment;
-  _openShareStock?: boolean; // 是否开启共享库存
+  _openSKUStock?: boolean; // 是否开启套餐单独设置库存
+  subName?: string;
+  locationWithCompanyId?: number; //站点
 }
 export interface SPUDetailF extends SPUForm {
   id: number;

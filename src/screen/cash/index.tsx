@@ -1,17 +1,19 @@
 import {Icon} from '@ant-design/react-native';
 import {useNavigation} from '@react-navigation/native';
 import React, {FC, useEffect} from 'react';
-import {StyleSheet, View, Text, ScrollView} from 'react-native';
+import {StyleSheet, View, Text, ScrollView, SafeAreaView} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useSelector} from 'react-redux';
 import {NavigationBar} from '../../component';
 import CutOffRule from '../../component/CutOffRule';
 import Title from '../../component/Title';
-import {FontSize} from '../../constants/styles';
+import {FontSize, globalStyles} from '../../constants/styles';
 import {useSummaryDispatcher, useUserDispatcher} from '../../helper/hooks';
 import {FakeNavigation} from '../../models';
 import {RootState} from '../../redux/reducers';
-import CommodityList from './CommodityList';
+import CommodityList from './rank/CommodityList';
+import SalesTop from './rank/SalesTop';
+
 const Cash: FC = () => {
   const navigation = useNavigation() as FakeNavigation;
   const commissionToday = useSelector((state: RootState) => state.summary);
@@ -33,40 +35,50 @@ const Cash: FC = () => {
 
   return (
     <>
-      <NavigationBar title="我的金库" />
-      <ScrollView>
-        <View style={styles.wrapper}>
-          <View style={styles.content}>
-            <Title title="余额" unit="元" type={'money'} value={wallet?.balanceYuan} arrow handleClick={() => console.log(111)} />
-            <CutOffRule />
-            <View style={styles.contentOneBtn}>
-              <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Withdraw')}>
-                <View style={styles.iconBg}>
-                  <Icon name="money-collect" />
-                </View>
-                <Text style={[{textAlign: 'center'}, FontSize.f15]}>提现</Text>
-              </TouchableOpacity>
-              <View>
-                <View style={styles.iconBg}>
-                  <Icon name="money-collect" />
-                </View>
-                <Text style={[{textAlign: 'center'}, FontSize.f15]}>提现记录</Text>
+      <SafeAreaView style={globalStyles.wrapper}>
+        <NavigationBar title="我的金库" />
+        <ScrollView>
+          <View style={styles.wrapper}>
+            <View style={styles.content}>
+              <Title title="余额" unit="元" type={'money'} value={wallet?.balanceYuan} arrow handleClick={() => console.log(111)} />
+              <CutOffRule />
+              <View style={styles.contentOneBtn}>
+                <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Withdraw')}>
+                  <View style={styles.iconBg}>
+                    <Icon name="money-collect" />
+                  </View>
+                  <Text style={[{textAlign: 'center'}, FontSize.f15]}>提现</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('WithdrawalsRecord')}>
+                  <View>
+                    <View style={styles.iconBg}>
+                      <Icon name="money-collect" />
+                    </View>
+                    <Text style={[{textAlign: 'center'}, FontSize.f15]}>提现记录</Text>
+                  </View>
+                </TouchableOpacity>
               </View>
             </View>
+            <View style={styles.content}>
+              <Title title="今日收益" unit="元" type={'money'} value={commissionToday?.commissionToday?.moneyYuan} arrow handleClick={() => navigation.navigate('TodayEarnings')} />
+              <CutOffRule />
+              <Title
+                title="预计收益"
+                unit="元"
+                type={'money'}
+                value={commissionToday?.commissionExpect?.moneyYuan}
+                arrow
+                handleClick={() => navigation.navigate('EstimatedIncome')}
+              />
+              <CutOffRule />
+              <Title title="历史总收益" unit="元" type={'money'} value={commissionToday?.commissionHistory?.moneyYuan} arrow handleClick={() => console.log(111)} />
+              <CutOffRule />
+            </View>
+            <CommodityList unit="元" title="商品提成排行" />
+            <SalesTop unit="单" title="商品销量排行" />
           </View>
-          <View style={styles.content}>
-            <Title title="今日收益" unit="元" type={'money'} value={commissionToday?.commissionToday?.moneyYuan} arrow handleClick={() => console.log(111)} />
-            <CutOffRule />
-            <Title title="预计收益" unit="元" type={'money'} value={commissionToday?.commissionExpect?.moneyYuan} arrow handleClick={() => console.log(111)} />
-            <CutOffRule />
-            <Title title="历史总收益" unit="元" type={'money'} value={commissionToday?.commissionHistory?.moneyYuan} arrow handleClick={() => console.log(111)} />
-            <CutOffRule />
-          </View>
-
-          <CommodityList unit="元" title="商品提成排行" type="commission" />
-          <CommodityList unit="单" title="商品销量排行" type="sales" />
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </SafeAreaView>
     </>
   );
 };

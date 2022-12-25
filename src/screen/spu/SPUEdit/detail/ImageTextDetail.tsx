@@ -5,9 +5,15 @@ import {Form, FormTitle, SectionGroup, Footer} from '../../../../component';
 import {styles} from '../style';
 import Upload from '../../../../component/Form/Upload';
 import {globalStyles} from '../../../../constants/styles';
+import {SPUForm} from '../../../../models';
+import {Control, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
 
 interface ImageTextDetailProps {
   onNext?: () => void;
+  control?: Control<SPUForm, any>;
+  setValue?: UseFormSetValue<SPUForm>;
+  getValues?: UseFormGetValues<SPUForm>;
+  watch?: UseFormWatch<SPUForm>;
 }
 
 const ImageTextDetail: React.FC<ImageTextDetailProps> = ({onNext}) => {

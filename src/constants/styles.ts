@@ -114,7 +114,7 @@ export const globalStyles = StyleSheet.create({
   tagWrapper: {
     padding: 5,
     flexDirection: 'row',
-    backgroundColor: '#FFB44333',
+    backgroundColor: 'rgba(255, 180, 67, 0.2)',
     alignSelf: 'flex-start',
     alignItems: 'center',
     borderRadius: 3,
@@ -122,6 +122,49 @@ export const globalStyles = StyleSheet.create({
   tag: {
     fontSize: 12,
     color: '#FFB443',
+  },
+  dropDownItem: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    borderRadius: 5,
+    borderWidth: 0,
+    shadowColor: 'rgba(0, 0, 0, 0.2)', //设置阴影色
+    shadowOffset: {width: 0, height: 0}, //设置阴影偏移,该值会设置整个阴影的偏移，width可以看做x,height可以看做y,x向右为正，y向下为正
+    shadowOpacity: 1,
+    shadowRadius: 1,
+  },
+  //下拉菜单专用
+  dropDownText: {
+    width: '100%',
+    height: 40,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    backgroundColor: '#fff',
+  },
+  fontSize12: {
+    fontSize: 12,
+  },
+  tagWrapperGreen: {
+    padding: 5,
+    backgroundColor: 'rgba(74, 184, 125, 0.2)',
+  },
+  tagGreen: {
+    color: '#4AB87D',
+    fontSize: 10,
+  },
+  wrapper: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  //分割线
+  dividingLine: {
+    width: 1,
+    height: 12,
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    marginLeft: globalStyleVariables.MODULE_SPACE,
+    marginRight: globalStyleVariables.MODULE_SPACE,
   },
 });
 

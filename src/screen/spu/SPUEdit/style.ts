@@ -17,6 +17,7 @@ export const styles = StyleSheet.create({
   shopList: {
     backgroundColor: '#f7f7f7',
     paddingHorizontal: 15,
+    marginBottom: 10,
   },
   shopItem: {
     paddingVertical: 8,

@@ -1,6 +1,6 @@
 import {ReactNode} from 'react';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {MerchantCreateType} from './merchant';
+import {MerchantCreateType, ShopForm} from './merchant';
 
 /**
  * @deprecated rn 不支持
@@ -40,6 +40,13 @@ export type RootStackParamList = {
   Cash: undefined;
   Withdraw: undefined;
   Success: undefined;
+  WithdrawalsRecord: undefined;
+  EstimatedIncome: undefined;
+  HistoricalEarnings: undefined;
+  TodayEarnings: undefined;
+  MyMerchantDetail: {id: number; name: string; status: number};
+  ShopDetail: {shopDetail: ShopForm; id: number};
+  ShopList: {id: number};
 };
 
 export type Props = NativeStackScreenProps<RootStackParamList>;

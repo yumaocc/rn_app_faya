@@ -177,18 +177,6 @@ const AddMerchant: React.FC = () => {
                       )}
                     />
                   )}
-
-                  {/* <Controller
-          control={control}
-          name="locationWithCompanyId"
-          rules={{required: true}}
-          render={({field}) => (
-            <Form.Item label="站点">
-              <Cascader options={cityList || []} placeholder="请输入" value={field.value} onChange={field.onChange} />
-            </Form.Item>
-          )}
-        /> */}
-
                   <Controller
                     control={control}
                     name="address"

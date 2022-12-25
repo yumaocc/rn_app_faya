@@ -1,64 +1,100 @@
 // import moment from 'moment';
 import {Button, Icon} from '@ant-design/react-native';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {ScrollView, Text, TouchableWithoutFeedback, View} from 'react-native';
+import {Control, useFieldArray, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
+import {ScrollView, StyleSheet, Text, TouchableWithoutFeedback, View} from 'react-native';
 import {useSelector} from 'react-redux';
-import {FormTitle, SectionGroup, Form, Input, Select, DatePicker, Footer, Cascader, Modal} from '../../../../component';
-import {globalStyleVariables} from '../../../../constants/styles';
+import {FormTitle, SectionGroup, Form, Input, Select, DatePicker, Footer, Cascader, Modal, SelfText} from '../../../../component';
+import {globalStyles, globalStyleVariables} from '../../../../constants/styles';
 import {useMerchantDispatcher, useContractDispatcher, useSPUCategories} from '../../../../helper/hooks';
-import {BoolEnum} from '../../../../models';
+import {BoolEnum, ShopForm} from '../../../../models';
 import {RootState} from '../../../../redux/reducers';
 import {styles} from '../style';
+import Label from '../../../../component/Lable';
+import {Controller} from 'react-hook-form';
 import SelectShop, {ImperativeRef} from './SelectShop';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 interface BaseProps {
   onNext?: () => void;
+  control?: Control<any, any>;
+  setValue?: UseFormSetValue<any>;
+  getValues?: UseFormGetValues<any>;
+  watch?: UseFormWatch<any>;
 }
 
-const Base: React.FC<BaseProps> = ({onNext}) => {
+const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch}) => {
+  const bizUserId = watch('bizUserId');
+  const contractId = watch('contractId');
+  const canUseShopIds = watch('canUseShopIds');
+
   const currentMerchant = useSelector((state: RootState) => state.merchant.currentMerchant);
   const merchantList = useSelector((state: RootState) => state.merchant.merchantSearchList);
   const currentContract = useSelector((state: RootState) => state.contract.currentContract);
   const contractList = useSelector((state: RootState) => state.contract.contractSearchList);
   const [showUseShop, setShowUseShop] = useState(false);
-  const canUseShopRef = useRef<ImperativeRef>();
 
-  const form = Form.useFormInstance();
+  // const form = Form.useFormInstance();
   const [SPUCategories] = useSPUCategories();
   const [merchantDispatcher] = useMerchantDispatcher();
   const [contractDispatcher] = useContractDispatcher();
 
   const canUseShopList = useMemo(() => {
     const shopList = currentMerchant?.shopList || [];
-    const ids = form.getFieldValue('canUseShopIds') || [];
-    return shopList.filter(e => ids.includes(e.id));
-  }, [currentMerchant, form]);
+    return shopList.filter(e => {
+      return bizUserId === e.bizUserId;
+    });
+  }, [bizUserId, currentMerchant?.shopList]);
 
+  //商家列表
   useEffect(() => {
     merchantDispatcher.loadMerchantSearchList({});
   }, [merchantDispatcher]);
+  useEffect(() => {
+    if (bizUserId) {
+      contractDispatcher.loadContractSearchList({id: bizUserId});
+    }
+  }, [bizUserId, contractDispatcher]);
+  useEffect(() => {
+    merchantDispatcher.loadCurrentMerchantPublic(19);
+  }, [bizUserId, merchantDispatcher]);
 
+  useEffect(() => {
+    if (contractId) {
+      contractDispatcher.loadCurrentContract(contractId);
+    }
+  }, [contractDispatcher, contractId]);
+
+  useEffect(() => {
+    if (currentContract) {
+      setValue('saleBeginTime', currentContract.bookingReq.saleBeginTime);
+      setValue('saleEndTime', currentContract.bookingReq.saleEndTime);
+      setValue('spuStock', currentContract.skuInfoReq.spuStock);
+      setValue('skuInfo', currentContract.skuInfoReq.skuInfo);
+      setValue('spuName', currentContract.spuInfoReq.spuName);
+    }
+  });
   function onCheck() {
-    console.log(form.getFieldsValue());
+    // console.log(form.getFieldsValue());
     onNext && onNext();
   }
 
-  function handleChangeMerchant(merchantId?: number) {
-    merchantDispatcher.loadCurrentMerchantPrivate(merchantId);
-    form.setFieldsValue({
-      contractId: undefined,
-      canUseShopIds: [],
-    });
-    if (merchantId) {
-      contractDispatcher.loadContractSearchList({id: merchantId});
-    }
-    clearDirtyFormData();
-  }
+  // function handleChangeMerchant(merchantId?: number) {
+  //   merchantDispatcher.loadCurrentMerchantPrivate(merchantId);
+  //   form.setFieldsValue({
+  //     contractId: undefined,
+  //     canUseShopIds: [],
+  //   });
+  //   if (merchantId) {
+  //     contractDispatcher.loadContractSearchList({id: merchantId});
+  //   }
+  //   clearDirtyFormData();
+  // }
 
-  function handleChangeContract(contractId?: number) {
-    contractDispatcher.loadCurrentContract(contractId);
-    clearDirtyFormData();
-  }
+  // function handleChangeContract(contractId?: number) {
+  //   contractDispatcher.loadCurrentContract(contractId);
+  //   clearDirtyFormData();
+  // }
 
   // 如果改变了合同或者商家，相关的表单脏数据要删除
   function clearDirtyFormData() {
@@ -67,28 +103,80 @@ const Base: React.FC<BaseProps> = ({onNext}) => {
       modelList: [],
     });
   }
-  function handleConfirmShops() {
-    const shopIds = canUseShopRef.current?.getValue() || [];
-    form.setFieldValue('canUseShopIds', shopIds);
+  // function handleConfirmShops() {
+  //   const shopIds = canUseShopRef.current?.getValue() || [];
+  //   form.setFieldValue('canUseShopIds', shopIds);
+  // }
+  const canUseShopOk = () => {
+    setShowUseShop(false);
+    setValue('canUseShopIds', showUseShop);
+  };
+  interface ListProps {
+    value: ShopForm[];
   }
+  const List: React.FC<ListProps> = props => {
+    return (
+      <>
+        {props.value.map(item => (
+          <View key={item.id} style={styles.shopItem}>
+            <Text numberOfLines={1}>{item.shopName}</Text>
+          </View>
+        ))}
+      </>
+    );
+  };
 
   return (
     <ScrollView style={styles.container}>
       <SectionGroup style={[{marginTop: 0}, styles.sectionGroupStyle]}>
         <FormTitle title="商家信息" />
-        <Form.Item label="选择商家" name="bizUserId">
-          <Select onChange={handleChangeMerchant} options={merchantList.map(e => ({label: e.name, value: e.id}))} placeholder="选择商家" />
-        </Form.Item>
-        <Form.Item name="contractId" label="选择合同">
-          <Select onChange={handleChangeContract} options={contractList.map(e => ({label: e.name, value: e.id}))} placeholder="选择合同" />
-        </Form.Item>
-        <Form.Item
+        <Controller
+          control={control}
+          name="bizUserId"
+          render={({field: {value, onChange}}) => (
+            <Label label="选择商家">
+              <Select onChange={onChange} value={value} options={merchantList.map((e: {name: any; id: any}) => ({label: e.name, value: e.id}))} placeholder="选择商家" />
+            </Label>
+          )}
+        />
+
+        <Controller
+          control={control}
+          name="contractId"
+          render={({field: {value, onChange}}) => (
+            <Label label="选择合同">
+              <Select onChange={onChange} value={value} options={contractList.map(e => ({label: e.name, value: e.id}))} placeholder="选择合同" />
+            </Label>
+          )}
+        />
+
+        <Label label="可消费店铺">
+          <TouchableOpacity activeOpacity={0.5} onPress={() => setShowUseShop(true)}>
+            <View style={style.childrenWrapper}>
+              {canUseShopIds?.length ? <Text>已选择</Text> : <Text style={style.placeholder}>请选择</Text>}
+              <Icon name="caret-right" style={style.arrow} />
+            </View>
+          </TouchableOpacity>
+        </Label>
+
+        {!!canUseShopIds?.length ? (
+          <View style={styles.shopList}>
+            <View style={[styles.shopItem, {borderBottomColor: '#e5e5e5', borderBottomWidth: 1}]}>
+              <Text>已选{canUseShopIds?.length}家</Text>
+            </View>
+            <View>
+              <Controller control={control} name={'canUseShopIds'} render={({field: {value}}) => <List value={value} />} />
+            </View>
+          </View>
+        ) : null}
+
+        {/* <Form.Item
           label="选择店铺"
           extra={
-            canUseShopList.length ? (
+            canUseShopList?.length ? (
               <View style={styles.shopList}>
                 <View style={[styles.shopItem, {borderBottomColor: '#e5e5e5', borderBottomWidth: 1}]}>
-                  <Text>已选{form.getFieldValue('canUseShopIds').length || 0}家</Text>
+                  <Text>已选{0}家</Text>
                 </View>
                 <View>
                   {canUseShopList.map(shop => {
@@ -108,13 +196,19 @@ const Base: React.FC<BaseProps> = ({onNext}) => {
               <Icon style={{transform: [{rotate: '90deg'}], marginLeft: 3, color: '#000', fontSize: 10}} name="caret-right" />
             </View>
           </TouchableWithoutFeedback>
-        </Form.Item>
+        </Form.Item> */}
       </SectionGroup>
       <SectionGroup style={styles.sectionGroupStyle}>
         <FormTitle title="商品基础信息" />
-        <Form.Item label="商品名称" name="spuName">
-          <Input placeholder="商品名称" />
-        </Form.Item>
+        <Controller
+          control={control}
+          name="spuName"
+          render={({field: {value, onChange}}) => (
+            <Form.Item label="商品名称">
+              <Input placeholder="商品名称" value={value} onChange={onChange} />
+            </Form.Item>
+          )}
+        />
         <Form.Item label="商品副标题" name="subName">
           <Input placeholder="商品副标题" />
         </Form.Item>
@@ -170,9 +264,7 @@ const Base: React.FC<BaseProps> = ({onNext}) => {
           下一步
         </Button>
       </View>
-      <Modal visible={showUseShop} onClose={() => setShowUseShop(false)} onOk={handleConfirmShops}>
-        <SelectShop value={form.getFieldValue('canUseShopIds')} shopRef={canUseShopRef} />
-      </Modal>
+      <SelectShop shopList={canUseShopList} setValue={setValue} open={showUseShop} setOpen={(value: boolean) => setShowUseShop(value)} />
     </ScrollView>
   );
 };
@@ -180,3 +272,20 @@ Base.defaultProps = {
   // title: 'Base',
 };
 export default Base;
+
+const style = StyleSheet.create({
+  placeholder: {
+    color: globalStyleVariables.TEXT_COLOR_TERTIARY,
+    fontSize: 15,
+  },
+  childrenWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  arrow: {
+    transform: [{rotate: '90deg'}],
+    marginLeft: 3,
+    color: '#000',
+    fontSize: 10,
+  },
+});

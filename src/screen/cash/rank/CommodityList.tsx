@@ -2,20 +2,20 @@ import moment from 'moment';
 import {Moment} from 'moment';
 import React, {FC, useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
-import {formatMoment} from '../../helper';
-import {useSummaryDispatcher} from '../../helper/hooks';
+import {formatMoment} from '../../../helper';
+import {useSummaryDispatcher} from '../../../helper/hooks';
 import ModalDropdown from 'react-native-modal-dropdown';
-import {Picker} from '../../models';
-import {RootState} from '../../redux/reducers';
+import {Picker} from '../../../models';
+import {RootState} from '../../../redux/reducers';
 import {StyleSheet, Text, View} from 'react-native';
-import {date} from '../../constants';
+import {date} from '../../../constants';
 import {Icon} from '@ant-design/react-native';
-import CutOffRule from '../../component/CutOffRule';
-import LinkButton from '../../component/LinkButton';
+import CutOffRule from '../../../component/CutOffRule';
+import LinkButton from '../../../component/LinkButton';
+import {globalStyles} from '../../../constants/styles';
 interface CommodityListProps {
   unit: string;
   title?: string;
-  type?: 'commission' | 'sales';
 }
 const CommodityList: FC<CommodityListProps> = ({unit, title}) => {
   const [valueType, setValueType] = useState<Picker>({label: '日', value: 'day'});
@@ -39,23 +39,29 @@ const CommodityList: FC<CommodityListProps> = ({unit, title}) => {
           <Text>{title}</Text>
           <View style={styles.dropDown}>
             <ModalDropdown
-              dropdownStyle={styles.dropDownItem}
-              renderRow={item => <Text>{item.label}</Text>}
+              dropdownStyle={globalStyles.dropDownItem}
+              renderRow={item => (
+                <View style={[globalStyles.dropDownText]}>
+                  <Text>{item.label}</Text>
+                </View>
+              )}
               options={date}
               defaultValue={valueType.label}
               onSelect={(item, text) => handleChangeFilter(text as Picker)}>
               <View style={{flexDirection: 'row'}}>
                 <Text>{valueType.label}</Text>
-                <Icon name="caret-down" color="#030303" size="s" style={{marginLeft: 7}} />
+                <Icon name="caret-down" color="#030303" style={[{marginLeft: 7}, globalStyles.fontPrimary]} />
               </View>
             </ModalDropdown>
           </View>
         </View>
         {commissionTop?.map((item, index) => {
-          if (index > 4) return <></>;
+          if (index > 4) {
+            return <></>;
+          }
           return (
             <>
-              <View key={item.spuId} style={styles.rankList}>
+              <View key={item.spuId + index} style={styles.rankList}>
                 <Text style={styles.index}>{index + 1}</Text>
                 <Text>{item.name}</Text>
                 <Text style={{color: '#4AB87D'}}>
@@ -111,11 +117,6 @@ export const styles = StyleSheet.create({
   dropDownMenu: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-  },
-  dropDownItem: {
-    width: 100,
-    flexDirection: 'row',
-    justifyContent: 'center',
   },
   index: {
     fontWeight: '900',

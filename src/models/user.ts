@@ -52,6 +52,7 @@ export interface WalletInfo {
   status: number; // 认证状态
   idCard: string; // 实名身份证号
   bankCompanyName: string;
+  reason: string; //失败原因
 }
 
 export enum UserWithdrawalRecordStatus {

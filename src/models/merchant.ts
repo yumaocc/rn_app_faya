@@ -41,6 +41,8 @@ export interface ShopForm {
   longitude: string | number;
   contactPhone?: string; // 店铺电话
   addressDetail?: string; // 店铺地址
+  checked?: boolean;
+  bizUserId?: number;
 }
 export interface ShopF extends ShopForm {
   id: number;

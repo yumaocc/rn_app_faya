@@ -1,8 +1,10 @@
+import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {View, Text, StyleSheet, Image} from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 // import {BadgeFlag} from '../../../component';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
-import {MyMerchantF, StylePropView} from '../../../models';
+import {FakeNavigation, MyMerchantF, StylePropView} from '../../../models';
 
 interface CardProps {
   merchant: MyMerchantF;
@@ -11,64 +13,89 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = props => {
   const {merchant, style} = props;
+  const navigation = useNavigation() as FakeNavigation;
   return (
     <View style={[styles.container, style]}>
-      <View style={[globalStyles.borderBottom, styles.header]}>
-        <View style={[styles.logo]}>
-          <Image source={{uri: 'https://fakeimg.pl/100'}} style={{width: 40, height: 40}} />
-        </View>
-        <View style={styles.headerRight}>
-          <View style={[globalStyles.flexNormal, {justifyContent: 'space-between'}]}>
-            <View style={{flex: 1, flexDirection: 'row'}}>
-              <Text style={[globalStyles.textColorPrimary, styles.merchantName, {flex: 1}]} numberOfLines={1}>
-                {merchant.name}
-              </Text>
-            </View>
-            <View style={styles.tagWrapper}>
-              <Text style={styles.tag}>合作中</Text>
-            </View>
+      <TouchableOpacity
+        activeOpacity={0.5}
+        onPress={() =>
+          navigation.navigate({
+            name: 'MyMerchantDetail',
+            params: {
+              id: merchant.id,
+              name: merchant.name,
+              status: merchant.status,
+            },
+          })
+        }>
+        <View style={[globalStyles.borderBottom, styles.header]}>
+          <View style={[styles.logo]}>
+            <Image source={{uri: merchant?.avatar}} style={{width: 40, height: 40}} />
           </View>
-          <Text
-            style={{
-              fontSize: 12,
-              color: globalStyleVariables.TEXT_COLOR_TERTIARY,
-            }}>
-            {merchant.categoryName}
-          </Text>
-        </View>
-      </View>
+          <View style={styles.headerRight}>
+            <View style={[globalStyles.flexNormal, {justifyContent: 'space-between'}]}>
+              <View style={{flex: 1, flexDirection: 'row'}}>
+                <Text style={[globalStyles.textColorPrimary, styles.merchantName, {flex: 1}]} numberOfLines={1}>
+                  {merchant.name}
+                </Text>
+              </View>
 
-      <View
-        style={[
-          globalStyles.borderBottom,
-          {
+              {!!merchant?.status ? (
+                <View style={globalStyles.tagWrapperGreen}>
+                  <Text style={globalStyles.tagGreen}>·合作中</Text>
+                </View>
+              ) : (
+                <View style={globalStyles.tagWrapper}>
+                  <Text style={globalStyles.tag}>·即将调入公海{merchant?.status}</Text>
+                </View>
+              )}
+            </View>
+            <Text
+              style={{
+                fontSize: 12,
+                color: globalStyleVariables.TEXT_COLOR_TERTIARY,
+              }}>
+              {merchant.categoryName}
+            </Text>
+          </View>
+        </View>
+
+        <View
+          style={[
+            globalStyles.borderBottom,
+            {
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+              paddingVertical: 16,
+            },
+          ]}>
+          <View>
+            <Text style={[globalStyles.fontSecondary, styles.centerText]}>商户模式</Text>
+            <Text style={[globalStyles.fontPrimary, styles.centerTextValue]}>{merchant.multiStore ? '连锁' : '单店'}</Text>
+          </View>
+          <View>
+            <Text style={[globalStyles.fontSecondary, styles.centerText]}>店铺数量</Text>
+            <Text style={[globalStyles.fontPrimary, styles.centerTextValue]}>{merchant?.shopNums || 0}</Text>
+          </View>
+          <View>
+            <Text style={[globalStyles.fontSecondary, styles.centerText]}>商品数量</Text>
+            <Text style={[globalStyles.fontPrimary, styles.centerTextValue]}>{merchant?.saleProductNums || 0}</Text>
+          </View>
+        </View>
+
+        <View
+          style={{
             flexDirection: 'row',
             justifyContent: 'space-around',
-            paddingVertical: 16,
-          },
-        ]}>
-        <View>
-          <Text style={[globalStyles.fontSecondary, styles.centerText]}>商户模式</Text>
-          <Text style={[globalStyles.fontPrimary, styles.centerTextValue]}>{merchant.multiStore ? '连锁' : '单店'}</Text>
+          }}>
+          <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('MyMerchantDetail')}>
+            <Text style={styles.button}>型号管理</Text>
+          </TouchableOpacity>
+          <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('AddSPU')}>
+            <Text style={styles.button}>新增商品</Text>
+          </TouchableOpacity>
         </View>
-        <View>
-          <Text style={[globalStyles.fontSecondary, styles.centerText]}>店铺数量</Text>
-          <Text style={[globalStyles.fontPrimary, styles.centerTextValue]}>{merchant?.shopNums || 0}</Text>
-        </View>
-        <View>
-          <Text style={[globalStyles.fontSecondary, styles.centerText]}>商品数量</Text>
-          <Text style={[globalStyles.fontPrimary, styles.centerTextValue]}>{merchant?.saleProductNums || 0}</Text>
-        </View>
-      </View>
-
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-around',
-        }}>
-        <Text style={styles.button}>新增商品</Text>
-        <Text style={styles.button}>跟进记录(20)</Text>
-      </View>
+      </TouchableOpacity>
       {/* 左上角 NEW徽标 */}
       {/* <BadgeFlag label="NEW" /> */}
     </View>

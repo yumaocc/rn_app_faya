@@ -1,80 +1,106 @@
 // import {Checkbox} from '@ant-design/react-native';
-import React, {MutableRefObject, useEffect, useImperativeHandle, useMemo, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import {useSelector} from 'react-redux';
 import {globalStyles} from '../../../../constants/styles';
-import {RootState} from '../../../../redux/reducers';
-import {Checkbox} from '../../../../component';
-
-export interface ImperativeRef {
-  getValue: () => number[];
-}
+import {Checkbox, Modal} from '../../../../component';
+import {Control, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
+import {ShopForm} from '../../../../models';
 
 interface SelectShopProps {
-  value: number[];
-  shopRef?: MutableRefObject<ImperativeRef>;
+  shopList: ShopForm[];
+  open?: boolean;
+  setOpen?: (value: boolean) => void;
+  control?: Control<any, any>;
+  setValue?: UseFormSetValue<any>;
+  getValues?: UseFormGetValues<any>;
+  watch?: UseFormWatch<any>;
 }
 
-const SelectShop: React.FC<SelectShopProps> = props => {
-  const {value} = props;
-
-  const [currentIds, setCurrentIds] = useState<Set<number>>(new Set(value));
-  const currentMerchant = useSelector((state: RootState) => state.merchant.currentMerchant);
-  const [indeterminate, setIndeterminate] = useState(false);
+const SelectShop: React.FC<SelectShopProps> = ({shopList, open, setOpen, setValue}) => {
+  const [currentShopList, setCurrentShopList] = useState<ShopForm[]>([]);
   const [checkAll, setCheckAll] = useState(false);
-  const shopList = useMemo(() => currentMerchant?.shopList || [], [currentMerchant]);
-
-  useImperativeHandle(props.shopRef, () => ({
-    getValue: () => [...currentIds],
-  }));
+  const [len, setLen] = useState(0);
+  useEffect(() => {
+    if (open) {
+      const list: ShopForm[] = [];
+      shopList.forEach(item => {
+        list.push({...item, checked: false});
+      });
+      setCurrentShopList(list);
+    }
+  }, [open, shopList]);
 
   useEffect(() => {
-    if (value?.length) {
-      setCurrentIds(new Set(value));
-    }
-  }, [value]);
-
-  useEffect(() => {
-    setCheckAll(currentIds.size && currentIds.size === shopList.length);
-    setIndeterminate(currentIds.size && currentIds.size < shopList.length);
-  }, [currentIds, shopList]);
-
-  function handleChangeCheckAll(checked: boolean) {
-    if (checked) {
-      setCurrentIds(new Set(shopList.map(e => e.id)));
+    if (checkAll) {
     } else {
-      setCurrentIds(new Set());
+      setCurrentShopList(list =>
+        list.map(item => {
+          item.checked = false;
+          return item;
+        }),
+      );
     }
-  }
-  function onChange(value: any, checked: boolean) {
+  }, [checkAll, shopList]);
+
+  const onChange = (id: number, checked: boolean) => {
     if (checked) {
-      currentIds.add(value);
+      setLen(len + 1);
     } else {
-      currentIds.delete(value);
+      setLen(len - 1);
     }
-    setCurrentIds(new Set(currentIds));
-  }
+    setCurrentShopList(list =>
+      list.map(item => {
+        if (item.id === id) {
+          item.checked = checked;
+        }
+        return item;
+      }),
+    );
+  };
+
+  const handleCheckAll = (e: boolean) => {
+    if (e) {
+      setLen(currentShopList?.length);
+    } else {
+      setLen(0);
+    }
+    setCheckAll(e);
+    setCurrentShopList(list =>
+      list.map(item => {
+        item.checked = e;
+        return item;
+      }),
+    );
+  };
+
+  const canUseShopOk = () => {
+    const list = currentShopList.filter(item => (item.checked ? true : false));
+    setValue('canUseShopIds', list);
+    setOpen(false);
+  };
 
   return (
-    <View style={styles.container}>
-      <View style={[globalStyles.borderBottom, {paddingBottom: 10}]}>
-        <Text>
-          共{shopList.length || 0}家，已选{currentIds?.size}家
-        </Text>
-      </View>
-      <View>
-        <Checkbox indeterminate={indeterminate} checked={checkAll} onChange={handleChangeCheckAll}>
-          全选
-        </Checkbox>
-      </View>
-      <View>
-        {shopList.map(item => (
-          <Checkbox key={item.id} checked={currentIds.has(item.id)} onChange={e => onChange(item?.id, e)}>
-            {item.shopName}
+    <Modal visible={open} onClose={() => setOpen(false)} onOk={canUseShopOk}>
+      <View style={styles.container}>
+        <View style={[globalStyles.borderBottom, {paddingBottom: 10}]}>
+          <Text>
+            共{currentShopList?.length || 0}家，已选{len}家
+          </Text>
+        </View>
+        <View>
+          <Checkbox checked={checkAll} onChange={e => handleCheckAll(e)}>
+            全选
           </Checkbox>
-        ))}
+        </View>
+        <View>
+          {currentShopList?.map(item => (
+            <Checkbox key={item.id} checked={item?.checked} onChange={e => onChange(item?.id, e)}>
+              {item?.shopName}
+            </Checkbox>
+          ))}
+        </View>
       </View>
-    </View>
+    </Modal>
   );
 };
 SelectShop.defaultProps = {};

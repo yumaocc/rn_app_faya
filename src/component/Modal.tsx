@@ -17,6 +17,7 @@ interface ModalProps {
   onOk?: () => Promise<void> | void;
   onCancel?: () => Promise<void> | void;
   onClose: () => void;
+  loading?: boolean;
 }
 
 const Modal: React.FC<ModalProps> = props => {

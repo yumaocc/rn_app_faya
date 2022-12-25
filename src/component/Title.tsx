@@ -19,18 +19,19 @@ const Title: FC<TitleProps> = ({title, value, arrow, unit, handleClick, type}) =
   };
   return (
     <View style={styles.wrapper}>
-      <View style={styles.content}>
-        <View style={styles.left}>
-          <Text style={{fontSize: 15}}>{title}</Text>
-          <TouchableOpacity onPress={clickEye}>
-            <Icon name="eye" style={{marginLeft: 17}} />
-          </TouchableOpacity>
-        </View>
-        <TouchableOpacity onPress={handleClick}>
+      <TouchableOpacity onPress={handleClick}>
+        <View style={styles.content}>
+          <View style={styles.left}>
+            <Text style={{fontSize: 15}}>{title}</Text>
+            <TouchableOpacity onPress={clickEye}>
+              <Icon name="eye" style={{marginLeft: 17}} />
+            </TouchableOpacity>
+          </View>
+
           <View>{arrow && <Icon name="right" />}</View>
-        </TouchableOpacity>
-      </View>
-      <UnitNumber value={value} unit={unit} type={type} desensitization={eyeIsShow} />
+        </View>
+        <UnitNumber value={value} unit={unit} type={type} desensitization={eyeIsShow} />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -42,7 +43,6 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   content: {
-    width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

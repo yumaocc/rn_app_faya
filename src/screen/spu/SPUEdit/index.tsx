@@ -8,7 +8,7 @@ import {useSelector} from 'react-redux';
 import {Steps, Form, NavigationBar} from '../../../component';
 import {useCommonDispatcher, useContractDispatcher, useMerchantDispatcher, useParams, useRefCallback, useSKUDispatcher} from '../../../helper/hooks';
 import {globalStyleVariables} from '../../../constants/styles';
-
+import {useForm} from 'react-hook-form';
 import Base from './base/Base';
 import SKU from './sku/SKU';
 import Booking from './booking/Booking';
@@ -30,7 +30,7 @@ const EditSPU: React.FC = () => {
   const spuID = useMemo(() => Number(params.id), [params.id]); // 路由读取到商品ID
   const isEdit = useMemo(() => !!spuID, [spuID]); // 是否是编辑模式
   const [currentKey, setCurrentKey] = React.useState('base');
-  // const [form, setField] = useSearch();
+  const {control, setValue, getValues, watch} = useForm<any>();
   const initForm = getInitSPUForm(); // 表单的初始数据
   const [form] = Form.useForm(initForm);
   const {width: windowWidth} = useWindowDimensions();
@@ -112,11 +112,13 @@ const EditSPU: React.FC = () => {
 
   async function check() {
     try {
-      const formData = form.getFieldsValue() as SPUForm;
-      console.log(formData);
-      const cleanData = cleanSPUForm(formData);
-      console.log('cleaned', cleanData);
-      await api.sku.createSPU(cleanData);
+      const res = getValues();
+      console.log(res);
+      // const formData = form.getFieldsValue() as SPUForm;
+      // console.log(formData);
+      // const cleanData = cleanSPUForm(formData);
+      // console.log('cleaned', cleanData);
+      // await api.sku.createSPU(cleanData);
     } catch (error) {
       commonDispatcher.error(error);
     }
@@ -165,16 +167,16 @@ const EditSPU: React.FC = () => {
           <Steps steps={steps} currentKey={currentKey} onChange={setCurrentKey} onBeforeChangeKey={handleChangeStep} />
           <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
             <View style={{width: windowWidth}}>
-              <Base onNext={() => setCurrentKey('sku')} />
+              <Base control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={() => setCurrentKey('sku')} />
             </View>
             <View style={{width: windowWidth}}>
-              <SKU onNext={() => setCurrentKey('booking')} />
+              <SKU control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={() => setCurrentKey('booking')} />
             </View>
             <View style={{width: windowWidth}}>
-              <Booking onNext={() => setCurrentKey('detail')} />
+              <Booking control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={() => setCurrentKey('detail')} />
             </View>
             <View style={{width: windowWidth}}>
-              <ImageTextDetail onNext={handleSubmit} />
+              <ImageTextDetail control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={handleSubmit} />
             </View>
           </ScrollView>
           <Button onPress={check} type="warning">

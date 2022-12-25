@@ -3,13 +3,18 @@ import {View, Text, TouchableOpacity} from 'react-native';
 import {SwipeAction, TextareaItem} from '@ant-design/react-native';
 import {SectionGroup, FormTitle, Form, PlusButton, Modal} from '../../../../component';
 import {useSKUBuyNotice} from '../../../../helper/hooks';
-import {SKUBuyNoticeType} from '../../../../models';
+import {SKUBuyNoticeType, SPUForm} from '../../../../models';
 import {styles} from '../style';
 import {globalStyleVariables} from '../../../../constants/styles';
 import {getBuyNoticeTitle} from '../../../../helper';
+import {Control, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
 
 interface BuyNoticeProps {
   title?: string;
+  control?: Control<SPUForm, any>;
+  setValue?: UseFormSetValue<SPUForm>;
+  getValues?: UseFormGetValues<SPUForm>;
+  watch?: UseFormWatch<SPUForm>;
 }
 
 const BuyNotice: React.FC<BuyNoticeProps> = () => {

@@ -28,7 +28,7 @@ export class CustomErrorWithPayload extends Error {
     this.payload = payload;
   }
 }
-
+export type SearchParam = PageParam & SearchForm;
 export type ErrorType = CustomError | CustomErrorWithPayload | Error;
 
 export type CacheKeys = 'token' | 'api' | 'phone' | 'useMockData';
@@ -48,8 +48,6 @@ export interface PreviewConfig {
 export interface SearchForm {
   [key: string]: any;
 }
-
-export type SearchParam = PageParam & SearchForm;
 
 export type SubmitState = 'none' | 'loading' | 'success' | 'error';
 
@@ -94,6 +92,10 @@ export interface BeginTimeAndEndTime {
 export interface Picker {
   value: TimeDimension;
   label: string;
+}
+export interface Options {
+  label: string;
+  value: number;
 }
 //城市三级分类
 
