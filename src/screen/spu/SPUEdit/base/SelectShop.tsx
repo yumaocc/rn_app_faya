@@ -16,31 +16,32 @@ interface SelectShopProps {
   watch?: UseFormWatch<any>;
 }
 
-const SelectShop: React.FC<SelectShopProps> = ({shopList, open, setOpen, setValue}) => {
+const SelectShop: React.FC<SelectShopProps> = ({shopList, open, setOpen, setValue, getValues}) => {
   const [currentShopList, setCurrentShopList] = useState<ShopForm[]>([]);
   const [checkAll, setCheckAll] = useState(false);
   const [len, setLen] = useState(0);
   useEffect(() => {
     if (open) {
+      const {canUseShopIds} = getValues();
       const list: ShopForm[] = [];
-      shopList.forEach(item => {
-        list.push({...item, checked: false});
-      });
+      if (canUseShopIds) {
+        shopList.forEach((item, index) => {
+          list.push({...item, checked: canUseShopIds[index]?.checked || false});
+        });
+      } else {
+        shopList.forEach(item => {
+          list.push({...item, checked: false});
+        });
+      }
       setCurrentShopList(list);
     }
-  }, [open, shopList]);
+  }, [getValues, open, shopList]);
 
   useEffect(() => {
-    if (checkAll) {
-    } else {
-      setCurrentShopList(list =>
-        list.map(item => {
-          item.checked = false;
-          return item;
-        }),
-      );
+    if (currentShopList?.length && len === currentShopList.length) {
+      setCheckAll(true);
     }
-  }, [checkAll, shopList]);
+  }, [currentShopList.length, len]);
 
   const onChange = (id: number, checked: boolean) => {
     if (checked) {
@@ -76,6 +77,7 @@ const SelectShop: React.FC<SelectShopProps> = ({shopList, open, setOpen, setValu
   const canUseShopOk = () => {
     const list = currentShopList.filter(item => (item.checked ? true : false));
     setValue('canUseShopIds', list);
+    setCheckAll(false);
     setOpen(false);
   };
 

@@ -1,18 +1,18 @@
 // import moment from 'moment';
 import {Button, Icon} from '@ant-design/react-native';
-import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {Control, useFieldArray, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
-import {ScrollView, StyleSheet, Text, TouchableWithoutFeedback, View} from 'react-native';
+import React, {useEffect, useMemo, useState} from 'react';
+import {Control, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import {FormTitle, SectionGroup, Form, Input, Select, DatePicker, Footer, Cascader, Modal, SelfText} from '../../../../component';
-import {globalStyles, globalStyleVariables} from '../../../../constants/styles';
+import {globalStyleVariables} from '../../../../constants/styles';
 import {useMerchantDispatcher, useContractDispatcher, useSPUCategories} from '../../../../helper/hooks';
 import {BoolEnum, ShopForm} from '../../../../models';
 import {RootState} from '../../../../redux/reducers';
 import {styles} from '../style';
 import Label from '../../../../component/Lable';
 import {Controller} from 'react-hook-form';
-import SelectShop, {ImperativeRef} from './SelectShop';
+import SelectShop from './SelectShop';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
 interface BaseProps {
@@ -95,22 +95,10 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch}
   //   contractDispatcher.loadCurrentContract(contractId);
   //   clearDirtyFormData();
   // }
-
-  // 如果改变了合同或者商家，相关的表单脏数据要删除
-  function clearDirtyFormData() {
-    form.setFieldsValue({
-      packageList: [],
-      modelList: [],
-    });
-  }
   // function handleConfirmShops() {
   //   const shopIds = canUseShopRef.current?.getValue() || [];
   //   form.setFieldValue('canUseShopIds', shopIds);
   // }
-  const canUseShopOk = () => {
-    setShowUseShop(false);
-    setValue('canUseShopIds', showUseShop);
-  };
   interface ListProps {
     value: ShopForm[];
   }
@@ -264,7 +252,7 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch}
           下一步
         </Button>
       </View>
-      <SelectShop shopList={canUseShopList} setValue={setValue} open={showUseShop} setOpen={(value: boolean) => setShowUseShop(value)} />
+      <SelectShop getValues={getValues} shopList={canUseShopList} setValue={setValue} open={showUseShop} setOpen={(value: boolean) => setShowUseShop(value)} />
     </ScrollView>
   );
 };
