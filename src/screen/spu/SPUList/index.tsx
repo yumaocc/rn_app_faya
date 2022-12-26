@@ -40,7 +40,14 @@ const SPUList: React.FC = () => {
       <View style={styles.spuContainer}>
         <TouchableWithoutFeedback
           onPress={() => {
-            viewDetail(item.id);
+            if (item.status === 2) {
+              viewDetail(item.id);
+            } else {
+              navigation.navigate({
+                name: 'EditSPU',
+                params: {id: item.id},
+              });
+            }
           }}>
           <View style={{flexDirection: 'row'}}>
             <View style={{paddingTop: 10}}>

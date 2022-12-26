@@ -156,6 +156,7 @@ export interface SPUF {
   id: number;
   poster: string; // 封面图
   statusStr: string; // 状态
+  status?: number; //状态码
   bizName: string;
   bookTypeStr: string;
   bookingType: BookingType;
@@ -175,4 +176,12 @@ export interface SalesList {
   saleBeginTime: string;
   saleEndTime: string;
   spuId: number;
+}
+
+export interface Notice {
+  BOOKING: {type: SKUBuyNoticeType; content: string}[];
+  SALE_TIME: {type: SKUBuyNoticeType; content: string}[];
+  USE_RULE: {type: SKUBuyNoticeType; content: string}[];
+  POLICY: {type: SKUBuyNoticeType; content: string}[];
+  TIPS: {type: SKUBuyNoticeType; content: string}[];
 }

@@ -1,13 +1,13 @@
-import React, {useCallback, useState} from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+import React, {useState} from 'react';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {SwipeAction, TextareaItem} from '@ant-design/react-native';
 import {SectionGroup, FormTitle, Form, PlusButton, Modal} from '../../../../component';
 import {useSKUBuyNotice} from '../../../../helper/hooks';
-import {SKUBuyNoticeType} from '../../../../models';
+import {Notice, SKUBuyNoticeType} from '../../../../models';
 import {styles} from '../style';
 import {globalStyleVariables} from '../../../../constants/styles';
-import {getBuyNoticeTitle} from '../../../../helper';
 import {Control, Controller, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
+import {cleanNotice} from '../../../../helper/util';
 
 interface BuyNoticeProps {
   title?: string;
@@ -17,145 +17,126 @@ interface BuyNoticeProps {
   watch?: UseFormWatch<any>;
 }
 
-const BuyNotice: React.FC<BuyNoticeProps> = ({setValue, watch, control}) => {
+const BuyNotice: React.FC<BuyNoticeProps> = ({setValue, control, getValues}) => {
   const [showAddNotice, setShowAddNotice] = useState(false);
-  const purchaseNoticeEntities = watch('purchaseNoticeEntities');
   const [customNotice, setCustomNotice] = useState<string>('');
-  const [template, setTemplate] = useState<{type: SKUBuyNoticeType; list: string[]}>({type: 'BOOKING', list: []});
   const [buyNotices] = useSKUBuyNotice();
-  const form = Form.useFormInstance();
-  console.log('购买须知', buyNotices);
-  const getBuyNoticeTemplate = useCallback(
-    (type: SKUBuyNoticeType) => {
-      return buyNotices ? buyNotices[type] : [];
-    },
-    [buyNotices],
-  );
-  const getNoticeList = useCallback<(k: string) => string[]>((fieldKey: string) => form.getFieldValue(fieldKey) || [], [form]);
-
+  const [currentTemplate, setCurrentTemplate] = useState<SKUBuyNoticeType>();
   function openAddNotice(type: SKUBuyNoticeType) {
     setShowAddNotice(true);
-    setTemplate({type, list: getBuyNoticeTemplate(type)});
-    setCustomNotice('');
+    setCurrentTemplate(type);
   }
 
   function removeNotice(type: SKUBuyNoticeType, index: number) {
-    const fieldKey = getFieldKeyByType(type);
-    const list = getNoticeList(fieldKey);
-    // list.splice(index, 1);
-    form.setFieldsValue({[fieldKey]: list.filter((_, i) => i !== index)});
-  }
+    const {purchaseNoticeEntities} = getValues();
+    const needDelNotice = purchaseNoticeEntities.filter((item: any) => item.type === type);
+    const newNotice = needDelNotice.filter((item, idx) => idx !== index);
+    const oldNotice = purchaseNoticeEntities.filter((item: any) => item.type !== type);
 
-  function getFieldKeyByType(type: SKUBuyNoticeType): string {
-    switch (type) {
-      case 'BOOKING':
-        return '_bookingNotice';
-      case 'SALE_TIME':
-        return '_saleTimeNotice';
-      case 'USE_RULE':
-        return '_useRuleNotice';
-      case 'TIPS':
-        return '_tipsNotice';
-      case 'POLICY':
-        return '_policyNotice';
-      default:
-        return '';
-    }
+    setValue('purchaseNoticeEntities', [...oldNotice, ...newNotice]);
   }
 
   function onAddNotice(type: SKUBuyNoticeType, content: string) {
-    let fieldName = getFieldKeyByType(type);
-    setValue('purchaseNoticeEntities', [...(purchaseNoticeEntities || []), {type: type, content}]);
-    if (fieldName) {
-      const oldList = form.getFieldValue(fieldName) as string[];
-      form.setFieldsValue({[fieldName]: [...oldList, content]});
-    }
+    const {purchaseNoticeEntities = []} = getValues();
+    setValue('purchaseNoticeEntities', [...purchaseNoticeEntities, {type: type, content}]);
     setShowAddNotice(false);
+    setCustomNotice('');
   }
 
-  function renderNoticeByType(type: SKUBuyNoticeType) {
-    const title = getBuyNoticeTitle(type);
-    const fieldKey = getFieldKeyByType(type);
-    const notices = getNoticeList(fieldKey);
-    const hasNotices = notices && notices.length > 0;
-    return (
-      <Form.Item
-        label={title}
-        extra={
-          hasNotices ? (
-            <View style={{backgroundColor: '#f2f2f2', borderRadius: 5, padding: 10}}>
-              {notices.map((item, index) => {
-                return (
-                  <SwipeAction
-                    key={index}
-                    right={[
-                      {
-                        text: '删除',
-                        color: 'white',
-                        backgroundColor: globalStyleVariables.COLOR_DANGER,
-                        onPress: () => removeNotice(type, index),
-                      },
-                    ]}>
-                    <View style={{paddingVertical: 10}}>
-                      <Text numberOfLines={4}>{item}</Text>
-                    </View>
-                  </SwipeAction>
-                );
-              })}
-            </View>
-          ) : null
-        }>
-        <PlusButton title="新建一条" onPress={() => openAddNotice(type)} />
-      </Form.Item>
-    );
-  }
   interface BookingNoticeProps {
-    value: {type: string; content: string}[];
+    value: Notice;
   }
   const BookingNotice: React.FC<BookingNoticeProps> = props => {
     const {value} = props;
-    return <></>;
+    const noticeContent = (type: SKUBuyNoticeType) => {
+      return (
+        <>
+          {value?.[type]?.map((item, index) => (
+            <View style={[style.noticeBox]}>
+              <SwipeAction
+                key={index}
+                right={[
+                  {
+                    text: '删除',
+                    color: 'white',
+                    backgroundColor: globalStyleVariables.COLOR_DANGER,
+                    onPress: () => removeNotice(item.type, index),
+                  },
+                ]}>
+                <View style={{paddingVertical: 10}}>
+                  <Text numberOfLines={4}>{item.content}</Text>
+                </View>
+              </SwipeAction>
+            </View>
+          ))}
+        </>
+      );
+    };
+    return (
+      <>
+        <SectionGroup style={styles.sectionGroupStyle}>
+          <FormTitle title="购买须知设置" />
+
+          <Form.Item label="预约须知">
+            <PlusButton title="新建一条" onPress={() => openAddNotice('BOOKING')} />
+          </Form.Item>
+          {noticeContent('BOOKING')}
+
+          <Form.Item label="营业时间">
+            <PlusButton title="新建一条" onPress={() => openAddNotice('SALE_TIME')} />
+          </Form.Item>
+          {noticeContent('SALE_TIME')}
+
+          <Form.Item label="使用规则">
+            <PlusButton title="新建一条" onPress={() => openAddNotice('USE_RULE')} />
+          </Form.Item>
+          {noticeContent('USE_RULE')}
+
+          <Form.Item label="温馨提示">
+            <PlusButton title="新建一条" onPress={() => openAddNotice('TIPS')} />
+          </Form.Item>
+          {noticeContent('TIPS')}
+
+          <Form.Item label="取消政策">
+            <PlusButton title="新建一条" onPress={() => openAddNotice('POLICY')} />
+          </Form.Item>
+          {noticeContent('POLICY')}
+        </SectionGroup>
+      </>
+    );
   };
   return (
     <>
-      <SectionGroup style={styles.sectionGroupStyle}>
-        <FormTitle title="购买须知设置" />
-        <Controller name="" control={control} render={() => renderNoticeByType} />
-        {renderNoticeByType('BOOKING')}
-        {renderNoticeByType('SALE_TIME')}
-        {renderNoticeByType('USE_RULE')}
-        {renderNoticeByType('POLICY')}
-        {renderNoticeByType('TIPS')}
-      </SectionGroup>
+      <Controller name="purchaseNoticeEntities" control={control} render={({field: {value}}) => <BookingNotice value={cleanNotice(value)} />} />
 
       <Modal
         visible={showAddNotice}
         onClose={() => setShowAddNotice(false)}
         onOk={() => {
           if (customNotice !== '') {
-            onAddNotice(template.type, customNotice);
+            onAddNotice(currentTemplate, customNotice);
           }
         }}>
         <View>
-          {template?.list?.length > 0 && (
+          {buyNotices[currentTemplate]?.length > 0 && (
             <>
               <View style={{marginBottom: 10}}>
                 <Text style={{fontSize: 16}}>选择一个模板</Text>
               </View>
-              {template.list.map((text, index) => (
-                <TouchableOpacity key={index} activeOpacity={0.5} onPress={() => onAddNotice(template.type, text)}>
+              {buyNotices[currentTemplate].map((item, index) => (
+                <TouchableOpacity key={index} activeOpacity={0.5} onPress={() => onAddNotice(item.type, item.content)}>
                   <View style={styles.buyNoticeTemplate}>
-                    <Text style={styles.templateText}>{text}</Text>
+                    <Text style={styles.templateText}>{item.content}</Text>
                   </View>
                 </TouchableOpacity>
               ))}
             </>
           )}
-          {template?.list?.length > 0 && (
-            <View style={{marginTop: 20, marginBottom: 10}}>
-              <Text style={{fontSize: 16}}>或者用以下内容新增</Text>
-            </View>
-          )}
+
+          <View style={{marginTop: 20, marginBottom: 10}}>
+            <Text style={{fontSize: 16}}>或者用以下内容新增</Text>
+          </View>
+
           <View style={{borderWidth: 1, borderRadius: 5, borderColor: globalStyleVariables.BORDER_COLOR, overflow: 'hidden', padding: 5}}>
             <TextareaItem last style={{fontSize: 15}} value={customNotice} onChange={value => setCustomNotice(value)} rows={3} placeholder="请输入自定义内容" />
           </View>
@@ -164,7 +145,16 @@ const BuyNotice: React.FC<BuyNoticeProps> = ({setValue, watch, control}) => {
     </>
   );
 };
-// BuyNotice.defaultProps = {
-//   title: 'BuyNotice',
-// };
+BuyNotice.defaultProps = {
+  title: 'BuyNotice',
+};
 export default BuyNotice;
+
+const style = StyleSheet.create({
+  noticeBox: {
+    padding: globalStyleVariables.MODULE_SPACE,
+    backgroundColor: '#f4f4f4',
+    borderRadius: 5,
+    marginBottom: globalStyleVariables.MODULE_SPACE,
+  },
+});

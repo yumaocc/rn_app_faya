@@ -14,7 +14,7 @@ import Label from '../../../../component/Lable';
 import {Controller} from 'react-hook-form';
 import SelectShop from './SelectShop';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import {momentFromDateTime} from '../../../../helper/util';
+import {findItem, momentFromDateTime} from '../../../../helper/util';
 
 interface BaseProps {
   onNext?: () => void;
@@ -34,7 +34,7 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch}
   const currentContract = useSelector((state: RootState) => state.contract.currentContract);
   const contractList = useSelector((state: RootState) => state.contract.contractSearchList);
   const [showUseShop, setShowUseShop] = useState(false);
-  // const form = Form.useFormInstance();
+
   const [SPUCategories] = useSPUCategories();
   const [merchantDispatcher] = useMerchantDispatcher();
   const [contractDispatcher] = useContractDispatcher();
@@ -69,7 +69,7 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch}
     if (currentContract) {
       setValue('saleBeginTime', momentFromDateTime(currentContract.bookingReq.saleBeginTime));
       setValue('saleEndTime', momentFromDateTime(currentContract.bookingReq.saleEndTime));
-      setValue('spuStock', currentContract.skuInfoReq.spuStock);
+      setValue('stockAmount', currentContract.skuInfoReq.spuStock);
       setValue('skuList', currentContract.skuInfoReq.skuInfo);
       setValue('spuName', currentContract.spuInfoReq.spuName);
     }
@@ -78,6 +78,11 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch}
     // console.log(form.getFieldsValue());
     onNext && onNext();
   }
+  // useEffect(() => {
+  //   if (merchantList) {
+  //     setValue('bizUserId', spuDetail.bizUserId);
+  //   }
+  // }, [merchantList, setValue, spuDetail?.bizUserId]);
 
   // function handleChangeMerchant(merchantId?: number) {
   //   merchantDispatcher.loadCurrentMerchantPrivate(merchantId);
@@ -100,16 +105,19 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch}
   //   form.setFieldValue('canUseShopIds', shopIds);
   // }
   interface ListProps {
-    value: ShopForm[];
+    value: number[];
   }
   const List: React.FC<ListProps> = props => {
+    const shopList = props.value.map(item => findItem(canUseShopList, e => e.id === item));
     return (
       <>
-        {props.value.map(item => (
-          <View key={item.id} style={styles.shopItem}>
-            <Text numberOfLines={1}>{item.shopName}</Text>
-          </View>
-        ))}
+        {shopList.map((item, index) =>
+          item ? (
+            <View key={index} style={styles.shopItem}>
+              <Text numberOfLines={1}>{item?.shopName}</Text>
+            </View>
+          ) : null,
+        )}
       </>
     );
   };
@@ -311,7 +319,7 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch}
       <SelectShop getValues={getValues} shopList={canUseShopList} setValue={setValue} open={showUseShop} setOpen={(value: boolean) => setShowUseShop(value)} />
     </ScrollView>
   );
-};
+};;
 Base.defaultProps = {
   // title: 'Base',
 };

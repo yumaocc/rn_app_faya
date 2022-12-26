@@ -1,7 +1,6 @@
 import {get, getPaged, post} from './helper';
-import {convertSKUBuyNotice} from '../helper/sku';
 import qs from 'qs';
-import {PagedData, SearchParam, SKUBuyNotice, SKUBuyNoticeF, SPUF, SPUCategory, SPUCodeType, SPUForm, SPUDetailF, BeginTimeAndEndTime, SalesList} from '../models';
+import {PagedData, SearchParam, SKUBuyNoticeF, SPUF, SPUCategory, SPUCodeType, SPUForm, SPUDetailF, BeginTimeAndEndTime, SalesList} from '../models';
 // import {wait} from '../helper';
 
 // 获取spu分类
@@ -15,9 +14,9 @@ export async function getCodeTypes(): Promise<SPUCodeType[]> {
 }
 
 // 获取购买须知
-export async function getSKUBuyNotice(): Promise<SKUBuyNotice> {
+export async function getSKUBuyNotice(): Promise<SKUBuyNoticeF[]> {
   let data: SKUBuyNoticeF[] = await get<SKUBuyNoticeF[]>('/purchase/notice/template/list');
-  return convertSKUBuyNotice(data);
+  return data;
 }
 
 // 获取spu列表

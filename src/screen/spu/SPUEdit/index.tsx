@@ -14,7 +14,7 @@ import SKU from './sku/SKU';
 import Booking from './booking/Booking';
 import ImageTextDetail from './detail/ImageTextDetail';
 import {getInitSPUForm, generateSPUForm} from '../../../helper';
-import {cleanSPUForm} from '../../../helper/util';
+import {cleanSPUForm, momentFromDateTime} from '../../../helper/util';
 import {RootState} from '../../../redux/reducers';
 import * as api from '../../../apis';
 import {SPUForm} from '../../../models';
@@ -45,7 +45,7 @@ const EditSPU: React.FC = () => {
   const [merchantDispatcher] = useMerchantDispatcher();
   const [contractDispatcher] = useContractDispatcher();
   const [skuDispatcher] = useSKUDispatcher();
-
+  console.log('商品详细数据', spuDetail);
   // 如果有链接上的id，就查询spu详情
   useEffect(() => {
     if (params.id && !spuID) {
@@ -71,15 +71,37 @@ const EditSPU: React.FC = () => {
     // skuDispatcher.loadEditingCurrentContract(spuDetail.contractId);
     // skuDispatcher.loadEditingCurrentMerchant(spuDetail.bizUserId);
   }, [spuDetail, merchantDispatcher, contractDispatcher]);
-
+  console.log(spuDetail);
   // spu详情有了或者更换了合同，需要重新生成表单
   useEffect(() => {
     if (!contractDetail) {
       return;
+    } else if (spuDetail) {
+      setValue('saleBeginTime', momentFromDateTime(spuDetail.saleBeginTime));
+      setValue('saleEndTime', momentFromDateTime(spuDetail.saleEndTime));
+      setValue('stockAmount', spuDetail.stockAmount);
+      setValue('spuName', spuDetail.spuName);
+      setValue('showBeginTime', momentFromDateTime(spuDetail.showBeginTime));
+      setValue('bizUserId', spuDetail.bizUserId);
+      setValue('skuList', spuDetail.skuList);
+      setValue('needIdCard', spuDetail.needIdCard);
+      setValue('subName', spuDetail.subName);
+      setValue('canUseShopIds', spuDetail.canUseShopIds);
+      setValue('poster', [{url: spuDetail.poster, id: 1}]);
+      setValue('bannerPhotos', spuDetail.bannerPhotos);
+      setValue('contractId', spuDetail.contractId);
+      setValue('modelList', spuDetail.modelList);
+      setValue('packageList', spuDetail.packageList);
+      setValue('stockAmount', spuDetail.stockAmount);
+      setValue('purchaseNoticeEntities', spuDetail.purchaseNoticeEntities);
+      spuDetail.skuList.forEach((item, index) => {
+        setValue(`skuList.${index}.skuDetails`, item.list);
+      });
     }
     // 从后端数据生成前端要的表单数据
-    const patchFormData = generateSPUForm(contractDetail, spuDetail);
-    form.setFieldsValue({...spuDetail, ...patchFormData});
+
+    // const patchFormData = generateSPUForm(contractDetail, spuDetail);
+    // form.setFieldsValue({...spuDetail, ...patchFormData});
   }, [spuDetail, contractDetail]); // eslint-disable-line react-hooks/exhaustive-deps
   // 这里不要依赖form，否则会爆栈
 
@@ -114,8 +136,9 @@ const EditSPU: React.FC = () => {
   async function check() {
     try {
       const res = getValues();
+      console.log('原始表单数据', res);
       const formData = cleanSPUForm(res);
-      console.log('表单原始数据', formData);
+      console.log('格式化表单数据', formData);
       await api.sku.createSPU(res);
       commonDispatcher.success('创建成功');
     } catch (error) {

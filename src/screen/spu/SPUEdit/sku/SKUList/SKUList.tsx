@@ -23,6 +23,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues}) => {
     control: control,
     name: 'skuList',
   });
+  const spuDetail = useSelector((state: RootState) => state.sku.currentSPU);
   const packListForm = useForm();
   const packArray = useFieldArray({
     control: packListForm.control,
@@ -46,6 +47,14 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues}) => {
       packListForm.setValue('sku', skuInfo);
     }
   }, [isShowPackageModal, packListForm, skuInfo]);
+
+  useEffect(() => {
+    if (spuDetail) {
+      spuDetail.skuList.map(item => {
+        packListForm.setValue('sku.list', item.list);
+      });
+    }
+  }, [packListForm, spuDetail]);
 
   function deletePack(index: number) {
     const {packageList = []} = getValues();
@@ -100,7 +109,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues}) => {
     const skus: any = [];
     res.skus.forEach((item, index) => {
       if (item._selected) {
-        skus.push({sku: res.sku[index].contractSkuId, nums: item.nums});
+        skus.push({skuId: res.sku[index].contractSkuId, nums: item.nums});
       }
     });
     const formData = {
@@ -108,7 +117,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues}) => {
       packageName: res.packageName,
       skus: skus,
     };
-
+    console.log('组合套餐', formData);
     const {packageList = []} = getValues();
     setValue('packageList', [...packageList, formData]);
     setIsShowPackageModal(false);
@@ -119,6 +128,8 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues}) => {
   }
   const PackList: React.FC<PackListProps> = props => {
     const {value} = props;
+    console.log('组合套餐列表', value);
+    console.log(skuList);
     return (
       <>
         {value?.map((item, index) => (
@@ -130,7 +141,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues}) => {
                   text: '编辑',
                   color: 'white',
                   backgroundColor: globalStyleVariables.COLOR_PRIMARY,
-                  onPress: () => packSKU(index),
+                  onPress: () => console.log(11),
                 },
                 {
                   text: '删除',
@@ -145,7 +156,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues}) => {
                 </View>
                 <View style={{margin: globalStyleVariables.MODULE_SPACE}}>
                   {item?.skus?.map((sku, index) => {
-                    const foundSKU = findItem(skuList, item => item.skuId === sku.skuId);
+                    const foundSKU = findItem(contractDetail.skuInfoReq.skuInfo, item => item.contractSkuId[0] === sku.skuId);
                     return (
                       <View key={index}>
                         <Text style={globalStyles.fontTertiary}>{`${foundSKU?.skuName} * ${sku.nums}`}</Text>
@@ -177,7 +188,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues}) => {
               )}
             />
             <Controller
-              name={`skuList.${index}.skuSettlementPrice`}
+              name={`skuList.${index}.skuStock`}
               control={control}
               render={({field: {value}}) => (
                 <Form.Item label="套餐结算价（元）">

@@ -4,8 +4,9 @@ import {useSelector} from 'react-redux';
 import {useFetchData} from './common';
 import {useSKUDispatcher} from './dispatcher';
 import * as api from '../../apis';
-import {SKUBuyNotice, SPUCategory, SPUCodeType, SPUDetailF} from '../../models';
+import {Notice, SPUCategory, SPUCodeType, SPUDetailF} from '../../models';
 import {RootState} from '../../redux/reducers';
+import {cleanNotice} from '../util';
 
 export function useSPUCategories(): [SPUCategory[]] {
   const SPUCategories = useSelector((state: RootState) => state.sku.categories);
@@ -30,7 +31,7 @@ export function useCodeTypes(): [SPUCodeType[]] {
   return [SPUCodeTypes];
 }
 
-export function useSKUBuyNotice(): [SKUBuyNotice] {
+export function useSKUBuyNotice(): [Notice] {
   const notices = useSelector((state: RootState) => state.sku.buyNotice);
   const [SKUDispatcher] = useSKUDispatcher();
   useEffect(() => {
@@ -38,7 +39,7 @@ export function useSKUBuyNotice(): [SKUBuyNotice] {
       SKUDispatcher.loadSKUBuyNotice();
     }
   }, [SKUDispatcher, notices]);
-  return [notices as SKUBuyNotice];
+  return [cleanNotice(notices)];
 }
 
 // 获取spu详情

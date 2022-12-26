@@ -1,5 +1,5 @@
 import {Button} from '@ant-design/react-native';
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {Control, Controller, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
 import {ScrollView, View, Text, StyleSheet} from 'react-native';
 import {useSelector} from 'react-redux';
@@ -12,7 +12,7 @@ import {BookingModel, BoolEnum} from '../../../../models';
 import {RootState} from '../../../../redux/reducers';
 import {styles} from '../style';
 import {useForm} from 'react-hook-form';
-import BuyNotice from './BuyNotice';
+import BookingNotice from './BuyNotice';
 
 interface BookingProps {
   onNext?: () => void;
@@ -55,20 +55,8 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
   }
   function handleSubmitBinding() {
     const res = bookingModel.getValues();
-    console.log('预约型号', res);
     const {modelList = []} = getValues();
     setValue('modelList', [...modelList, res]);
-    // const newModel = bindingForm.getFieldsValue();
-    // const oldModelList: BookingModel[] = form.getFieldValue('modelList');
-    // const oldValue = findItem<{modelId: number}>(oldModelList, e => e.modelId === newModel.modelId);
-    // let newList;
-    // if (oldValue) {
-    //   newList = oldModelList.map(e => (e.modelId === newModel.modelId ? {...e, ...newModel} : e));
-    // } else {
-    //   newList = [...oldModelList, newModel];
-    // }
-    // setValue('modelList', newList);
-    // form.setFieldsValue({modelList: newList});
     setShowBinding(false);
   }
 
@@ -85,7 +73,7 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
                 {item.contractSkuIds?.map(skuId => {
                   const skuItem = findItem(contractDetail?.skuInfoReq?.skuInfo, item => item.contractSkuId === skuId);
                   return (
-                    <Text style={[globalStyles.fontTertiary, globalStyles.moduleMarginTop]} key={skuId}>
+                    <Text key={skuId} style={[globalStyles.fontTertiary, globalStyles.moduleMarginTop]}>
                       {skuItem?.skuName}
                     </Text>
                   );
@@ -176,8 +164,8 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
             <Select disabled value={contractDetail?.bookingReq?.codeType} options={codeTypes.map(item => ({label: item.name, value: item.codeType}))} />
           </Form.Item>
         </SectionGroup>
-        <BuyNotice setValue={setValue} control={control} watch={watch} />
 
+        <BookingNotice setValue={setValue} control={control} watch={watch} getValues={getValues} />
         <Footer />
         <View style={styles.button}>
           <Button type="primary" onPress={onCheck}>

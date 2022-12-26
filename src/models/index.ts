@@ -76,6 +76,7 @@ export type {
   BookingModel,
   SPUDetailF,
   SalesList,
+  Notice,
 } from './spu';
 export type {CommissionToday, CommissionExpect, Commission, CommissionTop, SaleTop, CommissionHistory, CommissionDetail} from './summary';
 

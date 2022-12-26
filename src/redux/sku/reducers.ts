@@ -2,12 +2,12 @@ import produce from 'immer';
 
 import {SKUActions} from './actions';
 import {ActionType} from './types';
-import {SPUCodeType, SPUCategory, SKUBuyNotice, SPUDetailF} from '../../models';
+import {SPUCodeType, SPUCategory, SKUBuyNoticeF, SPUDetailF} from '../../models';
 
 export interface SKUState {
   codeTypes: SPUCodeType[];
   categories: SPUCategory[];
-  buyNotice?: SKUBuyNotice;
+  buyNotice?: SKUBuyNoticeF[];
   currentSPU?: SPUDetailF;
 }
 

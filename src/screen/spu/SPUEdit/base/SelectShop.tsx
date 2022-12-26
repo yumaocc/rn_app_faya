@@ -20,6 +20,7 @@ const SelectShop: React.FC<SelectShopProps> = ({shopList, open, setOpen, setValu
   const [currentShopList, setCurrentShopList] = useState<ShopForm[]>([]);
   const [checkAll, setCheckAll] = useState(false);
   const [len, setLen] = useState(0);
+
   useEffect(() => {
     if (open) {
       const {canUseShopIds} = getValues();
@@ -76,7 +77,8 @@ const SelectShop: React.FC<SelectShopProps> = ({shopList, open, setOpen, setValu
 
   const canUseShopOk = () => {
     const list = currentShopList.filter(item => (item.checked ? true : false));
-    setValue('canUseShopIds', list);
+    const shopList = list.map(item => item.id);
+    setValue('canUseShopIds', shopList);
     setCheckAll(false);
     setOpen(false);
   };

@@ -1,6 +1,6 @@
 import moment, {Moment} from 'moment';
 import {DATE_TIME_FORMAT} from '../constants';
-import {Environment, DateTimeString, FormMerchant, MerchantForm, MerchantCreateType, UploadFile, SPUCategory, SPUCodeType, ShopForm} from '../models';
+import {Environment, DateTimeString, FormMerchant, MerchantForm, MerchantCreateType, UploadFile, SPUCategory, SPUCodeType, ShopForm, SKUBuyNoticeF, Notice} from '../models';
 
 // 用来模拟异步操作
 export async function wait(ms: number) {
@@ -145,30 +145,61 @@ export function formattingCodeType(data: SPUCodeType[]) {
 //格式化新建商品的数据
 export function cleanSPUForm(formData: any) {
   const form = {...formData};
-  form.saleBeginTime = formatMoment(form.saleBeginTime);
-  form.saleEndTime = formatMoment(form.saleEndTime);
-  form.showBeginTime = formatMoment(form.showBeginTime);
-  form.canUseShopIds = form.canUseShopIds.map((item: ShopForm) => item.id);
-  form.poster = formData.poster[0].url;
+  form.saleBeginTime = formatMoment(form?.saleBeginTime);
+  form.saleEndTime = formatMoment(form?.saleEndTime);
+  form.showBeginTime = formatMoment(form?.showBeginTime);
+  form.canUseShopIds = form?.canUseShopIds?.map((item: ShopForm) => item.id);
+  form.poster = formData?.poster[0]?.url;
+  delete form.spuStock;
   form.skuList.forEach((_, index: number) => {
     delete _.skuSettlementPrice;
     form.skuList[index].list = form.skuList[index].skuDetails;
     delete form.skuList[index].skuDetails;
   });
-  form.skuList.forEach((item: any) => {
+  form.skuList?.forEach((item: any) => {
     item.show = 1;
     delete item.buyLimitNum;
     delete item.buyLimitType;
   });
-  form.packageList.forEach((item: any) => {
-    item.skus.forEach((item: any) => {
+  form?.packageList?.forEach((item: any) => {
+    item?.skus?.forEach((item: any) => {
       delete item._selected;
       delete item._skuName;
       delete item.skuSettlementPrice;
     });
   });
-  form.areaInfo = [19, 19, 19];
   form.spuHtml = '';
-  form.bannerPhotos = form.bannerPhotos.map((item: any) => ({url: item.url}));
+  form.bannerPhotos = form?.bannerPhotos?.map((item: any) => ({url: item.url, id: item.id}));
   return form;
 }
+
+export const cleanNotice = (value: SKUBuyNoticeF[]) => {
+  const _notice: Notice = {
+    BOOKING: [],
+    SALE_TIME: [],
+    USE_RULE: [],
+    POLICY: [],
+    TIPS: [],
+  };
+  console.log('原始数据', value);
+  value?.forEach(item => {
+    switch (item.type) {
+      case 'BOOKING':
+        _notice.BOOKING.push(item);
+        break;
+      case 'SALE_TIME':
+        _notice.SALE_TIME.push(item);
+        break;
+      case 'USE_RULE':
+        _notice.USE_RULE.push(item);
+        break;
+      case 'TIPS':
+        _notice.TIPS.push(item);
+        break;
+      case 'POLICY':
+        _notice.POLICY.push(item);
+        break;
+    }
+  });
+  return _notice;
+};
