@@ -12,7 +12,6 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/reducers';
 import * as api from '../../../apis';
 import {useNavigation} from '@react-navigation/native';
-
 const Withdraw: FC = () => {
   const [walletInfo, updateWallet] = useWallet(); //钱包信息
 
@@ -81,6 +80,7 @@ const Withdraw: FC = () => {
         <NavigationBar title="提现" headerRight={headerRight} />
         <View style={styles.wrapper}>
           <Text>到账银行卡</Text>
+
           {walletInfo?.status === BankCardStatus.unverified && (
             <TouchableOpacity activeOpacity={0.5} style={[globalStyles.flexNormal, globalStyles.moduleMarginTop, {alignItems: 'center'}]}>
               <Icon name="plus" color="#546DAD" />

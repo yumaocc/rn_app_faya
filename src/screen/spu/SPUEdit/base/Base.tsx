@@ -4,7 +4,7 @@ import React, {useEffect, useMemo, useState} from 'react';
 import {Control, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {useSelector} from 'react-redux';
-import {FormTitle, SectionGroup, Form, Input, Select, DatePicker, Footer, Cascader, Modal, SelfText} from '../../../../component';
+import {FormTitle, SectionGroup, Form, Input, Select, DatePicker, Footer, Cascader} from '../../../../component';
 import {globalStyleVariables} from '../../../../constants/styles';
 import {useMerchantDispatcher, useContractDispatcher, useSPUCategories} from '../../../../helper/hooks';
 import {BoolEnum, ShopForm} from '../../../../models';
@@ -14,6 +14,7 @@ import Label from '../../../../component/Lable';
 import {Controller} from 'react-hook-form';
 import SelectShop from './SelectShop';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {momentFromDateTime} from '../../../../helper/util';
 
 interface BaseProps {
   onNext?: () => void;
@@ -33,7 +34,6 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch}
   const currentContract = useSelector((state: RootState) => state.contract.currentContract);
   const contractList = useSelector((state: RootState) => state.contract.contractSearchList);
   const [showUseShop, setShowUseShop] = useState(false);
-
   // const form = Form.useFormInstance();
   const [SPUCategories] = useSPUCategories();
   const [merchantDispatcher] = useMerchantDispatcher();
@@ -67,13 +67,13 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch}
 
   useEffect(() => {
     if (currentContract) {
-      setValue('saleBeginTime', currentContract.bookingReq.saleBeginTime);
-      setValue('saleEndTime', currentContract.bookingReq.saleEndTime);
+      setValue('saleBeginTime', momentFromDateTime(currentContract.bookingReq.saleBeginTime));
+      setValue('saleEndTime', momentFromDateTime(currentContract.bookingReq.saleEndTime));
       setValue('spuStock', currentContract.skuInfoReq.spuStock);
-      setValue('skuInfo', currentContract.skuInfoReq.skuInfo);
+      setValue('skuList', currentContract.skuInfoReq.skuInfo);
       setValue('spuName', currentContract.spuInfoReq.spuName);
     }
-  });
+  }, [currentContract, setValue]);
   function onCheck() {
     // console.log(form.getFieldsValue());
     onNext && onNext();
@@ -197,54 +197,110 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch}
             </Form.Item>
           )}
         />
-        <Form.Item label="商品副标题" name="subName">
-          <Input placeholder="商品副标题" />
-        </Form.Item>
+        <Controller
+          control={control}
+          name="subName"
+          render={({field: {value, onChange}}) => (
+            <Form.Item label="商品副标题">
+              <Input placeholder="商品副标题" value={value} onChange={onChange} />
+            </Form.Item>
+          )}
+        />
         <Form.Item label="商品分类">
           <Cascader value={currentContract?.spuInfoReq?.spuCategoryIds} disabled options={SPUCategories} labelKey="name" valueKey="id" placeholder="商品分类" />
         </Form.Item>
-        <Form.Item label="收货地址" name="needExpress" desc="开启后，用户下单需填写收货地址">
-          <Select
-            options={[
-              {label: '是', value: BoolEnum.TRUE},
-              {label: '否', value: BoolEnum.FALSE},
-            ]}
-          />
-        </Form.Item>
-        <Form.Item label="身份证" name="needIdCard" desc="开启后，用户下单需填写身份证">
-          <Select
-            options={[
-              {label: '是', value: BoolEnum.TRUE},
-              {label: '否', value: BoolEnum.FALSE},
-            ]}
-          />
-        </Form.Item>
-        <Form.Item label="初始销量" name="baseSaleAmount" desc="为了xxx而显示的销量">
-          <Input placeholder="请输入" type="number" />
-        </Form.Item>
-        <Form.Item label="初始分享量" name="baseShareCount" desc="为了xxx而显示的分享量">
-          <Input placeholder="请输入" type="number" />
-        </Form.Item>
+        <Controller
+          control={control}
+          defaultValue={BoolEnum.FALSE}
+          name="needExpress"
+          render={({field: {value, onChange}}) => (
+            <Form.Item label="收货地址" desc="开启后，用户下单需填写收货地址">
+              <Select
+                value={value}
+                onChange={onChange}
+                options={[
+                  {label: '是', value: BoolEnum.TRUE},
+                  {label: '否', value: BoolEnum.FALSE},
+                ]}
+              />
+            </Form.Item>
+          )}
+        />
+        <Controller
+          control={control}
+          defaultValue={BoolEnum.FALSE}
+          name="needIdCard"
+          render={({field: {value, onChange}}) => (
+            <Form.Item label="身份证" desc="开启后，用户下单需填写身份证">
+              <Select
+                value={value}
+                onChange={onChange}
+                options={[
+                  {label: '是', value: BoolEnum.TRUE},
+                  {label: '否', value: BoolEnum.FALSE},
+                ]}
+              />
+            </Form.Item>
+          )}
+        />
+        <Controller
+          control={control}
+          name="baseSaleAmount"
+          defaultValue={40}
+          render={({field: {value, onChange}}) => (
+            <Form.Item label="初始销量" desc="为了xxx而显示的销量">
+              <Input placeholder="请输入" type="number" value={value} onChange={onChange} />
+            </Form.Item>
+          )}
+        />
+        <Controller
+          control={control}
+          name="baseShareCount"
+          defaultValue={20}
+          render={({field: {value, onChange}}) => (
+            <Form.Item label="初始分享量" desc="为了xxx而显示的分享量">
+              <Input placeholder="请输入" type="number" value={value} onChange={onChange} />
+            </Form.Item>
+          )}
+        />
       </SectionGroup>
       <SectionGroup style={styles.sectionGroupStyle}>
         <FormTitle title="上线时间" />
         <Form.Item label="售卖时间" vertical desc={`合同时间：${currentContract?.bookingReq?.saleBeginTime || 'N/A'}-${currentContract?.bookingReq?.saleEndTime || 'N/A'}`}>
           <View style={styles.composeItemWrapper}>
-            <Form.Item label="开始时间" name="_saleBeginTime" style={styles.composeItem} hiddenBorderBottom hiddenBorderTop>
-              <DatePicker mode="datetime" />
-            </Form.Item>
-            <Form.Item label="结束时间" name="_saleEndTime" style={styles.composeItem} hiddenBorderBottom>
-              <DatePicker mode="datetime" />
-            </Form.Item>
+            <Controller
+              name="saleBeginTime"
+              control={control}
+              render={({field: {value, onChange}}) => (
+                <Form.Item label="开始时间" style={styles.composeItem} hiddenBorderBottom hiddenBorderTop>
+                  <DatePicker mode="datetime" value={value} onChange={onChange} />
+                </Form.Item>
+              )}
+            />
+            <Controller
+              name="saleEndTime"
+              control={control}
+              render={({field: {value, onChange}}) => (
+                <Form.Item label="结束时间" style={styles.composeItem} hiddenBorderBottom>
+                  <DatePicker mode="datetime" value={value} onChange={onChange} />
+                </Form.Item>
+              )}
+            />
           </View>
         </Form.Item>
 
         <Form.Item label="使用时间" vertical>
           <Text>{`${currentContract?.bookingReq?.useBeginTime || 'N/A'}-${currentContract?.bookingReq?.useEndTime || 'N/A'}`}</Text>
         </Form.Item>
-        <Form.Item label="展示时间" name="_showBeginTime" desc="用于提前展示，不提前展示的商品无需设置">
-          <DatePicker mode="datetime" />
-        </Form.Item>
+        <Controller
+          name="showBeginTime"
+          control={control}
+          render={({field: {value, onChange}}) => (
+            <Form.Item label="展示时间" desc="用于提前展示，不提前展示的商品无需设置">
+              <DatePicker mode="datetime" value={value} onChange={onChange} />
+            </Form.Item>
+          )}
+        />
       </SectionGroup>
       <Footer />
       <View style={styles.button}>

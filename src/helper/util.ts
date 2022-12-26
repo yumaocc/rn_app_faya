@@ -1,6 +1,6 @@
 import moment, {Moment} from 'moment';
 import {DATE_TIME_FORMAT} from '../constants';
-import {Environment, DateTimeString, FormMerchant, MerchantForm, MerchantCreateType, UploadFile, SPUCategory, SPUCodeType} from '../models';
+import {Environment, DateTimeString, FormMerchant, MerchantForm, MerchantCreateType, UploadFile, SPUCategory, SPUCodeType, ShopForm} from '../models';
 
 // 用来模拟异步操作
 export async function wait(ms: number) {
@@ -140,4 +140,35 @@ export function formattingCodeType(data: SPUCodeType[]) {
       value: item.codeType,
     };
   });
+}
+
+//格式化新建商品的数据
+export function cleanSPUForm(formData: any) {
+  const form = {...formData};
+  form.saleBeginTime = formatMoment(form.saleBeginTime);
+  form.saleEndTime = formatMoment(form.saleEndTime);
+  form.showBeginTime = formatMoment(form.showBeginTime);
+  form.canUseShopIds = form.canUseShopIds.map((item: ShopForm) => item.id);
+  form.poster = formData.poster[0].url;
+  form.skuList.forEach((_, index: number) => {
+    delete _.skuSettlementPrice;
+    form.skuList[index].list = form.skuList[index].skuDetails;
+    delete form.skuList[index].skuDetails;
+  });
+  form.skuList.forEach((item: any) => {
+    item.show = 1;
+    delete item.buyLimitNum;
+    delete item.buyLimitType;
+  });
+  form.packageList.forEach((item: any) => {
+    item.skus.forEach((item: any) => {
+      delete item._selected;
+      delete item._skuName;
+      delete item.skuSettlementPrice;
+    });
+  });
+  form.areaInfo = [19, 19, 19];
+  form.spuHtml = '';
+  form.bannerPhotos = form.bannerPhotos.map((item: any) => ({url: item.url}));
+  return form;
 }

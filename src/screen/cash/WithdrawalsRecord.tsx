@@ -8,7 +8,7 @@ import {NavigationBar, SectionGroup} from '../../component';
 import {UserWithdrawalRecord, UserWithdrawalRecordStatus} from '../../models';
 import {globalStyles} from '../../constants/styles';
 import CutOffRule from '../../component/CutOffRule';
-
+import Success from './Success';
 type StartFetchFunction = (rowData: any[], pageSize: number) => void;
 type abortFetchFunction = () => void;
 
@@ -36,6 +36,7 @@ const WithdrawalsRecord: FC = () => {
           <Text style={[globalStyles.fontPrimary]}>提现到银行卡</Text>
           <Text style={[globalStyles.fontPrimary]}>{item?.moneyYuan}</Text>
         </View>
+        <Success />
         <View style={[globalStyles.containerLR, globalStyles.moduleMarginTop]}>
           <Text style={[globalStyles.fontTertiary]}>{item?.createdTime}</Text>
           {UserWithdrawalRecordStatus.CHECKING === item?.status && <Text style={[globalStyles.fontTertiary]}>审核中</Text>}

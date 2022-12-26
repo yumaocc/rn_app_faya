@@ -5,9 +5,9 @@ import {SafeAreaView, Text, View} from 'react-native';
 import {NavigationBar} from '../../component';
 import {globalStyles} from '../../constants/styles';
 import {FakeNavigation} from '../../models';
-
 const Success: FC = () => {
   const navigation = useNavigation() as FakeNavigation;
+
   return (
     <>
       <SafeAreaView style={globalStyles.wrapper}>

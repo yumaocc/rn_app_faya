@@ -3,27 +3,28 @@ import {View, Text, TouchableOpacity} from 'react-native';
 import {SwipeAction, TextareaItem} from '@ant-design/react-native';
 import {SectionGroup, FormTitle, Form, PlusButton, Modal} from '../../../../component';
 import {useSKUBuyNotice} from '../../../../helper/hooks';
-import {SKUBuyNoticeType, SPUForm} from '../../../../models';
+import {SKUBuyNoticeType} from '../../../../models';
 import {styles} from '../style';
 import {globalStyleVariables} from '../../../../constants/styles';
 import {getBuyNoticeTitle} from '../../../../helper';
-import {Control, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
+import {Control, Controller, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
 
 interface BuyNoticeProps {
   title?: string;
-  control?: Control<SPUForm, any>;
-  setValue?: UseFormSetValue<SPUForm>;
-  getValues?: UseFormGetValues<SPUForm>;
-  watch?: UseFormWatch<SPUForm>;
+  control?: Control<any, any>;
+  setValue?: UseFormSetValue<any>;
+  getValues?: UseFormGetValues<any>;
+  watch?: UseFormWatch<any>;
 }
 
-const BuyNotice: React.FC<BuyNoticeProps> = () => {
+const BuyNotice: React.FC<BuyNoticeProps> = ({setValue, watch, control}) => {
   const [showAddNotice, setShowAddNotice] = useState(false);
+  const purchaseNoticeEntities = watch('purchaseNoticeEntities');
   const [customNotice, setCustomNotice] = useState<string>('');
   const [template, setTemplate] = useState<{type: SKUBuyNoticeType; list: string[]}>({type: 'BOOKING', list: []});
   const [buyNotices] = useSKUBuyNotice();
   const form = Form.useFormInstance();
-
+  console.log('购买须知', buyNotices);
   const getBuyNoticeTemplate = useCallback(
     (type: SKUBuyNoticeType) => {
       return buyNotices ? buyNotices[type] : [];
@@ -64,6 +65,7 @@ const BuyNotice: React.FC<BuyNoticeProps> = () => {
 
   function onAddNotice(type: SKUBuyNoticeType, content: string) {
     let fieldName = getFieldKeyByType(type);
+    setValue('purchaseNoticeEntities', [...(purchaseNoticeEntities || []), {type: type, content}]);
     if (fieldName) {
       const oldList = form.getFieldValue(fieldName) as string[];
       form.setFieldsValue({[fieldName]: [...oldList, content]});
@@ -107,10 +109,18 @@ const BuyNotice: React.FC<BuyNoticeProps> = () => {
       </Form.Item>
     );
   }
+  interface BookingNoticeProps {
+    value: {type: string; content: string}[];
+  }
+  const BookingNotice: React.FC<BookingNoticeProps> = props => {
+    const {value} = props;
+    return <></>;
+  };
   return (
     <>
       <SectionGroup style={styles.sectionGroupStyle}>
         <FormTitle title="购买须知设置" />
+        <Controller name="" control={control} render={() => renderNoticeByType} />
         {renderNoticeByType('BOOKING')}
         {renderNoticeByType('SALE_TIME')}
         {renderNoticeByType('USE_RULE')}

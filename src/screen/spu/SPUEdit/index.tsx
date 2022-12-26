@@ -13,7 +13,8 @@ import Base from './base/Base';
 import SKU from './sku/SKU';
 import Booking from './booking/Booking';
 import ImageTextDetail from './detail/ImageTextDetail';
-import {getInitSPUForm, generateSPUForm, cleanSPUForm} from '../../../helper';
+import {getInitSPUForm, generateSPUForm} from '../../../helper';
+import {cleanSPUForm} from '../../../helper/util';
 import {RootState} from '../../../redux/reducers';
 import * as api from '../../../apis';
 import {SPUForm} from '../../../models';
@@ -113,13 +114,12 @@ const EditSPU: React.FC = () => {
   async function check() {
     try {
       const res = getValues();
-      console.log(res);
-      // const formData = form.getFieldsValue() as SPUForm;
-      // console.log(formData);
-      // const cleanData = cleanSPUForm(formData);
-      // console.log('cleaned', cleanData);
-      // await api.sku.createSPU(cleanData);
+      const formData = cleanSPUForm(res);
+      console.log('表单原始数据', formData);
+      await api.sku.createSPU(res);
+      commonDispatcher.success('创建成功');
     } catch (error) {
+      console.log(error);
       commonDispatcher.error(error);
     }
   }
