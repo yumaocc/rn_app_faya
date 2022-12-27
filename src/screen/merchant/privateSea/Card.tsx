@@ -2,6 +2,8 @@ import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
+import {useCommonDispatcher} from '../../../helper/hooks';
+import * as api from '../../../apis';
 import {BoolEnum, FakeNavigation, MerchantAction, MerchantCreateType, MerchantF, StylePropView} from '../../../models';
 
 interface CardProps {
@@ -10,12 +12,21 @@ interface CardProps {
 }
 
 const Card: React.FC<CardProps> = ({merchant, style}) => {
+  const [commonDispatcher] = useCommonDispatcher();
+  async function inviteAuth(id: number) {
+    try {
+      await api.merchant.inviteAuth(id);
+      commonDispatcher.success('已发送认证邀请');
+    } catch (error) {
+      commonDispatcher.error(error);
+    }
+  }
   const navigation = useNavigation() as FakeNavigation;
   return (
     <TouchableOpacity
       activeOpacity={0.5}
       onPress={() => {
-        if (merchant?.hasAuth !== 1) {
+        if (merchant?.hasAuth) {
           navigation.navigate({
             name: 'ViewMerchant',
             params: {
@@ -36,7 +47,7 @@ const Card: React.FC<CardProps> = ({merchant, style}) => {
       <View style={[style, styles.container]}>
         <View style={[globalStyles.borderBottom, styles.header]}>
           <View style={[styles.logo]}>
-            <Image source={{uri: 'https://fakeimg.pl/100'}} style={{width: 40, height: 40}} />
+            <Image source={{uri: merchant?.avatar || 'https://fakeimg.pl/100'}} style={{width: 40, height: 40}} />
           </View>
           <View style={styles.headerRight}>
             <View style={[globalStyles.flexNormal, {justifyContent: 'space-between'}]}>
@@ -45,9 +56,15 @@ const Card: React.FC<CardProps> = ({merchant, style}) => {
                   {merchant.name}
                 </Text>
               </View>
-              <View style={styles.tagWrapper}>
-                <Text style={styles.tag}>待签约</Text>
-              </View>
+              {merchant?.hasAuth ? (
+                <View style={globalStyles.tagWrapperGreen}>
+                  <Text style={globalStyles.tagGreen}>已认证</Text>
+                </View>
+              ) : (
+                <View style={styles.tagWrapper}>
+                  <Text style={styles.tag}>未认证</Text>
+                </View>
+              )}
             </View>
             <Text
               style={{
@@ -64,27 +81,21 @@ const Card: React.FC<CardProps> = ({merchant, style}) => {
         </View>
         <View style={[globalStyles.containerLR, globalStyles.borderBottom, {paddingVertical: globalStyleVariables.MODULE_SPACE}]}>
           <Text style={globalStyles.fontSecondary}>认领时间</Text>
-          {/* <Text style={globalStyles.fontSecondary}>{getDateFromDateTime(merchant.claimTime)}</Text> */}
+          <Text style={globalStyles.fontSecondary}>{merchant?.createdTime}</Text>
         </View>
-        <View style={[globalStyles.borderBottom, {paddingVertical: globalStyleVariables.MODULE_SPACE}]}>
-          <View style={globalStyles.containerLR}>
-            {/* <Text style={globalStyles.fontSecondary}>上次跟进</Text> */}
-            {/* <Text style={globalStyles.fontSecondary}>{getDateFromDateTime(merchant.claimTime)}</Text> */}
-          </View>
-          <View style={styles.follow}>
-            {/* <Text
-            style={{
-              fontSize: 12,
-              color: globalStyleVariables.TEXT_COLOR_PRIMARY,
-            }}>
-            兄弟听我一句劝，游戏没了还能重玩，媳妇没了游戏就能一直玩了。兄弟听我一句劝，游戏没了还能重玩，媳妇没了游戏就能一直玩了。
-          </Text> */}
-          </View>
-        </View>
-        <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-          <Text style={styles.button}>签结算合同</Text>
-          {/* <Text style={styles.button}>跟进记录(20)</Text> */}
-        </View>
+        {merchant?.hasAuth ? (
+          <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('AddContract')}>
+            <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+              <Text style={styles.button}>邀请结算</Text>
+            </View>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity activeOpacity={0.5} onPress={() => inviteAuth(merchant.id)}>
+            <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+              <Text style={styles.button}>邀请认证</Text>
+            </View>
+          </TouchableOpacity>
+        )}
       </View>
     </TouchableOpacity>
   );

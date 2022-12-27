@@ -1,5 +1,5 @@
 import {Button} from '@ant-design/react-native';
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useState} from 'react';
 import {Control, Controller, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
 import {ScrollView, View, Text, StyleSheet} from 'react-native';
 import {useSelector} from 'react-redux';
@@ -7,8 +7,8 @@ import {Checkbox, Footer, Form, FormTitle, Modal, PlusButton, SectionGroup, Sele
 import {BoolOptions} from '../../../../constants';
 import {globalStyles, globalStyleVariables} from '../../../../constants/styles';
 import {findItem, getBookingType} from '../../../../helper';
-import {useCodeTypes, useCommonDispatcher, useMerchantBookingModel, useSKUBuyNotice} from '../../../../helper/hooks';
-import {BookingModel, BoolEnum} from '../../../../models';
+import {useCodeTypes, useCommonDispatcher, useMerchantBookingModel} from '../../../../helper/hooks';
+import {BoolEnum} from '../../../../models';
 import {RootState} from '../../../../redux/reducers';
 import {styles} from '../style';
 import {useForm} from 'react-hook-form';
@@ -37,7 +37,6 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
   const [codeTypes] = useCodeTypes();
   const [bookingModal] = useMerchantBookingModel(merchantDetail?.id);
   const [commonDispatcher] = useCommonDispatcher();
-  const modelList = useMemo<BookingModel[]>(() => form.getFieldValue('modelList') || [], [form]);
 
   async function onCheck() {
     console.log(form.getFieldsValue());
@@ -71,7 +70,7 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
               <View key={index} style={[style.module, globalStyles.moduleMarginTop]}>
                 <Text style={[globalStyles.fontPrimary, globalStyles.borderBottom]}>型号：{bookingItem?.name}</Text>
                 {item.contractSkuIds?.map(skuId => {
-                  const skuItem = findItem(contractDetail?.skuInfoReq?.skuInfo, item => item.contractSkuId === skuId);
+                  const skuItem = findItem(contractDetail?.skuInfoReq?.skuInfo, item => item.contractSkuId[0] === skuId);
                   return (
                     <Text key={skuId} style={[globalStyles.fontTertiary, globalStyles.moduleMarginTop]}>
                       {skuItem?.skuName}

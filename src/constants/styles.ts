@@ -124,6 +124,7 @@ export const globalStyles = StyleSheet.create({
     color: '#FFB443',
   },
   dropDownItem: {
+    flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
     borderRadius: 5,
@@ -156,7 +157,6 @@ export const globalStyles = StyleSheet.create({
   },
   wrapper: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   //分割线
   dividingLine: {
@@ -165,6 +165,9 @@ export const globalStyles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
     marginLeft: globalStyleVariables.MODULE_SPACE,
     marginRight: globalStyleVariables.MODULE_SPACE,
+  },
+  inputWidth: {
+    width: 60,
   },
 });
 

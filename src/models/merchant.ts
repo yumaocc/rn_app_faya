@@ -12,6 +12,7 @@ export interface MerchantF {
   createdTime: DateTimeString;
   hasAuth: BoolNumber;
   multiStore: BoolNumber;
+  avatar: string;
 }
 
 // 我的商家
@@ -74,7 +75,7 @@ export interface MerchantForm {
   type?: MerchantCreateType; // 默认0公海用户，1私海用户
   shopList?: ShopForm[]; // 店铺列表
   areaInfo: number[]; //地区
-  locationWithCompanyId?: number[]; //站点
+  locationWithCompanyId?: number; //站点
 }
 //这是表单需要的数据
 export interface FormMerchant {

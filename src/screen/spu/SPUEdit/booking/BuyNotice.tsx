@@ -3,7 +3,7 @@ import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {SwipeAction, TextareaItem} from '@ant-design/react-native';
 import {SectionGroup, FormTitle, Form, PlusButton, Modal} from '../../../../component';
 import {useSKUBuyNotice} from '../../../../helper/hooks';
-import {Notice, SKUBuyNoticeType} from '../../../../models';
+import {Notice, NoticeItem, SKUBuyNoticeType} from '../../../../models';
 import {styles} from '../style';
 import {globalStyleVariables} from '../../../../constants/styles';
 import {Control, Controller, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
@@ -15,6 +15,10 @@ interface BuyNoticeProps {
   setValue?: UseFormSetValue<any>;
   getValues?: UseFormGetValues<any>;
   watch?: UseFormWatch<any>;
+}
+
+interface BookingNoticeProps {
+  value: Notice;
 }
 
 const BuyNotice: React.FC<BuyNoticeProps> = ({setValue, control, getValues}) => {
@@ -30,7 +34,7 @@ const BuyNotice: React.FC<BuyNoticeProps> = ({setValue, control, getValues}) => 
   function removeNotice(type: SKUBuyNoticeType, index: number) {
     const {purchaseNoticeEntities} = getValues();
     const needDelNotice = purchaseNoticeEntities.filter((item: any) => item.type === type);
-    const newNotice = needDelNotice.filter((item, idx) => idx !== index);
+    const newNotice = needDelNotice.filter((item: NoticeItem, idx: number) => idx !== index);
     const oldNotice = purchaseNoticeEntities.filter((item: any) => item.type !== type);
 
     setValue('purchaseNoticeEntities', [...oldNotice, ...newNotice]);
@@ -38,14 +42,12 @@ const BuyNotice: React.FC<BuyNoticeProps> = ({setValue, control, getValues}) => 
 
   function onAddNotice(type: SKUBuyNoticeType, content: string) {
     const {purchaseNoticeEntities = []} = getValues();
+
     setValue('purchaseNoticeEntities', [...purchaseNoticeEntities, {type: type, content}]);
     setShowAddNotice(false);
     setCustomNotice('');
   }
 
-  interface BookingNoticeProps {
-    value: Notice;
-  }
   const BookingNotice: React.FC<BookingNoticeProps> = props => {
     const {value} = props;
     const noticeContent = (type: SKUBuyNoticeType) => {

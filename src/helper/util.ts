@@ -89,7 +89,7 @@ export function flattenTree<T>(tree: any[], childrenKey: string = 'children'): T
 // 格式化商家发送请求的数据
 export function formattingMerchantRequest(data: FormMerchant, type: MerchantCreateType) {
   const {avatar, businessLicense} = data;
-  const newData: MerchantForm = {...data, avatar: avatar[0].url, businessLicense: businessLicense[0].url, type};
+  const newData: MerchantForm = {...data, avatar: avatar[0].url, businessLicense: businessLicense[0].url, type, locationWithCompanyId: 19};
   return newData;
 }
 
@@ -168,7 +168,6 @@ export function cleanSPUForm(formData: any) {
       delete item.skuSettlementPrice;
     });
   });
-  form.spuHtml = '';
   form.bannerPhotos = form?.bannerPhotos?.map((item: any) => ({url: item.url, id: item.id}));
   return form;
 }

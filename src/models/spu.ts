@@ -58,7 +58,7 @@ export interface PackagedSKUItem {
   contractSkuId: number;
   nums: number;
   skuId?: number;
-  _skuName?: string;
+  skuName?: string;
   _selected?: boolean;
 }
 export type PackagedSKUForm = PackagedSKU;
@@ -178,10 +178,14 @@ export interface SalesList {
   spuId: number;
 }
 
+export interface NoticeItem {
+  type: SKUBuyNoticeType;
+  content: string;
+}
 export interface Notice {
-  BOOKING: {type: SKUBuyNoticeType; content: string}[];
-  SALE_TIME: {type: SKUBuyNoticeType; content: string}[];
-  USE_RULE: {type: SKUBuyNoticeType; content: string}[];
-  POLICY: {type: SKUBuyNoticeType; content: string}[];
-  TIPS: {type: SKUBuyNoticeType; content: string}[];
+  BOOKING: NoticeItem[];
+  SALE_TIME: NoticeItem[];
+  USE_RULE: NoticeItem[];
+  POLICY: NoticeItem[];
+  TIPS: NoticeItem[];
 }

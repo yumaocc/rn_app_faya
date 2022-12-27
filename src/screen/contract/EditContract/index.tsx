@@ -99,13 +99,13 @@ const EditSPU: React.FC = () => {
 
   function handleChangeStep(currentKey: string, nextKey: string) {
     if (nextKey !== 'base') {
+      const {bizUserId} = getValues();
       const valid = bizUserId;
       if (!valid) {
         commonDispatcher.info('请先选择商家和合同！');
       }
-      return false;
+      return valid;
     }
-    setCurrentKey(currentKey);
     return true;
   }
 

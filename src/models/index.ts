@@ -77,10 +77,11 @@ export type {
   SPUDetailF,
   SalesList,
   Notice,
+  NoticeItem,
 } from './spu';
 export type {CommissionToday, CommissionExpect, Commission, CommissionTop, SaleTop, CommissionHistory, CommissionDetail} from './summary';
 
 export {LoginState, UserState, UserType, UserWithdrawalRecordStatus, BankCardStatus} from './user';
-export {CustomError, CustomErrorWithPayload, BoolEnum} from './common';
+export {CustomError, CustomErrorWithPayload, BoolEnum, RequestAction} from './common';
 export {MerchantType, MerchantCreateType, MerchantAgentType, MerchantAction} from './merchant';
 export {BuyLimitType, SettlementType, AccountType, ProtocolType, InvoiceType, BookingType, ContractAction} from './contract';

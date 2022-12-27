@@ -87,6 +87,11 @@ export interface BeginTimeAndEndTime {
   beginTime: string;
   endTime: string;
 }
+//请求类型，是加载更多合适其他的，比如搜索
+export enum RequestAction {
+  load = 1,
+  other = 2,
+}
 
 //时间选择类型
 export interface Picker {

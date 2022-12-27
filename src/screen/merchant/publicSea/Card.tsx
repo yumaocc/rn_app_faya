@@ -52,7 +52,7 @@ const Card: React.FC<CardProps> = props => {
         <View style={[styles.container, style]}>
           <View style={[globalStyles.borderBottom, styles.header]}>
             <View style={[styles.logo]}>
-              <Image source={{uri: 'https://fakeimg.pl/100'}} style={{width: 40, height: 40}} />
+              <Image source={{uri: merchant?.avatar || 'https://fakeimg.pl/100'}} style={{width: 40, height: 40}} />
             </View>
             <View style={styles.headerRight}>
               <View style={[globalStyles.flexNormal, {justifyContent: 'space-between'}]}>
@@ -114,6 +114,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     position: 'relative',
     overflow: 'hidden',
+    marginTop: globalStyleVariables.MODULE_SPACE,
   },
   header: {
     flexDirection: 'row',

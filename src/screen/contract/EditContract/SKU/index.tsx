@@ -2,7 +2,7 @@ import React, {FC, useEffect, useState} from 'react';
 import {Control, useFieldArray, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import {Cascader, Form, FormTitle, Input, SectionGroup, Select, Switch} from '../../../../component';
-import {globalStyleVariables} from '../../../../constants/styles';
+import {globalStyles, globalStyleVariables} from '../../../../constants/styles';
 import {useSPUCategories} from '../../../../helper/hooks';
 import {convertNumber2Han, formattingGoodsCategory} from '../../../../helper/util';
 import {BuyLimitType, Contract, ContractAction, InvoiceType} from '../../../../models';
@@ -211,17 +211,20 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action}
                         ]}
                       />
                       {buyLimitTypeIsShow(index) && (
-                        <Controller
-                          control={control}
-                          rules={{required: true}}
-                          name={`skuInfoReq.skuInfo.${index}.buyLimitNum`}
-                          render={({field: {value, onChange}}) => <Input style={{backgroundColor: 'red', width: 30}} value={value} onChange={onChange} />}
-                        />
+                        <View style={[{width: 100}, globalStyles.moduleMarginLeft]}>
+                          <Controller
+                            control={control}
+                            rules={{required: true}}
+                            name={`skuInfoReq.skuInfo.${index}.buyLimitNum`}
+                            render={({field: {value, onChange}}) => <Input style={{width: 30}} value={value} onChange={onChange} extra="份" />}
+                          />
+                        </View>
                       )}
                     </View>
                   </Form.Item>
                 )}
               />
+
               <SKUContent title={`套餐${convertNumber2Han(index + 1)}内容`} control={control} next={index} />
             </SectionGroup>
           );
@@ -243,7 +246,8 @@ export const styles = StyleSheet.create({
   },
   buyLimitType: {
     width: '100%',
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
   },
 });

@@ -40,7 +40,7 @@ const ImageTextDetail: React.FC<ImageTextDetailProps> = ({onNext, control}) => {
           name="bannerPhotos"
           control={control}
           render={({field: {value, onChange}}) => (
-            <Form.Item label="详情Banner" name="bannerPhotos" vertical desc="2-18张图，尺寸4:3，建议尺寸1000*750，文件大小3M以内，格式jpg/png">
+            <Form.Item label="详情Banner" vertical desc="2-18张图，尺寸4:3，建议尺寸1000*750，文件大小3M以内，格式jpg/png">
               <Upload maxCount={1} value={value} onChange={onChange} />
             </Form.Item>
           )}

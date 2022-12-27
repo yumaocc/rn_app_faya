@@ -7,7 +7,7 @@ import {createMerchant, updateMerchant} from '../../../apis/merchant';
 import {Form, NavigationBar, Tabs} from '../../../component';
 import {globalStyleVariables} from '../../../constants/styles';
 import {useParams, useRefCallback, useCommonDispatcher, useMerchantDispatcher} from '../../../helper/hooks';
-import {MerchantCreateType, MerchantAction, FakeNavigation, FormMerchant, MerchantFormEnum} from '../../../models'; // FormMerchant
+import {MerchantCreateType, MerchantAction, FormMerchant, MerchantFormEnum} from '../../../models'; // FormMerchant
 import EditBase from '../Form/EditBase';
 import {useForm, Controller} from 'react-hook-form';
 import Certification from '../Form/Certification';
@@ -31,7 +31,7 @@ const AddMerchant: React.FC = () => {
   const [form] = Form.useForm();
   const merchantDetail = useSelector<RootState, FormMerchant>(state => state.merchant.currentMerchant);
 
-  const navigation = useNavigation() as FakeNavigation;
+  const navigation = useNavigation();
   const {
     control,
     getValues,
@@ -103,14 +103,13 @@ const AddMerchant: React.FC = () => {
       const newFormData = formattingMerchantRequest(formData, identity);
 
       if (action === MerchantAction.EDIT) {
-        console.log(action, 'action');
         await updateMerchant(newFormData);
       }
       if (action === MerchantAction.ADD) {
         await createMerchant(newFormData);
       }
       commonDispatcher.success(action === MerchantAction.ADD ? '添加成功' : '修改成功');
-      navigation.navigate('Tab');
+      navigation.goBack();
     } catch (error) {
       commonDispatcher.success((JSON.stringify(error) as string) || '添加失败');
     }
@@ -121,7 +120,7 @@ const AddMerchant: React.FC = () => {
     try {
       await api.merchant.drawMerchant(id);
       commonDispatcher.success('添加成功');
-      navigation.navigate('Tab');
+      navigation.goBack();
     } catch (error) {
       commonDispatcher.error((error as string) || '添加失败');
     }
@@ -131,7 +130,7 @@ const AddMerchant: React.FC = () => {
     try {
       setLoading(true);
       await api.merchant.inviteAuth(id);
-      navigation.navigate('Tab');
+      navigation.goBack();
     } catch (error) {
       commonDispatcher.error((error as string) || '邀请失败');
     }

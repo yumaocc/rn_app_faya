@@ -1,4 +1,4 @@
-import {Icon} from '@ant-design/react-native';
+// import {Icon as IconImg} from '@ant-design/react-native';
 import {useNavigation} from '@react-navigation/native';
 import React, {FC, useEffect} from 'react';
 import {StyleSheet, View, Text, ScrollView, SafeAreaView} from 'react-native';
@@ -13,6 +13,9 @@ import {FakeNavigation} from '../../models';
 import {RootState} from '../../redux/reducers';
 import CommodityList from './rank/CommodityList';
 import SalesTop from './rank/SalesTop';
+import {SvgUri} from 'react-native-svg';
+import Icon from '../../component/Form/Icon';
+import {icons} from '../../assets/icon';
 
 const Cash: FC = () => {
   const navigation = useNavigation() as FakeNavigation;
@@ -38,6 +41,7 @@ const Cash: FC = () => {
       <SafeAreaView style={globalStyles.wrapper}>
         <NavigationBar title="我的金库" />
         <ScrollView>
+          <SvgUri uri={icons.success} height={100} width={100} fill="#00000" />
           <View style={styles.wrapper}>
             <View style={styles.content}>
               <Title title="余额" unit="元" type={'money'} value={wallet?.balanceYuan} arrow handleClick={() => console.log(111)} />
@@ -45,14 +49,15 @@ const Cash: FC = () => {
               <View style={styles.contentOneBtn}>
                 <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Withdraw')}>
                   <View style={styles.iconBg}>
-                    <Icon name="money-collect" />
+                    <Icon name="shangping" />
                   </View>
                   <Text style={[{textAlign: 'center'}, FontSize.f15]}>提现</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => navigation.navigate('WithdrawalsRecord')}>
                   <View>
                     <View style={styles.iconBg}>
-                      <Icon name="money-collect" />
+                      <Icon name="hetong" />
+                      <Icon name="search" />
                     </View>
                     <Text style={[{textAlign: 'center'}, FontSize.f15]}>提现记录</Text>
                   </View>
@@ -86,8 +91,6 @@ export default Cash;
 
 export const styles = StyleSheet.create({
   wrapper: {
-    marginLeft: 10,
-    marginRight: 10,
     flex: 1,
   },
   content: {

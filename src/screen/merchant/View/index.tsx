@@ -1,12 +1,12 @@
 import {Button, Icon} from '@ant-design/react-native';
 import {useNavigation} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, ScrollView, useWindowDimensions, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, ScrollView, useWindowDimensions, Text} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Cascader, Form, FormTitle, Input, NavigationBar, SectionGroup, Select, SelfText} from '../../../component';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {useParams, useCommonDispatcher, useMerchantDispatcher, useLoadCity} from '../../../helper/hooks';
-import {MerchantCreateType, MerchantAction, FakeNavigation, FormMerchant, MerchantFormEnum, MerchantType, BoolEnum} from '../../../models'; // FormMerchant
+import {MerchantCreateType, MerchantAction, FormMerchant, MerchantFormEnum, MerchantType, BoolEnum} from '../../../models'; // FormMerchant
 import {useForm, Controller, useFieldArray} from 'react-hook-form';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/reducers';
@@ -14,6 +14,7 @@ import Loading from '../../../component/Loading';
 import Upload from '../../../component/Form/Upload';
 import {useRequest} from 'ahooks';
 import * as api from '../../../apis';
+import ModalDropdown from 'react-native-modal-dropdown';
 // add 新增  edit 编辑 view 查看
 // 当id === MerchantCreateType.PRIVATE_SEA, 并且 action === view的时候不能编辑
 // 当id === MerchantCreateType.PRIVATE_SEA, 并且 action === edit 或者add的时候可以编辑
@@ -36,7 +37,7 @@ const AddMerchant: React.FC = () => {
     name: 'shopList',
   });
 
-  const navigation = useNavigation() as FakeNavigation;
+  const navigation = useNavigation();
   const {data} = useRequest(async () => {
     const res = await api.merchant.getMerchantCategories();
 
@@ -72,7 +73,7 @@ const AddMerchant: React.FC = () => {
       await api.merchant.returnPublic(merchantDetail.id);
       setLoading(false);
       commonDispatcher.success('归还成功');
-      navigation.navigate('Tab');
+      navigation.goBack();
     } catch (error) {
       commonDispatcher.error(error || '归还失败');
     }
@@ -80,16 +81,24 @@ const AddMerchant: React.FC = () => {
   return (
     <>
       <Loading active={loading} />
-      <ScrollView>
-        <SafeAreaView style={styles.container} edges={['bottom']}>
+      <SafeAreaView style={styles.container} edges={['bottom']}>
+        <ScrollView>
           <NavigationBar
             title={merchantDetail?.name}
             headerRight={
-              <TouchableOpacity activeOpacity={0.5} onPress={handleEdit}>
-                <View style={{height: '100%', justifyContent: 'center', paddingHorizontal: 10}}>
-                  <Icon name="ellipsis" size={26} color={globalStyleVariables.TEXT_COLOR_PRIMARY} />
-                </View>
-              </TouchableOpacity>
+              <ModalDropdown
+                dropdownStyle={[globalStyles.dropDownItem, {height: 40, width: 90}]}
+                renderRow={item => (
+                  <View style={[globalStyles.dropDownText, {width: '100%'}]}>
+                    <Text>{item.label}</Text>
+                  </View>
+                )}
+                options={[{label: '归还公海', value: 1}]}
+                onSelect={() => {
+                  handleEdit();
+                }}>
+                <Icon name="ellipsis" size={26} color={globalStyleVariables.TEXT_COLOR_PRIMARY} />
+              </ModalDropdown>
             }
           />
           <View style={styles.container}>
@@ -287,8 +296,8 @@ const AddMerchant: React.FC = () => {
               </View>
             </ScrollView>
           </View>
-        </SafeAreaView>
-      </ScrollView>
+        </ScrollView>
+      </SafeAreaView>
     </>
   );
 };

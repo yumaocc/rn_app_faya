@@ -13,7 +13,7 @@ import Base from './base/Base';
 import SKU from './sku/SKU';
 import Booking from './booking/Booking';
 import ImageTextDetail from './detail/ImageTextDetail';
-import {getInitSPUForm, generateSPUForm} from '../../../helper';
+import {getInitSPUForm} from '../../../helper';
 import {cleanSPUForm, momentFromDateTime} from '../../../helper/util';
 import {RootState} from '../../../redux/reducers';
 import * as api from '../../../apis';
@@ -71,12 +71,12 @@ const EditSPU: React.FC = () => {
     // skuDispatcher.loadEditingCurrentContract(spuDetail.contractId);
     // skuDispatcher.loadEditingCurrentMerchant(spuDetail.bizUserId);
   }, [spuDetail, merchantDispatcher, contractDispatcher]);
-  console.log(spuDetail);
-  // spu详情有了或者更换了合同，需要重新生成表单
+
   useEffect(() => {
     if (!contractDetail) {
       return;
     } else if (spuDetail) {
+      console.log('spuDetail详情', spuDetail);
       setValue('saleBeginTime', momentFromDateTime(spuDetail.saleBeginTime));
       setValue('saleEndTime', momentFromDateTime(spuDetail.saleEndTime));
       setValue('stockAmount', spuDetail.stockAmount);
@@ -104,12 +104,6 @@ const EditSPU: React.FC = () => {
     // form.setFieldsValue({...spuDetail, ...patchFormData});
   }, [spuDetail, contractDetail]); // eslint-disable-line react-hooks/exhaustive-deps
   // 这里不要依赖form，否则会爆栈
-
-  if (isEdit) {
-    if (!isEdit) {
-      console.log(1);
-    }
-  }
 
   // 自动切换到指定step
   useEffect(() => {
@@ -164,16 +158,14 @@ const EditSPU: React.FC = () => {
         navigation.canGoBack() && navigation.goBack();
       }
     } catch (error) {
-      console.log(error);
       commonDispatcher.error(error);
     }
   }
 
   function handleChangeStep(currentKey: string, nextKey: string) {
     if (nextKey !== 'base') {
-      const merchantId = form.getFieldValue('bizUserId');
-      const contractId = form.getFieldValue('contractId');
-      const valid = merchantId && contractId;
+      const {bizUserId, contractId} = getValues();
+      const valid = bizUserId && contractId;
       if (!valid) {
         commonDispatcher.info('请先选择商家和合同！');
       }

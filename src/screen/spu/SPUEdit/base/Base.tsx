@@ -7,7 +7,7 @@ import {useSelector} from 'react-redux';
 import {FormTitle, SectionGroup, Form, Input, Select, DatePicker, Footer, Cascader} from '../../../../component';
 import {globalStyleVariables} from '../../../../constants/styles';
 import {useMerchantDispatcher, useContractDispatcher, useSPUCategories} from '../../../../helper/hooks';
-import {BoolEnum, ShopForm} from '../../../../models';
+import {BoolEnum} from '../../../../models';
 import {RootState} from '../../../../redux/reducers';
 import {styles} from '../style';
 import Label from '../../../../component/Lable';
@@ -319,7 +319,8 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch}
       <SelectShop getValues={getValues} shopList={canUseShopList} setValue={setValue} open={showUseShop} setOpen={(value: boolean) => setShowUseShop(value)} />
     </ScrollView>
   );
-};;
+};
+
 Base.defaultProps = {
   // title: 'Base',
 };

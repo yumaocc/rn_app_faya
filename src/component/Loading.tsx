@@ -9,7 +9,7 @@ const Loading: FC<LoadingProps> = ({active}) => {
   return (
     active && (
       <View style={styles.container}>
-        <ActivityIndicator />
+        <ActivityIndicator animating={true} />
       </View>
     )
   );

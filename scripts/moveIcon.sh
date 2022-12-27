@@ -1,0 +1,1 @@
+mv scripts/icons.ts src/component/Form/Icon/icons.ts

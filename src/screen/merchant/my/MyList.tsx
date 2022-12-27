@@ -1,12 +1,16 @@
 import {Icon} from '@ant-design/react-native';
+import {useDebounceFn} from 'ahooks';
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import {View, Text, StyleSheet, FlatList, SafeAreaView} from 'react-native';
 import ModalDropdown from 'react-native-modal-dropdown';
 import * as api from '../../../apis';
 import {Input} from '../../../component';
+import {PAGE_SIZE} from '../../../constants';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
-import {MyMerchantF, Options} from '../../../models';
+import {useCommonDispatcher} from '../../../helper/hooks';
+import {MyMerchantF, Options, RequestAction, SearchParam} from '../../../models';
 import Card from './Card';
+import Loading from '../../../component/Loading';
 const options = [
   {
     label: '单店',
@@ -21,35 +25,54 @@ const MyList: React.FC = () => {
   const [merchantList, setMerchantList] = React.useState<MyMerchantF[]>([]);
   const [valueType, setValueType] = useState<Options>(null);
   const [value, setValue] = useState('');
-  const [account, setAccount] = useState(0);
+  const [len, setLen] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [pageIndex, setPageIndex] = useState(1);
+  const [commonDispatcher] = useCommonDispatcher();
+
   useEffect(() => {
-    async function asyncFunc() {
-      const res = await api.merchant.getMyMerchants({
-        pageIndex: 1,
-        pageSize: 10,
-      });
-      setAccount(res.page.pageTotal);
-      setMerchantList(res.content);
+    if (merchantList) {
+      getData({pageIndex: 1});
     }
-    asyncFunc();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleChangeFilter = (value: Options) => {
-    console.log(value);
-    setValueType(value);
-    // setPageIndex(1);
-    // searchList(Action.other, 1);
+  const getData = async (params: SearchParam, action?: RequestAction) => {
+    try {
+      setLoading(true);
+      const res = await api.merchant.getMyMerchants({...params, pageSize: PAGE_SIZE});
+      if (action === RequestAction.other) {
+        setMerchantList(res.content);
+      } else {
+        setMerchantList(list => [...list, ...res.content]);
+      }
+      setLen(res.page.pageTotal);
+      setPageIndex(pageIndex => pageIndex + 1);
+    } catch (error) {
+      commonDispatcher.error(error);
+    }
+    setLoading(false);
   };
+
+  const {run} = useDebounceFn(async (name: string) => getData({pageIndex: 1, name}, RequestAction.other));
+
+  const handleChangeFilter = (value: Options) => {
+    setValueType(value);
+    setPageIndex(1);
+    getData({pageIndex: 1, multiStore: value.value}, RequestAction.other);
+  };
+
   return (
-    <ScrollView style={styles.container}>
+    <SafeAreaView style={[globalStyles.wrapper, styles.container]}>
+      <Loading active={loading} />
       <View style={[styles.header, globalStyles.containerLR]}>
         <Text style={(globalStyles.moduleMarginLeft, {flex: 1})}>
-          <Text style={globalStyles.fontPrimary}>共{account}家</Text>
+          <Text style={globalStyles.fontPrimary}>共{len}家</Text>
         </Text>
 
         <View style={[{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}]}>
           <ModalDropdown
-            dropdownStyle={[globalStyles.dropDownItem, {height: 80}]}
+            dropdownStyle={[globalStyles.dropDownItem, {height: 80, width: 100}]}
             renderRow={item => (
               <View style={[globalStyles.dropDownText]}>
                 <Text>{item.label}</Text>
@@ -63,29 +86,32 @@ const MyList: React.FC = () => {
             </View>
           </ModalDropdown>
           <View style={globalStyles.dividingLine} />
-          <View>
+          <View style={{width: 80, backgroundColor: '#f4f4f4'}}>
             <Input
               placeholder="搜索"
               value={value}
               onChange={e => {
                 setValue(e);
-                // run(1);
-                // setPageIndex(1);
+                run(e);
+                setPageIndex(1);
               }}
               textAlign="left"
-              style={{position: 'absolute', left: -10}}
             />
           </View>
         </View>
       </View>
-      <View style={{paddingHorizontal: globalStyleVariables.MODULE_SPACE}}>
-        <View>
-          {merchantList.map(merchant => {
-            return <Card merchant={merchant} key={merchant.id} style={{marginTop: globalStyleVariables.MODULE_SPACE}} />;
-          })}
-        </View>
-      </View>
-    </ScrollView>
+      <FlatList
+        refreshing={loading}
+        onRefresh={() => {
+          getData({pageIndex: 1}, RequestAction.other);
+        }}
+        data={merchantList}
+        renderItem={({item, index}) => <Card merchant={item} key={index} style={globalStyles.moduleMarginTop} />}
+        onEndReached={() => {
+          getData({pageIndex: pageIndex, multiStore: valueType?.value, name: value});
+        }}
+      />
+    </SafeAreaView>
   );
 };
 export default MyList;

@@ -51,7 +51,7 @@ const CommodityList: FC<CommodityListProps> = ({unit, title}) => {
               onSelect={(item, text) => handleChangeFilter(text as Picker)}>
               <View style={{flexDirection: 'row'}}>
                 <Text>{valueType.label}</Text>
-                <Icon name="caret-down" color="#030303" size="s" style={{marginLeft: 7}} />
+                <Icon name="caret-down" color="#030303" style={[{marginLeft: 7}, globalStyles.fontPrimary]} />
               </View>
             </ModalDropdown>
           </View>

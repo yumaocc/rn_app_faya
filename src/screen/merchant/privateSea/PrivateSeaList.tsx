@@ -2,16 +2,16 @@ import {Icon} from '@ant-design/react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useDebounceFn} from 'ahooks';
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, SafeAreaView} from 'react-native';
-import {FlatList} from 'react-native-gesture-handler';
+import {View, Text, StyleSheet, SafeAreaView, FlatList} from 'react-native';
 import ModalDropdown from 'react-native-modal-dropdown';
 import * as api from '../../../apis';
 import {Input, PlusButton} from '../../../component';
 import {PAGE_SIZE} from '../../../constants';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {useCommonDispatcher, useHomeSummary} from '../../../helper/hooks';
-import {FakeNavigation, MerchantAction, MerchantCreateType, MerchantF, Options} from '../../../models';
+import {FakeNavigation, MerchantAction, MerchantCreateType, MerchantF, Options, RequestAction, SearchParam} from '../../../models';
 import Card from './Card';
+import Loading from '../../../component/Loading';
 
 const options = [
   {
@@ -23,10 +23,6 @@ const options = [
     value: 1,
   },
 ];
-enum Action {
-  load = 1,
-  other = 2,
-}
 
 const PrivateSeaList: React.FC = () => {
   const [valueType, setValueType] = useState<Options>(null);
@@ -37,44 +33,40 @@ const PrivateSeaList: React.FC = () => {
   const [commonDispatcher] = useCommonDispatcher();
   const navigation = useNavigation() as FakeNavigation;
   const [merchantList, setMerchantList] = React.useState<MerchantF[]>([]);
+  const [pullDown, setPullDown] = useState(false);
 
-  const searchList = async (action: Action, index?: number) => {
+  const getData = async (params: SearchParam, action?: RequestAction) => {
     try {
       setLoading(true);
-      const data = await api.merchant.getPrivateSeaMerchants({
-        pageIndex: index || pageIndex,
-        pageSize: PAGE_SIZE,
-        name: value,
-        multiStore: valueType?.value,
-      });
-      setPageIndex(pageIndex + 1);
-      if (action === Action.load) {
-        setMerchantList([...merchantList, ...data.content]);
+      const res = await api.merchant.getPrivateSeaMerchants({...params, pageSize: PAGE_SIZE});
+      if (action === RequestAction.other) {
+        setMerchantList(res.content);
       } else {
-        setMerchantList([...data.content]);
+        setMerchantList(list => [...list, ...res.content]);
       }
+      setPageIndex(pageIndex => pageIndex + 1);
     } catch (error) {
       commonDispatcher.error(error);
     }
     setLoading(false);
   };
 
-  const {run} = useDebounceFn(async (index: number) => searchList(Action.other, index), {wait: 500});
+  const {run} = useDebounceFn(async (name: string) => getData({pageIndex: 1, name}, RequestAction.other));
 
   useEffect(() => {
-    searchList(Action.load);
+    getData({pageIndex: 1});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleChangeFilter = (value: Options) => {
-    console.log(value);
     setValueType(value);
     setPageIndex(1);
-    searchList(Action.other, 1);
+    getData({pageIndex: 1, multiStore: value.value}, RequestAction.other);
   };
 
   return (
     <SafeAreaView style={[globalStyles.wrapper, styles.container]}>
+      <Loading active={loading} />
       <View style={[styles.header]}>
         <Text style={(globalStyles.moduleMarginLeft, {flex: 1})}>
           我的私海&nbsp;
@@ -97,17 +89,16 @@ const PrivateSeaList: React.FC = () => {
             </View>
           </ModalDropdown>
           <View style={styles.dividingLine} />
-          <View>
+          <View style={{width: 80, backgroundColor: '#f4f4f4'}}>
             <Input
               placeholder="搜索"
               value={value}
               onChange={e => {
                 setValue(e);
-                run(1);
+                run(e);
                 setPageIndex(1);
               }}
               textAlign="left"
-              style={{position: 'absolute', left: -10}}
             />
           </View>
         </View>
@@ -127,10 +118,15 @@ const PrivateSeaList: React.FC = () => {
         }}
       />
       <FlatList
-        refreshing={loading}
+        refreshing={pullDown}
+        onRefresh={async () => {
+          setPullDown(true);
+          await getData({pageIndex: 1}, RequestAction.other);
+          setPullDown(false);
+        }}
         data={merchantList}
         renderItem={({item}) => <Card merchant={item} key={item.id} style={globalStyles.moduleMarginTop} />}
-        onEndReached={() => searchList(Action.load)}
+        onEndReached={() => getData({pageIndex: pageIndex, multiStore: valueType?.value, name: value})}
       />
     </SafeAreaView>
   );

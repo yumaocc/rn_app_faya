@@ -65,7 +65,7 @@ const ContractList: FC = () => {
         }}>
         <View style={{marginTop: 10, paddingBottom: 10}}>
           <View>
-            <Text style={{fontSize: 20, fontWeight: 'bold', marginBottom: 10}}>{item?.name}</Text>
+            <Text style={[globalStyles.fontPrimary]}>{item?.name}</Text>
           </View>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             {item?.status === BoolEnum.TRUE ? <Text style={{color: '#4AB87D'}}>生效中{item?.createdTime}</Text> : <Text style={{color: '#999999'}}>已失效{item?.createdTime}</Text>}
