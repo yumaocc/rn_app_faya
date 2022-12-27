@@ -25,10 +25,8 @@ const Cash: FC = () => {
   const [summaryDispatcher] = useSummaryDispatcher();
 
   useEffect(() => {
-    if (!commissionToday) {
-      summaryDispatcher.loadCommissionToday();
-    }
-  }, [commissionToday, summaryDispatcher]);
+    summaryDispatcher.loadCommissionToday();
+  }, [summaryDispatcher]);
 
   useEffect(() => {
     if (!wallet) {
@@ -44,20 +42,19 @@ const Cash: FC = () => {
           <SvgUri uri={icons.success} height={100} width={100} fill="#00000" />
           <View style={styles.wrapper}>
             <View style={styles.content}>
-              <Title title="余额" unit="元" type={'money'} value={wallet?.balanceYuan} arrow handleClick={() => console.log(111)} />
+              <Title title="余额" unit="元" type={'money'} value={Number(wallet?.balanceYuan)} arrow handleClick={() => console.log(111)} />
               <CutOffRule />
               <View style={styles.contentOneBtn}>
                 <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Withdraw')}>
                   <View style={styles.iconBg}>
-                    <Icon name="shangping" />
+                    <Icon name="FYLM_mine_jinku_tixianjilu" />
                   </View>
                   <Text style={[{textAlign: 'center'}, FontSize.f15]}>提现</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => navigation.navigate('WithdrawalsRecord')}>
                   <View>
                     <View style={styles.iconBg}>
-                      <Icon name="hetong" />
-                      <Icon name="search" />
+                      <Icon name="FYLM_mine_jinku" />
                     </View>
                     <Text style={[{textAlign: 'center'}, FontSize.f15]}>提现记录</Text>
                   </View>
@@ -65,7 +62,14 @@ const Cash: FC = () => {
               </View>
             </View>
             <View style={styles.content}>
-              <Title title="今日收益" unit="元" type={'money'} value={commissionToday?.commissionToday?.moneyYuan} arrow handleClick={() => navigation.navigate('TodayEarnings')} />
+              <Title
+                title="今日收益"
+                unit="元"
+                type={'money'}
+                value={Number(commissionToday?.commissionToday?.moneyYuan)}
+                arrow
+                handleClick={() => navigation.navigate('TodayEarnings')}
+              />
               <CutOffRule />
               <Title
                 title="预计收益"
@@ -76,7 +80,7 @@ const Cash: FC = () => {
                 handleClick={() => navigation.navigate('EstimatedIncome')}
               />
               <CutOffRule />
-              <Title title="历史总收益" unit="元" type={'money'} value={commissionToday?.commissionHistory?.moneyYuan} arrow handleClick={() => console.log(111)} />
+              <Title title="历史总收益" unit="元" type={'money'} value={commissionToday?.commissionHistory?.moneyYuan} arrow />
               <CutOffRule />
             </View>
             <CommodityList unit="元" title="商品提成排行" />

@@ -133,6 +133,7 @@ export const globalStyles = StyleSheet.create({
     shadowOffset: {width: 0, height: 0}, //设置阴影偏移,该值会设置整个阴影的偏移，width可以看做x,height可以看做y,x向右为正，y向下为正
     shadowOpacity: 1,
     shadowRadius: 1,
+    width: 100,
   },
   //下拉菜单专用
   dropDownText: {

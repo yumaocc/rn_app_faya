@@ -58,11 +58,11 @@ const CommodityList: FC<CommodityListProps> = ({unit, title}) => {
         </View>
         {salesTop?.map((item, index) => {
           if (index > 4) {
-            return <></>;
+            return null;
           }
           return (
-            <>
-              <View key={item.spuId + index} style={styles.rankList}>
+            <View key={item.spuId}>
+              <View style={styles.rankList}>
                 <Text style={styles.index}>{index + 1}</Text>
                 <Text>{item.name}</Text>
                 <Text style={{color: '#4AB87D'}}>
@@ -76,7 +76,7 @@ const CommodityList: FC<CommodityListProps> = ({unit, title}) => {
                   <LinkButton title={'查看更多'} onPress={() => console.log('查看更多')} />
                 </View>
               )}
-            </>
+            </View>
           );
         })}
       </View>

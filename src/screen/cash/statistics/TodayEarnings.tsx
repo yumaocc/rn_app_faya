@@ -1,12 +1,12 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useDebounceFn} from 'ahooks';
 import {View, Text, StyleSheet, Image, FlatList, useWindowDimensions} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {Icon} from '@ant-design/react-native';
+import {Icon as AntdIcon} from '@ant-design/react-native';
 import * as api from '../../../apis';
 import {Input, NavigationBar} from '../../../component';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
-import {CommissionDetail, Picker} from '../../../models';
+import {CommissionDetail, Picker, RequestAction, SearchParam} from '../../../models';
 import {useCommonDispatcher, useSummaryDispatcher} from '../../../helper/hooks';
 import {date, PAGE_SIZE} from '../../../constants';
 import Title from '../../../component/Title';
@@ -16,97 +16,113 @@ import moment from 'moment';
 import {formatMoment} from '../../../helper';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/reducers';
+import Icon from '../../../component/Form/Icon';
+import Loading from '../../../component/Loading';
 
-enum Action {
-  load = 1,
-  other = 2,
-}
 //今日收益页面
 const TodayEarnings: React.FC = () => {
+  const [loading, setLoading] = useState(false);
   const [valueType, setValueType] = useState<Picker>(null);
+  const [pageIndex, setPageIndex] = useState(1);
   const [data, setData] = useState<CommissionDetail[]>([]);
   const {width: windowWidth} = useWindowDimensions();
   const [commonDispatcher] = useCommonDispatcher();
   const [summaryDispatcher] = useSummaryDispatcher();
-  const pageIndex = useRef(1);
   const commissionToday = useSelector((state: RootState) => state.summary);
   const [value, setValue] = useState('');
-  const {run} = useDebounceFn(
-    async () => {
-      pageIndex.current = 1;
-      getData(Action.other);
-    },
-    {wait: 500},
-  );
+  const {run} = useDebounceFn(async (name: string) => getData({pageIndex: 1, name}, RequestAction.other));
+
+  useEffect(() => {
+    summaryDispatcher.loadCommissionToday();
+  }, [summaryDispatcher]);
+
+  useEffect(() => {
+    getData(
+      {
+        pageIndex: 1,
+      },
+      RequestAction.load,
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const getData = async (params: SearchParam, action?: RequestAction) => {
+    try {
+      setLoading(true);
+      const res = await api.summary.getCommissionOrder({...params, pageSize: PAGE_SIZE});
+      console.log('请求结果', res);
+      if (action === RequestAction.other) {
+        setData(res.content);
+      } else {
+        setData(list => [...list, ...res.content]);
+      }
+      if (res.content.length) {
+        setPageIndex(pageIndex => pageIndex + 1);
+      }
+    } catch (error) {
+      commonDispatcher.error(error);
+    }
+    setLoading(false);
+  };
 
   function handleChangeFilter(e: Picker) {
     setValueType(e);
-    pageIndex.current = 1;
-    getData(Action.other);
+    const start: Moment = moment().startOf(valueType?.value);
+    const end: Moment = moment().endOf(valueType?.value);
+    console.log('value', e);
+    console.log(start);
+    console.log(end);
+    setPageIndex(1);
+    getData(
+      {
+        beginTime: formatMoment(start),
+        endTime: formatMoment(end),
+        pageIndex: 1,
+      },
+      RequestAction.other,
+    );
   }
-  const getData = useCallback(
-    async (action: Action) => {
-      try {
-        const start: Moment = moment().startOf(valueType?.value);
-        const end: Moment = moment().endOf(valueType?.value);
-        if (action === Action.load) {
-          const res = await api.summary.getCommissionOrder({
-            beginTime: valueType?.value ? formatMoment(start) : '',
-            endTime: valueType?.value ? formatMoment(end) : '',
-            pageSize: PAGE_SIZE,
-            pageIndex: pageIndex.current,
-            name: value,
-          });
-          setData([...data, ...res.content]);
-        } else {
-          const res = await api.summary.getCommissionOrder({
-            beginTime: formatMoment(start),
-            endTime: formatMoment(end),
-            pageSize: PAGE_SIZE,
-            pageIndex: pageIndex.current,
-            name: value,
-          });
-          setData([...res.content]);
-        }
-        pageIndex.current++;
-      } catch (error) {
-        commonDispatcher.error('哎呀，出错了');
-      }
-    },
-    [commonDispatcher, data, value, valueType?.value],
-  );
 
-  useEffect(() => {
-    if (!commissionToday) {
-      summaryDispatcher.loadCommissionToday();
+  const pullUp = (index?: number) => {
+    let start: Moment = null;
+    let end: Moment = null;
+    if (valueType?.value) {
+      start = moment().startOf(valueType?.value);
+      end = moment().endOf(valueType?.value);
     }
-  }, [commissionToday, summaryDispatcher]);
-
-  useEffect(() => {
-    getData(Action.load);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    getData(
+      {
+        beginTime: formatMoment(start),
+        endTime: formatMoment(end),
+        name: value,
+        pageIndex: index || pageIndex,
+      },
+      RequestAction.load,
+    );
+  };
   const headerRight = (
-    <View style={[globalStyles.containerLR]}>
+    <View style={{width: 100}}>
       <Input
+        placeholder="搜索"
         value={value}
+        extra={<Icon name="FYLM_all_search" color="#f4f4f4" />}
         onChange={e => {
           setValue(e);
-          run();
+          setPageIndex(1);
+          run(e);
         }}
+        textAlign="left"
       />
-      <Icon name="alert" />
     </View>
   );
   return (
     <>
       <SafeAreaView style={globalStyles.wrapper}>
+        <Loading active={loading} />
         <NavigationBar title="收益订单" headerRight={headerRight} />
         <View style={{overflow: 'hidden', flex: 1}}>
-          <View style={[{width: windowWidth, padding: globalStyleVariables.MODULE_SPACE}, globalStyles.containerLR]}>
-            <View>
-              <Title title="今日收益" unit="元" type={'money'} value={commissionToday?.commissionToday?.moneyYuan} />
-            </View>
+          <View style={[{width: windowWidth, padding: globalStyleVariables.MODULE_SPACE, backgroundColor: '#fff'}, globalStyles.containerLR]}>
+            <Title title="今日收益" unit="元" type={'money'} value={Number(commissionToday?.commissionToday?.moneyYuan)} />
             <ModalDropdown
               dropdownStyle={globalStyles.dropDownItem}
               renderRow={item => (
@@ -118,13 +134,17 @@ const TodayEarnings: React.FC = () => {
               defaultValue={valueType?.label}
               onSelect={(_, text) => handleChangeFilter(text as Picker)}>
               <View style={[{flexDirection: 'row'}]}>
-                <Text>{valueType?.label}</Text>
-                <Icon name="caret-down" color="#030303" size="lg" style={[{marginLeft: 7}, globalStyles.fontPrimary]} />
+                {valueType?.value ? <Text>{valueType?.label}</Text> : <Text>筛选</Text>}
+                <AntdIcon name="caret-down" color="#030303" size="lg" style={[{marginLeft: 7}, globalStyles.fontPrimary]} />
               </View>
             </ModalDropdown>
           </View>
           <FlatList
             data={data}
+            refreshing={loading}
+            onRefresh={() => {
+              pullUp(1);
+            }}
             renderItem={({item}) => (
               <>
                 <View style={styles.spuContainer}>
@@ -135,7 +155,7 @@ const TodayEarnings: React.FC = () => {
                     <View style={{flex: 1, marginLeft: 10}}>
                       <View style={globalStyles.containerLR}>
                         <View style={{flexDirection: 'row'}}>
-                          <Icon name="shop" />
+                          <AntdIcon name="shop" />
                           <Text style={globalStyles.fontPrimary}>{item.bizName}</Text>
                         </View>
                         {item?.status === 3 && (
@@ -167,8 +187,8 @@ const TodayEarnings: React.FC = () => {
                 </View>
               </>
             )}
-            keyExtractor={(item, index) => ' ' + index}
-            onEndReached={() => getData(Action.load)}
+            keyExtractor={item => ' ' + item?.spuId}
+            onEndReached={() => pullUp()}
           />
         </View>
       </SafeAreaView>

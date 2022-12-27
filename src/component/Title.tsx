@@ -10,13 +10,14 @@ interface TitleProps {
   value: string | number;
   unit?: string;
   handleClick?: () => void;
-  type?: 'money' | 'number' | string;
+  type?: 'money' | 'number';
 }
 const Title: FC<TitleProps> = ({title, value, arrow, unit, handleClick, type}) => {
   const [eyeIsShow, setEyeIsShow] = useState(false);
   const clickEye = () => {
     setEyeIsShow(!eyeIsShow);
   };
+
   return (
     <View style={styles.wrapper}>
       <TouchableOpacity onPress={handleClick}>
@@ -24,7 +25,7 @@ const Title: FC<TitleProps> = ({title, value, arrow, unit, handleClick, type}) =
           <View style={styles.left}>
             <Text style={{fontSize: 15}}>{title}</Text>
             <TouchableOpacity onPress={clickEye}>
-              <Icon name="eye" style={{marginLeft: 17}} />
+              <Icon name="eye" style={{marginLeft: 10}} />
             </TouchableOpacity>
           </View>
 

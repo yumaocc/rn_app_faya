@@ -70,7 +70,7 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
               <View key={index} style={[style.module, globalStyles.moduleMarginTop]}>
                 <Text style={[globalStyles.fontPrimary, globalStyles.borderBottom]}>型号：{bookingItem?.name}</Text>
                 {item.contractSkuIds?.map(skuId => {
-                  const skuItem = findItem(contractDetail?.skuInfoReq?.skuInfo, item => item.contractSkuId[0] === skuId);
+                  const skuItem = findItem(contractDetail?.skuInfoReq?.skuInfo, item => item.contractSkuId === skuId);
                   return (
                     <Text key={skuId} style={[globalStyles.fontTertiary, globalStyles.moduleMarginTop]}>
                       {skuItem?.skuName}
@@ -136,24 +136,6 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
               <PlusButton title="绑定预约型号" style={{marginRight: 20}} onPress={openBindingModal} />
             </View>
             <Controller name="modelList" control={control} render={({field: {value}}) => <BookingModel value={value} />} />
-            {/* <View>
-              {modelList.map((model, index) => {
-                const bookingItem = findItem(bookingModal, item => item.id === model.modelId);
-                return (
-                  <View key={index} style={[style.module, globalStyles.moduleMarginTop]}>
-                    <Text style={[globalStyles.fontPrimary, globalStyles.borderBottom]}>型号：{bookingItem?.name}</Text>
-                    {model.contractSkuIds?.map(skuId => {
-                      const skuItem = findItem(contractDetail?.skuInfoReq?.skuInfo, item => item.contractSkuId === skuId);
-                      return (
-                        <Text style={[globalStyles.fontTertiary, globalStyles.moduleMarginTop]} key={skuId}>
-                          {skuItem?.skuName}
-                        </Text>
-                      );
-                    })}
-                  </View>
-                );
-              })}
-            </View> */}
           </Form.Item>
         </SectionGroup>
 

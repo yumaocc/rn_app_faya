@@ -1,4 +1,4 @@
-import {Icon} from '@ant-design/react-native';
+import {Icon as AntdIcon} from '@ant-design/react-native';
 import {useDebounceFn} from 'ahooks';
 import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, FlatList, SafeAreaView} from 'react-native';
@@ -11,6 +11,7 @@ import {useCommonDispatcher} from '../../../helper/hooks';
 import {MyMerchantF, Options, RequestAction, SearchParam} from '../../../models';
 import Card from './Card';
 import Loading from '../../../component/Loading';
+import Icon from '../../../component/Form/Icon';
 const options = [
   {
     label: '单店',
@@ -46,8 +47,10 @@ const MyList: React.FC = () => {
       } else {
         setMerchantList(list => [...list, ...res.content]);
       }
+      if (res?.content?.length) {
+        setPageIndex(pageIndex => pageIndex + 1);
+      }
       setLen(res.page.pageTotal);
-      setPageIndex(pageIndex => pageIndex + 1);
     } catch (error) {
       commonDispatcher.error(error);
     }
@@ -82,14 +85,15 @@ const MyList: React.FC = () => {
             onSelect={(item, text) => handleChangeFilter(text as Options)}>
             <View style={{flexDirection: 'row'}}>
               {valueType?.label ? <Text>{valueType.label}</Text> : <Text>筛选</Text>}
-              <Icon name="caret-down" color="#030303" style={[{marginLeft: 7}, globalStyles.fontPrimary]} />
+              <AntdIcon name="caret-down" color="#030303" style={[{marginLeft: 7}, globalStyles.fontPrimary]} />
             </View>
           </ModalDropdown>
           <View style={globalStyles.dividingLine} />
-          <View style={{width: 80, backgroundColor: '#f4f4f4'}}>
+          <View style={{width: 100}}>
             <Input
               placeholder="搜索"
               value={value}
+              extra={<Icon name="FYLM_all_search" color="#f4f4f4" />}
               onChange={e => {
                 setValue(e);
                 run(e);
@@ -103,10 +107,10 @@ const MyList: React.FC = () => {
       <FlatList
         refreshing={loading}
         onRefresh={() => {
-          getData({pageIndex: 1}, RequestAction.other);
+          getData({pageIndex: pageIndex, multiStore: valueType?.value, name: value});
         }}
         data={merchantList}
-        renderItem={({item, index}) => <Card merchant={item} key={index} style={globalStyles.moduleMarginTop} />}
+        renderItem={({item}) => <Card merchant={item} key={item.id} style={globalStyles.moduleMarginTop} />}
         onEndReached={() => {
           getData({pageIndex: pageIndex, multiStore: valueType?.value, name: value});
         }}

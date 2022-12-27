@@ -57,7 +57,7 @@ const Withdraw: FC = () => {
   const headerRight = (
     <>
       <ModalDropdown
-        dropdownStyle={globalStyles.dropDownItem}
+        dropdownStyle={[globalStyles.dropDownItem, {width: 100, height: 80}]}
         options={[
           {label: '提现记录', value: 1},
           {label: '常见疑问', value: 2},

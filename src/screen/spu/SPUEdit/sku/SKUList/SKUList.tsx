@@ -5,7 +5,7 @@ import {Stepper, SwipeAction} from '@ant-design/react-native';
 
 import {Checkbox, Form, FormTitle, Input, Modal, PlusButton, SectionGroup, SelfText} from '../../../../../component';
 import {globalStyles, globalStyleVariables} from '../../../../../constants/styles';
-import {findItem, getBuyLimitStr} from '../../../../../helper';
+import {getBuyLimitStr} from '../../../../../helper';
 import {PackagedSKU} from '../../../../../models';
 import {RootState} from '../../../../../redux/reducers';
 import {styles} from '../../style';
@@ -60,7 +60,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues}) => {
 
   async function onSubmitPack() {
     const res = packListForm.getValues();
-    console.log('组合套餐', res);
+
     const skus: any = [];
     res.skus.forEach((item: any, index: number) => {
       if (item._selected) {
@@ -72,6 +72,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues}) => {
       packageName: res.packageName,
       skus: skus,
     };
+
     const {packageList = []} = getValues();
     setValue('packageList', [...packageList, formData]);
     setIsShowPackageModal(false);

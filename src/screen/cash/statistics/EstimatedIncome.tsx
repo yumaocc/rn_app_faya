@@ -1,62 +1,33 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useDebounceFn} from 'ahooks';
 import {View, Text, StyleSheet, Image, FlatList} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {Icon} from '@ant-design/react-native';
+import {Icon as AntdIcon} from '@ant-design/react-native';
 import * as api from '../../../apis';
 import {Input, NavigationBar} from '../../../component';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
-import {CommissionDetail} from '../../../models';
+import {CommissionDetail, Picker, RequestAction, SearchParam} from '../../../models';
 import {useCommonDispatcher, useSummaryDispatcher} from '../../../helper/hooks';
-import {PAGE_SIZE} from '../../../constants';
+import {date, PAGE_SIZE} from '../../../constants';
 import Title from '../../../component/Title';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/reducers';
+import Loading from '../../../component/Loading';
+import Icon from '../../../component/Form/Icon';
+import {formatMoment} from '../../../helper';
+import moment, {Moment} from 'moment';
+import ModalDropdown from 'react-native-modal-dropdown';
 
-enum Action {
-  load = 1,
-  other = 2,
-}
 const EstimatedIncome: React.FC = () => {
   const [data, setData] = useState<CommissionDetail[]>([]);
+  const [valueType, setValueType] = useState<Picker>(null);
+  const [pageIndex, setPageIndex] = useState(1);
+  const [loading, setLoading] = useState(false);
   const [commonDispatcher] = useCommonDispatcher();
   const [summaryDispatcher] = useSummaryDispatcher();
-  const pageIndex = useRef(1);
   const commissionToday = useSelector((state: RootState) => state.summary);
   const [value, setValue] = useState('');
-  const {run} = useDebounceFn(
-    async () => {
-      pageIndex.current = 1;
-      getData(Action.other);
-    },
-    {wait: 500},
-  );
-
-  const getData = useCallback(
-    async (action: Action) => {
-      try {
-        if (action === Action.load) {
-          const res = await api.summary.getExpectCommissionOrder({
-            pageSize: PAGE_SIZE,
-            pageIndex: pageIndex.current,
-            name: value,
-          });
-          setData([...data, ...res.content]);
-        } else {
-          const res = await api.summary.getCommissionOrder({
-            pageSize: PAGE_SIZE,
-            pageIndex: pageIndex.current,
-            name: value,
-          });
-          setData([...res.content]);
-        }
-        pageIndex.current++;
-      } catch (error) {
-        commonDispatcher.error('哎呀，出错了');
-      }
-    },
-    [commonDispatcher, data, value],
-  );
+  const {run} = useDebounceFn(async (name: string) => getData({pageIndex: 1, name}, RequestAction.other));
 
   useEffect(() => {
     if (!commissionToday) {
@@ -65,27 +36,106 @@ const EstimatedIncome: React.FC = () => {
   }, [commissionToday, summaryDispatcher]);
 
   useEffect(() => {
-    getData(Action.load);
+    getData(
+      {
+        pageIndex: 1,
+      },
+      RequestAction.load,
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const getData = async (params: SearchParam, action?: RequestAction) => {
+    try {
+      setLoading(true);
+      const res = await api.summary.getExpectCommissionOrder({...params, pageSize: PAGE_SIZE});
+      if (action === RequestAction.other) {
+        setData(res.content);
+      } else {
+        setData(list => [...list, ...res.content]);
+      }
+      if (res.content.length) {
+        setPageIndex(pageIndex => pageIndex + 1);
+      }
+    } catch (error) {
+      commonDispatcher.error(error);
+    }
+    setLoading(false);
+  };
+  const pullUp = (index?: number) => {
+    let start: Moment = null;
+    let end: Moment = null;
+    if (valueType?.value) {
+      start = moment().startOf(valueType?.value);
+      end = moment().endOf(valueType?.value);
+    }
+    getData(
+      {
+        beginTime: formatMoment(start),
+        endTime: formatMoment(end),
+        name: value,
+        pageIndex: index || pageIndex,
+      },
+      RequestAction.load,
+    );
+  };
+
+  function handleChangeFilter(e: Picker) {
+    setValueType(e);
+    const start: Moment = moment().startOf(valueType?.value);
+    const end: Moment = moment().endOf(valueType?.value);
+    console.log('value', e);
+    console.log(start);
+    console.log(end);
+    setPageIndex(1);
+    getData(
+      {
+        beginTime: formatMoment(start),
+        endTime: formatMoment(end),
+        pageIndex: 1,
+      },
+      RequestAction.other,
+    );
+  }
+
   const headerRight = (
-    <View style={[globalStyles.containerLR]}>
+    <View style={{width: 100}}>
       <Input
+        placeholder="搜索"
         value={value}
+        extra={<Icon name="FYLM_all_search" color="#f4f4f4" />}
         onChange={e => {
           setValue(e);
-          run();
+          setPageIndex(1);
+          run(e);
         }}
+        textAlign="left"
       />
     </View>
   );
   return (
     <>
       <SafeAreaView style={globalStyles.wrapper}>
+        <Loading active={loading} />
         <NavigationBar title="预计收益" headerRight={headerRight} />
         <View style={{overflow: 'hidden', flex: 1}}>
           <View style={[globalStyles.containerLR, styles.header]}>
-            <Title title="预计收益总额" unit="元" type={'money'} value={commissionToday?.commissionExpect?.moneyYuan} />
+            <Title title="预计收益总额" unit="元" type={'money'} value={Number(commissionToday?.commissionExpect?.moneyYuan)} />
+            <ModalDropdown
+              dropdownStyle={globalStyles.dropDownItem}
+              renderRow={item => (
+                <View style={[globalStyles.dropDownText]}>
+                  <Text>{item?.label}</Text>
+                </View>
+              )}
+              options={date}
+              defaultValue={valueType?.label}
+              onSelect={(_, text) => handleChangeFilter(text as Picker)}>
+              <View style={[{flexDirection: 'row'}]}>
+                {valueType?.value ? <Text>{valueType?.label}</Text> : <Text>筛选</Text>}
+                <AntdIcon name="caret-down" color="#030303" size="lg" style={[{marginLeft: 7}, globalStyles.fontPrimary]} />
+              </View>
+            </ModalDropdown>
           </View>
           <FlatList
             data={data}
@@ -99,7 +149,7 @@ const EstimatedIncome: React.FC = () => {
                     <View style={{flex: 1, marginLeft: 10}}>
                       <View style={globalStyles.containerLR}>
                         <View style={{flexDirection: 'row'}}>
-                          <Icon name="shop" />
+                          <AntdIcon name="shop" />
                           <Text style={globalStyles.fontPrimary}>{item.bizName}</Text>
                         </View>
                         {item?.status === 3 && (
@@ -131,13 +181,13 @@ const EstimatedIncome: React.FC = () => {
                 </View>
               </>
             )}
-            keyExtractor={(item, index) => ' ' + index}
-            onEndReached={() => getData(Action.load)}
+            keyExtractor={item => ' ' + item?.spuId}
+            onEndReached={() => pullUp()}
           />
         </View>
-        <View style={[globalStyles.containerCenter, {margin: globalStyleVariables.MODULE_SPACE}]}>
+        {/* <View style={[globalStyles.containerCenter, {margin: globalStyleVariables.MODULE_SPACE}]}>
           <Text style={globalStyles.fontTertiary}>已经到底了</Text>
-        </View>
+        </View> */}
       </SafeAreaView>
     </>
   );

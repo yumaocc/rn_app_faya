@@ -1,5 +1,6 @@
-import {Icon} from '@ant-design/react-native';
 import {useNavigation} from '@react-navigation/native';
+import {Icon as AntdIcon} from '@ant-design/react-native';
+import Icon from '../../../component/Form/Icon';
 import {useDebounceFn} from 'ahooks';
 import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, SafeAreaView, FlatList} from 'react-native';
@@ -44,7 +45,9 @@ const PrivateSeaList: React.FC = () => {
       } else {
         setMerchantList(list => [...list, ...res.content]);
       }
-      setPageIndex(pageIndex => pageIndex + 1);
+      if (res?.content?.length) {
+        setPageIndex(pageIndex => pageIndex + 1);
+      }
     } catch (error) {
       commonDispatcher.error(error);
     }
@@ -85,14 +88,15 @@ const PrivateSeaList: React.FC = () => {
             onSelect={(item, text) => handleChangeFilter(text as Options)}>
             <View style={{flexDirection: 'row'}}>
               {valueType?.label ? <Text>{valueType.label}</Text> : <Text>筛选</Text>}
-              <Icon name="caret-down" color="#030303" style={[{marginLeft: 7}, globalStyles.fontPrimary]} />
+              <AntdIcon name="caret-down" color="#030303" style={[{marginLeft: 7}, globalStyles.fontPrimary]} />
             </View>
           </ModalDropdown>
           <View style={styles.dividingLine} />
-          <View style={{width: 80, backgroundColor: '#f4f4f4'}}>
+          <View style={{width: 100}}>
             <Input
               placeholder="搜索"
               value={value}
+              extra={<Icon name="FYLM_all_search" color="#f4f4f4" />}
               onChange={e => {
                 setValue(e);
                 run(e);
@@ -121,7 +125,7 @@ const PrivateSeaList: React.FC = () => {
         refreshing={pullDown}
         onRefresh={async () => {
           setPullDown(true);
-          await getData({pageIndex: 1}, RequestAction.other);
+          await getData({pageIndex: pageIndex, multiStore: valueType?.value, name: value});
           setPullDown(false);
         }}
         data={merchantList}
