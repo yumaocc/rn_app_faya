@@ -68,12 +68,6 @@ const TodayEarnings: React.FC = () => {
     setValueType(e);
     const start: Moment = moment().startOf(e.value);
     const end: Moment = moment().endOf(e.value);
-    // console.log(formatMoment(moment().startOf('week')));
-    // console.log(formatMoment(moment().endOf('week')));
-    console.log('value', e);
-
-    console.log(formatMoment(start));
-    console.log(formatMoment(end));
     setPageIndex(1);
     getData(
       {

@@ -17,14 +17,16 @@ const Home: React.FC = () => {
       <Header title="首页" headerLeft={() => <Icon name="bell" />} headerLeftContainerStyle={{paddingLeft: 16}} />
       <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} contentContainerStyle={{padding: 16}}>
         {/* 今日收益 */}
-        <View style={styles.cardContainer}>
-          <View style={styles.cardTitleContainer}>
-            <Text style={[globalStyles.textColorPrimary, styles.cardTitle]}>今日收益</Text>
-            <Icon name="right" style={globalStyles.iconRight} />
-          </View>
-          <UnitNumber style={{paddingTop: 10}} type="money" value={commissionToday?.moneyYuan} />
-        </View>
 
+        <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('TodayEarnings')}>
+          <View style={styles.cardContainer}>
+            <View style={styles.cardTitleContainer}>
+              <Text style={[globalStyles.textColorPrimary, styles.cardTitle]}>今日收益</Text>
+              <Icon name="right" style={globalStyles.iconRight} />
+            </View>
+            <UnitNumber style={{paddingTop: 10}} type="money" value={commissionToday?.moneyYuan} />
+          </View>
+        </TouchableOpacity>
         <View style={[globalStyles.flexNormal, globalStyles.moduleMarginTop]}>
           {/* 我的商品 */}
           <View style={[styles.cardContainer, {flex: 1}]}>

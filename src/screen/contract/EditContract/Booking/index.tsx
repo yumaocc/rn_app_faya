@@ -6,7 +6,7 @@ import {DatePicker, Form, FormTitle, Input, SectionGroup, Select} from '../../..
 import {cleanContractForm} from '../../../../helper';
 import {useCodeTypes, useCommonDispatcher} from '../../../../helper/hooks';
 import {formattingCodeType} from '../../../../helper/util';
-import {BookingType, BoolEnum, Contract, ContractAction, FakeNavigation, FormControlC} from '../../../../models';
+import {BookingType, BoolEnum, Contract, ContractAction, ContractStatus, FormControlC} from '../../../../models';
 import * as api from '../../../../apis';
 import {styles} from './style';
 import {useNavigation} from '@react-navigation/native';
@@ -19,13 +19,14 @@ interface BookingProps {
   getValues: UseFormGetValues<Contract>;
   watch: UseFormWatch<Contract>;
   action: ContractAction;
+  status: ContractStatus;
 }
 
-const Booking: FC<BookingProps> = ({Controller, control, watch, getValues, action}) => {
+const Booking: FC<BookingProps> = ({Controller, control, watch, getValues, action, status}) => {
   const bookingType = watch('bookingReq.bookingType');
   const bookingCanCancel = watch('bookingReq.bookingCanCancel');
   const [commonDispatcher] = useCommonDispatcher();
-  const navigation = useNavigation() as FakeNavigation;
+  const navigation = useNavigation();
   const [codeTypes] = useCodeTypes();
 
   const handleSubmit = async () => {
@@ -38,11 +39,10 @@ const Booking: FC<BookingProps> = ({Controller, control, watch, getValues, actio
       if (action === ContractAction.ADD) {
         await api.contract.createContract(formData);
       }
-
-      commonDispatcher.success('签约成功');
-      navigation.navigate('Tab');
+      commonDispatcher.success(action === ContractAction.ADD ? '新增成功' : '保存成功');
+      navigation.canGoBack() && navigation.goBack();
     } catch (error) {
-      commonDispatcher.error(error || '签约失败');
+      commonDispatcher.error(error || '哎呀，出错了~');
     }
   };
   return (
@@ -184,9 +184,11 @@ const Booking: FC<BookingProps> = ({Controller, control, watch, getValues, actio
           )}
         />
       </SectionGroup>
-      <Button style={{margin: 10}} type="primary" onPress={handleSubmit}>
-        立即发起签约
-      </Button>
+      {status === ContractStatus.SignSuccess ? null : (
+        <Button style={{margin: 10}} type="primary" onPress={handleSubmit}>
+          立即发起签约
+        </Button>
+      )}
     </>
   );
 };

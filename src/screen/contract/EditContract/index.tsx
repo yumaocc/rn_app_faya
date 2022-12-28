@@ -9,7 +9,7 @@ import {useForm, Controller} from 'react-hook-form';
 import Base from './Base';
 import SKU from './SKU';
 import Booking from './Booking';
-import {BookingType, BoolEnum, Contract, ContractAction, ContractDetailEnum, ContractF} from '../../../models';
+import {BookingType, BoolEnum, Contract, ContractAction, ContractDetailEnum, ContractF, ContractStatus} from '../../../models';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/reducers';
 import {COMPANY_NAME} from '../../../constants';
@@ -46,7 +46,7 @@ const defaultValues = {
 };
 
 const EditSPU: React.FC = () => {
-  const {id, action} = useParams<{id: number; action: ContractAction}>();
+  const {id, action, status} = useParams<{id: number; action: ContractAction; status: ContractStatus}>();
   const [currentKey, setCurrentKey] = React.useState('base');
   const {width: windowWidth} = useWindowDimensions();
   const [commonDispatcher] = useCommonDispatcher();
@@ -57,7 +57,6 @@ const EditSPU: React.FC = () => {
 
   const [contractDispatcher] = useContractDispatcher();
   const contractDetail = useSelector<RootState, ContractF>(state => state.contract.currentContract);
-  const bizUserId = watch('bizUserId');
   // 自动切换到指定step
   useEffect(() => {
     if (!isReady) {
@@ -127,7 +126,16 @@ const EditSPU: React.FC = () => {
           </View>
           <View style={{width: windowWidth}}>
             <ScrollView>
-              <Booking action={action} watch={watch} setValue={setValue} getValues={getValues} control={control} Controller={Controller} onNext={() => setCurrentKey('detail')} />
+              <Booking
+                action={action}
+                watch={watch}
+                setValue={setValue}
+                getValues={getValues}
+                control={control}
+                Controller={Controller}
+                onNext={() => setCurrentKey('detail')}
+                status={status}
+              />
             </ScrollView>
           </View>
         </ScrollView>

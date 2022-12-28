@@ -1,55 +1,95 @@
-import React from 'react';
-import {TextInput, TouchableOpacity} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {TouchableOpacity} from 'react-native';
 import {FC} from 'react';
-import {useRequest} from 'ahooks';
-import {Icon, ListView} from '@ant-design/react-native';
-import {NavigationBar} from '../../../component';
-import {getMyContractList} from '../../../apis/contract';
+import {useDebounceFn} from 'ahooks';
+import {Icon as AntdIcon} from '@ant-design/react-native';
+import {Input, NavigationBar} from '../../../component';
 import {View, StyleSheet, Text} from 'react-native';
-import Loading from '../../common/Loading';
 import {UnitNumber} from '../../../component';
 import {globalStyleVariables, globalStyles} from '../../../constants/styles';
-import {BoolEnum, FakeNavigation, SearchParam, ContractList as ContractListType} from '../../../models';
+import {FakeNavigation, SearchParam, ContractList as ContractListType, RequestAction, Options, ContractAction, ContractStatus} from '../../../models';
 import {useNavigation} from '@react-navigation/native';
 import * as api from '../../../apis';
-
-type StartFetchFunction = (rowData: any[], pageSize: number) => void;
-type abortFetchFunction = () => void;
+import ModalDropdown from 'react-native-modal-dropdown';
+import {PAGE_SIZE} from '../../../constants';
+import {useCommonDispatcher} from '../../../helper/hooks';
+import {FlatList} from 'react-native-gesture-handler';
+import Icon from '../../../component/Form/Icon';
+import Loading from '../../../component/Loading';
 
 const ContractList: FC = () => {
   const navigation = useNavigation() as FakeNavigation;
-  const {data, loading, run} = useRequest(
-    async (params: SearchParam) => {
-      return getMyContractList(params);
-    },
-    {
-      debounceWait: 500,
-    },
-  );
+  const [loading, setLoading] = useState(false);
+  const [commonDispatcher] = useCommonDispatcher();
+  const [valueType, setValueType] = useState<Options>(null);
+  const [len, setLen] = useState(0);
+  const [pageIndex, setPageIndex] = useState(1);
+  const [data, setData] = useState<ContractListType[]>([]);
+  const [value, setValue] = useState('');
+  const {run} = useDebounceFn(async (name: string) => getData({pageIndex: 1, name}, RequestAction.other));
 
-  async function fetchData(pageIndex = 1, startFetch: StartFetchFunction, abortFetch: abortFetchFunction) {
+  useEffect(() => {
+    getData({pageIndex: 1});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const getData = async (params: SearchParam, action?: RequestAction) => {
     try {
-      const pageSize = 10;
-      const res = await api.contract.getMyContractList({pageIndex, pageSize});
-      const rowData: ContractListType[] = res.content;
-      startFetch(rowData, pageSize);
+      setLoading(true);
+      const res = await api.contract.getMyContractList({...params, pageSize: PAGE_SIZE});
+      setLen(res?.page?.pageTotal);
+      if (action === RequestAction.other) {
+        setData(res.content);
+      } else {
+        setData(list => [...list, ...res.content]);
+      }
+      if (res.content.length) {
+        setPageIndex(pageIndex => pageIndex + 1);
+      }
     } catch (error) {
-      abortFetch();
+      commonDispatcher.error(error);
     }
-  }
+    setLoading(false);
+  };
 
-  if (loading) {
-    return <Loading />;
+  function handleChangeFilter(e: Options) {
+    navigation.navigate({
+      name: 'AddContract',
+      params: {
+        action: ContractAction.ADD,
+      },
+    });
+    setValueType(e);
   }
+  const pullUp = (index?: number) => {
+    getData(
+      {
+        name: value,
+        pageIndex: index || pageIndex,
+      },
+      RequestAction.load,
+    );
+  };
 
   const headerRight = (
     <>
-      <Icon name="container" style={[globalStyles.primaryColor, styles.header_icon]} />
-      <Icon size="lg" name="plus-circle" style={[globalStyles.primaryColor, styles.header_icon]} />
+      <ModalDropdown
+        dropdownStyle={[globalStyles.dropDownItem, {height: 40, width: 80}]}
+        renderRow={item => (
+          <View style={[globalStyles.dropDownText]}>
+            <Text>{item?.label}</Text>
+          </View>
+        )}
+        options={[{label: '新建合同', value: 1}]}
+        defaultValue={valueType?.label}
+        onSelect={(_, text) => handleChangeFilter(text)}>
+        <View style={[{flexDirection: 'row'}]}>
+          <AntdIcon name="plus-circle" style={[globalStyles.primaryColor, styles.header_icon]} />
+        </View>
+      </ModalDropdown>
     </>
   );
 
-  const renderItem = (item: ContractListType) => {
+  const renderItem = ({item}: {item: ContractListType}) => {
     return (
       <TouchableOpacity
         key={item.id}
@@ -59,7 +99,8 @@ const ContractList: FC = () => {
             name: 'EditContract',
             params: {
               id: item.id,
-              action: item.status,
+              action: item.status === ContractStatus.SignSuccess ? ContractAction.VIEW : ContractAction.EDIT,
+              status: item.status,
             },
           });
         }}>
@@ -68,7 +109,10 @@ const ContractList: FC = () => {
             <Text style={[globalStyles.fontPrimary]}>{item?.name}</Text>
           </View>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-            {item?.status === BoolEnum.TRUE ? <Text style={{color: '#4AB87D'}}>生效中{item?.createdTime}</Text> : <Text style={{color: '#999999'}}>已失效{item?.createdTime}</Text>}
+            <Text style={{color: '#4AB87D'}}>
+              {item?.statusStr}
+              {item?.createdTime}
+            </Text>
             <Text>{item?.createdTime}</Text>
           </View>
         </View>
@@ -79,21 +123,40 @@ const ContractList: FC = () => {
     <>
       <View style={{flex: 1}}>
         <NavigationBar title="合同列表" headerRight={headerRight} />
+        <Loading active={loading} />
         <View style={[globalStyles.lineHorizontal]} />
         <View style={[styles.header]}>
           <View>
-            <UnitNumber prefix="共" value={data?.page?.pageTotal} unit="份" />
+            <UnitNumber prefix="共" value={len} unit="份" />
           </View>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Text style={{fontSize: 20, marginRight: 20}}>筛选</Text>
-            <View style={{flexDirection: 'row'}}>
-              <TextInput placeholder="搜索" onChangeText={name => run({name})} />
-              <Icon name="search" />
+            <View style={{width: 100}}>
+              <Input
+                placeholder="搜索"
+                value={value}
+                extra={<Icon name="FYLM_all_search" color="#f4f4f4" />}
+                onChange={e => {
+                  setValue(e);
+                  setPageIndex(1);
+                  run(e);
+                }}
+                textAlign="left"
+              />
             </View>
           </View>
         </View>
         <View style={styles.content}>
-          <ListView refreshViewStyle={styles.freshHeader} renderItem={renderItem} onFetch={fetchData} keyExtractor={key => key.id + ''} numColumns={1} />
+          <FlatList
+            data={data}
+            renderItem={renderItem}
+            keyExtractor={key => key.id + ''}
+            numColumns={1}
+            onEndReached={() => pullUp()}
+            refreshing={loading}
+            onRefresh={() => {
+              pullUp(1);
+            }}
+          />
         </View>
       </View>
     </>
@@ -136,7 +199,7 @@ const styles = StyleSheet.create({
   },
   header: {
     width: '100%',
-    height: 90,
+    height: 50,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

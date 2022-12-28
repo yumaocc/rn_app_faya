@@ -30,7 +30,7 @@ interface ListProps {
   value: number[];
 }
 
-const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch, errors, handleSubmit}) => {
+const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch, errors}) => {
   const bizUserId = watch('bizUserId');
   const contractId = watch('contractId');
   const canUseShopIds = watch('canUseShopIds');
@@ -285,7 +285,7 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
       </SectionGroup>
       <Footer />
       <View style={styles.button}>
-        <Button type="primary" onPress={handleSubmit(onCheck)}>
+        <Button type="primary" onPress={onCheck}>
           下一步
         </Button>
       </View>

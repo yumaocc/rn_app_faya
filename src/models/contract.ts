@@ -341,6 +341,15 @@ export interface ContractForm {
 export interface ContractDetailF extends ContractForm {
   id: number;
 }
+export enum ContractStatus {
+  Draft = 0,
+  Pending = 1, // 待审核
+  Resolved = 2,
+  Rejected = 3, // 审核不通过
+  SignSuccess = 4,
+  Expired = 5,
+  RejectedByPartyA = 6, // 用户拒签
+}
 
 export type ContractDetailEnum = keyof Contract;
 /**

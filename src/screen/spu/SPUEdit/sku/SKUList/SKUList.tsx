@@ -1,13 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {useRequest} from 'ahooks';
 import {View, Text, StyleSheet} from 'react-native';
 import {useSelector} from 'react-redux';
 import {Stepper, SwipeAction} from '@ant-design/react-native';
 
 import {Checkbox, Form, FormTitle, Input, Modal, PlusButton, SectionGroup, SelfText} from '../../../../../component';
 import {globalStyles, globalStyleVariables} from '../../../../../constants/styles';
-import {findItem, getBuyLimitStr} from '../../../../../helper';
-import {PackagedSKU, SaleParams, SPUForm} from '../../../../../models';
+import {findItem, getBuyLimitStr, getDirectCommissionRange, getEarnCommissionRange} from '../../../../../helper';
+import {PackagedSKU} from '../../../../../models';
 import {RootState} from '../../../../../redux/reducers';
 import {ErrorMessage} from '@hookform/error-message';
 import {styles} from '../../style';
@@ -20,7 +19,7 @@ interface SKUListProps {
   setValue?: UseFormSetValue<any>;
   getValues?: UseFormGetValues<any>;
   watch?: UseFormWatch<any>;
-  errors?: Partial<FieldErrorsImpl<SPUForm>>;
+  errors?: Partial<FieldErrorsImpl<any>>;
   setError?: UseFormSetError<any>;
 }
 
@@ -41,10 +40,6 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
   const {fields} = useFieldArray({
     control: control,
     name: 'skuList',
-  });
-
-  const {runAsync} = useRequest(async (price: SaleParams) => {
-    return apis.sku.getSalePrice(price);
   });
 
   useEffect(() => {
@@ -144,7 +139,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
       </>
     );
   };
-
+  console.log(errors);
   return (
     <View>
       {fields.map((item, index) => {
@@ -179,18 +174,23 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
               )}
             />
             <Controller
-              name={`skuList.[${index}].salePrice`}
+              name={`skuList.${index}.salePrice`}
               control={control}
               rules={{
-                validate: async e => {
-                  const settlePrice = contractDetail?.skuInfoReq?.skuInfo[index]?.skuSettlementPrice;
-                  const res = await runAsync({
-                    settlePrice,
-                    salePrice: e,
-                  });
-                  if (value < Number(res?.minSalePriceYuan)) {
-                    const message = `套餐价格不能低于${res?.minSalePriceYuan} `;
-                    setError({});
+                validate: async value => {
+                  try {
+                    const settlePrice = contractDetail?.skuInfoReq?.skuInfo[index]?.skuSettlementPrice;
+                    const res = await apis.sku.getSalePrice({settlePrice, salePrice: value});
+                    if (value < Number(res?.minSalePriceYuan)) {
+                      const message = `套餐价格不能低于${res?.minSalePriceYuan} `;
+                      setError(`skuList.${index}.salePrice`, {type: 'validate', message: message});
+
+                      return Promise.reject({message: message});
+                    }
+                    return true;
+                  } catch (error) {
+                    setError(`skuList.${index}.salePrice`, {type: 'validate', message: error as string});
+                    return Promise.reject({message: '套餐价格过低'});
                   }
                 },
               }}
@@ -198,18 +198,49 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                 <Form.Item label="套餐售价（元）">
                   <Input placeholder="请输入套餐售价" type="number" value={value} onChange={onChange} />
                   <Text style={globalStyles.error}>
-                    <ErrorMessage name={`skuList.[${index}].salePrice`} errors={errors} />
+                    <ErrorMessage name={`skuList.${index}.salePrice`} errors={errors} />
                   </Text>
                 </Form.Item>
               )}
             />
 
             <Controller
-              name={`skuList.[${index}].directSalesCommission`}
+              name={`skuList.${index}.directSalesCommission`}
               control={control}
+              rules={{
+                required: '请输入直售佣金',
+                validate: async value => {
+                  try {
+                    const {skuList} = getValues();
+                    const {earnCommission = 0, salePrice} = skuList[index];
+                    const settlementPrice = contractDetail?.skuInfoReq?.skuInfo[index]?.skuSettlementPrice;
+                    const res = await apis.sku.getSalePrice({
+                      salePrice: salePrice,
+                      settlePrice: settlementPrice,
+                    });
+                    const maxShareCommission = Number(res.maxShareCommissionYuan) || 0;
+                    const [min, max] = getDirectCommissionRange(maxShareCommission, earnCommission);
+                    if (value < min) {
+                      setError(`skuList.${index}.directSalesCommission`, {type: 'validate', message: `直售佣金不能小于${min}元`});
+                      return Promise.reject(`直售佣金不能小于${min}元`);
+                    }
+                    if (value > max) {
+                      setError(`skuList.${index}.directSalesCommission`, {type: 'validate', message: `直售佣金不能大于${max}元`});
+                      return Promise.reject(`直售佣金不能大于${max}元`);
+                    }
+                    return true;
+                  } catch (error) {
+                    setError(`skuList.${index}.directSalesCommission`, {type: 'validate', message: error as string});
+                    return Promise.reject({message: '套餐价格过低'});
+                  }
+                },
+              }}
               render={({field: {value, onChange}}) => (
                 <Form.Item label="直售佣金（元）">
                   <Input placeholder="请输入直售佣金" type="number" value={value} onChange={onChange} />
+                  <Text style={globalStyles.error}>
+                    <ErrorMessage name={`skuList.${index}.directSalesCommission`} errors={errors} />
+                  </Text>
                 </Form.Item>
               )}
             />
@@ -217,9 +248,40 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
             <Controller
               name={`skuList.[${index}].earnCommission`}
               control={control}
+              rules={{
+                required: '请输入躺赚佣金',
+                validate: async value => {
+                  try {
+                    const {skuList} = getValues();
+                    const {directSalesCommission = 0, salePrice} = skuList[index];
+                    const settlementPrice = contractDetail?.skuInfoReq?.skuInfo[index]?.skuSettlementPrice;
+                    const res = await apis.sku.getSalePrice({
+                      salePrice: salePrice,
+                      settlePrice: settlementPrice,
+                    });
+                    const maxShareCommission = Number(res.maxShareCommissionYuan) || 0;
+                    const [min, max] = getEarnCommissionRange(maxShareCommission, directSalesCommission);
+                    if (value < min) {
+                      setError(`skuList.${index}.earnCommission`, {type: 'validate', message: `躺赚佣金不能小于${min}元`});
+                      return Promise.reject(`躺赚佣金不能小于${min}元`);
+                    }
+                    if (value > max) {
+                      setError(`skuList.${index}.earnCommission`, {type: 'validate', message: `躺赚佣金不能大于${max}元`});
+                      return Promise.reject(`躺赚佣金不能大于${max}元`);
+                    }
+                    return true;
+                  } catch (error) {
+                    setError(`skuList.${index}.earnCommission`, {type: 'validate', message: error as string});
+                    return Promise.reject({message: error as string});
+                  }
+                },
+              }}
               render={({field: {value, onChange}}) => (
                 <Form.Item label="躺赚佣金（元）">
                   <Input placeholder="请输入躺赚佣金" type="number" value={value} onChange={onChange} />
+                  <Text style={globalStyles.error}>
+                    <ErrorMessage name={`skuList.${index}.earnCommission`} errors={errors} />
+                  </Text>
                 </Form.Item>
               )}
             />

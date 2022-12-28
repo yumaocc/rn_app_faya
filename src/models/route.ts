@@ -48,6 +48,9 @@ export type RootStackParamList = {
   ShopDetail: {shopDetail: ShopForm; id: number};
   ShopList: {id: number};
   IconTest: undefined;
+  CommodityTopList: undefined;
+  SalesTopList: undefined;
+  MineDetail: undefined;
 };
 
 export type Props = NativeStackScreenProps<RootStackParamList>;

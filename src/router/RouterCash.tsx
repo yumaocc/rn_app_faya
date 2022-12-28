@@ -7,6 +7,8 @@ import WithdrawalsRecord from '../screen/cash/WithdrawalsRecord';
 import EstimatedIncome from '../screen/cash/statistics/EstimatedIncome';
 import HistoricalEarnings from '../screen/cash/statistics/HistoricalEarnings';
 import TodayEarnings from '../screen/cash/statistics/TodayEarnings';
+import SalesTopList from '../screen/cash/rank/SalesTopList';
+import CommodityTopList from '../screen/cash/rank/CommodityTopList';
 
 const RouterSPU = (
   <>
@@ -17,7 +19,8 @@ const RouterSPU = (
     <Stack.Screen name="EstimatedIncome" component={EstimatedIncome} options={commonScreenOptions} />
     <Stack.Screen name="HistoricalEarnings" component={HistoricalEarnings} options={commonScreenOptions} />
     <Stack.Screen name="TodayEarnings" component={TodayEarnings} options={commonScreenOptions} />
+    <Stack.Screen name="SalesTopList" component={SalesTopList} options={commonScreenOptions} />
+    <Stack.Screen name="CommodityTopList" component={CommodityTopList} options={commonScreenOptions} />
   </>
 );
-
 export default RouterSPU;

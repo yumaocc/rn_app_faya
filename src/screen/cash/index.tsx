@@ -12,7 +12,7 @@ import {FontSize, globalStyles} from '../../constants/styles';
 import {useSummaryDispatcher, useUserDispatcher} from '../../helper/hooks';
 import {FakeNavigation} from '../../models';
 import {RootState} from '../../redux/reducers';
-import CommodityList from './rank/CommodityList';
+import CommodityTop from './rank/CommodityTop';
 import SalesTop from './rank/SalesTop';
 import {SvgUri} from 'react-native-svg';
 import Icon from '../../component/Form/Icon';
@@ -41,6 +41,7 @@ const Cash: FC = () => {
       <SafeAreaView style={globalStyles.wrapper} edges={['bottom']}>
         <NavigationBar title="我的金库" />
         <ScrollView>
+          <Button onPress={() => navigation.navigate('Tab')}>dianji</Button>
           <SvgUri uri={icons.success} height={100} width={100} fill="#00000" />
           <View style={styles.wrapper}>
             <View style={styles.content}>
@@ -86,7 +87,7 @@ const Cash: FC = () => {
               <Title title="历史总收益" unit="元" type={'money'} value={commissionToday?.commissionHistory?.moneyYuan} arrow />
               <CutOffRule />
             </View>
-            <CommodityList unit="元" title="商品提成排行" />
+            <CommodityTop unit="元" title="商品提成排行" />
             <SalesTop unit="单" title="商品销量排行" />
           </View>
         </ScrollView>

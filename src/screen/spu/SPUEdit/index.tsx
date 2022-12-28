@@ -38,7 +38,8 @@ const EditSPU: React.FC = () => {
     setError,
     formState: {errors},
   } = useForm<any>({
-    mode: 'onBlur',
+    mode: 'all',
+    reValidateMode: 'onChange',
   });
   const {width: windowWidth} = useWindowDimensions();
   const [ref, setRef, isReady] = useRefCallback<ScrollView>();
@@ -71,6 +72,12 @@ const EditSPU: React.FC = () => {
     contractDispatcher.loadCurrentContract(spuDetail.contractId);
     contractDispatcher.loadContractSearchList({id: spuDetail.bizUserId});
   }, [spuDetail, merchantDispatcher, contractDispatcher]);
+  useEffect(() => {
+    const keys = Object.keys(errors);
+    if (keys.length) {
+      commonDispatcher.error(errors[keys[0]]);
+    }
+  }, [commonDispatcher, errors]);
 
   useEffect(() => {
     if (!contractDetail) {
@@ -125,7 +132,19 @@ const EditSPU: React.FC = () => {
   }, [skuDispatcher]);
 
   async function submit() {
+    const keys = Object.keys(errors);
+    console.log(keys);
+    if (keys.length) {
+      commonDispatcher.error(errors[keys[0]]);
+      return;
+    }
     try {
+      const keys = Object.keys(errors);
+      console.log(keys);
+      if (keys.length) {
+        commonDispatcher.error(errors[keys[0]]);
+        return;
+      }
       const res = getValues();
       const formData = cleanSPUForm(res);
       if (isEdit) {

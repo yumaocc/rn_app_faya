@@ -26,6 +26,7 @@ export interface UserInfo {
   status: UserState;
   telephone: string;
   type: UserType;
+  idCard: string;
 }
 export interface LoginParam {
   phone: string;

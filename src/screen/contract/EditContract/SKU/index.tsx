@@ -90,7 +90,7 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action}
           name="spuInfoReq.spuCategoryIds"
           render={({field: {value, onChange}}) => (
             <Form.Item label="商品分类">
-              <Cascader value={value} onChange={onChange} options={SPUCategories} />
+              <Cascader value={value || []} onChange={onChange} options={SPUCategories} />
             </Form.Item>
           )}
         />

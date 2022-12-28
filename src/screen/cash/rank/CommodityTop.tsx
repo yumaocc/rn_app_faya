@@ -4,7 +4,7 @@ import {useSelector} from 'react-redux';
 import {formatMoment} from '../../../helper';
 import {useSummaryDispatcher} from '../../../helper/hooks';
 import ModalDropdown from 'react-native-modal-dropdown';
-import {Picker} from '../../../models';
+import {FakeNavigation, Picker} from '../../../models';
 import {RootState} from '../../../redux/reducers';
 import {StyleSheet, Text, View} from 'react-native';
 import {date} from '../../../constants';
@@ -12,14 +12,15 @@ import {Icon} from '@ant-design/react-native';
 import CutOffRule from '../../../component/CutOffRule';
 import LinkButton from '../../../component/LinkButton';
 import {globalStyles} from '../../../constants/styles';
-interface CommodityListProps {
+import {useNavigation} from '@react-navigation/native';
+interface CommodityTopProps {
   unit: string;
   title?: string;
 }
-const CommodityList: FC<CommodityListProps> = ({unit, title}) => {
+const CommodityTop: FC<CommodityTopProps> = ({unit, title}) => {
   const [valueType, setValueType] = useState<Picker>({label: '日', value: 'day'});
   const commissionTop = useSelector((state: RootState) => state.summary.commissionTop);
-
+  const navigation = useNavigation() as FakeNavigation;
   const [summaryDispatcher] = useSummaryDispatcher();
 
   useEffect(() => {
@@ -55,9 +56,6 @@ const CommodityList: FC<CommodityListProps> = ({unit, title}) => {
           </View>
         </View>
         {commissionTop?.map((item, index) => {
-          if (index > 4) {
-            return null;
-          }
           return (
             <View key={item.spuId}>
               <View style={styles.rankList}>
@@ -71,7 +69,7 @@ const CommodityList: FC<CommodityListProps> = ({unit, title}) => {
               <CutOffRule />
               {index === 4 && (
                 <View style={styles.more}>
-                  <LinkButton title={'查看更多'} onPress={() => console.log('查看更多')} />
+                  <LinkButton title={'查看更多'} onPress={() => navigation.navigate('CommodityTopList')} />
                 </View>
               )}
             </View>
@@ -82,7 +80,7 @@ const CommodityList: FC<CommodityListProps> = ({unit, title}) => {
   );
 };
 
-export default CommodityList;
+export default CommodityTop;
 
 export const styles = StyleSheet.create({
   content: {

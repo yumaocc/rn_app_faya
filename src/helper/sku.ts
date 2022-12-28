@@ -169,3 +169,30 @@ export function generateSPUForm(contract: ContractDetailF, spuDetail?: SPUDetail
 
   return form;
 }
+
+export function getDirectCommissionRange(maxCommission: number, earnCommission = 0): [number, number] {
+  const min = 2;
+  let max = maxCommission - 2;
+  if (earnCommission && earnCommission < Math.floor(maxCommission / 2)) {
+    // 超过一半最大佣金的躺赚佣金是无意义的
+    max = Math.min(maxCommission - earnCommission * 2);
+  }
+  // min = Math.max(min, maxCommission - Math.floor(maxCommission / 4) * 2);
+  if (max < min) {
+    max = min;
+  }
+  return [min, max];
+}
+
+export function getEarnCommissionRange(maxCommission: number, directCommission = 0): [number, number] {
+  let max = Math.floor(maxCommission / 4);
+  if (directCommission && directCommission < maxCommission) {
+    // 超过最大佣金的直售佣金是无意义的
+    const value = Math.floor((maxCommission - directCommission) / 2);
+    max = Math.min(max, value);
+  }
+  if (max < 1) {
+    max = 1;
+  }
+  return [1, max];
+}

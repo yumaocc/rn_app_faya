@@ -99,5 +99,6 @@ export async function getPushMoneyTopTen(params?: BeginTimeAndEndTime): Promise<
 // salePrice : 套餐售价
 //settlePrice： 门售价
 export async function getSalePrice(price: SaleParams): Promise<SaleType> {
+  console.log('请求参数', price);
   return await post<SaleType, SaleParams>('/spu/find/commission/by/price', price);
 }

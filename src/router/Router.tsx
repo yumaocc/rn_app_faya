@@ -13,6 +13,7 @@ import RouterMerchant from './RouterMerchant';
 import RouteContract from './RouterContract';
 import RouterCash from './RouterCash';
 import IconTest from '../screen/IconTest/IconTest';
+import MineDetail from '../screen/mine/MineDetail';
 const Navigator: React.FC = () => {
   const token = useSelector((state: RootState) => state.common.token);
   const isLogout = useSelector((state: RootState) => state.user.isLogout);
@@ -34,6 +35,14 @@ const Navigator: React.FC = () => {
               headerShown: false,
             }}
           />
+          <Stack.Screen
+            name="MineDetail"
+            component={MineDetail}
+            options={{
+              headerShown: false,
+            }}
+          />
+
           {RouterSPU}
           {RouterMerchant}
           {RouteContract}

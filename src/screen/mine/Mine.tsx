@@ -24,28 +24,29 @@ const Mine: React.FC = () => {
           backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND,
         }}>
         <View style={{height: 50, backgroundColor: '#fff'}} />
-        <View style={styles.profile}>
-          <View style={styles.avatarWrapper}>
-            <Image source={{uri: user?.avatar || 'https://fakeimg.pl/100?text=USER'}} style={{height: 60, width: 60}} />
-          </View>
-          <View style={[styles.nameWrapper]}>
-            <Text style={[globalStyles.fontPrimary, styles.name]}>{user?.name}</Text>
-            {user.status === UserState.CERTIFIED && (
-              <View style={[globalStyles.tagWrapper, styles.certWrapper]}>
-                <Icon name="safety" color="#4AB87D" size={15} />
-                <Text style={[globalStyles.tag, {color: '#4AB87D'}]}>已实名认证</Text>
-              </View>
-            )}
-          </View>
-          <Icon name="right" style={globalStyles.iconRight} />
-        </View>
 
+        <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('MineDetail')}>
+          <View style={styles.profile}>
+            <View style={styles.avatarWrapper}>
+              <Image source={{uri: user?.avatar || 'https://fakeimg.pl/100?text=USER'}} style={{height: 60, width: 60}} />
+            </View>
+            <View style={[styles.nameWrapper]}>
+              <Text style={[globalStyles.fontPrimary, styles.name]}>{user?.name}</Text>
+              {user.status === UserState.CERTIFIED && (
+                <View style={[globalStyles.tagWrapper, styles.certWrapper]}>
+                  <Icon name="safety" color="#4AB87D" size={15} />
+                  <Text style={[globalStyles.tag, {color: '#4AB87D'}]}>已实名认证</Text>
+                </View>
+              )}
+            </View>
+            <Icon name="right" style={globalStyles.iconRight} />
+          </View>
+        </TouchableOpacity>
         <SectionGroup>
           <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Cash')}>
             <OperateItem title="我的金库" icon={<Icon name="wallet" />} />
           </TouchableOpacity>
         </SectionGroup>
-
         <SectionGroup>
           <TouchableOpacity onPress={() => navigation.navigate('ContractList')}>
             <OperateItem title="合同管理" icon={<Icon name="wallet" />} />
@@ -64,11 +65,9 @@ const Mine: React.FC = () => {
             />
           </TouchableOpacity>
         </SectionGroup>
-
         <SectionGroup>
           <OperateItem title="录入的商家" icon={<Icon name="shop" />} />
         </SectionGroup>
-
         <SectionGroup>
           <OperateItem title="设置" icon={<Icon name="setting" />} />
         </SectionGroup>
