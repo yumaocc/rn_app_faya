@@ -23,12 +23,13 @@ const options = [
   },
 ];
 const MyList: React.FC = () => {
-  const [merchantList, setMerchantList] = React.useState<MyMerchantF[]>([]);
+  const [merchantList, setMerchantList] = useState<MyMerchantF[]>([]);
   const [valueType, setValueType] = useState<Options>(null);
   const [value, setValue] = useState('');
   const [len, setLen] = useState(0);
-  const [loading, setLoading] = useState(false);
   const [pageIndex, setPageIndex] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [pullDown, setPullDown] = useState(false);
   const [commonDispatcher] = useCommonDispatcher();
 
   useEffect(() => {
@@ -105,9 +106,11 @@ const MyList: React.FC = () => {
         </View>
       </View>
       <FlatList
-        refreshing={loading}
-        onRefresh={() => {
-          getData({pageIndex: pageIndex, multiStore: valueType?.value, name: value});
+        refreshing={pullDown}
+        onRefresh={async () => {
+          setPullDown(true);
+          await getData({pageIndex: pageIndex, multiStore: valueType?.value, name: value});
+          setPullDown(false);
         }}
         data={merchantList}
         renderItem={({item}) => <Card merchant={item} key={item.id} style={globalStyles.moduleMarginTop} />}

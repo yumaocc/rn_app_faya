@@ -1,17 +1,18 @@
 // import moment from 'moment';
-import {Button, Icon} from '@ant-design/react-native';
+import {Button, Icon as AntdIcon} from '@ant-design/react-native';
+import Icon from '../../../../component/Form/Icon';
 import React, {useEffect, useMemo, useState} from 'react';
-import {Control, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
+import {Control, FieldErrorsImpl, UseFormGetValues, UseFormHandleSubmit, UseFormSetValue, UseFormWatch} from 'react-hook-form';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import {FormTitle, SectionGroup, Form, Input, Select, DatePicker, Footer, Cascader} from '../../../../component';
-import {globalStyleVariables} from '../../../../constants/styles';
-import {useMerchantDispatcher, useContractDispatcher, useSPUCategories} from '../../../../helper/hooks';
+import {globalStyles, globalStyleVariables} from '../../../../constants/styles';
+import {useMerchantDispatcher, useContractDispatcher, useSPUCategories, useCommonDispatcher} from '../../../../helper/hooks';
 import {BoolEnum} from '../../../../models';
 import {RootState} from '../../../../redux/reducers';
 import {styles} from '../style';
-import Label from '../../../../component/Lable';
 import {Controller} from 'react-hook-form';
+import Error from '../../../../component/Error';
 import SelectShop from './SelectShop';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {findItem, momentFromDateTime} from '../../../../helper/util';
@@ -22,9 +23,14 @@ interface BaseProps {
   setValue?: UseFormSetValue<any>;
   getValues?: UseFormGetValues<any>;
   watch?: UseFormWatch<any>;
+  errors?: Partial<FieldErrorsImpl<any>>;
+  handleSubmit?: UseFormHandleSubmit<any>;
+}
+interface ListProps {
+  value: number[];
 }
 
-const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch}) => {
+const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch, errors, handleSubmit}) => {
   const bizUserId = watch('bizUserId');
   const contractId = watch('contractId');
   const canUseShopIds = watch('canUseShopIds');
@@ -38,6 +44,7 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch}
   const [SPUCategories] = useSPUCategories();
   const [merchantDispatcher] = useMerchantDispatcher();
   const [contractDispatcher] = useContractDispatcher();
+  const [commonDispatcher] = useCommonDispatcher();
 
   const canUseShopList = useMemo(() => {
     const shopList = currentMerchant?.shopList || [];
@@ -75,46 +82,34 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch}
     }
   }, [currentContract, setValue]);
   function onCheck() {
-    // console.log(form.getFieldsValue());
     onNext && onNext();
   }
-  // useEffect(() => {
-  //   if (merchantList) {
-  //     setValue('bizUserId', spuDetail.bizUserId);
-  //   }
-  // }, [merchantList, setValue, spuDetail?.bizUserId]);
 
-  // function handleChangeMerchant(merchantId?: number) {
-  //   merchantDispatcher.loadCurrentMerchantPrivate(merchantId);
-  //   form.setFieldsValue({
-  //     contractId: undefined,
-  //     canUseShopIds: [],
-  //   });
-  //   if (merchantId) {
-  //     contractDispatcher.loadContractSearchList({id: merchantId});
-  //   }
-  //   clearDirtyFormData();
-  // }
+  //打开店铺选择的函数
+  const canUseShopIdsIsShow = () => {
+    if (contractId) {
+      setShowUseShop(true);
+      return;
+    }
+    commonDispatcher.info('请先选择合同');
+  };
+  const delTheShop = (id: number) => {
+    const {canUseShopIds} = getValues();
+    const newCanUseShopIdS = canUseShopIds.filter((item: number) => item !== id);
+    setValue('canUseShopIds', newCanUseShopIdS);
+  };
 
-  // function handleChangeContract(contractId?: number) {
-  //   contractDispatcher.loadCurrentContract(contractId);
-  //   clearDirtyFormData();
-  // }
-  // function handleConfirmShops() {
-  //   const shopIds = canUseShopRef.current?.getValue() || [];
-  //   form.setFieldValue('canUseShopIds', shopIds);
-  // }
-  interface ListProps {
-    value: number[];
-  }
   const List: React.FC<ListProps> = props => {
     const shopList = props.value.map(item => findItem(canUseShopList, e => e.id === item));
     return (
       <>
-        {shopList.map((item, index) =>
+        {shopList.map(item =>
           item ? (
-            <View key={index} style={styles.shopItem}>
+            <View key={item.id} style={[styles.shopItem, globalStyles.containerLR]}>
               <Text numberOfLines={1}>{item?.shopName}</Text>
+              <TouchableOpacity activeOpacity={0.5} onPress={() => delTheShop(item.id)}>
+                <Icon name="del" color="red" />
+              </TouchableOpacity>
             </View>
           ) : null,
         )}
@@ -129,31 +124,35 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch}
         <Controller
           control={control}
           name="bizUserId"
+          rules={{required: true}}
           render={({field: {value, onChange}}) => (
-            <Label label="选择商家">
-              <Select onChange={onChange} value={value} options={merchantList.map((e: {name: any; id: any}) => ({label: e.name, value: e.id}))} placeholder="选择商家" />
-            </Label>
+            <Form.Item label="选择商家">
+              <Select onChange={onChange} value={value} options={merchantList.map((e: {name: any; id: any}) => ({label: e.name, value: e.id}))} placeholder="请选择" />
+              {errors.bizUserId && <Error value="请先选择商家" />}
+            </Form.Item>
           )}
         />
 
         <Controller
           control={control}
           name="contractId"
+          rules={{required: true}}
           render={({field: {value, onChange}}) => (
-            <Label label="选择合同">
-              <Select onChange={onChange} value={value} options={contractList.map(e => ({label: e.name, value: e.id}))} placeholder="选择合同" />
-            </Label>
+            <Form.Item label="选择合同">
+              <Select onChange={onChange} value={value} options={contractList.map(e => ({label: e.name, value: e.id}))} placeholder="请选择" />
+              {errors.contractId && <Error value="请先选择合同" />}
+            </Form.Item>
           )}
         />
 
-        <Label label="可消费店铺">
-          <TouchableOpacity activeOpacity={0.5} onPress={() => setShowUseShop(true)}>
+        <Form.Item label="可消费店铺">
+          <TouchableOpacity activeOpacity={0.5} onPress={canUseShopIdsIsShow}>
             <View style={style.childrenWrapper}>
               {canUseShopIds?.length ? <Text>已选择</Text> : <Text style={style.placeholder}>请选择</Text>}
-              <Icon name="caret-right" style={style.arrow} />
+              <AntdIcon name="caret-right" style={style.arrow} />
             </View>
           </TouchableOpacity>
-        </Label>
+        </Form.Item>
 
         {!!canUseShopIds?.length ? (
           <View style={styles.shopList}>
@@ -165,43 +164,17 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch}
             </View>
           </View>
         ) : null}
-
-        {/* <Form.Item
-          label="选择店铺"
-          extra={
-            canUseShopList?.length ? (
-              <View style={styles.shopList}>
-                <View style={[styles.shopItem, {borderBottomColor: '#e5e5e5', borderBottomWidth: 1}]}>
-                  <Text>已选{0}家</Text>
-                </View>
-                <View>
-                  {canUseShopList.map(shop => {
-                    return (
-                      <View key={shop.id} style={styles.shopItem}>
-                        <Text numberOfLines={1}>{shop.shopName}</Text>
-                      </View>
-                    );
-                  })}
-                </View>
-              </View>
-            ) : null
-          }>
-          <TouchableWithoutFeedback onPress={() => setShowUseShop(true)}>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <Text style={[{fontSize: 15, color: globalStyleVariables.TEXT_COLOR_TERTIARY}]}>请选择</Text>
-              <Icon style={{transform: [{rotate: '90deg'}], marginLeft: 3, color: '#000', fontSize: 10}} name="caret-right" />
-            </View>
-          </TouchableWithoutFeedback>
-        </Form.Item> */}
       </SectionGroup>
       <SectionGroup style={styles.sectionGroupStyle}>
         <FormTitle title="商品基础信息" />
         <Controller
           control={control}
           name="spuName"
+          rules={{required: true}}
           render={({field: {value, onChange}}) => (
             <Form.Item label="商品名称">
               <Input placeholder="商品名称" value={value} onChange={onChange} />
+              {errors.spuName && <Error value="请先输入商品名称" />}
             </Form.Item>
           )}
         />
@@ -254,7 +227,7 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch}
         <Controller
           control={control}
           name="baseSaleAmount"
-          defaultValue={40}
+          defaultValue={134}
           render={({field: {value, onChange}}) => (
             <Form.Item label="初始销量" desc="为了xxx而显示的销量">
               <Input placeholder="请输入" type="number" value={value} onChange={onChange} />
@@ -264,7 +237,7 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch}
         <Controller
           control={control}
           name="baseShareCount"
-          defaultValue={20}
+          defaultValue={84}
           render={({field: {value, onChange}}) => (
             <Form.Item label="初始分享量" desc="为了xxx而显示的分享量">
               <Input placeholder="请输入" type="number" value={value} onChange={onChange} />
@@ -312,7 +285,7 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch}
       </SectionGroup>
       <Footer />
       <View style={styles.button}>
-        <Button type="primary" onPress={onCheck}>
+        <Button type="primary" onPress={handleSubmit(onCheck)}>
           下一步
         </Button>
       </View>

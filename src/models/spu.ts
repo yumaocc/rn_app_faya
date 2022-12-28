@@ -189,3 +189,35 @@ export interface Notice {
   POLICY: NoticeItem[];
   TIPS: NoticeItem[];
 }
+// 获取销售佣金的请求类型
+export interface SaleParams {
+  salePrice: string;
+  settlePrice: string;
+}
+// 商品销售佣金
+
+export interface SaleType {
+  skuId: number;
+  originSettlePrice: number;
+  originSettlePriceYuan: string;
+  tempSettlePrice: number;
+  minSalePrice: number;
+  minSalePriceYuan: string;
+  profit: number;
+  profitYuan: string;
+  maxShareCommission: number;
+  maxShareCommissionYuan: string;
+  minShareCommission: number;
+  minShareCommissionYuan: string;
+  videoCommission: number;
+  videoCommissionYuan: string;
+  videoPercent: string | number;
+  commentCommission: number;
+  commentCommissionYuan: string;
+  commentPercent: number;
+  maxSaveMoney: number;
+  maxSaveMoneyYuan: string;
+  bdCommission: number;
+  bdCommissionYuan: string;
+  bdPercent: number;
+}

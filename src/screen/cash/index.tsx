@@ -1,7 +1,8 @@
 // import {Icon as IconImg} from '@ant-design/react-native';
 import {useNavigation} from '@react-navigation/native';
 import React, {FC, useEffect} from 'react';
-import {StyleSheet, View, Text, ScrollView, SafeAreaView} from 'react-native';
+import {StyleSheet, View, Text, ScrollView} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useSelector} from 'react-redux';
 import {NavigationBar} from '../../component';
@@ -16,6 +17,7 @@ import SalesTop from './rank/SalesTop';
 import {SvgUri} from 'react-native-svg';
 import Icon from '../../component/Form/Icon';
 import {icons} from '../../assets/icon';
+import {Button} from '@ant-design/react-native';
 
 const Cash: FC = () => {
   const navigation = useNavigation() as FakeNavigation;
@@ -36,12 +38,13 @@ const Cash: FC = () => {
 
   return (
     <>
-      <SafeAreaView style={globalStyles.wrapper}>
+      <SafeAreaView style={globalStyles.wrapper} edges={['bottom']}>
         <NavigationBar title="我的金库" />
         <ScrollView>
           <SvgUri uri={icons.success} height={100} width={100} fill="#00000" />
           <View style={styles.wrapper}>
             <View style={styles.content}>
+              <Button onPress={() => navigation.navigate('IconTest')}>选择icon：：：测试按钮</Button>
               <Title title="余额" unit="元" type={'money'} value={Number(wallet?.balanceYuan)} arrow handleClick={() => console.log(111)} />
               <CutOffRule />
               <View style={styles.contentOneBtn}>

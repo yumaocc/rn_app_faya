@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, forwardRef} from 'react';
+import React, {useCallback, useMemo, FC} from 'react';
 import {InputItem} from '@ant-design/react-native';
 import {InputItemProps} from '@ant-design/react-native/lib/input-item';
 import {globalStyleVariables} from '../../../constants/styles';
@@ -8,16 +8,7 @@ interface InputProps extends InputItemProps {
   name?: string;
 }
 
-// Input.defaultProps = {
-//   clear: true,
-//   textAlign: 'right',
-//   last: true,
-//   type: 'text',
-//   placeholder: '请输入',
-//   labelNumber: 2,
-//   styles: {},
-// };
-const Input = (props: InputProps, ref?: any) => {
+const Input: FC<InputProps> = props => {
   const {value, type = 'text', onChange, styles = {}, clear = true, textAlign = 'right', last = true, placeholder = '请输入', labelNumber = 2, ...restProps} = props;
   const shouldWrap = useMemo(() => type === 'number', [type]);
   const wrappedValue = useMemo(() => {
@@ -46,7 +37,6 @@ const Input = (props: InputProps, ref?: any) => {
 
   return (
     <InputItem
-      ref={ref}
       textAlign={textAlign}
       clear={clear}
       last={last}
@@ -64,4 +54,14 @@ const Input = (props: InputProps, ref?: any) => {
   );
 };
 
-export default forwardRef<any, InputProps>(Input);
+export default Input;
+
+Input.defaultProps = {
+  clear: true,
+  textAlign: 'right',
+  last: true,
+  type: 'text',
+  placeholder: '请输入',
+  labelNumber: 2,
+  styles: {},
+};

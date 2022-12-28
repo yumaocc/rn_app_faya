@@ -78,6 +78,8 @@ export type {
   SalesList,
   Notice,
   NoticeItem,
+  SaleType,
+  SaleParams,
 } from './spu';
 export type {CommissionToday, CommissionExpect, Commission, CommissionTop, SaleTop, CommissionHistory, CommissionDetail} from './summary';
 

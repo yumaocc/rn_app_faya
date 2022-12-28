@@ -12,6 +12,7 @@ import RouterSPU from './RouterSPU';
 import RouterMerchant from './RouterMerchant';
 import RouteContract from './RouterContract';
 import RouterCash from './RouterCash';
+import IconTest from '../screen/IconTest/IconTest';
 const Navigator: React.FC = () => {
   const token = useSelector((state: RootState) => state.common.token);
   const isLogout = useSelector((state: RootState) => state.user.isLogout);
@@ -22,6 +23,13 @@ const Navigator: React.FC = () => {
           <Stack.Screen
             name="Tab"
             component={TabNavigator}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="IconTest"
+            component={IconTest}
             options={{
               headerShown: false,
             }}

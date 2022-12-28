@@ -1,6 +1,6 @@
 import {Button} from '@ant-design/react-native';
 import React from 'react';
-import {Control, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
+import {Control, FieldErrorsImpl, UseFormGetValues, UseFormHandleSubmit, UseFormSetError, UseFormSetValue, UseFormWatch} from 'react-hook-form';
 import {ScrollView, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import {Footer, Form, FormTitle, Input, SectionGroup, Switch} from '../../../../component';
@@ -17,14 +17,16 @@ interface SKUProps {
   setValue?: UseFormSetValue<any>;
   getValues?: UseFormGetValues<any>;
   watch?: UseFormWatch<any>;
+  errors: Partial<FieldErrorsImpl<any>>;
+  handleSubmit: UseFormHandleSubmit<any>;
+  setError?: UseFormSetError<any>;
 }
 
-const SKU: React.FC<SKUProps> = ({onNext, control, setValue, getValues, watch}) => {
+const SKU: React.FC<SKUProps> = ({onNext, control, setValue, getValues, watch, handleSubmit, errors, setError}) => {
   const contractDetail = useSelector((state: RootState) => state.contract.currentContract);
-  const form = Form.useFormInstance();
 
   function onCheck() {
-    console.log(form.getFieldsValue());
+    console.log('错误信息', errors);
     onNext && onNext();
   }
 
@@ -52,11 +54,11 @@ const SKU: React.FC<SKUProps> = ({onNext, control, setValue, getValues, watch}) 
       </SectionGroup>
 
       {/* sku信息 */}
-      <SKUList control={control} setValue={setValue} getValues={getValues} watch={watch} />
+      <SKUList errors={errors} control={control} setValue={setValue} getValues={getValues} watch={watch} setError={setError} />
 
       <Footer />
       <View style={styles.button}>
-        <Button type="primary" onPress={onCheck}>
+        <Button type="primary" onPress={handleSubmit(onCheck)}>
           下一步
         </Button>
       </View>

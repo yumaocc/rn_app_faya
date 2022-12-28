@@ -39,7 +39,7 @@ const SelectShop: React.FC<SelectShopProps> = ({shopList, open, setOpen, setValu
   }, [getValues, open, shopList]);
 
   useEffect(() => {
-    if (currentShopList?.length && len === currentShopList.length) {
+    if (currentShopList?.length > 0 && len === currentShopList.length) {
       setCheckAll(true);
     }
   }, [currentShopList.length, len]);

@@ -115,7 +115,7 @@ const EstimatedIncome: React.FC = () => {
   );
   return (
     <>
-      <SafeAreaView style={globalStyles.wrapper}>
+      <SafeAreaView style={globalStyles.wrapper} edges={['bottom']}>
         <Loading active={loading} />
         <NavigationBar title="预计收益" headerRight={headerRight} />
         <View style={{overflow: 'hidden', flex: 1}}>

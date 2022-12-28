@@ -1,6 +1,6 @@
 import {Button} from '@ant-design/react-native';
 import React, {useState} from 'react';
-import {Control, Controller, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
+import {Control, Controller, FieldErrorsImpl, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
 import {ScrollView, View, Text, StyleSheet} from 'react-native';
 import {useSelector} from 'react-redux';
 import {Checkbox, Footer, Form, FormTitle, Modal, PlusButton, SectionGroup, Select} from '../../../../component';
@@ -20,6 +20,7 @@ interface BookingProps {
   setValue?: UseFormSetValue<any>;
   getValues?: UseFormGetValues<any>;
   watch?: UseFormWatch<any>;
+  errors?: Partial<FieldErrorsImpl<any>>;
 }
 interface ModelListProps {
   value: {modelId: number; contractSkuIds: number[]}[];
@@ -31,15 +32,11 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
   const contractDetail = useSelector((state: RootState) => state.contract.currentContract);
   const merchantDetail = useSelector((state: RootState) => state.merchant.currentMerchant);
 
-  const form = Form.useFormInstance();
-  const [bindingForm] = Form.useForm();
-
   const [codeTypes] = useCodeTypes();
-  const [bookingModal] = useMerchantBookingModel(merchantDetail?.id);
+  const [booking] = useMerchantBookingModel(merchantDetail?.id);
   const [commonDispatcher] = useCommonDispatcher();
 
   async function onCheck() {
-    console.log(form.getFieldsValue());
     onNext && onNext();
   }
 
@@ -47,11 +44,9 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
     if (!merchantDetail?.id || !contractDetail?.id) {
       return commonDispatcher.error('请先选择商家和合同');
     }
-    bindingForm.setFieldsValue({
-      contractSkuIds: [],
-    });
     setShowBinding(true);
   }
+
   function handleSubmitBinding() {
     const res = bookingModel.getValues();
     const {modelList = []} = getValues();
@@ -64,7 +59,7 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
     return (
       <>
         {value?.map((item, index) => {
-          const [bookingItem] = bookingModal.filter(e => e.id === item.modelId);
+          const [bookingItem] = booking?.filter(e => e.id === item.modelId);
           return (
             <>
               <View key={index} style={[style.module, globalStyles.moduleMarginTop]}>
@@ -84,30 +79,6 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
       </>
     );
   };
-  // const ModelList = (props: ModelListProps) => {
-  //   const {value} = props;
-
-  //   return (
-  //     <>
-  //       {value.map((item, index) => {
-  //         const bookingItem = findItem(bookingModal, e => e.id === item.modelId);
-  //         return (
-  //           <View key={index} style={[style.module, globalStyles.moduleMarginTop]}>
-  //             <Text style={[globalStyles.fontPrimary, globalStyles.borderBottom]}>型号：{bookingItem?.name}</Text>
-  //             {item.contractSkuIds?.map(skuId => {
-  //               const skuItem = findItem(contractDetail?.skuInfoReq?.skuInfo, item => item.contractSkuId === skuId);
-  //               return (
-  //                 <Text style={[globalStyles.fontTertiary, globalStyles.moduleMarginTop]} key={skuId}>
-  //                   {skuItem?.skuName}
-  //                 </Text>
-  //               );
-  //             })}
-  //           </View>
-  //         );
-  //       })}
-  //     </>
-  //   );
-  // };
 
   return (
     <>
@@ -154,6 +125,7 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
           </Button>
         </View>
       </ScrollView>
+
       <Modal title="绑定预约型号" visible={showBinding} onOk={handleSubmitBinding} onClose={() => setShowBinding(false)}>
         <View>
           <Controller
@@ -161,7 +133,7 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
             control={bookingModel.control}
             render={({field: {value, onChange}}) => (
               <Form.Item label="选择预约型号">
-                <Select value={value} onChange={onChange} options={bookingModal?.map(item => ({label: item.name, value: item.id}))} />
+                <Select value={value} onChange={onChange} options={booking?.map(item => ({label: item.name, value: item.id}))} />
               </Form.Item>
             )}
           />

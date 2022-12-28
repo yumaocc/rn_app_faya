@@ -50,7 +50,6 @@ const TodayEarnings: React.FC = () => {
     try {
       setLoading(true);
       const res = await api.summary.getCommissionOrder({...params, pageSize: PAGE_SIZE});
-      console.log('请求结果', res);
       if (action === RequestAction.other) {
         setData(res.content);
       } else {
@@ -67,11 +66,14 @@ const TodayEarnings: React.FC = () => {
 
   function handleChangeFilter(e: Picker) {
     setValueType(e);
-    const start: Moment = moment().startOf(valueType?.value);
-    const end: Moment = moment().endOf(valueType?.value);
+    const start: Moment = moment().startOf(e.value);
+    const end: Moment = moment().endOf(e.value);
+    // console.log(formatMoment(moment().startOf('week')));
+    // console.log(formatMoment(moment().endOf('week')));
     console.log('value', e);
-    console.log(start);
-    console.log(end);
+
+    console.log(formatMoment(start));
+    console.log(formatMoment(end));
     setPageIndex(1);
     getData(
       {
@@ -117,7 +119,7 @@ const TodayEarnings: React.FC = () => {
   );
   return (
     <>
-      <SafeAreaView style={globalStyles.wrapper}>
+      <SafeAreaView style={globalStyles.wrapper} edges={['bottom']}>
         <Loading active={loading} />
         <NavigationBar title="收益订单" headerRight={headerRight} />
         <View style={{overflow: 'hidden', flex: 1}}>
@@ -187,7 +189,7 @@ const TodayEarnings: React.FC = () => {
                 </View>
               </>
             )}
-            keyExtractor={item => ' ' + item?.spuId}
+            keyExtractor={(item, index) => ' ' + index}
             onEndReached={() => pullUp()}
           />
         </View>

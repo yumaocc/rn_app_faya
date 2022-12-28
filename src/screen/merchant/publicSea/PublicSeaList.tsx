@@ -27,13 +27,14 @@ const options = [
 
 const PublicSeaList: React.FC = () => {
   const [valueType, setValueType] = useState<Options>(null);
-  const [loading, setLoading] = useState(false);
   const [pageIndex, setPageIndex] = useState(1);
   const [value, setValue] = useState('');
   const [len, setLen] = useState(0);
-  const navigation = useNavigation() as FakeNavigation;
-  const [merchantList, setMerchantList] = React.useState<MerchantF[]>([]);
+  const [merchantList, setMerchantList] = useState<MerchantF[]>([]);
   const [commonDispatcher] = useCommonDispatcher();
+  const [loading, setLoading] = useState(false);
+  const [pullDown, setPullDown] = useState(false);
+  const navigation = useNavigation() as FakeNavigation;
 
   const {run} = useDebounceFn(async (name: string) => getData({pageIndex: 1, name}, RequestAction.other));
 
@@ -125,9 +126,11 @@ const PublicSeaList: React.FC = () => {
         />
       </View>
       <FlatList
-        refreshing={loading}
-        onRefresh={() => {
-          getData({pageIndex: pageIndex, multiStore: valueType?.value, name: value});
+        refreshing={pullDown}
+        onRefresh={async () => {
+          setPullDown(true);
+          await getData({pageIndex: pageIndex, multiStore: valueType?.value, name: value});
+          setPullDown(false);
         }}
         data={merchantList}
         renderItem={({item}) => <Card update={() => getData({pageIndex: 1})} merchant={item} key={item.id} style={globalStyles.moduleMarginTop} />}

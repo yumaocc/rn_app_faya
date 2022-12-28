@@ -1,5 +1,10 @@
 {
-  "cSpell.words": ["Cascader", "SPUF"],
+  "cSpell.words": [
+    "Cascader",
+    "nums",
+    "skus",
+    "SPUF"
+  ],
   "typescript.tsdk": "node_modules/typescript/lib",
   "editor.formatOnSave": true,
   "editor.formatOnSaveMode": "modifications",

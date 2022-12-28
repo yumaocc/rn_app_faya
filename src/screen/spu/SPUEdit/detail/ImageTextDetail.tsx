@@ -5,7 +5,7 @@ import {Form, FormTitle, SectionGroup, Footer} from '../../../../component';
 import {styles} from '../style';
 import Upload from '../../../../component/Form/Upload';
 import {globalStyles} from '../../../../constants/styles';
-import {Controller} from 'react-hook-form';
+import {Controller, FieldErrorsImpl} from 'react-hook-form';
 import {Control, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
 
 interface ImageTextDetailProps {
@@ -14,13 +14,11 @@ interface ImageTextDetailProps {
   setValue?: UseFormSetValue<any>;
   getValues?: UseFormGetValues<any>;
   watch?: UseFormWatch<any>;
+  error?: Partial<FieldErrorsImpl<any>>;
 }
 
 const ImageTextDetail: React.FC<ImageTextDetailProps> = ({onNext, control}) => {
-  const form = Form.useFormInstance();
-
   function onCheck() {
-    console.log(form.getFieldsValue());
     onNext && onNext();
   }
   return (
@@ -55,7 +53,7 @@ const ImageTextDetail: React.FC<ImageTextDetailProps> = ({onNext, control}) => {
       <Footer />
       <View style={styles.button}>
         <Button type="primary" onPress={onCheck}>
-          下一步
+          提交
         </Button>
       </View>
     </ScrollView>

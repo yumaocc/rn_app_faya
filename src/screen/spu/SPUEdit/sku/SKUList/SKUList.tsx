@@ -1,42 +1,51 @@
 import React, {useEffect, useState} from 'react';
+import {useRequest} from 'ahooks';
 import {View, Text, StyleSheet} from 'react-native';
 import {useSelector} from 'react-redux';
 import {Stepper, SwipeAction} from '@ant-design/react-native';
 
 import {Checkbox, Form, FormTitle, Input, Modal, PlusButton, SectionGroup, SelfText} from '../../../../../component';
 import {globalStyles, globalStyleVariables} from '../../../../../constants/styles';
-import {getBuyLimitStr} from '../../../../../helper';
-import {PackagedSKU} from '../../../../../models';
+import {findItem, getBuyLimitStr} from '../../../../../helper';
+import {PackagedSKU, SaleParams, SPUForm} from '../../../../../models';
 import {RootState} from '../../../../../redux/reducers';
+import {ErrorMessage} from '@hookform/error-message';
 import {styles} from '../../style';
 import List from './List';
-import {Control, UseFormGetValues, UseFormSetValue, UseFormWatch, Controller, useFieldArray, useForm} from 'react-hook-form';
+import * as apis from '../../../../../apis';
+import {Control, UseFormGetValues, UseFormSetValue, UseFormWatch, Controller, useFieldArray, useForm, FieldErrorsImpl, UseFormSetError} from 'react-hook-form';
 
 interface SKUListProps {
   control?: Control<any, any>;
   setValue?: UseFormSetValue<any>;
   getValues?: UseFormGetValues<any>;
   watch?: UseFormWatch<any>;
+  errors?: Partial<FieldErrorsImpl<SPUForm>>;
+  setError?: UseFormSetError<any>;
 }
 
 interface PackListProps {
   value: PackagedSKU[];
 }
-const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues}) => {
-  const {fields} = useFieldArray({
-    control: control,
-    name: 'skuList',
-  });
+const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, setError}) => {
+  const [isShowPackageModal, setIsShowPackageModal] = useState(false);
   const spuDetail = useSelector((state: RootState) => state.sku.currentSPU);
+  const skuInfo = useSelector((state: RootState) => state.contract.currentContract?.skuInfoReq?.skuInfo);
+  const contractDetail = useSelector((state: RootState) => state.contract.currentContract);
   const packListForm = useForm();
+
   const packArray = useFieldArray({
     control: packListForm.control,
     name: 'sku',
   });
-  const skuInfo = useSelector((state: RootState) => state.contract.currentContract?.skuInfoReq?.skuInfo);
-  const [isShowPackageModal, setIsShowPackageModal] = useState(false);
+  const {fields} = useFieldArray({
+    control: control,
+    name: 'skuList',
+  });
 
-  const contractDetail = useSelector((state: RootState) => state.contract.currentContract);
+  const {runAsync} = useRequest(async (price: SaleParams) => {
+    return apis.sku.getSalePrice(price);
+  });
 
   useEffect(() => {
     if (isShowPackageModal) {
@@ -54,17 +63,16 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues}) => {
 
   function deletePack(index: number) {
     const {packageList = []} = getValues();
-    const newPackageList = packageList.filter((_, idx: number) => index !== idx);
+    const newPackageList = packageList.filter((_: any, idx: number) => index !== idx);
     setValue('packageList', newPackageList);
   }
 
   async function onSubmitPack() {
     const res = packListForm.getValues();
-
     const skus: any = [];
     res.skus.forEach((item: any, index: number) => {
-      if (item._selected) {
-        skus.push({skuId: res.sku[index].contractSkuId, nums: item.nums});
+      if (item?._selected) {
+        skus.push({contractSkuId: res.sku[index].contractSkuId, nums: item.nums});
       }
     });
     const formData = {
@@ -72,6 +80,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues}) => {
       packageName: res.packageName,
       skus: skus,
     };
+    console.log(formData);
 
     const {packageList = []} = getValues();
     setValue('packageList', [...packageList, formData]);
@@ -79,7 +88,6 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues}) => {
   }
 
   const editPackList = (index: number, item: PackagedSKU) => {
-    console.log(index, item);
     setIsShowPackageModal(true);
     const sku = item.skus.map(item => ({...item, _selected: true}));
     packListForm.setValue('packageName', item.packageName);
@@ -93,7 +101,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues}) => {
     return (
       <>
         {value?.map((item, index) => (
-          <SectionGroup key={index} style={styles.sectionGroupStyle}>
+          <SectionGroup key={item.id} style={styles.sectionGroupStyle}>
             <FormTitle title={`组合套餐${index + 1}`} />
             <SwipeAction
               right={[
@@ -115,10 +123,16 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues}) => {
                   <Text style={globalStyles.fontSecondary}>名称：{item.packageName}</Text>
                 </View>
                 <View style={{margin: globalStyleVariables.MODULE_SPACE}}>
-                  {item?.skus?.map((sku, index) => {
+                  {item?.skus?.map(sku => {
+                    let skuItem;
+                    if (spuDetail) {
+                      skuItem = findItem(spuDetail?.skuList, item => item.skuId === sku.skuId);
+                    } else {
+                      skuItem = findItem(contractDetail?.skuInfoReq?.skuInfo, item => item.contractSkuId === sku.contractSkuId);
+                    }
                     return (
-                      <View key={index}>
-                        <Text style={globalStyles.fontTertiary}>{`${sku?.skuName} * ${sku.nums}`}</Text>
+                      <View key={sku.skuId}>
+                        <Text style={globalStyles.fontTertiary}>{`${skuItem?.skuName} * ${sku.nums}`}</Text>
                       </View>
                     );
                   })}
@@ -146,30 +160,46 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues}) => {
                 </Form.Item>
               )}
             />
-            <Controller
-              name={`skuList.${index}.skuStock`}
-              control={control}
-              render={({field: {value}}) => (
-                <Form.Item label="套餐结算价（元）">
-                  <SelfText value={value + '元'} />
-                </Form.Item>
-              )}
-            />
+
+            <Form.Item label="套餐结算价（元）">
+              <SelfText value={contractDetail?.skuInfoReq?.skuInfo[index]?.skuSettlementPrice} />
+            </Form.Item>
+
             <Controller
               name={`skuList.[${index}].originPrice`}
               control={control}
+              rules={{required: '请输入套餐门市价'}}
               render={({field: {value, onChange}}) => (
                 <Form.Item label="套餐门市价（元）">
                   <Input placeholder="请输入套餐原价" type="number" value={value} onChange={onChange} />
+                  <Text style={globalStyles.error}>
+                    <ErrorMessage name={`skuList.[${index}].originPrice`} errors={errors} />
+                  </Text>
                 </Form.Item>
               )}
             />
             <Controller
               name={`skuList.[${index}].salePrice`}
               control={control}
+              rules={{
+                validate: async e => {
+                  const settlePrice = contractDetail?.skuInfoReq?.skuInfo[index]?.skuSettlementPrice;
+                  const res = await runAsync({
+                    settlePrice,
+                    salePrice: e,
+                  });
+                  if (value < Number(res?.minSalePriceYuan)) {
+                    const message = `套餐价格不能低于${res?.minSalePriceYuan} `;
+                    setError({});
+                  }
+                },
+              }}
               render={({field: {value, onChange}}) => (
                 <Form.Item label="套餐售价（元）">
                   <Input placeholder="请输入套餐售价" type="number" value={value} onChange={onChange} />
+                  <Text style={globalStyles.error}>
+                    <ErrorMessage name={`skuList.[${index}].salePrice`} errors={errors} />
+                  </Text>
                 </Form.Item>
               )}
             />
@@ -193,7 +223,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues}) => {
                 </Form.Item>
               )}
             />
-            {!!contractDetail?.skuInfoReq?.openSkuStock && (
+            {!!contractDetail?.skuInfoReq?.openSkuStock ? (
               <Controller
                 name={`skuList.[${index}].skuStock`}
                 control={control}
@@ -203,9 +233,13 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues}) => {
                   </Form.Item>
                 )}
               />
+            ) : (
+              <Form.Item label="套餐库存">
+                <Text>共享库存</Text>
+              </Form.Item>
             )}
             <Form.Item label="购买上限">
-              <SelfText value={getBuyLimitStr(contractDetail?.skuInfoReq?.skuInfo[index].buyLimitType, contractDetail?.skuInfoReq?.skuInfo[index].buyLimitType)} />
+              <SelfText value={getBuyLimitStr(contractDetail?.skuInfoReq?.skuInfo[index]?.buyLimitType, contractDetail?.skuInfoReq?.skuInfo[index]?.buyLimitType)} />
             </Form.Item>
 
             <List control={control} next={index} />
@@ -219,10 +253,11 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues}) => {
         <PlusButton style={[globalStyles.containerCenter]} onPress={() => setIsShowPackageModal(true)} title="组合现有套餐" />
       </SectionGroup>
 
-      <Modal title="组合套餐" visible={isShowPackageModal} onOk={onSubmitPack} onClose={() => setIsShowPackageModal(false)}>
+      <Modal title="组合套餐" visible={isShowPackageModal} onOk={packListForm.handleSubmit(onSubmitPack)} onClose={() => setIsShowPackageModal(false)}>
         <Controller
           control={packListForm.control}
           name="packageName"
+          rules={{required: true}}
           render={({field: {value, onChange}}) => (
             <Form.Item label="组合套餐名称" vertical>
               <Input
@@ -232,6 +267,9 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues}) => {
                 styles={{container: {height: 40, paddingHorizontal: 15, margin: 0, borderRadius: 5, backgroundColor: '#0000000D'}}}
                 placeholder="请输入组合套餐名称"
               />
+              {packListForm.formState.errors.packageName && (
+                <Text style={[globalStyles.error, globalStyles.moduleMarginLeft, globalStyles.moduleMarginTop]}>请输入组合套餐名称</Text>
+              )}
             </Form.Item>
           )}
         />
@@ -244,6 +282,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues}) => {
                 <View key={item.id} style={[{marginBottom: 10}]}>
                   <Controller
                     name={`skus[${index}]._selected`}
+                    rules={{required: true}}
                     control={packListForm.control}
                     render={({field: {value, onChange}}) => (
                       <Form.Item noStyle>

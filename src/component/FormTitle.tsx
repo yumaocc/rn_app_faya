@@ -30,7 +30,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    backgroundColor: '#fff',
     height: 30,
   },
   bar: {

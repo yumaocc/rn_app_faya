@@ -1,5 +1,4 @@
 import moment from 'moment';
-import {Moment} from 'moment';
 import React, {FC, useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import {formatMoment} from '../../../helper';
@@ -25,10 +24,10 @@ const CommodityList: FC<CommodityListProps> = ({unit, title}) => {
   const [summaryDispatcher] = useSummaryDispatcher();
 
   useEffect(() => {
-    const start: Moment = moment().startOf(valueType.value);
-    const end: Moment = moment().endOf(valueType.value);
+    const start = moment().startOf(valueType.value);
+    const end = moment().endOf(valueType.value);
     summaryDispatcher.loadSalesTop([formatMoment(start), formatMoment(end)]);
-  }, [summaryDispatcher, valueType]);
+  }, [summaryDispatcher, valueType.value]);
 
   function handleChangeFilter(e: Picker) {
     setValueType(e);

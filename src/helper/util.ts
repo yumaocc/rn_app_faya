@@ -89,7 +89,7 @@ export function flattenTree<T>(tree: any[], childrenKey: string = 'children'): T
 // 格式化商家发送请求的数据
 export function formattingMerchantRequest(data: FormMerchant, type: MerchantCreateType) {
   const {avatar, businessLicense} = data;
-  const newData: MerchantForm = {...data, avatar: avatar[0].url, businessLicense: businessLicense[0].url, type, locationWithCompanyId: 19};
+  const newData: MerchantForm = {...data, avatar: avatar[0].url, businessLicense: businessLicense[0].url, type};
   return newData;
 }
 
@@ -148,7 +148,6 @@ export function cleanSPUForm(formData: any) {
   form.saleBeginTime = formatMoment(form?.saleBeginTime);
   form.saleEndTime = formatMoment(form?.saleEndTime);
   form.showBeginTime = formatMoment(form?.showBeginTime);
-  form.canUseShopIds = form?.canUseShopIds?.map((item: ShopForm) => item.id);
   form.poster = formData?.poster[0]?.url;
   delete form.spuStock;
   form.skuList.forEach((_, index: number) => {
@@ -163,12 +162,15 @@ export function cleanSPUForm(formData: any) {
   });
   form?.packageList?.forEach((item: any) => {
     item?.skus?.forEach((item: any) => {
+      delete item.skuId;
       delete item._selected;
       delete item._skuName;
       delete item.skuSettlementPrice;
     });
   });
-  form.bannerPhotos = form?.bannerPhotos?.map((item: any) => ({url: item.url, id: item.id}));
+
+  form.bannerPhotos = form?.bannerPhotos?.map((item: any) => ({url: item.url}));
+  form.spuHtml = '';
   return form;
 }
 
@@ -180,7 +182,6 @@ export const cleanNotice = (value: SKUBuyNoticeF[]) => {
     POLICY: [],
     TIPS: [],
   };
-  console.log('原始数据', value);
   value?.forEach(item => {
     switch (item.type) {
       case 'BOOKING':

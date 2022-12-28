@@ -1,6 +1,6 @@
 import {get, getPaged, post} from './helper';
 import qs from 'qs';
-import {PagedData, SearchParam, SKUBuyNoticeF, SPUF, SPUCategory, SPUCodeType, SPUForm, SPUDetailF, BeginTimeAndEndTime, SalesList} from '../models';
+import {PagedData, SearchParam, SKUBuyNoticeF, SPUF, SPUCategory, SPUCodeType, SPUForm, SPUDetailF, BeginTimeAndEndTime, SalesList, SaleParams, SaleType} from '../models';
 // import {wait} from '../helper';
 
 // 获取spu分类
@@ -93,4 +93,11 @@ export async function getMerchandiseTopTen(params?: BeginTimeAndEndTime): Promis
 //获取提成前十
 export async function getPushMoneyTopTen(params?: BeginTimeAndEndTime): Promise<{content: SalesList[]}> {
   return await get(`sku/commission/top/ten/income?${qs.stringify(params)}`);
+}
+
+//获取销售佣金
+// salePrice : 套餐售价
+//settlePrice： 门售价
+export async function getSalePrice(price: SaleParams): Promise<SaleType> {
+  return await post<SaleType, SaleParams>('/spu/find/commission/by/price', price);
 }

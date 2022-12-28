@@ -96,10 +96,7 @@ export interface FormMerchant {
   shopList?: ShopForm[]; // 店铺列表
   areaInfo: number[]; //地区
   id?: number;
-  locationWithCompanyId?: number[]; //站点
-  test?: {
-    name: string;
-  };
+  locationWithCompanyId?: number; //站点
 }
 // MerchantForm的枚举类型
 export type MerchantFormEnum = keyof FormMerchant;

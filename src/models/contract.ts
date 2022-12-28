@@ -419,7 +419,7 @@ export interface SkuInfoReqF {
 export interface SkuInfoF {
   buyLimitNum?: number;
   buyLimitType?: number;
-  contractSkuId?: number[];
+  contractSkuId?: number;
   skuDetails: SkuDetails[];
   skuName: string;
   skuSettlementPrice: string;

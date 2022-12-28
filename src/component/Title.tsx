@@ -1,8 +1,10 @@
 // 带有眼镜的那种title组件
-import {Icon} from '@ant-design/react-native';
+import {Icon as AntdIcon} from '@ant-design/react-native';
 import React, {FC, useState} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {globalStyles} from '../constants/styles';
+import Icon from './Form/Icon';
 import UnitNumber from './UnitNumber';
 interface TitleProps {
   title: string;
@@ -25,11 +27,10 @@ const Title: FC<TitleProps> = ({title, value, arrow, unit, handleClick, type}) =
           <View style={styles.left}>
             <Text style={{fontSize: 15}}>{title}</Text>
             <TouchableOpacity onPress={clickEye}>
-              <Icon name="eye" style={{marginLeft: 10}} />
+              <Icon name={eyeIsShow ? 'closeEye' : 'eye'} size={20} style={globalStyles.moduleMarginLeft} />
             </TouchableOpacity>
           </View>
-
-          <View>{arrow && <Icon name="right" />}</View>
+          <View>{arrow && <AntdIcon name="right" />}</View>
         </View>
         <UnitNumber value={value} unit={unit} type={type} desensitization={eyeIsShow} />
       </TouchableOpacity>
@@ -52,5 +53,8 @@ export const styles = StyleSheet.create({
   left: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  fontSize: {
+    fontSize: 12,
   },
 });
