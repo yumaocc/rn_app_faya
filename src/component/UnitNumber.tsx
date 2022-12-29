@@ -22,7 +22,6 @@ const UnitNumber: React.FC<UnitNumberProps> = props => {
     valueStr = String(value);
   }
   if (typeof value === 'string') {
-    console.warn();
     valueStr = value;
   }
   return (

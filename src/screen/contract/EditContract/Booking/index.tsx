@@ -1,15 +1,18 @@
 import {Button} from '@ant-design/react-native';
 import React, {FC} from 'react';
-import {Control, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
-import {View} from 'react-native';
+import _ from 'lodash';
+import {Control, FieldErrorsImpl, UseFormGetValues, UseFormHandleSubmit, UseFormSetValue, UseFormWatch} from 'react-hook-form';
+import {View, Text} from 'react-native';
 import {DatePicker, Form, FormTitle, Input, SectionGroup, Select} from '../../../../component';
 import {cleanContractForm} from '../../../../helper';
 import {useCodeTypes, useCommonDispatcher} from '../../../../helper/hooks';
 import {formattingCodeType} from '../../../../helper/util';
 import {BookingType, BoolEnum, Contract, ContractAction, ContractStatus, FormControlC} from '../../../../models';
+import {ErrorMessage} from '@hookform/error-message';
 import * as api from '../../../../apis';
 import {styles} from './style';
 import {useNavigation} from '@react-navigation/native';
+import {globalStyles} from '../../../../constants/styles';
 
 interface BookingProps {
   onNext: () => void;
@@ -19,17 +22,19 @@ interface BookingProps {
   getValues: UseFormGetValues<Contract>;
   watch: UseFormWatch<Contract>;
   action: ContractAction;
+  errors: Partial<FieldErrorsImpl<any>>;
   status: ContractStatus;
+  handleSubmit: UseFormHandleSubmit<any>;
 }
 
-const Booking: FC<BookingProps> = ({Controller, control, watch, getValues, action, status}) => {
+const Booking: FC<BookingProps> = ({Controller, control, watch, getValues, action, status, handleSubmit, errors}) => {
   const bookingType = watch('bookingReq.bookingType');
   const bookingCanCancel = watch('bookingReq.bookingCanCancel');
   const [commonDispatcher] = useCommonDispatcher();
   const navigation = useNavigation();
   const [codeTypes] = useCodeTypes();
 
-  const handleSubmit = async () => {
+  const submit = async () => {
     try {
       const form = getValues();
       const formData = cleanContractForm(form);
@@ -45,6 +50,24 @@ const Booking: FC<BookingProps> = ({Controller, control, watch, getValues, actio
       commonDispatcher.error(error || '哎呀，出错了~');
     }
   };
+
+  const getError = (value: any) => {
+    console.log(value);
+
+    const res = _.flatMap(value, e =>
+      e?.message ? e : _.flatMap(e, item => (item?.message ? item : _.flatMap(item, element => (element?.message ? element : _.flatMap(element, e => e))))),
+    );
+    commonDispatcher.info(res[0]?.message || '哎呀，出错了~');
+  };
+
+  const onHandleSubmit = async () => {
+    try {
+      const func = handleSubmit(submit, getError);
+      await func();
+    } catch (error) {
+      commonDispatcher.error(error);
+    }
+  };
   return (
     <>
       <SectionGroup style={styles.sectionGroup}>
@@ -52,19 +75,27 @@ const Booking: FC<BookingProps> = ({Controller, control, watch, getValues, actio
         <View style={[styles.composeItemWrapper]}>
           <Controller
             control={control}
+            rules={{required: '请选择售卖开始时间'}}
             name="bookingReq.saleBeginTime"
             render={({field: {value, onChange}}) => (
-              <Form.Item label="开始时间" style={styles.composeItem} hiddenBorderBottom hiddenBorderTop>
+              <Form.Item label="售卖开始时间" style={styles.composeItem} hiddenBorderBottom hiddenBorderTop>
                 <DatePicker mode="datetime" value={value} onChange={onChange} />
+                <Text style={globalStyles.error}>
+                  <ErrorMessage name={'bookingReq.saleBeginTime'} errors={errors} />
+                </Text>
               </Form.Item>
             )}
           />
           <Controller
             control={control}
+            rules={{required: '请选择售卖结束时间'}}
             name="bookingReq.saleEndTime"
             render={({field: {value, onChange}}) => (
-              <Form.Item label="结束时间" style={styles.composeItem} hiddenBorderBottom>
+              <Form.Item label="售卖结束时间" style={styles.composeItem} hiddenBorderBottom>
                 <DatePicker mode="datetime" value={value} onChange={onChange} />
+                <Text style={globalStyles.error}>
+                  <ErrorMessage name={'bookingReq.saleEndTime'} errors={errors} />
+                </Text>
               </Form.Item>
             )}
           />
@@ -185,7 +216,7 @@ const Booking: FC<BookingProps> = ({Controller, control, watch, getValues, actio
         />
       </SectionGroup>
       {status === ContractStatus.SignSuccess ? null : (
-        <Button style={{margin: 10}} type="primary" onPress={handleSubmit}>
+        <Button style={{margin: 10}} type="primary" onPress={onHandleSubmit}>
           立即发起签约
         </Button>
       )}

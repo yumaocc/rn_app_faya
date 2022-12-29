@@ -1,6 +1,7 @@
 import React, {useMemo} from 'react';
 import {View, Text, ScrollView} from 'react-native';
 import {Cascader, Footer, Form, FormTitle, SectionGroup} from '../../../component';
+import {globalStyleVariables} from '../../../constants/styles';
 import {findItem} from '../../../helper';
 import {useSPUCategories} from '../../../helper/hooks';
 import {ContractDetailF, MerchantDetailF, SPUDetailF} from '../../../models';
@@ -14,7 +15,7 @@ interface BaseProps {
 
 const Base: React.FC<BaseProps> = props => {
   const {spuDetail, merchantDetail, contractDetail} = props;
-
+  console.log(spuDetail);
   const [SPUCategories] = useSPUCategories();
 
   const canUseShopList = useMemo(() => {
@@ -34,11 +35,11 @@ const Base: React.FC<BaseProps> = props => {
         </Form.Item>
         <Form.Item label="可消费店铺" vertical>
           <View style={{backgroundColor: '#f2f2f2', borderRadius: 5}}>
-            <Text>{`共${spuDetail?.canUseShopIds?.length || 0}家`}</Text>
+            <Text style={{padding: globalStyleVariables.MODULE_SPACE}}>{`共${spuDetail?.canUseShopIds?.length || 0}家`}</Text>
             <View>
               {canUseShopList.map(shop => {
                 return (
-                  <View key={shop.id}>
+                  <View key={shop.id} style={[{padding: globalStyleVariables.MODULE_SPACE}]}>
                     <Text>{shop.shopName}</Text>
                   </View>
                 );

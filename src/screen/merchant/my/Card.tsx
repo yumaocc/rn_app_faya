@@ -88,7 +88,19 @@ const Card: React.FC<CardProps> = props => {
             flexDirection: 'row',
             justifyContent: 'space-around',
           }}>
-          <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('MyMerchantDetail')}>
+          <TouchableOpacity
+            activeOpacity={0.5}
+            onPress={() => {
+              navigation.navigate({
+                name: 'MyMerchantDetail',
+                params: {
+                  id: merchant.id,
+                  name: merchant.name,
+                  status: merchant.status,
+                  from: 'module',
+                },
+              });
+            }}>
             <Text style={styles.button}>型号管理</Text>
           </TouchableOpacity>
           <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('AddSPU')}>

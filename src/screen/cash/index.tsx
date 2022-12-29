@@ -17,7 +17,6 @@ import SalesTop from './rank/SalesTop';
 import {SvgUri} from 'react-native-svg';
 import Icon from '../../component/Form/Icon';
 import {icons} from '../../assets/icon';
-import {Button} from '@ant-design/react-native';
 
 const Cash: FC = () => {
   const navigation = useNavigation() as FakeNavigation;
@@ -41,11 +40,11 @@ const Cash: FC = () => {
       <SafeAreaView style={globalStyles.wrapper} edges={['bottom']}>
         <NavigationBar title="我的金库" />
         <ScrollView>
-          <Button onPress={() => navigation.navigate('Tab')}>dianji</Button>
+          {/* <Button onPress={() => navigation.navigate('Tab')}>dianji</Button> */}
           <SvgUri uri={icons.success} height={100} width={100} fill="#00000" />
           <View style={styles.wrapper}>
             <View style={styles.content}>
-              <Button onPress={() => navigation.navigate('IconTest')}>选择icon：：：测试按钮</Button>
+              {/* <Button onPress={() => navigation.navigate('IconTest')}>选择icon：：：测试按钮</Button> */}
               <Title title="余额" unit="元" type={'money'} value={Number(wallet?.balanceYuan)} arrow handleClick={() => console.log(111)} />
               <CutOffRule />
               <View style={styles.contentOneBtn}>

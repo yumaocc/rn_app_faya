@@ -9,12 +9,11 @@ import {useForm, Controller} from 'react-hook-form';
 import Base from './Base';
 import SKU from './SKU';
 import Booking from './Booking';
-import {BookingType, BoolEnum, Contract, ContractAction, ContractDetailEnum, ContractF, ContractStatus} from '../../../models';
+import {BookingType, BoolEnum, ContractAction, ContractDetailEnum, ContractF, ContractStatus} from '../../../models';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/reducers';
 import {COMPANY_NAME} from '../../../constants';
 import {generateContractFormPatch} from '../../../helper';
-// import {ContractDetailEnum} from '../../../models';
 
 const steps = [
   {title: '基础信息', key: 'base'},
@@ -51,7 +50,14 @@ const EditSPU: React.FC = () => {
   const {width: windowWidth} = useWindowDimensions();
   const [commonDispatcher] = useCommonDispatcher();
   const [ref, setRef, isReady] = useRefCallback<ScrollView>();
-  const {control, getValues, setValue, watch} = useForm<Contract>({
+  const {
+    control,
+    getValues,
+    setValue,
+    watch,
+    handleSubmit,
+    formState: {errors},
+  } = useForm<any>({
     defaultValues,
   });
 
@@ -116,12 +122,21 @@ const EditSPU: React.FC = () => {
         <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
           <View style={[{width: windowWidth, padding: globalStyleVariables.MODULE_SPACE}]}>
             <ScrollView>
-              <Base watch={watch} setValue={setValue} getValues={getValues} control={control} Controller={Controller} onNext={() => setCurrentKey('sku')} />
+              <Base errors={errors} watch={watch} setValue={setValue} getValues={getValues} control={control} Controller={Controller} onNext={() => setCurrentKey('sku')} />
             </ScrollView>
           </View>
           <View style={{width: windowWidth}}>
             <ScrollView>
-              <SKU watch={watch} action={action} setValue={setValue} getValues={getValues} control={control} onNext={() => setCurrentKey('booking')} />
+              <SKU
+                handleSubmit={handleSubmit}
+                errors={errors}
+                watch={watch}
+                action={action}
+                setValue={setValue}
+                getValues={getValues}
+                control={control}
+                onNext={() => setCurrentKey('booking')}
+              />
             </ScrollView>
           </View>
           <View style={{width: windowWidth}}>
@@ -133,6 +148,8 @@ const EditSPU: React.FC = () => {
                 getValues={getValues}
                 control={control}
                 Controller={Controller}
+                handleSubmit={handleSubmit}
+                errors={errors}
                 onNext={() => setCurrentKey('detail')}
                 status={status}
               />

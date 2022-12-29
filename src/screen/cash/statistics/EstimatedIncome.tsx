@@ -181,6 +181,11 @@ const EstimatedIncome: React.FC = () => {
                 </View>
               </>
             )}
+            ListFooterComponent={
+              <View style={[globalStyles.containerCenter, {flex: 1, marginTop: globalStyleVariables.MODULE_SPACE, marginBottom: globalStyleVariables.MODULE_SPACE}]}>
+                <Text style={[globalStyles.fontTertiary, {textAlign: 'center'}]}>已经到底</Text>
+              </View>
+            }
             keyExtractor={item => ' ' + item?.spuId}
             onEndReached={() => pullUp()}
           />

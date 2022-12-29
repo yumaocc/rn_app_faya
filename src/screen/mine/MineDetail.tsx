@@ -16,7 +16,7 @@ const MineDetail: FC = () => {
     let newIdN0 = '';
     for (let i = 0; i < idNo.length; i++) {
       const element = idNo[i];
-      if ((i = 0)) {
+      if (i === 0) {
         newIdN0 += element;
       } else {
         newIdN0 += '*';
@@ -26,34 +26,36 @@ const MineDetail: FC = () => {
   };
   return (
     <>
-      <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}} edges={['bottom']}>
+      <SafeAreaView style={{flex: 1, backgroundColor: '#f4f4f4'}} edges={['bottom']}>
         <NavigationBar title="个人资料" />
-        <View style={[globalStyles.containerLR, {padding: globalStyleVariables.MODULE_SPACE, height: 60}, globalStyles.borderTop]}>
+        <View style={[globalStyles.containerLR, {padding: globalStyleVariables.MODULE_SPACE, height: 60, backgroundColor: '#fff'}, globalStyles.borderTop]}>
           <Text style={globalStyles.fontPrimary}>姓名</Text>
           <Text style={globalStyles.fontPrimary}>{user?.name}</Text>
         </View>
-        <View style={[globalStyles.containerLR, {padding: globalStyleVariables.MODULE_SPACE}, globalStyles.borderTop]}>
+        <View style={[globalStyles.containerLR, {padding: globalStyleVariables.MODULE_SPACE, backgroundColor: '#fff'}, globalStyles.borderTop]}>
           <Text style={globalStyles.fontPrimary}>头像</Text>
           <View style={styles.avatarWrapper}>
             <Image source={{uri: user?.avatar || 'https://fakeimg.pl/100?text=USER'}} style={{height: 60, width: 60}} />
           </View>
         </View>
         {user.status === UserState.CERTIFIED && (
-          <View style={[globalStyles.containerCenter, globalStyles.moduleMarginTop, {padding: 20}]}>
+          <View style={[globalStyles.containerCenter, globalStyles.moduleMarginTop, {padding: 20, backgroundColor: '#fff'}]}>
             <View style={[globalStyles.containerCenter, globalStyles.moduleMarginTop, globalStyles.borderBottom]}>
               <Icon name="FYLM_all_feedback_true" color="#546DAD" size={100} />
-              <Text style={[globalStyles.fontPrimary, globalStyles.moduleMarginTop]}>已实名认证</Text>
+              <Text style={[globalStyles.fontPrimary, globalStyles.moduleMarginTop]}>实名认证已完成</Text>
             </View>
           </View>
         )}
-        <View style={[globalStyles.containerCenter]}>
-          <View style={[globalStyles.containerCenter, globalStyles.moduleMarginTop, globalStyles.borderBottom, {paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
+        <View style={[globalStyles.containerCenter, {paddingLeft: 60, paddingRight: 60, backgroundColor: '#fff'}]}>
+          <View style={[{width: '100%', height: 120}, globalStyles.borderTop, globalStyles.containerCenter]}>
             <Text style={[globalStyles.fontTertiary]}>真实姓名： {user.name}</Text>
-            <Text style={[globalStyles.fontTertiary]}>身份证号 {idCardNoStr(user.idCard)}</Text>
+            <Text style={[globalStyles.fontTertiary, globalStyles.moduleMarginTop]}>身份证号 {idCardNoStr(user.idCard)}</Text>
           </View>
         </View>
-        <View style={[globalStyles.containerCenter, {marginTop: 20}]}>
-          <Text style={globalStyles.fontTertiary}>实名信息认证后不可修改</Text>
+        <View style={[globalStyles.containerCenter, {paddingLeft: 60, paddingRight: 60, backgroundColor: '#fff'}]}>
+          <View style={[globalStyles.borderTop, {height: 120}, globalStyles.containerCenter]}>
+            <Text style={[globalStyles.fontTertiary, {paddingTop: globalStyleVariables.MODULE_SPACE}, globalStyles.borderTop]}>实名信息认证后不可修改</Text>
+          </View>
         </View>
       </SafeAreaView>
     </>

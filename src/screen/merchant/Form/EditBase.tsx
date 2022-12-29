@@ -12,8 +12,10 @@ import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import EditShop from './EditShop';
 import {Control, useFieldArray} from 'react-hook-form';
 import {useSelector} from 'react-redux';
+import {ErrorMessage} from '@hookform/error-message';
 import {RootState} from '../../../redux/reducers';
 import {Icon} from '@ant-design/react-native';
+
 interface EditBaseProps {
   type: MerchantCreateType; //用户的身份，公海还是私海
   control: Control<FormMerchant, any>;
@@ -23,7 +25,7 @@ interface EditBaseProps {
   isHidden: boolean;
 }
 
-const EditBase: React.FC<EditBaseProps> = ({Controller, control, errors, setValue, isHidden}) => {
+const EditBase: React.FC<EditBaseProps> = ({Controller, control, setValue, isHidden, errors}) => {
   const {cityList} = useLoadCity();
   const [modalIsShow, setModalIsShow] = useState(false);
   const areaInfo = useSelector<RootState, number[]>(state => {
@@ -34,6 +36,7 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, control, errors, setValu
     control,
     name: 'shopList',
   });
+
   //商家类型
   const {data} = useRequest(async () => {
     const res = await api.merchant.getMerchantCategories();
@@ -63,7 +66,6 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, control, errors, setValu
         <Controller
           control={control}
           name="avatar"
-          rules={{required: true}}
           render={({field}) => (
             <Form.Item label="商家LOGO" horizontal desc="大于300px*300px jpg/png/gif">
               <Upload maxCount={1} value={field.value} onChange={field.onChange} />
@@ -73,25 +75,32 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, control, errors, setValu
         <Controller
           control={control}
           name="name"
-          rules={{required: true}}
+          rules={{required: '请输入商家名称'}}
           render={({field}) => (
             <Form.Item label="商家名称">
               <Input placeholder="请输入商家名称" value={field.value} onChange={field.onChange} />
+              <Text style={globalStyles.error}>
+                <ErrorMessage name={'name'} errors={errors} />
+              </Text>
             </Form.Item>
           )}
         />
 
-        {data?.length && (
-          <Controller
-            control={control}
-            name="categoryId"
-            render={({field}) => (
-              <Form.Item label="商家行业">
-                <Select options={data} value={field.value} onChange={field.onChange} />
-              </Form.Item>
-            )}
-          />
-        )}
+        {/* {data?.length && ( */}
+        <Controller
+          control={control}
+          name="categoryId"
+          rules={{required: '请选择商家行业'}}
+          render={({field}) => (
+            <Form.Item label="商家行业">
+              <Select options={data || []} value={field.value} onChange={field.onChange} />
+              <Text style={globalStyles.error}>
+                <ErrorMessage name={'categoryId'} errors={errors} />
+              </Text>
+            </Form.Item>
+          )}
+        />
+        {/* )} */}
 
         <Controller
           control={control}
@@ -128,38 +137,28 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, control, errors, setValu
             </Form.Item>
           )}
         />
-        {cityList?.length && (
-          <Controller
-            control={control}
-            name="areaInfo"
-            rules={{required: true}}
-            render={({field}) => (
-              <Form.Item label="商家城市">
-                <Cascader value={field.value} onChange={field.onChange} options={cityList} placeholder="请输入" />
-              </Form.Item>
-            )}
-          />
-        )}
-
-        {/* <Controller
+        {/* {cityList?.length && ( */}
+        <Controller
           control={control}
-          name="locationWithCompanyId"
-          rules={{required: true}}
+          name="areaInfo"
+          rules={{required: '请输入商家城市'}}
           render={({field}) => (
-            <Form.Item label="站点">
-              <Cascader options={cityList || []} placeholder="请输入" value={field.value} onChange={field.onChange} />
+            <Form.Item label="商家城市">
+              <Cascader value={field.value} onChange={field.onChange} options={cityList || []} placeholder="请输入" />
+              <Text style={globalStyles.error}>
+                <ErrorMessage name={'areaInfo'} errors={errors} />
+              </Text>
             </Form.Item>
           )}
-        /> */}
+        />
+        {/* )} */}
 
         <Controller
           control={control}
           name="address"
-          rules={{required: true, maxLength: 100}}
           render={({field}) => (
             <Form.Item label="商家地址">
-              <Input placeholder="请输入商家地址" onChange={field.onChange} value={field.value} onBlur={field.onBlur} />
-              {errors.address && <Text style={globalStyles.error}>请输入商家地址</Text>}
+              <Input placeholder="请输入商家地址" onChange={field.onChange} value={field.value} />
             </Form.Item>
           )}
         />

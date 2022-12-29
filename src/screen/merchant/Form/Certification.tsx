@@ -26,7 +26,7 @@ const Certification: React.FC<CertificationProps> = ({Controller, control, watch
           control={control}
           render={({field}) => (
             <Form.Item label="商家主体名称">
-              <Input placeholder="请输入" {...field} />
+              <Input placeholder="请输入" value={field.value} onChange={field.onChange} />
             </Form.Item>
           )}
         />
@@ -62,7 +62,7 @@ const Certification: React.FC<CertificationProps> = ({Controller, control, watch
           control={control}
           render={({field}) => (
             <Form.Item label={`${legalAuthType === MerchantAgentType.LEGAL ? '法人' : '经办人'}手机号`}>
-              <Input {...field} />
+              <Input value={field.value} onChange={field.onChange} />
             </Form.Item>
           )}
         />
@@ -71,7 +71,7 @@ const Certification: React.FC<CertificationProps> = ({Controller, control, watch
           control={control}
           render={({field}) => (
             <Form.Item label={`${legalAuthType === MerchantAgentType.LEGAL ? '法人' : '经办人'}姓名`}>
-              <Input {...field} />
+              <Input value={field.value} onChange={field.onChange} />
             </Form.Item>
           )}
         />
@@ -81,7 +81,7 @@ const Certification: React.FC<CertificationProps> = ({Controller, control, watch
           control={control}
           render={({field}) => (
             <Form.Item label={`${legalAuthType === MerchantAgentType.LEGAL ? '法人' : '经办人'}身份证`}>
-              <Input {...field} />
+              <Input value={field.value} onChange={field.onChange} />
             </Form.Item>
           )}
         />

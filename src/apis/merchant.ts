@@ -45,6 +45,7 @@ export async function getMerchantCategories(): Promise<MerchantCategory[]> {
 
 // 创建商户
 export async function createMerchant(merchant: MerchantForm): Promise<boolean> {
+  console.log('创建商户请求参数', merchant);
   return await post<boolean, MerchantForm>('/biz/user/add/one', merchant);
 }
 

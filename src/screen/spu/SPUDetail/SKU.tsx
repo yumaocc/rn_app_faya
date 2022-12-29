@@ -50,27 +50,29 @@ const SKU: React.FC<SKUProps> = props => {
             <Form.Item label="购买上限">
               <Text>{getBuyLimitStr(contractSKU?.buyLimitType, contractSKU?.buyLimitNum)}</Text>
             </Form.Item>
-            <Form.Item
-              label="套餐库存"
-              extra={
-                sku?.list?.length > 0 ? (
-                  <View style={[{borderRadius: 5, backgroundColor: '#00000008', padding: 10}]}>
-                    <FormTitle style={{backgroundColor: 'transparent'}} title={`套餐${index + 1}内容`} />
-                    {sku?.list?.map((detail, index) => {
-                      return (
-                        <View style={[globalStyles.containerLR, {paddingVertical: 4}]} key={index}>
-                          <Text>
-                            {detail.nums}份{detail.name}
-                          </Text>
-                          <Text>{detail.price}元</Text>
-                        </View>
-                      );
-                    })}
-                  </View>
-                ) : null
-              }>
-              <Text>{isShareStock ? '共享库存' : sku.skuStock || '-'}</Text>
-            </Form.Item>
+            {false && (
+              <Form.Item
+                label="套餐库存"
+                extra={
+                  sku?.list?.length > 0 ? (
+                    <View style={[{borderRadius: 5, backgroundColor: '#00000008', padding: 10}]}>
+                      <FormTitle style={{backgroundColor: 'transparent'}} title={`套餐${index + 1}内容`} />
+                      {sku?.list?.map((detail, index) => {
+                        return (
+                          <View style={[globalStyles.containerLR, {paddingVertical: 4}]} key={index}>
+                            <Text>
+                              {detail.nums}份{detail.name}
+                            </Text>
+                            <Text>{detail.price}元</Text>
+                          </View>
+                        );
+                      })}
+                    </View>
+                  ) : null
+                }>
+                <Text>{isShareStock ? '共享库存' : sku.skuStock || '-'}</Text>
+              </Form.Item>
+            )}
           </SectionGroup>
         );
       })}

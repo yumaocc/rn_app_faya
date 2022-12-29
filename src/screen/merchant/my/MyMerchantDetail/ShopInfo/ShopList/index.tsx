@@ -1,20 +1,19 @@
 import {useNavigation} from '@react-navigation/native';
 import React, {useEffect} from 'react';
 import {FC} from 'react';
-import {FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {useSelector} from 'react-redux';
 import {NavigationBar} from '../../../../../../component';
 import {globalStyles, globalStyleVariables} from '../../../../../../constants/styles';
-import {useMerchantDispatcher} from '../../../../../../helper/hooks';
+import {useMerchantDispatcher, useParams} from '../../../../../../helper/hooks';
 import {FakeNavigation, ShopForm} from '../../../../../../models';
 import {RootState} from '../../../../../../redux/reducers';
 
-interface ShopListProps {
-  id: number;
-}
-const ShopList: FC<ShopListProps> = ({id}) => {
+const ShopList: FC = () => {
   const [merchantDispatcher] = useMerchantDispatcher();
   const navigation = useNavigation() as FakeNavigation;
+  const {id} = useParams<{id: number}>();
   const shopList = useSelector<RootState, ShopForm[]>(state => state.merchant?.currentMerchant?.shopList);
   useEffect(() => {
     if (id) {
@@ -25,9 +24,10 @@ const ShopList: FC<ShopListProps> = ({id}) => {
       merchantDispatcher.exitMerchantPage();
     };
   }, [merchantDispatcher, id]);
+
   return (
     <>
-      <SafeAreaView style={[globalStyles.wrapper, {backgroundColor: '#f4f4f4'}]}>
+      <SafeAreaView style={[globalStyles.wrapper, {backgroundColor: '#f4f4f4'}]} edges={['bottom']}>
         <NavigationBar title="店铺管理" />
         <View style={[globalStyles.moduleMarginTop, globalStyles.moduleMarginLeft]}>
           <Text style={globalStyles.fontSize12}>共{shopList?.length || 0}家</Text>

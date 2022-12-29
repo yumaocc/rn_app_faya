@@ -1,6 +1,6 @@
 import moment, {Moment} from 'moment';
 import {DATE_TIME_FORMAT} from '../constants';
-import {Environment, DateTimeString, FormMerchant, MerchantForm, MerchantCreateType, UploadFile, SPUCategory, SPUCodeType, ShopForm, SKUBuyNoticeF, Notice} from '../models';
+import {Environment, DateTimeString, FormMerchant, MerchantForm, MerchantCreateType, UploadFile, SPUCategory, SPUCodeType, SKUBuyNoticeF, Notice, ContractF} from '../models';
 
 // 用来模拟异步操作
 export async function wait(ms: number) {
@@ -34,11 +34,14 @@ export function findItem<T>(list: T[], predicate: (item: T) => boolean): T | nul
 }
 
 // 格式化时间
-export function formatMoment(moment: Moment) {
-  if (!moment) {
+export function formatMoment(newMoment: Moment) {
+  if (!newMoment) {
     return null;
   }
-  return moment.format(DATE_TIME_FORMAT);
+  if (!moment(newMoment).isValid()) {
+    return null;
+  }
+  return newMoment.format(DATE_TIME_FORMAT);
 }
 
 export function momentFromDateTime(timeStr: DateTimeString) {
@@ -88,8 +91,15 @@ export function flattenTree<T>(tree: any[], childrenKey: string = 'children'): T
 
 // 格式化商家发送请求的数据
 export function formattingMerchantRequest(data: FormMerchant, type: MerchantCreateType) {
-  const {avatar, businessLicense} = data;
-  const newData: MerchantForm = {...data, avatar: avatar[0].url, businessLicense: businessLicense[0].url, type};
+  const {avatar, businessLicense, areaInfo} = data;
+  let avatarUrl = '';
+  let businessLicenseUrl = businessLicense?.length ? businessLicense[0].url : null;
+  if (avatar.length) {
+    avatarUrl = avatar[0].url;
+  } else {
+    return Promise.reject('图片正在上传中');
+  }
+  const newData: MerchantForm = {...data, avatar: avatarUrl, businessLicense: businessLicenseUrl, type, locationWithCompanyId: areaInfo[2]};
   return newData;
 }
 
@@ -143,21 +153,24 @@ export function formattingCodeType(data: SPUCodeType[]) {
 }
 
 //格式化新建商品的数据
-export function cleanSPUForm(formData: any) {
+export function cleanSPUForm(formData: any, contractDetail: ContractF) {
   const form = {...formData};
-  form.saleBeginTime = formatMoment(form?.saleBeginTime);
-  form.saleEndTime = formatMoment(form?.saleEndTime);
-  form.showBeginTime = formatMoment(form?.showBeginTime);
-  form.poster = formData?.poster[0]?.url;
+
+  form.saleBeginTime = formatMoment(formData?.saleBeginTime) || null;
+  form.saleEndTime = formatMoment(formData?.saleEndTime) || null;
+  form.showBeginTime = formatMoment(formData?.showBeginTime);
+  form.poster = formData?.poster?.length ? formData?.poster[0]?.url : null;
   delete form.spuStock;
-  form.skuList.forEach((_, index: number) => {
+  form.skuList.forEach((_: any, index: number) => {
     delete _.skuSettlementPrice;
-    form.skuList[index].list = form.skuList[index].skuDetails;
+    form.skuList[index].list = contractDetail.skuInfoReq.skuInfo[index].skuDetails;
     delete form.skuList[index].skuDetails;
   });
   form.skuList?.forEach((item: any) => {
     item.show = 1;
     delete item.buyLimitNum;
+    delete item?.maxPurchaseQuantity;
+    delete item?.minPurchaseQuantity;
     delete item.buyLimitType;
   });
   form?.packageList?.forEach((item: any) => {
@@ -169,6 +182,18 @@ export function cleanSPUForm(formData: any) {
     });
   });
 
+  if (!form?.packageList) {
+    form.packageList = [];
+  }
+  if (!form?.purchaseNoticeEntities) {
+    form.purchaseNoticeEntities = [];
+  }
+  if (!form?.modelList) {
+    form.modelList = [];
+  }
+  if (!form?.canUseShopIds) {
+    form.canUseShopIds = [];
+  }
   form.bannerPhotos = form?.bannerPhotos?.map((item: any) => ({url: item.url}));
   form.spuHtml = '';
   return form;

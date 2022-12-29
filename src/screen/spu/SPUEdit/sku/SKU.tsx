@@ -22,11 +22,10 @@ interface SKUProps {
   setError?: UseFormSetError<any>;
 }
 
-const SKU: React.FC<SKUProps> = ({onNext, control, setValue, getValues, watch, handleSubmit, errors, setError}) => {
+const SKU: React.FC<SKUProps> = ({onNext, control, setValue, getValues, watch, errors, setError}) => {
   const contractDetail = useSelector((state: RootState) => state.contract.currentContract);
 
   function onCheck() {
-    console.log('错误信息', errors);
     onNext && onNext();
   }
 
@@ -58,7 +57,7 @@ const SKU: React.FC<SKUProps> = ({onNext, control, setValue, getValues, watch, h
 
       <Footer />
       <View style={styles.button}>
-        <Button type="primary" onPress={handleSubmit(onCheck)}>
+        <Button type="primary" onPress={onCheck}>
           下一步
         </Button>
       </View>

@@ -16,6 +16,7 @@ import ImageTextDetail from './detail/ImageTextDetail';
 import {cleanSPUForm, momentFromDateTime} from '../../../helper/util';
 import {RootState} from '../../../redux/reducers';
 import * as api from '../../../apis';
+import _ from 'lodash';
 
 const steps = [
   {title: '基本信息', key: 'base'},
@@ -72,17 +73,11 @@ const EditSPU: React.FC = () => {
     contractDispatcher.loadCurrentContract(spuDetail.contractId);
     contractDispatcher.loadContractSearchList({id: spuDetail.bizUserId});
   }, [spuDetail, merchantDispatcher, contractDispatcher]);
-  useEffect(() => {
-    const keys = Object.keys(errors);
-    if (keys.length) {
-      commonDispatcher.error(errors[keys[0]]);
-    }
-  }, [commonDispatcher, errors]);
 
   useEffect(() => {
     if (!contractDetail) {
       return;
-    } else if (spuDetail) {
+    } else if (spuDetail && contractDetail) {
       setValue('skuList', spuDetail.skuList);
       setValue('baseSaleAmount', spuDetail.baseSaleAmount);
       setValue('baseShareCount', spuDetail.baseShareCount);
@@ -103,11 +98,11 @@ const EditSPU: React.FC = () => {
       setValue('packageList', spuDetail.packageList);
       setValue('stockAmount', spuDetail.stockAmount);
       setValue('purchaseNoticeEntities', spuDetail.purchaseNoticeEntities);
-      spuDetail.skuList.forEach((item, index) => {
-        setValue(`skuList.${index}.skuDetails`, item.list);
+      contractDetail.skuInfoReq.skuInfo.forEach((item, index) => {
+        setValue(`skuList.${index}.skuDetails`, item?.skuDetails);
       });
     }
-  }, [spuDetail, contractDetail]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [spuDetail, contractDetail, setValue]);
 
   // 自动切换到指定step
   useEffect(() => {
@@ -131,29 +126,35 @@ const EditSPU: React.FC = () => {
     };
   }, [skuDispatcher]);
 
-  async function submit() {
-    const keys = Object.keys(errors);
-    console.log(keys);
-    if (keys.length) {
-      commonDispatcher.error(errors[keys[0]]);
-      return;
-    }
+  const getError = (value: any) => {
+    const res = _.flatMap(value, e =>
+      e?.message ? e : _.flatMap(e, item => (item?.message ? item : _.flatMap(item, element => (element?.message ? element : _.flatMap(element, e => e))))),
+    );
+    commonDispatcher.info(res[0]);
+    console.log('商品错误提示表单', res);
+  };
+
+  async function onHandleSubmit() {
+    const func = handleSubmit(submit, getError);
     try {
-      const keys = Object.keys(errors);
-      console.log(keys);
-      if (keys.length) {
-        commonDispatcher.error(errors[keys[0]]);
-        return;
-      }
+      await func();
+    } catch (error) {
+      commonDispatcher.error(errors || '哎呀，出错了~');
+    }
+  }
+
+  async function submit() {
+    try {
       const res = getValues();
-      const formData = cleanSPUForm(res);
+      const formData = cleanSPUForm(res, contractDetail);
+      console.log(' 格式化之后的数据', formData);
       if (isEdit) {
         await api.sku.updateSPU(formData);
+        skuDispatcher.loadCurrentSPU(spuID);
       } else {
         await api.sku.createSPU(formData);
       }
-      commonDispatcher.success('创建成功');
-      skuDispatcher.loadCurrentSPU(spuID);
+      commonDispatcher.success(isEdit ? '修改成功' : '创建成功');
       navigation.canGoBack() && navigation.goBack();
     } catch (error) {
       commonDispatcher.error(error || '哎呀，出错了~');
@@ -198,7 +199,7 @@ const EditSPU: React.FC = () => {
             <Booking control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={() => setCurrentKey('detail')} errors={errors} />
           </View>
           <View style={{width: windowWidth}}>
-            <ImageTextDetail control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={handleSubmit(submit)} error={errors} />
+            <ImageTextDetail control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={onHandleSubmit} error={errors} />
           </View>
         </ScrollView>
       </SafeAreaView>

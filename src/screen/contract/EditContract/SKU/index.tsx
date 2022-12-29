@@ -1,5 +1,5 @@
 import React, {FC, useEffect, useState} from 'react';
-import {Control, useFieldArray, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
+import {Control, FieldErrorsImpl, useFieldArray, UseFormGetValues, UseFormHandleSubmit, UseFormSetValue, UseFormWatch} from 'react-hook-form';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import {Cascader, Form, FormTitle, Input, SectionGroup, Select, Switch} from '../../../../component';
 import {globalStyles, globalStyleVariables} from '../../../../constants/styles';
@@ -7,7 +7,7 @@ import {useSPUCategories} from '../../../../helper/hooks';
 import {convertNumber2Han, formattingGoodsCategory} from '../../../../helper/util';
 import {BuyLimitType, Contract, ContractAction, InvoiceType} from '../../../../models';
 import SKUContent from './SKUContent';
-
+import {ErrorMessage} from '@hookform/error-message';
 import {Controller} from 'react-hook-form';
 import {Button} from '@ant-design/react-native';
 import {useSelector} from 'react-redux';
@@ -19,9 +19,11 @@ interface SKUProps {
   getValues: UseFormGetValues<Contract>;
   watch: UseFormWatch<Contract>;
   action: ContractAction;
+  handleSubmit?: UseFormHandleSubmit<any>;
+  errors?: Partial<FieldErrorsImpl<any>>;
 }
 
-const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action}) => {
+const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action, errors}) => {
   useSPUCategories();
   const SPUCategories = useSelector((state: RootState) => {
     return formattingGoodsCategory(state.sku.categories);
@@ -44,7 +46,7 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action}
   //增加一个套餐
   const addSkuInfo = () => {
     append({
-      skuName: 'asdf',
+      skuName: '',
       skuDetails: [
         {
           name: '',
@@ -79,18 +81,26 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action}
         <Controller
           control={control}
           name="spuInfoReq.spuName"
-          render={({field}) => (
+          rules={{required: '请输入商品名称'}}
+          render={({field: {value, onChange}}) => (
             <Form.Item label="商品名称">
-              <Input {...field} />
+              <Input value={value} onChange={onChange} />
+              <Text style={globalStyles.error}>
+                <ErrorMessage name={'spuInfoReq.spuName'} errors={errors} />
+              </Text>
             </Form.Item>
           )}
         />
         <Controller
           control={control}
           name="spuInfoReq.spuCategoryIds"
+          rules={{required: '请选择商品分类'}}
           render={({field: {value, onChange}}) => (
             <Form.Item label="商品分类">
               <Cascader value={value || []} onChange={onChange} options={SPUCategories} />
+              <Text style={globalStyles.error}>
+                <ErrorMessage name={'spuInfoReq.spuCategoryIds'} errors={errors} />
+              </Text>
             </Form.Item>
           )}
         />
@@ -109,11 +119,14 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action}
         <FormTitle title="套餐设置" />
         <Controller
           control={control}
-          rules={{required: true}}
+          rules={{required: '请输入商品总库存'}}
           name="skuInfoReq.spuStock"
           render={({field: {value, onChange}}) => (
             <Form.Item label="商品总库存">
-              <Input value={value} onChange={onChange} />
+              <Input value={value} type="number" onChange={onChange} />
+              <Text style={globalStyles.error}>
+                <ErrorMessage name={'skuInfoReq.spuStock'} errors={errors} />
+              </Text>
             </Form.Item>
           )}
         />
@@ -123,7 +136,6 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action}
 
         <Controller
           control={control}
-          rules={{required: true}}
           name="skuInfoReq.openSkuStock"
           render={({field: {value, onChange}}) => (
             <Form.Item label="套餐单独设置库存">
@@ -153,21 +165,27 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action}
               />
               <Controller
                 control={control}
-                rules={{required: true}}
+                rules={{required: '请输入套餐名称'}}
                 name={`skuInfoReq.skuInfo.${index}.skuName`}
                 render={({field: {value, onChange}}) => (
                   <Form.Item label="套餐名称">
                     <Input value={value} onChange={onChange} />
+                    <Text style={globalStyles.error}>
+                      <ErrorMessage name={`skuInfoReq.skuInfo.${index}.skuName`} errors={errors} />
+                    </Text>
                   </Form.Item>
                 )}
               />
               <Controller
                 control={control}
-                rules={{required: true}}
+                rules={{required: '请输入套餐结算价'}}
                 name={`skuInfoReq.skuInfo.${index}.skuSettlementPrice`}
                 render={({field: {value, onChange}}) => (
                   <Form.Item label="套餐结算价">
-                    <Input value={value} onChange={onChange} />
+                    <Input value={value} type="number" onChange={onChange} />
+                    <Text style={globalStyles.error}>
+                      <ErrorMessage name={`skuInfoReq.skuInfo.${index}.skuSettlementPrice`} errors={errors} />
+                    </Text>
                   </Form.Item>
                 )}
               />
@@ -178,7 +196,7 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action}
                   name={`skuInfoReq.skuInfo.${index}.skuStock`}
                   render={({field: {value, onChange}}) => (
                     <Form.Item label="套餐库存">
-                      <Input value={value} onChange={onChange} />
+                      <Input type="number" value={value} onChange={onChange} />
                     </Form.Item>
                   )}
                 />

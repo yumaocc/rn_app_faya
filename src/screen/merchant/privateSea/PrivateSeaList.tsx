@@ -131,6 +131,11 @@ const PrivateSeaList: React.FC = () => {
         data={merchantList}
         renderItem={({item}) => <Card merchant={item} key={item.id} style={globalStyles.moduleMarginTop} />}
         onEndReached={() => getData({pageIndex: pageIndex, multiStore: valueType?.value, name: value})}
+        ListFooterComponent={
+          <View style={[globalStyles.containerCenter, {flex: 1, marginTop: globalStyleVariables.MODULE_SPACE, marginBottom: globalStyleVariables.MODULE_SPACE}]}>
+            <Text style={[globalStyles.fontTertiary, {textAlign: 'center'}]}>已经到底</Text>
+          </View>
+        }
       />
     </SafeAreaView>
   );

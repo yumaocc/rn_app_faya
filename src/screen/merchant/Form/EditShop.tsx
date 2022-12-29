@@ -5,7 +5,10 @@ import {globalStyles} from '../../../constants/styles';
 import {useForm, Controller, UseFieldArrayAppend} from 'react-hook-form';
 import Modal from '../../../component/Modal';
 import {FormMerchant} from '../../../models';
+import _ from 'lodash';
+import {ErrorMessage} from '@hookform/error-message';
 import {InputItem} from '@ant-design/react-native';
+
 interface EditShopProps {
   nextIndex?: number;
   open: boolean;
@@ -21,12 +24,25 @@ const EditShop: FC<EditShopProps> = ({open, setOpen, setValue}) => {
   } = useForm({
     mode: 'onBlur',
   });
+  const getError = (value: any) => {
+    const errorArr: string[] = [];
+    for (const key in value) {
+      if (Object.prototype.hasOwnProperty.call(value, key)) {
+        const element = value[key];
+        const e = _.pick<string>(element, 'message');
+        errorArr.push(e);
+      }
+    }
+    const firstError = errorArr.pop();
+    console.log(firstError);
+  };
 
   const onOk = async (value: any) => {
     try {
       const errorLength = Object.keys(errors);
       setValue(value);
-      if (!errorLength) {
+
+      if (!errorLength.length) {
         setOpen(false);
       }
     } catch (error) {
@@ -34,25 +50,27 @@ const EditShop: FC<EditShopProps> = ({open, setOpen, setValue}) => {
     }
   };
   return (
-    <Modal visible={open} onOk={handleSubmit(onOk)} onClose={() => setOpen(false)}>
+    <Modal visible={open} onOk={handleSubmit(onOk, getError)} onClose={() => setOpen(false)}>
       <Controller
         name={'shopName'}
         control={control}
-        rules={{required: true}}
+        rules={{required: '请输入商家名称'}}
         render={({field}) => (
           <View style={globalStyles.moduleMarginTop}>
             <Text style={[globalStyles.fontPrimary]}>商家名称</Text>
             <View style={[{padding: 0, margin: 0, backgroundColor: '#f4f4f4'}, globalStyles.moduleMarginTop]}>
-              <InputItem style={{padding: 0, margin: 0}} placeholder="请输入商家名称" onChange={field.onChange} value={field.value} onBlur={field.onBlur} />
+              <InputItem style={{padding: 0, margin: 0}} placeholder="请输入商家名称" onChange={field.onChange} value={field.value} />
+              <Text style={globalStyles.error}>
+                <ErrorMessage name={'shopName'} errors={errors} />
+              </Text>
             </View>
-            {errors.shopName && <Text style={globalStyles.error}>请输入商家名称</Text>}
           </View>
         )}
       />
       <Controller
         name={'contactPhone'}
         control={control}
-        rules={{required: true}}
+        rules={{required: '请输入商家电话'}}
         render={({field}) => (
           <View style={globalStyles.moduleMarginTop}>
             <Text style={[globalStyles.fontPrimary]}>商家电话</Text>

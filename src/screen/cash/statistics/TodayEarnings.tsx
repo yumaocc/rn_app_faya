@@ -137,7 +137,12 @@ const TodayEarnings: React.FC = () => {
           </View>
           <FlatList
             data={data}
-            refreshing={loading}
+            refreshing={false}
+            ListFooterComponent={
+              <View style={[globalStyles.containerCenter, {flex: 1, marginTop: globalStyleVariables.MODULE_SPACE, marginBottom: globalStyleVariables.MODULE_SPACE}]}>
+                <Text style={[globalStyles.fontTertiary, {textAlign: 'center'}]}>已经到底</Text>
+              </View>
+            }
             onRefresh={() => {
               pullUp(1);
             }}

@@ -4,10 +4,10 @@ import React, {useEffect, useMemo, useState} from 'react';
 import {View, StyleSheet, ScrollView, useWindowDimensions} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {createMerchant, updateMerchant} from '../../../apis/merchant';
-import {Form, NavigationBar, Tabs} from '../../../component';
+import {NavigationBar, Tabs} from '../../../component';
 import {globalStyleVariables} from '../../../constants/styles';
 import {useParams, useRefCallback, useCommonDispatcher, useMerchantDispatcher} from '../../../helper/hooks';
-import {MerchantCreateType, MerchantAction, FormMerchant, MerchantFormEnum} from '../../../models'; // FormMerchant
+import {MerchantCreateType, MerchantAction, FormMerchant, MerchantFormEnum, MerchantForm} from '../../../models'; // FormMerchant
 import EditBase from '../Form/EditBase';
 import {useForm, Controller} from 'react-hook-form';
 import Certification from '../Form/Certification';
@@ -28,7 +28,7 @@ const AddMerchant: React.FC = () => {
   const [currentKey, setCurrentKey] = React.useState('base');
   const {width: windowWidth} = useWindowDimensions();
   const [ref, setRef, isReady] = useRefCallback<ScrollView>();
-  const [form] = Form.useForm();
+
   const merchantDetail = useSelector<RootState, FormMerchant>(state => state.merchant.currentMerchant);
 
   const navigation = useNavigation();
@@ -96,11 +96,12 @@ const AddMerchant: React.FC = () => {
       });
     }
   }, [merchantDetail, setValue]);
+
   //新建商家
   const onSubmit = async () => {
     try {
       const formData = getValues();
-      const newFormData = formattingMerchantRequest(formData, identity);
+      const newFormData = formattingMerchantRequest(formData, identity) as MerchantForm;
 
       if (action === MerchantAction.EDIT) {
         await updateMerchant(newFormData);
@@ -111,7 +112,7 @@ const AddMerchant: React.FC = () => {
       commonDispatcher.success(action === MerchantAction.ADD ? '添加成功' : '修改成功');
       navigation.goBack();
     } catch (error) {
-      commonDispatcher.success((JSON.stringify(error) as string) || '添加失败');
+      commonDispatcher.error(error || '添加失败');
     }
   };
 
@@ -136,60 +137,67 @@ const AddMerchant: React.FC = () => {
     }
     setLoading(false);
   };
+  const getTitle = () => {
+    if (merchantDetail) {
+      return merchantDetail.legalName;
+    } else {
+      return identity === MerchantCreateType.PUBLIC_SEA ? '新建公海商家' : '新建私海商家';
+    }
+  };
+  console.log(merchantDetail);
   return (
     <>
       <Loading active={loading} />
       <SafeAreaView style={styles.container} edges={['bottom']}>
-        <NavigationBar title={identity === MerchantCreateType.PUBLIC_SEA ? '新建公海商家' : '新建私海商家'} />
-        <Form form={form}>
-          <View style={styles.container}>
-            <Tabs tabs={tabs} currentKey={currentKey} onChange={setCurrentKey} style={{backgroundColor: '#fff'}} />
-            <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
-              <View style={{width: windowWidth}}>
-                <ScrollView>
-                  <EditBase isHidden={isHidden} errors={errors} control={control} Controller={Controller} type={identity} setValue={setValue} />
-                </ScrollView>
-              </View>
-              <View style={{width: windowWidth}}>
-                <ScrollView>
-                  <Certification errors={errors} type={1} control={control} watch={watch} Controller={Controller} />
-                </ScrollView>
-              </View>
-            </ScrollView>
-            {/* 这是私海过来的按钮 */}
-            {identity === MerchantCreateType.PRIVATE_SEA && action === MerchantAction.EDIT && (
-              <View style={styles.privateView}>
-                <Button style={{margin: 10}} type="ghost" onPress={() => inviteAuth(privateId)}>
-                  邀请认证
-                </Button>
-                <Button style={{margin: 10, flex: 1}} type="primary" onPress={handleSubmit(onSubmit)}>
-                  保存
-                </Button>
-              </View>
-            )}
-            {identity === MerchantCreateType.PRIVATE_SEA && action === MerchantAction.VIEW && (
-              <Button style={{margin: 10}} type="primary" onPress={() => inviteAuth(privateId)}>
+        <NavigationBar title={getTitle()} />
+
+        <View style={styles.container}>
+          <Tabs tabs={tabs} currentKey={currentKey} onChange={setCurrentKey} style={{backgroundColor: '#fff'}} />
+          <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
+            <View style={{width: windowWidth}}>
+              <ScrollView>
+                <EditBase isHidden={isHidden} errors={errors} control={control} Controller={Controller} type={identity} setValue={setValue} />
+              </ScrollView>
+            </View>
+            <View style={{width: windowWidth}}>
+              <ScrollView>
+                <Certification errors={errors} type={1} control={control} watch={watch} Controller={Controller} />
+              </ScrollView>
+            </View>
+          </ScrollView>
+          {/* 这是私海过来的按钮 */}
+          {identity === MerchantCreateType.PRIVATE_SEA && action === MerchantAction.EDIT && (
+            <View style={styles.privateView}>
+              <Button style={{margin: 10}} type="ghost" onPress={() => inviteAuth(privateId)}>
                 邀请认证
               </Button>
-            )}
-            {/* 这是公海过来的按钮 */}
-            {identity === MerchantCreateType.PUBLIC_SEA && action !== MerchantAction.ADD && (
-              <Button
-                style={{margin: 10}}
-                type="primary"
-                onPress={() => {
-                  addMyPrivateSeas(publicId);
-                }}>
-                加入我的私海
-              </Button>
-            )}
-            {action === MerchantAction.ADD && (
-              <Button style={{margin: 10}} type="primary" onPress={handleSubmit(onSubmit)}>
+              <Button style={{margin: 10, flex: 1}} type="primary" onPress={handleSubmit(onSubmit)}>
                 保存
               </Button>
-            )}
-          </View>
-        </Form>
+            </View>
+          )}
+          {identity === MerchantCreateType.PRIVATE_SEA && action === MerchantAction.VIEW && (
+            <Button style={{margin: 10}} type="primary" onPress={() => inviteAuth(privateId)}>
+              邀请认证
+            </Button>
+          )}
+          {/* 这是公海过来的按钮 */}
+          {identity === MerchantCreateType.PUBLIC_SEA && action !== MerchantAction.ADD && (
+            <Button
+              style={{margin: 10}}
+              type="primary"
+              onPress={() => {
+                addMyPrivateSeas(publicId);
+              }}>
+              加入我的私海
+            </Button>
+          )}
+          {action === MerchantAction.ADD && (
+            <Button style={{margin: 10}} type="primary" onPress={handleSubmit(onSubmit)}>
+              保存
+            </Button>
+          )}
+        </View>
       </SafeAreaView>
     </>
   );

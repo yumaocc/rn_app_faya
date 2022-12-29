@@ -14,12 +14,14 @@ interface CommodityListProps {
 
 type StartFetchFunction = (rowData: any[], pageSize: number) => void;
 type abortFetchFunction = () => void;
+
 const CommodityList: FC<CommodityListProps> = ({id}) => {
   const navigation = useNavigation() as FakeNavigation;
   const [len, setLen] = useState(0);
+
   async function fetchData(pageIndex = 1, startFetch: StartFetchFunction, abortFetch: abortFetchFunction) {
     try {
-      const pageSize = 5;
+      const pageSize = 10;
       const res = await api.contract.getContractList({pageIndex, pageSize, id});
       const rowData: ContractList[] = res.content;
       setLen(res.page.pageTotal);
@@ -28,6 +30,7 @@ const CommodityList: FC<CommodityListProps> = ({id}) => {
       abortFetch();
     }
   }
+
   const renderItem = (item: ContractList) => {
     return (
       <View style={[styles.content]}>
@@ -59,7 +62,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   freshHeader: {
-    height: 30,
+    height: 50,
   },
   box: {
     margin: globalStyleVariables.MODULE_SPACE,

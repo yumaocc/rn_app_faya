@@ -66,7 +66,7 @@ const SKUContent: FC<SKUContentProps> = ({next, control, title}) => {
                 name={`skuInfoReq.skuInfo.${next}.skuDetails.${index}.name`}
                 render={({field: {value, onChange}}) => (
                   <View style={{flex: 1}}>
-                    <InputItem keyboardType="default" allowFontScaling={true} placeholder="请输入" value={value} onChange={onChange} />
+                    <InputItem type="number" keyboardType="default" allowFontScaling={true} placeholder="商品名称" value={value} onChange={onChange} />
                   </View>
                 )}
               />
@@ -78,7 +78,7 @@ const SKUContent: FC<SKUContentProps> = ({next, control, title}) => {
                     <>
                       <View style={globalStyles.dividingLine} />
                       <View style={globalStyles.inputWidth}>
-                        <InputItem placeholder="请输入" value={value} onChange={onChange} />
+                        <InputItem type="number" placeholder="数量" value={value} onChange={onChange} />
                       </View>
                       <View style={globalStyles.dividingLine} />
                     </>
@@ -89,7 +89,7 @@ const SKUContent: FC<SKUContentProps> = ({next, control, title}) => {
                   name={`skuInfoReq.skuInfo.${next}.skuDetails.${index}.price`}
                   render={({field: {value, onChange}}) => (
                     <View style={globalStyles.inputWidth}>
-                      <InputItem placeholder="请输入" value={value} onChange={onChange} />
+                      <InputItem type="number" placeholder="价格" value={value} onChange={onChange} />
                     </View>
                   )}
                 />

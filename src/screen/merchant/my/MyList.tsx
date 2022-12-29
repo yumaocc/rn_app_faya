@@ -117,6 +117,11 @@ const MyList: React.FC = () => {
         onEndReached={() => {
           getData({pageIndex: pageIndex, multiStore: valueType?.value, name: value});
         }}
+        ListFooterComponent={
+          <View style={[globalStyles.containerCenter, {flex: 1, marginTop: globalStyleVariables.MODULE_SPACE, marginBottom: globalStyleVariables.MODULE_SPACE}]}>
+            <Text style={[globalStyles.fontTertiary, {textAlign: 'center'}]}>已经到底</Text>
+          </View>
+        }
       />
     </SafeAreaView>
   );

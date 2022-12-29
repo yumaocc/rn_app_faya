@@ -1,6 +1,7 @@
 import React, {useMemo} from 'react';
 import {View, Text, ScrollView} from 'react-native';
 import {Footer, Form, FormTitle, SectionGroup} from '../../../component';
+import {globalStyles} from '../../../constants/styles';
 import {convertSKUBuyNotice, findItem, getBookingType} from '../../../helper';
 import {useCodeTypes, useMerchantBookingModel} from '../../../helper/hooks';
 import {BookingType, BoolEnum, ContractDetailF, MerchantDetailF, SPUDetailF} from '../../../models';
@@ -57,11 +58,16 @@ const Booking: React.FC<BookingProps> = props => {
               {modelList.map((model, index) => {
                 const bookingItem = findItem(merchantBookingModel, item => item.id === model.modelId);
                 return (
-                  <View key={index} style={styles.modelCard}>
-                    <Text>{bookingItem?.name}</Text>
+                  <View key={index} style={[styles.modelCard]}>
+                    <Text style={globalStyles.fontPrimary}>{bookingItem?.name}</Text>
                     {model.contractSkuIds?.map(skuId => {
                       const skuItem = findItem(contractDetail?.skuInfoReq?.skuInfo, item => item.contractSkuId === skuId);
-                      return <Text key={skuId}>{skuItem?.skuName}</Text>;
+
+                      return (
+                        <Text key={skuId} style={globalStyles.fontTertiary}>
+                          {skuItem?.skuName}
+                        </Text>
+                      );
                     })}
                   </View>
                 );

@@ -88,6 +88,16 @@ const ContractList: FC = () => {
       </ModalDropdown>
     </>
   );
+  const getColor = (status: number) => {
+    switch (status) {
+      case ContractStatus.SignSuccess:
+        return '#4AB87D';
+      case ContractStatus.Resolved:
+        return '#4AB87D';
+      default:
+        return '#999999';
+    }
+  };
 
   const renderItem = ({item}: {item: ContractListType}) => {
     return (
@@ -109,7 +119,7 @@ const ContractList: FC = () => {
             <Text style={[globalStyles.fontPrimary]}>{item?.name}</Text>
           </View>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-            <Text style={{color: '#4AB87D'}}>
+            <Text style={[{color: getColor(item?.status)}, globalStyles.moduleMarginTop]}>
               {item?.statusStr}
               {item?.createdTime}
             </Text>
@@ -122,6 +132,7 @@ const ContractList: FC = () => {
   return (
     <>
       <View style={{flex: 1}}>
+        <Loading active={loading} />
         <NavigationBar title="合同列表" headerRight={headerRight} />
         <Loading active={loading} />
         <View style={[globalStyles.lineHorizontal]} />
@@ -149,6 +160,11 @@ const ContractList: FC = () => {
           <FlatList
             data={data}
             renderItem={renderItem}
+            ListFooterComponent={
+              <View style={[globalStyles.containerCenter, {flex: 1, marginTop: globalStyleVariables.MODULE_SPACE, marginBottom: globalStyleVariables.MODULE_SPACE}]}>
+                <Text style={[globalStyles.fontTertiary, {textAlign: 'center'}]}>已经到底</Text>
+              </View>
+            }
             keyExtractor={key => key.id + ''}
             numColumns={1}
             onEndReached={() => pullUp()}

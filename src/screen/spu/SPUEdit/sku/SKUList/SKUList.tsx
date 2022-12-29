@@ -10,6 +10,7 @@ import {PackagedSKU} from '../../../../../models';
 import {RootState} from '../../../../../redux/reducers';
 import {ErrorMessage} from '@hookform/error-message';
 import {styles} from '../../style';
+import {useCommonDispatcher} from '../../../../../helper/hooks';
 import List from './List';
 import * as apis from '../../../../../apis';
 import {Control, UseFormGetValues, UseFormSetValue, UseFormWatch, Controller, useFieldArray, useForm, FieldErrorsImpl, UseFormSetError} from 'react-hook-form';
@@ -28,6 +29,7 @@ interface PackListProps {
 }
 const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, setError}) => {
   const [isShowPackageModal, setIsShowPackageModal] = useState(false);
+  const [commonDispatcher] = useCommonDispatcher();
   const spuDetail = useSelector((state: RootState) => state.sku.currentSPU);
   const skuInfo = useSelector((state: RootState) => state.contract.currentContract?.skuInfoReq?.skuInfo);
   const contractDetail = useSelector((state: RootState) => state.contract.currentContract);
@@ -75,7 +77,6 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
       packageName: res.packageName,
       skus: skus,
     };
-    console.log(formData);
 
     const {packageList = []} = getValues();
     setValue('packageList', [...packageList, formData]);
@@ -96,7 +97,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
     return (
       <>
         {value?.map((item, index) => (
-          <SectionGroup key={item.id} style={styles.sectionGroupStyle}>
+          <SectionGroup key={index} style={styles.sectionGroupStyle}>
             <FormTitle title={`组合套餐${index + 1}`} />
             <SwipeAction
               right={[
@@ -122,6 +123,9 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                     let skuItem;
                     if (spuDetail) {
                       skuItem = findItem(spuDetail?.skuList, item => item.skuId === sku.skuId);
+                      if (!skuItem?.skuName) {
+                        skuItem = findItem(contractDetail?.skuInfoReq?.skuInfo, item => item.contractSkuId === sku.contractSkuId);
+                      }
                     } else {
                       skuItem = findItem(contractDetail?.skuInfoReq?.skuInfo, item => item.contractSkuId === sku.contractSkuId);
                     }
@@ -139,7 +143,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
       </>
     );
   };
-  console.log(errors);
+
   return (
     <View>
       {fields.map((item, index) => {
@@ -177,21 +181,22 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
               name={`skuList.${index}.salePrice`}
               control={control}
               rules={{
-                validate: async value => {
+                required: '请输入套餐售价',
+                validate: async (value = 0) => {
                   try {
                     const settlePrice = contractDetail?.skuInfoReq?.skuInfo[index]?.skuSettlementPrice;
                     const res = await apis.sku.getSalePrice({settlePrice, salePrice: value});
                     if (value < Number(res?.minSalePriceYuan)) {
                       const message = `套餐价格不能低于${res?.minSalePriceYuan} `;
                       setError(`skuList.${index}.salePrice`, {type: 'validate', message: message});
-
                       return Promise.reject({message: message});
                     }
-                    return true;
                   } catch (error) {
+                    commonDispatcher.info((error as string) || '哎呀，出错了~');
                     setError(`skuList.${index}.salePrice`, {type: 'validate', message: error as string});
                     return Promise.reject({message: '套餐价格过低'});
                   }
+                  return true;
                 },
               }}
               render={({field: {value, onChange}}) => (
@@ -212,7 +217,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                 validate: async value => {
                   try {
                     const {skuList} = getValues();
-                    const {earnCommission = 0, salePrice} = skuList[index];
+                    const {earnCommission = 0, salePrice = 0} = skuList[index];
                     const settlementPrice = contractDetail?.skuInfoReq?.skuInfo[index]?.skuSettlementPrice;
                     const res = await apis.sku.getSalePrice({
                       salePrice: salePrice,
@@ -230,6 +235,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                     }
                     return true;
                   } catch (error) {
+                    commonDispatcher.info((error as string) || '哎呀，出错了~');
                     setError(`skuList.${index}.directSalesCommission`, {type: 'validate', message: error as string});
                     return Promise.reject({message: '套餐价格过低'});
                   }
@@ -253,7 +259,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                 validate: async value => {
                   try {
                     const {skuList} = getValues();
-                    const {directSalesCommission = 0, salePrice} = skuList[index];
+                    const {directSalesCommission = 0, salePrice = 0} = skuList[index];
                     const settlementPrice = contractDetail?.skuInfoReq?.skuInfo[index]?.skuSettlementPrice;
                     const res = await apis.sku.getSalePrice({
                       salePrice: salePrice,
@@ -271,6 +277,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                     }
                     return true;
                   } catch (error) {
+                    commonDispatcher.info((error as string) || '哎呀，出错了~');
                     setError(`skuList.${index}.earnCommission`, {type: 'validate', message: error as string});
                     return Promise.reject({message: error as string});
                   }

@@ -11,6 +11,8 @@ import {useMerchantDispatcher, useContractDispatcher, useSPUCategories, useCommo
 import {BoolEnum} from '../../../../models';
 import {RootState} from '../../../../redux/reducers';
 import {styles} from '../style';
+import {ErrorMessage} from '@hookform/error-message';
+
 import {Controller} from 'react-hook-form';
 import Error from '../../../../component/Error';
 import SelectShop from './SelectShop';
@@ -82,6 +84,12 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
     }
   }, [currentContract, setValue]);
   function onCheck() {
+    const {bizUserId, contractId} = getValues();
+    const valid = bizUserId && contractId;
+    if (!valid) {
+      commonDispatcher.info('请先选择商家和合同！');
+      return;
+    }
     onNext && onNext();
   }
 
@@ -124,7 +132,6 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
         <Controller
           control={control}
           name="bizUserId"
-          rules={{required: true}}
           render={({field: {value, onChange}}) => (
             <Form.Item label="选择商家">
               <Select onChange={onChange} value={value} options={merchantList.map((e: {name: any; id: any}) => ({label: e.name, value: e.id}))} placeholder="请选择" />
@@ -136,7 +143,6 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
         <Controller
           control={control}
           name="contractId"
-          rules={{required: true}}
           render={({field: {value, onChange}}) => (
             <Form.Item label="选择合同">
               <Select onChange={onChange} value={value} options={contractList.map(e => ({label: e.name, value: e.id}))} placeholder="请选择" />
@@ -174,7 +180,9 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
           render={({field: {value, onChange}}) => (
             <Form.Item label="商品名称">
               <Input placeholder="商品名称" value={value} onChange={onChange} />
-              {errors.spuName && <Error value="请先输入商品名称" />}
+              <Text style={globalStyles.error}>
+                <ErrorMessage name={'spuName'} errors={errors} />
+              </Text>
             </Form.Item>
           )}
         />

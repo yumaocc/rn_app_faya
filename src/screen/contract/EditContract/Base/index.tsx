@@ -1,12 +1,14 @@
 import {Button} from '@ant-design/react-native';
 import React, {FC, useEffect} from 'react';
-import {Control, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
-import {StyleSheet} from 'react-native';
+import {Control, FieldErrorsImpl, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
+import {StyleSheet, Text} from 'react-native';
 import {useSelector} from 'react-redux';
 import {Form, FormTitle, Input, SectionGroup, Select, SelfText} from '../../../../component';
-import {useMerchantDispatcher} from '../../../../helper/hooks';
+import {useCommonDispatcher, useMerchantDispatcher} from '../../../../helper/hooks';
 import {Contract, FormControlC, ProtocolType, SettlementType} from '../../../../models';
+import {ErrorMessage} from '@hookform/error-message';
 import {RootState} from '../../../../redux/reducers';
+import {globalStyles} from '../../../../constants/styles';
 interface BaseProps {
   onNext: () => void;
   Controller: FormControlC;
@@ -14,9 +16,11 @@ interface BaseProps {
   setValue: UseFormSetValue<Contract>;
   getValues: UseFormGetValues<Contract>;
   watch: UseFormWatch<Contract>;
+  errors: Partial<FieldErrorsImpl<any>>;
 }
-const Base: FC<BaseProps> = ({Controller, control, watch, setValue, onNext, getValues}) => {
+const Base: FC<BaseProps> = ({Controller, control, watch, setValue, onNext, errors}) => {
   const [merchantDispatcher] = useMerchantDispatcher();
+  const [commonDispatcher] = useCommonDispatcher();
   const bizUserId = watch('bizUserId');
   //商家列表
   const merchantList = useSelector((state: RootState) => {
@@ -42,8 +46,11 @@ const Base: FC<BaseProps> = ({Controller, control, watch, setValue, onNext, getV
   }, [merchantDispatcher]);
 
   const next = () => {
-    getValues();
-    onNext();
+    if (bizUserId) {
+      onNext();
+      return;
+    }
+    commonDispatcher.info('请先选择商家');
   };
   return (
     <>
@@ -52,9 +59,13 @@ const Base: FC<BaseProps> = ({Controller, control, watch, setValue, onNext, getV
         <Controller
           name="bizUserId"
           control={control}
+          rules={{required: '请选择商家'}}
           render={({field: {value, onChange}}) => (
             <Form.Item label="商家">
               <Select value={value} onChange={onChange} options={merchantList || []} />
+              <Text style={globalStyles.error}>
+                <ErrorMessage name={'bizUserId'} errors={errors} />
+              </Text>
             </Form.Item>
           )}
         />
@@ -82,9 +93,13 @@ const Base: FC<BaseProps> = ({Controller, control, watch, setValue, onNext, getV
         <Controller
           name="contractName"
           control={control}
+          rules={{required: '请输入合同名称'}}
           render={({field: {value, onChange}}) => (
             <Form.Item label="合同名称">
               <Input value={value} onChange={onChange} />
+              <Text style={globalStyles.error}>
+                <ErrorMessage name={'contractName'} errors={errors} />
+              </Text>
             </Form.Item>
           )}
         />

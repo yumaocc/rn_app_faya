@@ -37,7 +37,7 @@ const Modal: React.FC<ModalProps> = props => {
     if (onOk) {
       await onOk();
     }
-    handleClose();
+    // handleClose();
   }
   async function handleCancel() {
     if (onCancel) {

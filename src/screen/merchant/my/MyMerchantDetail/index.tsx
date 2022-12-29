@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {FC} from 'react';
-import {SafeAreaView, StyleSheet, Text, useWindowDimensions, View} from 'react-native';
+import {StyleSheet, Text, useWindowDimensions, View} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {NavigationBar, Tabs} from '../../../../component';
 import {globalStyles, globalStyleVariables} from '../../../../constants/styles';
@@ -8,6 +8,7 @@ import {useParams, useRefCallback} from '../../../../helper/hooks';
 import ContractList from './ContractList';
 import ShopInfo from './ShopInfo';
 import Module from './Module';
+import {SafeAreaView} from 'react-native-safe-area-context';
 const tabs = [
   {title: '合同列表', key: 'contract'},
   {title: '商家信息', key: 'shop'},
@@ -16,7 +17,7 @@ const tabs = [
 const MyMerchantDetail: FC = () => {
   const [ref, setRef, isReady] = useRefCallback<ScrollView>();
   const {width: windowWidth} = useWindowDimensions();
-  const {id, name, status} = useParams<{id: number; name: string; status: string}>();
+  const {id, name, status, from} = useParams<{id: number; name: string; status: string; from: string}>();
   const [currentKey, setCurrentKey] = useState('contract');
   // 自动切换到指定step
   useEffect(() => {
@@ -32,10 +33,14 @@ const MyMerchantDetail: FC = () => {
       });
     }, 0);
   }, [currentKey, isReady, ref, windowWidth]);
-
+  useEffect(() => {
+    if (from) {
+      setCurrentKey(from);
+    }
+  }, [from]);
   return (
     <>
-      <SafeAreaView style={style.container}>
+      <SafeAreaView style={style.container} edges={['bottom']}>
         <NavigationBar
           title={
             <View style={[style.header]}>
