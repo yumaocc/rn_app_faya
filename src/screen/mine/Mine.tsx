@@ -65,12 +65,12 @@ const Mine: React.FC = () => {
             />
           </TouchableOpacity>
         </SectionGroup>
-        <SectionGroup>
+        {/* <SectionGroup>
           <OperateItem title="录入的商家" icon={<Icon name="shop" />} />
-        </SectionGroup>
-        <SectionGroup>
+        </SectionGroup> */}
+        {/* <SectionGroup>
           <OperateItem title="设置" icon={<Icon name="setting" />} />
-        </SectionGroup>
+        </SectionGroup> */}
         <SectionGroup>
           <Button
             type="warning"

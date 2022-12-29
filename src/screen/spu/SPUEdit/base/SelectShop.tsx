@@ -17,68 +17,40 @@ interface SelectShopProps {
 }
 
 const SelectShop: React.FC<SelectShopProps> = ({shopList, open, setOpen, setValue, getValues}) => {
-  const [currentShopList, setCurrentShopList] = useState<ShopForm[]>([]);
+  const [currentShopList, setCurrentShopList] = useState<number[]>([]);
   const [checkAll, setCheckAll] = useState(false);
   const [len, setLen] = useState(0);
+  useEffect(() => {
+    setLen(currentShopList?.length);
+  }, [currentShopList]);
+
+  const handleCheckAll = () => {
+    if (checkAll) {
+      setCheckAll(false);
+      setCurrentShopList([]);
+    } else {
+      setCheckAll(true);
+      const newShopList = shopList.map(item => item.id);
+      setCurrentShopList(newShopList);
+    }
+  };
+  useEffect(() => {
+    if (open) {
+      if (currentShopList?.length === shopList?.length) {
+        setCheckAll(true);
+      }
+    }
+  }, [currentShopList?.length, open, shopList?.length]);
 
   useEffect(() => {
     if (open) {
       const {canUseShopIds} = getValues();
-      const list: ShopForm[] = [];
-      if (canUseShopIds) {
-        shopList.forEach((item, index) => {
-          list.push({...item, checked: canUseShopIds[index]?.checked || false});
-        });
-      } else {
-        shopList.forEach(item => {
-          list.push({...item, checked: false});
-        });
-      }
-      setCurrentShopList(list);
+      setCurrentShopList(canUseShopIds);
     }
-  }, [getValues, open, shopList]);
-
-  useEffect(() => {
-    if (currentShopList?.length > 0 && len === currentShopList.length) {
-      setCheckAll(true);
-    }
-  }, [currentShopList.length, len]);
-
-  const onChange = (id: number, checked: boolean) => {
-    if (checked) {
-      setLen(len + 1);
-    } else {
-      setLen(len - 1);
-    }
-    setCurrentShopList(list =>
-      list.map(item => {
-        if (item.id === id) {
-          item.checked = checked;
-        }
-        return item;
-      }),
-    );
-  };
-
-  const handleCheckAll = (e: boolean) => {
-    if (e) {
-      setLen(currentShopList?.length);
-    } else {
-      setLen(0);
-    }
-    setCheckAll(e);
-    setCurrentShopList(list =>
-      list.map(item => {
-        item.checked = e;
-        return item;
-      }),
-    );
-  };
+  }, [getValues, open]);
 
   const canUseShopOk = () => {
-    const list = currentShopList.filter(item => (item.checked ? true : false));
-    const shopList = list.map(item => item.id);
-    setValue('canUseShopIds', shopList);
+    setValue('canUseShopIds', currentShopList);
     setCheckAll(false);
     setOpen(false);
   };
@@ -88,20 +60,16 @@ const SelectShop: React.FC<SelectShopProps> = ({shopList, open, setOpen, setValu
       <View style={styles.container}>
         <View style={[globalStyles.borderBottom, {paddingBottom: 10}]}>
           <Text>
-            共{currentShopList?.length || 0}家，已选{len}家
+            共{shopList?.length || 0}家，已选{len || 0}家
           </Text>
         </View>
         <View>
-          <Checkbox checked={checkAll} onChange={e => handleCheckAll(e)}>
+          <Checkbox checked={checkAll} onChange={handleCheckAll}>
             全选
           </Checkbox>
         </View>
         <View>
-          {currentShopList?.map(item => (
-            <Checkbox key={item.id} checked={item?.checked} onChange={e => onChange(item?.id, e)}>
-              {item?.shopName}
-            </Checkbox>
-          ))}
+          <Checkbox.Group value={currentShopList} options={shopList.map(item => ({label: item.shopName, value: item.id}))} onChange={setCurrentShopList} />
         </View>
       </View>
     </Modal>

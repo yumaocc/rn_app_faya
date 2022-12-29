@@ -1,4 +1,4 @@
-import {Button} from '@ant-design/react-native';
+import {Button, SwipeAction} from '@ant-design/react-native';
 import React, {useState} from 'react';
 import {Control, Controller, FieldErrorsImpl, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
 import {ScrollView, View, Text, StyleSheet} from 'react-native';
@@ -52,7 +52,14 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
     const {modelList = []} = getValues();
     setValue('modelList', [...modelList, res]);
     setShowBinding(false);
+    bookingModel.reset();
   }
+  const delBookModel = (index: number) => {
+    console.log(index);
+    const {modelList} = getValues();
+    const newModelList = modelList.filter((item: any, idx: number) => index !== idx);
+    setValue('modelList', newModelList);
+  };
 
   const BookingModel: React.FC<ModelListProps> = props => {
     const {value} = props;
@@ -63,15 +70,26 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
           return (
             <>
               <View key={index} style={[style.module, globalStyles.moduleMarginTop]}>
-                <Text style={[globalStyles.fontPrimary, globalStyles.borderBottom]}>型号：{bookingItem?.name}</Text>
-                {item.contractSkuIds?.map(skuId => {
-                  const skuItem = findItem(contractDetail?.skuInfoReq?.skuInfo, item => item.contractSkuId === skuId);
-                  return (
-                    <Text key={skuId} style={[globalStyles.fontTertiary, globalStyles.moduleMarginTop]}>
-                      {skuItem?.skuName}
-                    </Text>
-                  );
-                })}
+                <SwipeAction
+                  right={[
+                    {
+                      text: '删除',
+                      color: 'white',
+
+                      backgroundColor: globalStyleVariables.COLOR_DANGER,
+                      onPress: () => delBookModel(index),
+                    },
+                  ]}>
+                  <Text style={[globalStyles.fontPrimary, globalStyles.borderBottom]}>型号：{bookingItem?.name}</Text>
+                  {item.contractSkuIds?.map(skuId => {
+                    const skuItem = findItem(contractDetail?.skuInfoReq?.skuInfo, item => item.contractSkuId === skuId);
+                    return (
+                      <Text key={skuId} style={[globalStyles.fontTertiary, globalStyles.moduleMarginTop]}>
+                        {skuItem?.skuName}
+                      </Text>
+                    );
+                  })}
+                </SwipeAction>
               </View>
             </>
           );
@@ -132,7 +150,7 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
             name="modelId"
             control={bookingModel.control}
             render={({field: {value, onChange}}) => (
-              <Form.Item label="选择预约型号">
+              <Form.Item label="选择预约型号" style={{borderTopWidth: 0}}>
                 <Select value={value} onChange={onChange} options={booking?.map(item => ({label: item.name, value: item.id}))} />
               </Form.Item>
             )}

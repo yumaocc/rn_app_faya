@@ -1,7 +1,6 @@
 import {Icon} from '@ant-design/react-native';
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
-import {PlusButton} from '../../../component';
 // import {BadgeFlag} from '../../../component';
 import Loading from '../../../component/Loading';
 import {useCommonDispatcher} from '../../../helper/hooks';
@@ -9,6 +8,8 @@ import * as api from '../../../apis';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {FakeNavigation, MerchantAction, MerchantCreateType, MerchantF, StylePropView} from '../../../models';
 import {useNavigation} from '@react-navigation/native';
+import {cleanTime} from '../../../helper/util';
+import LinkButton from '../../../component/LinkButton';
 
 interface CardProps {
   merchant: MerchantF;
@@ -33,7 +34,7 @@ const Card: React.FC<CardProps> = props => {
     }
     setLoading(false);
   };
-
+  console.log(merchant);
   return (
     <>
       <Loading active={loading} />
@@ -50,25 +51,44 @@ const Card: React.FC<CardProps> = props => {
           })
         }>
         <View style={[styles.container, style]}>
-          <View style={[globalStyles.borderBottom, styles.header]}>
+          <View style={[styles.header, globalStyles.borderBottom]}>
             <View style={[styles.logo]}>
               <Image source={{uri: merchant?.avatar || 'https://fakeimg.pl/100'}} style={{width: 40, height: 40}} />
             </View>
-            <View style={styles.headerRight}>
-              <View style={[globalStyles.flexNormal, {justifyContent: 'space-between'}]}>
-                <View style={{flex: 1, flexDirection: 'row'}}>
-                  <Text style={[globalStyles.textColorPrimary, styles.merchantName, {flex: 1}]} numberOfLines={1}>
-                    {merchant.name}
-                  </Text>
+            <View style={[globalStyles.moduleMarginLeft]}>
+              <View>
+                <View style={[globalStyles.flexNormal, {justifyContent: 'space-between'}]}>
+                  <View style={{flex: 1, flexDirection: 'row', marginBottom: globalStyleVariables.MODULE_SPACE, alignItems: 'center'}}>
+                    <Icon name="shop" color={'black'} />
+                    <Text style={[globalStyles.textColorPrimary, styles.merchantName, {flex: 1}, globalStyles.moduleMarginLeft]} numberOfLines={1}>
+                      {merchant.name}
+                    </Text>
+                  </View>
                 </View>
+                <Text
+                  style={{
+                    fontSize: 12,
+                    color: globalStyleVariables.TEXT_COLOR_TERTIARY,
+                  }}>
+                  {merchant.categoryName}
+                </Text>
               </View>
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: globalStyleVariables.TEXT_COLOR_TERTIARY,
-                }}>
-                {merchant.categoryName}
-              </Text>
+
+              <View
+                style={[
+                  globalStyles.moduleMarginTop,
+                  {
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    paddingBottom: 5,
+                  },
+                ]}>
+                <Text style={[globalStyles.fontSize12]}>{merchant.multiStore ? '连锁' : '单店'}</Text>
+                <View style={globalStyles.dividingLine} />
+                <Text style={[globalStyles.fontSize12]}>{merchant?.hasAuth ? <Text style={{color: '#4AB87D'}}>已认证</Text> : <Text style={{color: '#999999'}}>未认证</Text>}</Text>
+                <View style={globalStyles.dividingLine} />
+                <Text style={[globalStyles.fontSize12]}>{cleanTime(merchant?.createdTime)}录入</Text>
+              </View>
             </View>
           </View>
           {merchant?.address && (
@@ -78,26 +98,7 @@ const Card: React.FC<CardProps> = props => {
             </View>
           )}
 
-          <View
-            style={[
-              globalStyles.borderBottom,
-              {
-                flexDirection: 'row',
-                justifyContent: 'space-around',
-                paddingVertical: 16,
-              },
-            ]}>
-            <View>
-              <Text style={[globalStyles.fontSecondary, styles.centerText]}>商户模式</Text>
-              <Text style={[globalStyles.fontPrimary, styles.centerTextValue]}>{merchant.multiStore ? '连锁' : '单店'}</Text>
-            </View>
-            <View>
-              <Text style={[globalStyles.fontSecondary, styles.centerText]}>认证状态</Text>
-              <Text style={[globalStyles.fontPrimary, styles.centerTextValue]}>{merchant?.hasAuth ? '是' : '否'}</Text>
-            </View>
-          </View>
-
-          <PlusButton title="加入我的私海" onPress={() => addMyPrivateSeas(merchant.id)} style={{justifyContent: 'center', paddingVertical: 15}} />
+          <LinkButton fontSize={[globalStyles.fontPrimary, globalStyles.primaryColor]} title="加入我的私海" onPress={() => addMyPrivateSeas(merchant.id)} />
         </View>
       </TouchableOpacity>
     </>
@@ -123,10 +124,7 @@ const styles = StyleSheet.create({
   logo: {
     borderRadius: 5,
   },
-  headerRight: {
-    marginLeft: 10,
-    flex: 1,
-  },
+
   merchantName: {
     fontSize: 15,
     fontWeight: '500',

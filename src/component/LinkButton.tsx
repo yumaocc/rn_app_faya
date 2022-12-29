@@ -6,11 +6,12 @@ import {globalStyles} from '../constants/styles';
 interface LinkButtonProps {
   title: string;
   onPress?: () => void;
+  fontSize: any;
 }
-const LinkButton: FC<LinkButtonProps> = ({title, onPress}) => {
+const LinkButton: FC<LinkButtonProps> = ({title, onPress, fontSize}) => {
   return (
     <Button style={[styles.button]} onPress={onPress} type="ghost">
-      <Text style={[globalStyles.fontSize12, globalStyles.primaryColor]}> {title}</Text>
+      <Text style={[globalStyles.fontSize12, globalStyles.primaryColor, fontSize]}> {title}</Text>
     </Button>
   );
 };

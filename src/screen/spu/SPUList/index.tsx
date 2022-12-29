@@ -85,9 +85,9 @@ const SPUList: React.FC = () => {
                     onPress={() => {
                       console.log(1);
                     }}>
-                    <View style={styles.showSale}>
+                    {/* <View style={styles.showSale}>
                       <Text style={[globalStyles.fontPrimary, {color: globalStyleVariables.COLOR_PRIMARY}]}>查看销售详情</Text>
-                    </View>
+                    </View> */}
                   </TouchableOpacity>
                   <View style={styles.setting}>
                     <Icon name="setting" color={globalStyleVariables.COLOR_PRIMARY} />

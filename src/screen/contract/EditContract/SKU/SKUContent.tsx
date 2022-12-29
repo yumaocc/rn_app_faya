@@ -60,7 +60,7 @@ const SKUContent: FC<SKUContentProps> = ({next, control, title}) => {
       {fields.map((item, index) => {
         return (
           <>
-            <View style={[globalStyles.containerLR, globalStyles.moduleMarginTop]}>
+            <View key={item.id} style={[globalStyles.containerLR, globalStyles.moduleMarginTop]}>
               <Controller
                 control={control}
                 name={`skuInfoReq.skuInfo.${next}.skuDetails.${index}.name`}

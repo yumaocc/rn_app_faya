@@ -5,6 +5,7 @@ import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {useCommonDispatcher} from '../../../helper/hooks';
 import * as api from '../../../apis';
 import {BoolEnum, FakeNavigation, MerchantAction, MerchantCreateType, MerchantF, StylePropView} from '../../../models';
+import {cleanTime} from '../../../helper/util';
 
 interface CardProps {
   merchant: MerchantF;
@@ -21,7 +22,9 @@ const Card: React.FC<CardProps> = ({merchant, style}) => {
       commonDispatcher.error(error);
     }
   }
+
   const navigation = useNavigation() as FakeNavigation;
+
   return (
     <TouchableOpacity
       activeOpacity={0.5}
@@ -76,13 +79,28 @@ const Card: React.FC<CardProps> = ({merchant, style}) => {
           </View>
         </View>
         <View style={[globalStyles.containerLR, globalStyles.borderBottom, {paddingVertical: globalStyleVariables.MODULE_SPACE}]}>
-          <Text style={globalStyles.fontSecondary}>商户模式</Text>
-          <Text style={globalStyles.fontSecondary}>{merchant.multiStore === BoolEnum.TRUE ? '连锁' : '单店'}</Text>
+          <View style={[globalStyles.containerCenter]}>
+            <View style={[{marginBottom: 5}]}>
+              <Text style={globalStyles.fontSecondary}>商户模式</Text>
+            </View>
+            <Text style={globalStyles.fontPrimary}>{merchant.multiStore === BoolEnum.TRUE ? '连锁' : '单店'}</Text>
+          </View>
+          <View style={globalStyles.dividingLine} />
+          <View style={[globalStyles.containerCenter, {paddingVertical: globalStyleVariables.MODULE_SPACE}]}>
+            <View style={[{marginBottom: 5}]}>
+              <Text style={globalStyles.fontPrimary}>认领时间</Text>
+            </View>
+            <Text style={globalStyles.fontSecondary}>{cleanTime(merchant?.createdTime)}</Text>
+          </View>
+          <View style={globalStyles.dividingLine} />
+          <View style={[globalStyles.containerCenter, {paddingVertical: globalStyleVariables.MODULE_SPACE}]}>
+            <View style={[{marginBottom: 5}]}>
+              <Text style={globalStyles.fontPrimary}>认证状态</Text>
+            </View>
+            <Text style={globalStyles.fontSecondary}>{merchant?.hasAuth ? <Text style={{color: '#4AB87D'}}>已认证</Text> : <Text style={{color: '#999999'}}>未认证</Text>}</Text>
+          </View>
         </View>
-        <View style={[globalStyles.containerLR, globalStyles.borderBottom, {paddingVertical: globalStyleVariables.MODULE_SPACE}]}>
-          <Text style={globalStyles.fontSecondary}>认领时间</Text>
-          <Text style={globalStyles.fontSecondary}>{merchant?.createdTime}</Text>
-        </View>
+
         {merchant?.hasAuth ? (
           <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('AddContract')}>
             <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>

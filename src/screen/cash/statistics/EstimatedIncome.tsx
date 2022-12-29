@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {useDebounceFn} from 'ahooks';
+// import {useDebounceFn} from 'ahooks';
 import {View, Text, StyleSheet, Image, FlatList} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Icon as AntdIcon} from '@ant-design/react-native';
 import * as api from '../../../apis';
-import {Input, NavigationBar} from '../../../component';
+import {NavigationBar} from '../../../component';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {CommissionDetail, Picker, RequestAction, SearchParam} from '../../../models';
 import {useCommonDispatcher, useSummaryDispatcher} from '../../../helper/hooks';
@@ -13,7 +13,7 @@ import Title from '../../../component/Title';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/reducers';
 import Loading from '../../../component/Loading';
-import Icon from '../../../component/Form/Icon';
+// import Icon from '../../../component/Form/Icon';
 import {formatMoment} from '../../../helper';
 import moment, {Moment} from 'moment';
 import ModalDropdown from 'react-native-modal-dropdown';
@@ -26,8 +26,8 @@ const EstimatedIncome: React.FC = () => {
   const [commonDispatcher] = useCommonDispatcher();
   const [summaryDispatcher] = useSummaryDispatcher();
   const commissionToday = useSelector((state: RootState) => state.summary);
-  const [value, setValue] = useState('');
-  const {run} = useDebounceFn(async (name: string) => getData({pageIndex: 1, name}, RequestAction.other));
+  const [value] = useState('');
+  // const {run} = useDebounceFn(async (name: string) => getData({pageIndex: 1, name}, RequestAction.other));
 
   useEffect(() => {
     if (!commissionToday) {
@@ -100,7 +100,7 @@ const EstimatedIncome: React.FC = () => {
 
   const headerRight = (
     <View style={{width: 100}}>
-      <Input
+      {/* <Input
         placeholder="搜索"
         value={value}
         extra={<Icon name="FYLM_all_search" color="#f4f4f4" />}
@@ -110,7 +110,7 @@ const EstimatedIncome: React.FC = () => {
           run(e);
         }}
         textAlign="left"
-      />
+      /> */}
     </View>
   );
   return (

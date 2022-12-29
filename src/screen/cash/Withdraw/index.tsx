@@ -57,11 +57,8 @@ const Withdraw: FC = () => {
   const headerRight = (
     <>
       <ModalDropdown
-        dropdownStyle={[globalStyles.dropDownItem, {width: 100, height: 80}]}
-        options={[
-          {label: '提现记录', value: 1},
-          {label: '常见疑问', value: 2},
-        ]}
+        dropdownStyle={[globalStyles.dropDownItem, {width: 100, height: 40}]}
+        options={[{label: '提现记录', value: 1}]}
         renderRow={item => (
           <View style={[globalStyles.dropDownText]}>
             <Text>{item.label}</Text>
@@ -112,8 +109,10 @@ const Withdraw: FC = () => {
           )}
           {walletInfo?.status !== BankCardStatus.unverified && BankCardStatus.authenticated && (
             <>
-              <View style={[globalStyles.flexNormal]}>
+              <View style={[globalStyles.containerCenter, globalStyles.moduleMarginTop]}>
                 <Text>认证失败，原因：{walletInfo?.reason}</Text>
+              </View>
+              <View style={globalStyles.moduleMarginTop}>
                 <Text>请前往pc认证</Text>
               </View>
             </>

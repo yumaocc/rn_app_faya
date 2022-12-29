@@ -1,7 +1,7 @@
 //提现记录
 import React, {useState} from 'react';
 import {FC} from 'react';
-import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import {ListView} from '@ant-design/react-native';
 import * as apis from '../../apis';
 import {NavigationBar, SectionGroup} from '../../component';
@@ -9,6 +9,7 @@ import {UserWithdrawalRecord, UserWithdrawalRecordStatus} from '../../models';
 import {globalStyles} from '../../constants/styles';
 import CutOffRule from '../../component/CutOffRule';
 import Success from './Success';
+import {SafeAreaView} from 'react-native-safe-area-context';
 type StartFetchFunction = (rowData: any[], pageSize: number) => void;
 type abortFetchFunction = () => void;
 
@@ -56,14 +57,16 @@ const WithdrawalsRecord: FC = () => {
   //   };
   return (
     <>
-      <SafeAreaView style={globalStyles.wrapper}>
+      <SafeAreaView style={globalStyles.wrapper} edges={['bottom']}>
         <NavigationBar title="提现记录" />
         {len ? (
           <SectionGroup style={styles.sectionGroup}>
             <ListView refreshViewStyle={styles.freshHeader} renderItem={renderItem} onFetch={fetchData} keyExtractor={key => key.id + ''} numColumns={1} />
           </SectionGroup>
         ) : (
-          <Text>暂时没有提现记录</Text>
+          <View style={[{flex: 1}, globalStyles.containerCenter]}>
+            <Text>暂时没有提现记录</Text>
+          </View>
         )}
       </SafeAreaView>
     </>

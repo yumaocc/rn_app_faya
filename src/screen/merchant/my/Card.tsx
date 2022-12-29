@@ -70,15 +70,15 @@ const Card: React.FC<CardProps> = props => {
             },
           ]}>
           <View>
-            <Text style={[globalStyles.fontSecondary, styles.centerText]}>商户模式</Text>
+            <Text style={[globalStyles.fontSize12, styles.centerText]}>商户模式</Text>
             <Text style={[globalStyles.fontPrimary, styles.centerTextValue]}>{merchant.multiStore ? '连锁' : '单店'}</Text>
           </View>
           <View>
-            <Text style={[globalStyles.fontSecondary, styles.centerText]}>店铺数量</Text>
+            <Text style={[globalStyles.fontSize12, styles.centerText]}>店铺数量</Text>
             <Text style={[globalStyles.fontPrimary, styles.centerTextValue]}>{merchant?.shopNums || 0}</Text>
           </View>
           <View>
-            <Text style={[globalStyles.fontSecondary, styles.centerText]}>商品数量</Text>
+            <Text style={[globalStyles.fontSize12, styles.centerText]}>商品数量</Text>
             <Text style={[globalStyles.fontPrimary, styles.centerTextValue]}>{merchant?.saleProductNums || 0}</Text>
           </View>
         </View>

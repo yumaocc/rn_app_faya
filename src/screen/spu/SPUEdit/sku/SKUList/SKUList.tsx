@@ -34,6 +34,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
   const skuInfo = useSelector((state: RootState) => state.contract.currentContract?.skuInfoReq?.skuInfo);
   const contractDetail = useSelector((state: RootState) => state.contract.currentContract);
   const packListForm = useForm();
+  const [packageListEdit, setPackageListEdit] = useState(-1);
 
   const packArray = useFieldArray({
     control: packListForm.control,
@@ -78,13 +79,19 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
       skus: skus,
     };
 
-    const {packageList = []} = getValues();
+    let {packageList = []} = getValues();
+    if (packageListEdit !== -1) {
+      packageList = packageList.filter((item: any, idx: number) => idx !== packageListEdit);
+    }
+    setPackageListEdit(-1);
     setValue('packageList', [...packageList, formData]);
+    packListForm.reset();
     setIsShowPackageModal(false);
   }
 
   const editPackList = (index: number, item: PackagedSKU) => {
     setIsShowPackageModal(true);
+    setPackageListEdit(index);
     const sku = item.skus.map(item => ({...item, _selected: true}));
     packListForm.setValue('packageName', item.packageName);
     sku.map((item, index) => {
@@ -92,7 +99,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
     });
   };
 
-  const PackList: React.FC<PackListProps> = props => {
+  const PackageList: React.FC<PackListProps> = props => {
     const {value} = props;
     return (
       <>
@@ -296,9 +303,29 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
               <Controller
                 name={`skuList.[${index}].skuStock`}
                 control={control}
+                rules={{
+                  required: '请输入套餐库存',
+                  validate: () => {
+                    const {skuList, stockAmount} = getValues();
+                    const stockSum = skuList.reduce((pre: number, idx: any) => {
+                      const {skuStock = 0} = idx;
+                      return pre + skuStock;
+                    }, 0);
+                    console.log(stockAmount);
+                    console.log('套餐总库存', stockSum);
+                    if (stockSum > stockAmount) {
+                      setError(`skuList.[${index}].skuStock`, {message: '套餐单独库存不能大于总库存'});
+                      return Promise.reject({message: '套餐单独库存不能大于总库存'});
+                    }
+                    return true;
+                  },
+                }}
                 render={({field: {value, onChange}}) => (
                   <Form.Item label="套餐库存">
                     <Input placeholder="请输入套餐库存" type="number" value={value} onChange={onChange} />
+                    <Text style={globalStyles.error}>
+                      <ErrorMessage name={`skuList.[${index}].skuStock`} errors={errors} />
+                    </Text>
                   </Form.Item>
                 )}
               />
@@ -316,7 +343,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
         );
       })}
       {/* 组合套餐 */}
-      <Controller control={control} name="packageList" render={({field: {value}}) => <PackList value={value} />} />
+      <Controller control={control} name="packageList" render={({field: {value}}) => <PackageList value={value} />} />
 
       <SectionGroup style={[{paddingVertical: 10, backgroundColor: '#fff'}]}>
         <PlusButton style={[globalStyles.containerCenter]} onPress={() => setIsShowPackageModal(true)} title="组合现有套餐" />

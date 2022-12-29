@@ -228,3 +228,7 @@ export const cleanNotice = (value: SKUBuyNoticeF[]) => {
   });
   return _notice;
 };
+//去掉日后面的参数
+export const cleanTime = (time: string) => {
+  return moment(time).format('YYYY-MM-DD');
+};
