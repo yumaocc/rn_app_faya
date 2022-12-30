@@ -8,6 +8,13 @@ export interface MerchantDispatcher {
   loadCurrentMerchantPrivate(payload: number): void;
   loadCurrentMerchantPublic(payload: number): void;
   loadMerchantSearchList(payload: SearchParam): void;
+
+  loadPublicMerchantList(payload: SearchParam): void;
+  // loadMeMerchantList(payload: SearchParam): void;
+
+  // setPublicMerchantList(payload: MerchantF[]): void;
+  // setPrivateMerchantList(payload: MerchantF[]): void;
+  // setMeMerchantList(payload: MyMerchantF[]): void;
   exitMerchantPage(): void;
 }
 
@@ -27,6 +34,10 @@ export const getMerchantDispatcher = (dispatch: Dispatch): MerchantDispatcher =>
     },
     exitMerchantPage() {
       dispatch(Actions.endEdit());
+    },
+
+    loadPublicMerchantList(payload: SearchParam) {
+      dispatch(Actions.loadPublicMerchantList(payload));
     },
   };
 };

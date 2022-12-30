@@ -26,96 +26,98 @@ const Card: React.FC<CardProps> = ({merchant, style}) => {
   const navigation = useNavigation() as FakeNavigation;
 
   return (
-    <TouchableOpacity
-      activeOpacity={0.5}
-      onPress={() => {
-        if (merchant?.hasAuth) {
-          navigation.navigate({
-            name: 'ViewMerchant',
-            params: {
-              privateId: merchant.id,
-            },
-          });
-        } else {
-          navigation.navigate({
-            name: 'AddMerchant',
-            params: {
-              action: MerchantAction.EDIT,
-              privateId: merchant.id,
-              identity: MerchantCreateType.PRIVATE_SEA,
-            },
-          });
-        }
-      }}>
-      <View style={[style, styles.container]}>
-        <View style={[globalStyles.borderBottom, styles.header]}>
-          <View style={[styles.logo]}>
-            <Image source={{uri: merchant?.avatar || 'https://fakeimg.pl/100'}} style={{width: 40, height: 40}} />
-          </View>
-          <View style={styles.headerRight}>
-            <View style={[globalStyles.flexNormal, {justifyContent: 'space-between'}]}>
-              <View style={{flex: 1, flexDirection: 'row'}}>
-                <Text style={[globalStyles.textColorPrimary, styles.merchantName, {flex: 1}]} numberOfLines={1}>
-                  {merchant.name}
-                </Text>
+    <View style={[globalStyles.marginRightLeft]}>
+      <TouchableOpacity
+        activeOpacity={0.5}
+        onPress={() => {
+          if (merchant?.hasAuth) {
+            navigation.navigate({
+              name: 'ViewMerchant',
+              params: {
+                privateId: merchant.id,
+              },
+            });
+          } else {
+            navigation.navigate({
+              name: 'AddMerchant',
+              params: {
+                action: MerchantAction.EDIT,
+                privateId: merchant.id,
+                identity: MerchantCreateType.PRIVATE_SEA,
+              },
+            });
+          }
+        }}>
+        <View style={[style, styles.container]}>
+          <View style={[globalStyles.borderBottom, styles.header]}>
+            <View style={[styles.logo]}>
+              <Image source={{uri: merchant?.avatar || 'https://fakeimg.pl/100'}} style={{width: 40, height: 40}} />
+            </View>
+            <View style={styles.headerRight}>
+              <View style={[globalStyles.flexNormal, {justifyContent: 'space-between'}]}>
+                <View style={{flex: 1, flexDirection: 'row'}}>
+                  <Text style={[globalStyles.textColorPrimary, styles.merchantName, {flex: 1}]} numberOfLines={1}>
+                    {merchant.name}
+                  </Text>
+                </View>
+                {merchant?.hasAuth ? (
+                  <View style={globalStyles.tagWrapperGreen}>
+                    <Text style={globalStyles.tagGreen}>已认证</Text>
+                  </View>
+                ) : (
+                  <View style={styles.tagWrapper}>
+                    <Text style={styles.tag}>未认证</Text>
+                  </View>
+                )}
               </View>
-              {merchant?.hasAuth ? (
-                <View style={globalStyles.tagWrapperGreen}>
-                  <Text style={globalStyles.tagGreen}>已认证</Text>
-                </View>
-              ) : (
-                <View style={styles.tagWrapper}>
-                  <Text style={styles.tag}>未认证</Text>
-                </View>
-              )}
+              <Text
+                style={{
+                  fontSize: 12,
+                  color: globalStyleVariables.TEXT_COLOR_TERTIARY,
+                }}>
+                {merchant.categoryName}
+              </Text>
             </View>
-            <Text
-              style={{
-                fontSize: 12,
-                color: globalStyleVariables.TEXT_COLOR_TERTIARY,
-              }}>
-              {merchant.categoryName}
-            </Text>
           </View>
-        </View>
-        <View style={[globalStyles.containerLR, globalStyles.borderBottom, {paddingVertical: globalStyleVariables.MODULE_SPACE}]}>
-          <View style={[globalStyles.containerCenter]}>
-            <View style={[{marginBottom: 5}]}>
-              <Text style={globalStyles.fontSecondary}>商户模式</Text>
+          <View style={[globalStyles.containerLR, globalStyles.borderBottom, {paddingVertical: globalStyleVariables.MODULE_SPACE}]}>
+            <View style={[globalStyles.containerCenter]}>
+              <View style={[{marginBottom: 5}]}>
+                <Text style={globalStyles.fontSecondary}>商户模式</Text>
+              </View>
+              <Text style={globalStyles.fontPrimary}>{merchant.multiStore === BoolEnum.TRUE ? '连锁' : '单店'}</Text>
             </View>
-            <Text style={globalStyles.fontPrimary}>{merchant.multiStore === BoolEnum.TRUE ? '连锁' : '单店'}</Text>
-          </View>
-          <View style={globalStyles.dividingLine} />
-          <View style={[globalStyles.containerCenter, {paddingVertical: globalStyleVariables.MODULE_SPACE}]}>
-            <View style={[{marginBottom: 5}]}>
-              <Text style={globalStyles.fontPrimary}>认领时间</Text>
+            <View style={globalStyles.dividingLine} />
+            <View style={[globalStyles.containerCenter, {paddingVertical: globalStyleVariables.MODULE_SPACE}]}>
+              <View style={[{marginBottom: 5}]}>
+                <Text style={globalStyles.fontPrimary}>认领时间</Text>
+              </View>
+              <Text style={globalStyles.fontSecondary}>{cleanTime(merchant?.createdTime)}</Text>
             </View>
-            <Text style={globalStyles.fontSecondary}>{cleanTime(merchant?.createdTime)}</Text>
-          </View>
-          <View style={globalStyles.dividingLine} />
-          <View style={[globalStyles.containerCenter, {paddingVertical: globalStyleVariables.MODULE_SPACE}]}>
-            <View style={[{marginBottom: 5}]}>
-              <Text style={globalStyles.fontPrimary}>认证状态</Text>
+            <View style={globalStyles.dividingLine} />
+            <View style={[globalStyles.containerCenter, {paddingVertical: globalStyleVariables.MODULE_SPACE}]}>
+              <View style={[{marginBottom: 5}]}>
+                <Text style={globalStyles.fontPrimary}>认证状态</Text>
+              </View>
+              <Text style={globalStyles.fontSecondary}>{merchant?.hasAuth ? <Text style={{color: '#4AB87D'}}>已认证</Text> : <Text style={{color: '#999999'}}>未认证</Text>}</Text>
             </View>
-            <Text style={globalStyles.fontSecondary}>{merchant?.hasAuth ? <Text style={{color: '#4AB87D'}}>已认证</Text> : <Text style={{color: '#999999'}}>未认证</Text>}</Text>
           </View>
-        </View>
 
-        {merchant?.hasAuth ? (
-          <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('AddContract')}>
-            <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-              <Text style={styles.button}>邀请结算</Text>
-            </View>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity activeOpacity={0.5} onPress={() => inviteAuth(merchant.id)}>
-            <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-              <Text style={styles.button}>邀请认证</Text>
-            </View>
-          </TouchableOpacity>
-        )}
-      </View>
-    </TouchableOpacity>
+          {merchant?.hasAuth ? (
+            <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('AddContract')}>
+              <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+                <Text style={styles.button}>邀请结算</Text>
+              </View>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity activeOpacity={0.5} onPress={() => inviteAuth(merchant.id)}>
+              <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+                <Text style={styles.button}>邀请认证</Text>
+              </View>
+            </TouchableOpacity>
+          )}
+        </View>
+      </TouchableOpacity>
+    </View>
   );
 };
 export default Card;

@@ -32,6 +32,10 @@ axios.interceptors.response.use((response: AxiosResponse) => {
       return response;
   }
 });
+axios.interceptors.request.use(res => {
+  console.log('请求体', res);
+  return res;
+});
 
 export async function getPaged<T>(url: string, config?: AxiosRequestConfig): Promise<PagedData<T>> {
   const res = await axios.get<Response<T>>(url, config);

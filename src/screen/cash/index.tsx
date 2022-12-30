@@ -37,9 +37,9 @@ const Cash: FC = () => {
 
   return (
     <>
-      <SafeAreaView style={globalStyles.wrapper} edges={['bottom']}>
+      <SafeAreaView style={[globalStyles.wrapper]} edges={['bottom']}>
         <NavigationBar title="我的金库" />
-        <ScrollView>
+        <ScrollView style={globalStyles.marginRightLeft}>
           {/* <Button onPress={() => navigation.navigate('Tab')}>dianji</Button> */}
           <SvgUri uri={icons.success} height={100} width={100} fill="#00000" />
           <View style={styles.wrapper}>

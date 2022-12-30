@@ -496,6 +496,7 @@
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 5Q64234526;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 5Q64234526;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = FayaBD/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -510,6 +511,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = life.faya.bd;
 				PRODUCT_NAME = FayaBD;
 				PROVISIONING_PROFILE_SPECIFIER = life.faya.bd;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = dev_bd;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -525,6 +527,7 @@
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 5Q64234526;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 5Q64234526;
 				INFOPLIST_FILE = FayaBD/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -538,6 +541,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = life.faya.bd;
 				PRODUCT_NAME = FayaBD;
 				PROVISIONING_PROFILE_SPECIFIER = life.faya.bd;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = dev_bd;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

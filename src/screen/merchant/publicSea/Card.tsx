@@ -6,7 +6,7 @@ import Loading from '../../../component/Loading';
 import {useCommonDispatcher} from '../../../helper/hooks';
 import * as api from '../../../apis';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
-import {FakeNavigation, MerchantAction, MerchantCreateType, MerchantF, StylePropView} from '../../../models';
+import {BoolEnum, FakeNavigation, MerchantAction, MerchantCreateType, MerchantF, StylePropView} from '../../../models';
 import {useNavigation} from '@react-navigation/native';
 import {cleanTime} from '../../../helper/util';
 import LinkButton from '../../../component/LinkButton';
@@ -35,7 +35,7 @@ const Card: React.FC<CardProps> = props => {
     setLoading(false);
   };
   return (
-    <>
+    <View style={globalStyles.marginRightLeft}>
       <Loading active={loading} />
       <TouchableOpacity
         activeOpacity={0.5}
@@ -82,7 +82,7 @@ const Card: React.FC<CardProps> = props => {
                     paddingBottom: 5,
                   },
                 ]}>
-                <Text style={[globalStyles.fontSize12]}>{merchant.multiStore ? '连锁' : '单店'}</Text>
+                <Text style={[globalStyles.fontSize12]}>{merchant.multiStore === BoolEnum.TRUE ? '多店' : '单店'}</Text>
                 <View style={globalStyles.dividingLine} />
                 <Text style={[globalStyles.fontSize12]}>{merchant?.hasAuth ? <Text style={{color: '#4AB87D'}}>已认证</Text> : <Text style={{color: '#999999'}}>未认证</Text>}</Text>
                 <View style={globalStyles.dividingLine} />
@@ -100,7 +100,7 @@ const Card: React.FC<CardProps> = props => {
           <LinkButton fontSize={[globalStyles.fontPrimary, globalStyles.primaryColor]} title="加入我的私海" onPress={() => addMyPrivateSeas(merchant.id)} />
         </View>
       </TouchableOpacity>
-    </>
+    </View>
   );
 };
 

@@ -85,5 +85,5 @@ export type {CommissionToday, CommissionExpect, Commission, CommissionTop, SaleT
 
 export {LoginState, UserState, UserType, UserWithdrawalRecordStatus, BankCardStatus} from './user';
 export {CustomError, CustomErrorWithPayload, BoolEnum, RequestAction} from './common';
-export {MerchantType, MerchantCreateType, MerchantAgentType, MerchantAction} from './merchant';
+export {MerchantType, MerchantCreateType, MerchantAgentType, MerchantAction, ShopType} from './merchant';
 export {BuyLimitType, SettlementType, AccountType, ProtocolType, InvoiceType, BookingType, ContractAction, ContractStatus} from './contract';

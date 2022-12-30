@@ -36,6 +36,7 @@ export type CacheKeys = 'token' | 'api' | 'phone' | 'useMockData';
 export interface PageParam {
   pageIndex?: number;
   pageSize?: number;
+  pageTotal?: number;
 }
 
 export interface PreviewConfig {

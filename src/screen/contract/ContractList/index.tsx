@@ -16,6 +16,7 @@ import {useCommonDispatcher} from '../../../helper/hooks';
 import {FlatList} from 'react-native-gesture-handler';
 import Icon from '../../../component/Form/Icon';
 import Loading from '../../../component/Loading';
+import {cleanTime} from '../../../helper/util';
 
 const ContractList: FC = () => {
   const navigation = useNavigation() as FakeNavigation;
@@ -122,9 +123,9 @@ const ContractList: FC = () => {
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             <Text style={[{color: getColor(item?.status)}, globalStyles.moduleMarginTop]}>
               {item?.statusStr}
-              {item?.createdTime}
+              {cleanTime(item?.createdTime)}
             </Text>
-            <Text>{item?.createdTime}</Text>
+            <Text>签约时间:{cleanTime(item?.createdTime)}</Text>
           </View>
         </View>
       </TouchableOpacity>

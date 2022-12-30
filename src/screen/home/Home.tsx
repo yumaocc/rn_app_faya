@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, View, ScrollView, StyleSheet, Button} from 'react-native';
+import {Text, View, ScrollView, StyleSheet} from 'react-native';
 import {Header} from '@react-navigation/elements';
 import {Icon} from '@ant-design/react-native';
 import {PlusButton, UnitNumber} from '../../component';
@@ -74,19 +74,33 @@ const Home: React.FC = () => {
         <View style={[globalStyles.moduleMarginTop, styles.cardContainer]}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <View style={{flex: 1, paddingRight: 10}}>
-              <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Tab')}>
+              <TouchableOpacity
+                activeOpacity={0.5}
+                onPress={() =>
+                  navigation.navigate({
+                    name: 'Merchant',
+                    params: {tab: 'private'},
+                  })
+                }>
                 <View style={styles.cardTitleContainer}>
                   <Text style={[globalStyles.textColorPrimary, styles.cardTitle]}>我的私海</Text>
                   <Icon name="right" style={globalStyles.iconRight} />
                 </View>
-                <UnitNumber style={{paddingTop: 10}} value={summary?.privateSeaNums || 0} unit={`/${summary?.privateSeaLimit || 0}`} />
+                <UnitNumber style={{paddingTop: 10}} value={`${summary?.privateSeaNums || 0}`} unit={`/${summary?.privateSeaLimit || 0} 家`} />
               </TouchableOpacity>
             </View>
 
             <View style={[globalStyles.lineVertical, {marginHorizontal: 5, height: 29}]} />
 
             <View style={{flex: 1, paddingLeft: 10}}>
-              <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Tab')}>
+              <TouchableOpacity
+                activeOpacity={0.5}
+                onPress={() =>
+                  navigation.navigate({
+                    name: 'Merchant',
+                    params: {tab: 'mine'},
+                  })
+                }>
                 <View style={styles.cardTitleContainer}>
                   <Text style={[globalStyles.textColorPrimary, styles.cardTitle]}>我的商家</Text>
                   <Icon name="right" style={globalStyles.iconRight} />

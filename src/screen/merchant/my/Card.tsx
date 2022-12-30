@@ -15,7 +15,7 @@ const Card: React.FC<CardProps> = props => {
   const {merchant, style} = props;
   const navigation = useNavigation() as FakeNavigation;
   return (
-    <View style={[styles.container, style]}>
+    <View style={[styles.container, style, {marginLeft: globalStyleVariables.MODULE_SPACE, marginRight: globalStyleVariables.MODULE_SPACE}]}>
       <TouchableOpacity
         activeOpacity={0.5}
         onPress={() =>
@@ -45,8 +45,8 @@ const Card: React.FC<CardProps> = props => {
                   <Text style={globalStyles.tagGreen}>·合作中</Text>
                 </View>
               ) : (
-                <View style={globalStyles.tagWrapper}>
-                  <Text style={globalStyles.tag}>·即将调入公海{merchant?.status}</Text>
+                <View style={{backgroundColor: 'rgba(255, 96, 96, 0.2)', padding: 5}}>
+                  <Text style={{color: '#FF6060', fontSize: 10}}>·即将调入公海</Text>
                 </View>
               )}
             </View>

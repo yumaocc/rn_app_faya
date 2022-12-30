@@ -3,9 +3,9 @@ import {PageParam, SearchForm} from './common';
 export interface PagedData<T> {
   content: T;
   page?: {
-    pageIndex: number;
-    pageSize: number;
-    pageTotal: number;
+    pageIndex?: number;
+    pageSize?: number;
+    pageTotal?: number;
   };
 }
 

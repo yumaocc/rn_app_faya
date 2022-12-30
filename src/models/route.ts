@@ -27,6 +27,7 @@ export type ValidRoute = keyof RootStackParamList;
 export type RootStackParamList = {
   Home: undefined;
   Login: undefined;
+  Merchant: {tab: string};
   Tab: undefined;
   AddMerchant: {type: MerchantCreateType} | undefined;
   EditContract: {id: number};
