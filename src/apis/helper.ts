@@ -26,7 +26,6 @@ export function resetToken(token: string) {
 
 axios.interceptors.response.use((response: AxiosResponse) => {
   const {data} = response;
-  console.log(data);
   switch (data.code) {
     case 8000:
       // fixme: 导航怎么办

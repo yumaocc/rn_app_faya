@@ -34,7 +34,6 @@ const Card: React.FC<CardProps> = props => {
     }
     setLoading(false);
   };
-  console.log(merchant);
   return (
     <>
       <Loading active={loading} />

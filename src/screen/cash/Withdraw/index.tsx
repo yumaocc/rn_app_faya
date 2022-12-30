@@ -1,6 +1,6 @@
 import {Button, Icon, InputItem} from '@ant-design/react-native';
 import React, {FC, useEffect, useMemo, useState} from 'react';
-import {SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {NavigationBar, UnitNumber} from '../../../component';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import ModalDropdown from 'react-native-modal-dropdown';
@@ -12,6 +12,7 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/reducers';
 import * as api from '../../../apis';
 import {useNavigation} from '@react-navigation/native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 const Withdraw: FC = () => {
   const [walletInfo, updateWallet] = useWallet(); //钱包信息
 
@@ -73,7 +74,7 @@ const Withdraw: FC = () => {
   );
   return (
     <>
-      <SafeAreaView style={globalStyles.wrapper}>
+      <SafeAreaView style={globalStyles.wrapper} edges={['bottom']}>
         <NavigationBar title="提现" headerRight={headerRight} />
         <View style={styles.wrapper}>
           <Text>到账银行卡</Text>

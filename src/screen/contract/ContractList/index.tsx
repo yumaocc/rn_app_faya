@@ -104,6 +104,7 @@ const ContractList: FC = () => {
       <TouchableOpacity
         key={item.id}
         activeOpacity={0.5}
+        style={{backgroundColor: '#fff', paddingLeft: globalStyleVariables.MODULE_SPACE, paddingRight: globalStyleVariables.MODULE_SPACE}}
         onPress={() => {
           navigation.navigate({
             name: 'EditContract',
@@ -134,7 +135,7 @@ const ContractList: FC = () => {
       <View style={{flex: 1}}>
         <Loading active={loading} />
         <NavigationBar title="合同列表" headerRight={headerRight} />
-        <Loading active={loading} />
+
         <View style={[globalStyles.lineHorizontal]} />
         <View style={[styles.header]}>
           <View>
@@ -156,24 +157,22 @@ const ContractList: FC = () => {
             </View>
           </View>
         </View>
-        <View style={styles.content}>
-          <FlatList
-            data={data}
-            renderItem={renderItem}
-            ListFooterComponent={
-              <View style={[globalStyles.containerCenter, {flex: 1, marginTop: globalStyleVariables.MODULE_SPACE, marginBottom: globalStyleVariables.MODULE_SPACE}]}>
-                <Text style={[globalStyles.fontTertiary, {textAlign: 'center'}]}>已经到底</Text>
-              </View>
-            }
-            keyExtractor={key => key.id + ''}
-            numColumns={1}
-            onEndReached={() => pullUp()}
-            refreshing={loading}
-            onRefresh={() => {
-              pullUp(1);
-            }}
-          />
-        </View>
+        <FlatList
+          data={data}
+          renderItem={renderItem}
+          ListFooterComponent={
+            <View style={[globalStyles.containerCenter, {flex: 1, marginTop: globalStyleVariables.MODULE_SPACE, marginBottom: globalStyleVariables.MODULE_SPACE}]}>
+              <Text style={[globalStyles.fontTertiary, {textAlign: 'center'}]}>已经到底</Text>
+            </View>
+          }
+          keyExtractor={key => key.id + ''}
+          numColumns={1}
+          onEndReached={() => pullUp()}
+          refreshing={loading}
+          onRefresh={() => {
+            pullUp(1);
+          }}
+        />
       </View>
     </>
   );
@@ -220,8 +219,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#fff',
-    paddingLeft: 10,
-    paddingRight: 10,
+    paddingLeft: globalStyleVariables.MODULE_SPACE,
+    paddingRight: globalStyleVariables.MODULE_SPACE,
+    marginBottom: globalStyleVariables.MODULE_SPACE,
   },
 });
 
