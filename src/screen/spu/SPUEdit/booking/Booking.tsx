@@ -55,7 +55,6 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
     bookingModel.reset();
   }
   const delBookModel = (index: number) => {
-    console.log(index);
     const {modelList} = getValues();
     const newModelList = modelList.filter((item: any, idx: number) => index !== idx);
     setValue('modelList', newModelList);

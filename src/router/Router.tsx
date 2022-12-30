@@ -1,5 +1,5 @@
 import React from 'react';
-import {createNavigationContainerRef} from '@react-navigation/native';
+import {createNavigationContainerRef, StackActions} from '@react-navigation/native';
 
 import TabNavigator from '../screen/tabs/TabNavigator';
 import Login from '../screen/common/Login';
@@ -14,6 +14,7 @@ import RouteContract from './RouterContract';
 import RouterCash from './RouterCash';
 import IconTest from '../screen/IconTest/IconTest';
 import MineDetail from '../screen/mine/MineDetail';
+import {RootStackParamList, ValidRoute} from '../models';
 const Navigator: React.FC = () => {
   const token = useSelector((state: RootState) => state.common.token);
   const isLogout = useSelector((state: RootState) => state.user.isLogout);
@@ -67,9 +68,53 @@ export default Navigator;
 
 export const navigationRef = createNavigationContainerRef();
 
-// 编程式导航
-export function navigate<Params = any>(name: string, params?: Params) {
+export function isInLogin(): boolean {
   if (navigationRef.isReady()) {
-    navigationRef.current?.navigate(name as unknown as never, params as unknown as never);
+    const routes = navigationRef.getState()?.routes;
+    if (routes?.length) {
+      const last = routes[routes.length - 1];
+      if (last.name === 'Login') {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+// 编程式导航
+export function goLogin(loginParams?: GoLoginParams) {
+  if (isInLogin()) {
+    return;
+  }
+  navigateTo('Login', loginParams?.params, loginParams?.behavior === 'replace');
+}
+
+export function relaunch() {
+  if (navigationRef.isReady()) {
+    navigationRef.dispatch(StackActions.popToTop());
   }
 }
+
+export function relaunchTo(url: ValidRoute, params?: any) {
+  if (navigationRef.isReady()) {
+    navigationRef.dispatch(StackActions.popToTop());
+    navigationRef.dispatch(StackActions.push(url, params));
+  }
+}
+
+export function navigateTo(url: keyof RootStackParamList, params?: any, redirect = false) {
+  if (navigationRef.isReady()) {
+    if (redirect) {
+      navigationRef.dispatch(StackActions.replace(url, params));
+    } else {
+      navigationRef.dispatch(StackActions.push(url, params));
+    }
+  }
+}
+
+export function navigateBack() {
+  if (navigationRef.isReady()) {
+    navigationRef.dispatch(StackActions.pop());
+  }
+}
+

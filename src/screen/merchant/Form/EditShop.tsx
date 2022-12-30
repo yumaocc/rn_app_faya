@@ -5,9 +5,9 @@ import {globalStyles} from '../../../constants/styles';
 import {useForm, Controller, UseFieldArrayAppend} from 'react-hook-form';
 import Modal from '../../../component/Modal';
 import {FormMerchant} from '../../../models';
-import _ from 'lodash';
 import {ErrorMessage} from '@hookform/error-message';
 import {InputItem} from '@ant-design/react-native';
+import {useCommonDispatcher} from '../../../helper/hooks';
 
 interface EditShopProps {
   nextIndex?: number;
@@ -17,6 +17,7 @@ interface EditShopProps {
 }
 
 const EditShop: FC<EditShopProps> = ({open, setOpen, setValue}) => {
+  const [commonDispatcher] = useCommonDispatcher();
   const {
     control,
     formState: {errors},
@@ -24,18 +25,6 @@ const EditShop: FC<EditShopProps> = ({open, setOpen, setValue}) => {
   } = useForm({
     mode: 'onBlur',
   });
-  const getError = (value: any) => {
-    const errorArr: string[] = [];
-    for (const key in value) {
-      if (Object.prototype.hasOwnProperty.call(value, key)) {
-        const element = value[key];
-        const e = _.pick<string>(element, 'message');
-        errorArr.push(e);
-      }
-    }
-    const firstError = errorArr.pop();
-    console.log(firstError);
-  };
 
   const onOk = async (value: any) => {
     try {
@@ -46,11 +35,11 @@ const EditShop: FC<EditShopProps> = ({open, setOpen, setValue}) => {
         setOpen(false);
       }
     } catch (error) {
-      console.log(error);
+      commonDispatcher.error(error || '哎呀，出错了~');
     }
   };
   return (
-    <Modal visible={open} onOk={handleSubmit(onOk, getError)} onClose={() => setOpen(false)}>
+    <Modal visible={open} onOk={handleSubmit(onOk)} onClose={() => setOpen(false)}>
       <Controller
         name={'shopName'}
         control={control}

@@ -8,7 +8,6 @@ import {NavigationBar, SectionGroup} from '../../component';
 import {UserWithdrawalRecord, UserWithdrawalRecordStatus} from '../../models';
 import {globalStyles} from '../../constants/styles';
 import CutOffRule from '../../component/CutOffRule';
-import Success from './Success';
 import {SafeAreaView} from 'react-native-safe-area-context';
 type StartFetchFunction = (rowData: any[], pageSize: number) => void;
 type abortFetchFunction = () => void;
@@ -23,8 +22,71 @@ const WithdrawalsRecord: FC = () => {
       if (res.content.length > 0) {
         setLen(true);
       }
+      const item = [
+        {
+          moneyYuan: '1231',
+          createdTime: '2022-12-01 20:12',
+          status: 1,
+        },
+        {
+          moneyYuan: '1231',
+          createdTime: '2022-12-01 20:12',
+          status: 1,
+        },
+        {
+          moneyYuan: '1231',
+          createdTime: '2022-12-01 20:12',
+          status: 1,
+        },
+        {
+          moneyYuan: '1231',
+          createdTime: '2022-12-01 20:12',
+          status: 1,
+        },
+        {
+          moneyYuan: '1231',
+          createdTime: '2022-12-01 20:12',
+          status: 1,
+        },
+        {
+          moneyYuan: '1231',
+          createdTime: '2022-12-01 20:12',
+          status: 1,
+        },
+        {
+          moneyYuan: '1231',
+          createdTime: '2022-12-01 20:12',
+          status: 1,
+        },
+        {
+          moneyYuan: '1231',
+          createdTime: '2022-12-01 20:12',
+          status: 1,
+        },
+        {
+          moneyYuan: '1231',
+          createdTime: '2022-12-01 20:12',
+          status: 1,
+        },
+        {
+          moneyYuan: '1231',
+          createdTime: '2022-12-01 20:12',
+          status: 1,
+        },
+        {
+          moneyYuan: '1231',
+          createdTime: '2022-12-01 20:12',
+          status: 1,
+        },
+        {
+          moneyYuan: '1231',
+          createdTime: '2022-12-01 20:12',
+          status: 1,
+        },
+      ];
+      setLen(true);
       const rowData = res.content;
-      startFetch(rowData, pageSize);
+      startFetch(item, pageSize);
     } catch (error) {
       abortFetch();
     }
@@ -37,7 +99,6 @@ const WithdrawalsRecord: FC = () => {
           <Text style={[globalStyles.fontPrimary]}>提现到银行卡</Text>
           <Text style={[globalStyles.fontPrimary]}>{item?.moneyYuan}</Text>
         </View>
-        <Success />
         <View style={[globalStyles.containerLR, globalStyles.moduleMarginTop]}>
           <Text style={[globalStyles.fontTertiary]}>{item?.createdTime}</Text>
           {UserWithdrawalRecordStatus.CHECKING === item?.status && <Text style={[globalStyles.fontTertiary]}>审核中</Text>}
@@ -50,24 +111,19 @@ const WithdrawalsRecord: FC = () => {
       </>
     );
   };
-  //   const item = {
-  //     moneyYuan: '1231',
-  //     createdTime: '2022-12-01 20:12',
-  //     status: 1,
-  //   };
   return (
     <>
       <SafeAreaView style={globalStyles.wrapper} edges={['bottom']}>
         <NavigationBar title="提现记录" />
-        {len ? (
-          <SectionGroup style={styles.sectionGroup}>
-            <ListView refreshViewStyle={styles.freshHeader} renderItem={renderItem} onFetch={fetchData} keyExtractor={key => key.id + ''} numColumns={1} />
-          </SectionGroup>
-        ) : (
-          <View style={[{flex: 1}, globalStyles.containerCenter]}>
-            <Text>暂时没有提现记录</Text>
-          </View>
-        )}
+        {/* {len ? ( */}
+        <SectionGroup style={styles.sectionGroup}>
+          <ListView refreshViewStyle={styles.freshHeader} renderItem={renderItem} onFetch={fetchData} keyExtractor={key => key.id + ''} numColumns={1} />
+        </SectionGroup>
+        {/* ) : (
+        <View style={[{flex: 1}, globalStyles.containerCenter]}>
+          <Text>暂时没有提现记录</Text>
+        </View>
+        )} */}
       </SafeAreaView>
     </>
   );

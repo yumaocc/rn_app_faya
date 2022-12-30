@@ -45,7 +45,7 @@ const Cash: FC = () => {
           <View style={styles.wrapper}>
             <View style={styles.content}>
               {/* <Button onPress={() => navigation.navigate('IconTest')}>选择icon：：：测试按钮</Button> */}
-              <Title title="余额" unit="元" type={'money'} value={Number(wallet?.balanceYuan)} arrow handleClick={() => console.log(111)} />
+              <Title title="余额" unit="元" type={'money'} value={Number(wallet?.balanceYuan)} arrow handleClick={() => console.log()} />
               <CutOffRule />
               <View style={styles.contentOneBtn}>
                 <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Withdraw')}>

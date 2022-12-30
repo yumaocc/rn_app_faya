@@ -131,7 +131,6 @@ const EditSPU: React.FC = () => {
       e?.message ? e : _.flatMap(e, item => (item?.message ? item : _.flatMap(item, element => (element?.message ? element : _.flatMap(element, e => e))))),
     );
     commonDispatcher.info(res[0]);
-    console.log('商品错误提示表单', res);
   };
 
   async function onHandleSubmit() {
@@ -147,7 +146,6 @@ const EditSPU: React.FC = () => {
     try {
       const res = getValues();
       const formData = cleanSPUForm(res, contractDetail);
-      console.log(' 格式化之后的数据', formData);
       if (isEdit) {
         await api.sku.updateSPU(formData);
         skuDispatcher.loadCurrentSPU(spuID);

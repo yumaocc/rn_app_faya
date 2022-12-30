@@ -25,7 +25,6 @@ interface DatePickerProps {
 
 const DatePicker: React.FC<DatePickerProps> = props => {
   const {value, min, max, mode, onChange} = props;
-  // console.log('value!', value);
   const valueDate = useMemo(() => {
     return value || moment();
   }, [value]);

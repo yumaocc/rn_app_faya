@@ -52,8 +52,6 @@ const Booking: FC<BookingProps> = ({Controller, control, watch, getValues, actio
   };
 
   const getError = (value: any) => {
-    console.log(value);
-
     const res = _.flatMap(value, e =>
       e?.message ? e : _.flatMap(e, item => (item?.message ? item : _.flatMap(item, element => (element?.message ? element : _.flatMap(element, e => e))))),
     );

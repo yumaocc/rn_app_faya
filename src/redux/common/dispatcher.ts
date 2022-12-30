@@ -10,6 +10,7 @@ export interface CommonDispatcher {
   initApp(): void;
   previewImages(config: PreviewConfig): void;
   closePreview(): void;
+  setToken(token: string): void;
 }
 
 export const getCommonDispatcher = (dispatch: Dispatch): CommonDispatcher => ({
@@ -30,5 +31,8 @@ export const getCommonDispatcher = (dispatch: Dispatch): CommonDispatcher => ({
   },
   closePreview() {
     dispatch(Actions.closePreview());
+  },
+  setToken(token) {
+    dispatch(Actions.setToken(token));
   },
 });

@@ -30,7 +30,6 @@ export async function loadCommissionHistory(): Promise<CommissionHistory> {
 }
 
 export async function getCommissionOrder(param: SearchParam): Promise<PagedData<CommissionDetail[]>> {
-  console.log('请求参数', param);
   return await getPaged<CommissionDetail[]>('/sku/commission/details/page', {
     params: param,
   });

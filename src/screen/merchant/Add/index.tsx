@@ -144,7 +144,7 @@ const AddMerchant: React.FC = () => {
       return identity === MerchantCreateType.PUBLIC_SEA ? '新建公海商家' : '新建私海商家';
     }
   };
-  console.log(merchantDetail);
+
   return (
     <>
       <Loading active={loading} />

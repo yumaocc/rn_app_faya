@@ -7,7 +7,7 @@ import * as api from '../../../apis';
 import {NavigationBar} from '../../../component';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {CommissionDetail, Picker, RequestAction, SearchParam} from '../../../models';
-import {useCommonDispatcher, useSummaryDispatcher} from '../../../helper/hooks';
+import {useSummaryDispatcher} from '../../../helper/hooks';
 import {date, PAGE_SIZE} from '../../../constants';
 import Title from '../../../component/Title';
 import ModalDropdown from 'react-native-modal-dropdown';
@@ -26,7 +26,6 @@ const TodayEarnings: React.FC = () => {
   const [pageIndex, setPageIndex] = useState(1);
   const [data, setData] = useState<CommissionDetail[]>([]);
   const {width: windowWidth} = useWindowDimensions();
-  const [commonDispatcher] = useCommonDispatcher();
   const [summaryDispatcher] = useSummaryDispatcher();
   const commissionToday = useSelector((state: RootState) => state.summary);
   const [value] = useState('');
@@ -59,7 +58,7 @@ const TodayEarnings: React.FC = () => {
         setPageIndex(pageIndex => pageIndex + 1);
       }
     } catch (error) {
-      commonDispatcher.error(error);
+      // commonDispatcher.error(error);
     }
     setLoading(false);
   };

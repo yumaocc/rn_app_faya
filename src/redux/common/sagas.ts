@@ -8,7 +8,7 @@ import {ERROR_SHOW_TIME, getBaseURL} from '../../constants';
 import {cache, wait} from '../../helper';
 import {ActionWithPayload} from '../types';
 import * as api from '../../apis';
-import {UserInfo} from '../../models';
+import {ErrorType, UserInfo} from '../../models';
 
 function* initApp(): any {
   const url = getBaseURL();
@@ -36,9 +36,21 @@ function* setToken(action: ActionWithPayload<ActionType, string>) {
   resetToken(token);
   yield cache.config.setToken(token);
 }
+function* handleError(action: ActionWithPayload<ActionType, ErrorType | string>) {
+  try {
+    yield put(Actions.dismissMessage());
+    const {payload} = action;
+    if (typeof payload === 'string') {
+      return;
+    }
+    if (payload?.code === 8000) {
+      yield put(Actions.setToken(''));
+    }
+  } catch (error) {}
+}
 
 function* watchCommonSagas() {
-  yield takeLatest(ActionType.ERROR, dismissMessage);
+  yield takeLatest(ActionType.ERROR, handleError);
   yield takeLatest(ActionType.SUCCESS, dismissMessage);
   yield takeLatest(ActionType.INFO, dismissMessage);
   yield takeLatest(ActionType.INIT_APP, initApp);

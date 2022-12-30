@@ -103,7 +103,6 @@ export function cleanContractForm(contractForm: Contract): ContractF {
   _skuInfo.forEach((item: {skuStock: number; skuSettlementPrice: number; buyLimitNum: number; skuDetails: any[]}) => {
     item.skuStock = Number(item.skuStock);
     item.skuSettlementPrice = Number(item.skuSettlementPrice);
-    console.log(item.buyLimitNum, '需要');
     item.buyLimitNum = Number(item.buyLimitNum);
     item.skuDetails.forEach(item => {
       item.nums = Number(item.nums);

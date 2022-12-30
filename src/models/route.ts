@@ -23,6 +23,7 @@ interface NavigationItemObject {
  */
 export type NavigationItem = NavigationItemObject | string;
 
+export type ValidRoute = keyof RootStackParamList;
 export type RootStackParamList = {
   Home: undefined;
   Login: undefined;

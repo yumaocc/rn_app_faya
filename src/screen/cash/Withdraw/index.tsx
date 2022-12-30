@@ -91,7 +91,7 @@ const Withdraw: FC = () => {
                 <Text>
                   {walletInfo?.bankCompanyName}&nbsp;({slice(walletInfo?.bankCard)})
                 </Text>
-                <LinkButton onPress={() => console.log('跟换银行卡')} title="更换银行卡" />
+                {/* <LinkButton onPress={() => console.log('跟换银行卡')} title="更换银行卡" /> */}
               </View>
               <CutOffRule />
               <Text>提现金额</Text>

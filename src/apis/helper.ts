@@ -1,6 +1,6 @@
 import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
 import {REQUEST_TIMEOUT} from '../constants';
-import {PagedData, Response, AppHeader} from '../models';
+import {PagedData, Response, AppHeader, CustomError} from '../models';
 import {Platform} from 'react-native';
 import packageJSON from '../../package.json';
 
@@ -12,8 +12,6 @@ const headers: AppHeader = {
   project: 'FAYABD',
 };
 axios.defaults.headers.common = {...currentHeader, ...headers};
-
-// console.log('headers', headers);
 
 axios.defaults.timeout = REQUEST_TIMEOUT;
 
@@ -28,9 +26,8 @@ axios.interceptors.response.use((response: AxiosResponse) => {
   const {data} = response;
   switch (data.code) {
     case 8000:
-      // fixme: 导航怎么办
-      // location.href = '/#/login';
-      return response;
+      const {code, msg} = data;
+      throw new CustomError(msg, code);
     default:
       return response;
   }
@@ -50,8 +47,7 @@ export async function postPaged<T, P>(url: string, data?: P, config?: AxiosReque
   if (res.data.code === 1) {
     return res.data.data;
   }
-  // throw new CustomError(res.data.msg, res.data.code);
-  return Promise.reject(res.data.msg);
+  throw new CustomError(res.data.msg, res.data.code);
 }
 
 export async function get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {

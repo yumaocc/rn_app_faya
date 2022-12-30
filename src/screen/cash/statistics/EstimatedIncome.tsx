@@ -84,9 +84,7 @@ const EstimatedIncome: React.FC = () => {
     setValueType(e);
     const start: Moment = moment().startOf(valueType?.value);
     const end: Moment = moment().endOf(valueType?.value);
-    console.log('value', e);
-    console.log(start);
-    console.log(end);
+
     setPageIndex(1);
     getData(
       {
