@@ -111,7 +111,7 @@ const ShopDetail: FC = () => {
             <Button style={{borderColor: 'red', flex: 1, marginRight: globalStyleVariables.MODULE_SPACE}} onPress={() => delShop(shopDetail.id)} type="ghost">
               <Text style={{color: 'red'}}> 删除</Text>
             </Button>
-            <Button type="primary" style={{width: 260}} onPress={amendShop}>
+            <Button type="primary" style={{width: 200}} onPress={amendShop}>
               保存
             </Button>
           </View>

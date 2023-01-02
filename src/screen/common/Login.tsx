@@ -1,15 +1,20 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import {InputItem, Button} from '@ant-design/react-native';
+import {InputItem, Button, Radio, Toast} from '@ant-design/react-native';
 import {useSelector} from 'react-redux';
 import {useCommonDispatcher, useUserDispatcher} from '../../helper/hooks';
 import {RootState} from '../../redux/reducers';
-import {LoginState} from '../../models';
+import {FakeNavigation, LoginState} from '../../models';
 import * as api from '../../apis';
+import {globalStyles, globalStyleVariables} from '../../constants/styles';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import {useNavigation} from '@react-navigation/native';
 
 const Login: React.FC = () => {
+  const [radio, setRadio] = useState<number>();
   const [phone, setPhone] = React.useState('');
   const [code, setCode] = React.useState(''); // 验证码
+  const navigation = useNavigation() as FakeNavigation;
   const suggestPhone = useSelector((state: RootState) => state.user.phone);
   const loginState = useSelector((state: RootState) => state.user.loginState);
   const [verifyCodeSend, setVerifyCodeSend] = useState(false);
@@ -55,10 +60,14 @@ const Login: React.FC = () => {
 
   function handleLogin() {
     if (!phone) {
-      return commonDispatcher.error('请输入手机号');
+      return Toast.info('请输入手机号');
     }
     if (!code) {
-      return commonDispatcher.error('请输入验证码');
+      Toast.info('请输入验证码');
+      return;
+    }
+    if (!radio) {
+      return Toast.info('请同意用户协议');
     }
     userDispatcher.login({phone, code});
   }
@@ -72,6 +81,7 @@ const Login: React.FC = () => {
             <Text style={styles.phoneLabel}>+86</Text>
           </InputItem>
         </View>
+
         <Text style={styles.formExplain}>未注册的手机号验证通过后将自动注册</Text>
         <View style={[styles.formItem, styles.formItemCode]}>
           <InputItem
@@ -96,6 +106,21 @@ const Login: React.FC = () => {
         <Button style={styles.login} type="primary" onPress={handleLogin} loading={loginState === LoginState.Loading}>
           登录
         </Button>
+        <View style={{flexDirection: 'row', alignItems: 'center', marginTop: globalStyleVariables.MODULE_SPACE}}>
+          <Radio
+            defaultChecked={false}
+            onChange={() => {
+              setRadio(1);
+            }}
+            style={{marginRight: globalStyleVariables.MODULE_SPACE}}
+          />
+          <Text style={[globalStyles.fontTertiary, {lineHeight: 15}]}>
+            登录即表示您同意
+            <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Agreement')}>
+              <Text style={globalStyles.primaryColor}>《发芽联盟入驻协议》</Text>
+            </TouchableOpacity>
+          </Text>
+        </View>
       </View>
     </View>
   );

@@ -33,7 +33,7 @@ const CommodityList: FC<CommodityListProps> = ({id}) => {
 
   const renderItem = (item: ContractList) => {
     return (
-      <View style={[styles.content]}>
+      <View key={item.id} style={[styles.content]}>
         <Text style={[globalStyles.fontPrimary]}>{item.name}</Text>
         <View style={[globalStyles.containerLR, globalStyles.moduleMarginTop]}>
           <Text style={globalStyles.fontTertiary}>签约时间：{item.createdTime}</Text>
@@ -49,7 +49,7 @@ const CommodityList: FC<CommodityListProps> = ({id}) => {
           <Text>共{len}份合同</Text>
           <PlusButton title="新增合同" onPress={() => navigation.navigate('AddContract')} />
         </View>
-        <ListView refreshViewStyle={styles.freshHeader} numColumns={1} renderItem={renderItem} keyExtractor={item => '' + item.id} onFetch={fetchData} />
+        <ListView refreshViewStyle={styles.freshHeader} numColumns={1} renderItem={renderItem} keyExtractor={item => 'con' + item.id} onFetch={fetchData} />
       </SafeAreaView>
     </>
   );
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   freshHeader: {
-    height: 50,
+    height: 60,
   },
   box: {
     margin: globalStyleVariables.MODULE_SPACE,

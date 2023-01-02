@@ -11,6 +11,7 @@ export interface CommonDispatcher {
   previewImages(config: PreviewConfig): void;
   closePreview(): void;
   setToken(token: string): void;
+  loadAllSite(): void;
 }
 
 export const getCommonDispatcher = (dispatch: Dispatch): CommonDispatcher => ({
@@ -34,5 +35,8 @@ export const getCommonDispatcher = (dispatch: Dispatch): CommonDispatcher => ({
   },
   setToken(token) {
     dispatch(Actions.setToken(token));
+  },
+  loadAllSite() {
+    dispatch(Actions.loadAllSites());
   },
 });

@@ -46,6 +46,7 @@ function* loadCurrentMerchantPublic(action: ActionWithPayload<ActionType, number
     yield put(CommonActions.error(error));
   }
 }
+
 function* loadMerchantSearchList(action: ActionWithPayload<ActionType, SearchParam>) {
   const param = action.payload;
   try {
@@ -59,7 +60,7 @@ function* loadMerchantSearchList(action: ActionWithPayload<ActionType, SearchPar
   }
 }
 
-//公海
+//公海分页
 function* loadPublicMerchantList(action: ActionWithPayload<ActionType, SearchParam>) {
   const params = action.payload;
   try {
@@ -67,13 +68,12 @@ function* loadPublicMerchantList(action: ActionWithPayload<ActionType, SearchPar
     yield put(Actions.loadMerchantLoading());
     const res: PagedData<MerchantF[]> = yield call(api.merchant.getPublicSeaMerchants, param);
     if (!res?.content?.length) {
-      console.log(111);
-      const page: PageParam = yield select((state: RootState) => state.merchant.merchantList.page);
+      const page: PageParam = yield select((state: RootState) => state.merchant.merchantPublicList.page);
       res.page = page;
     }
     if (action === RequestAction.load) {
-      const merchant: MerchantF[] = yield select((state: RootState) => state.merchant?.merchantList?.content);
-      res.content = [...res?.content, ...merchant];
+      const merchant: MerchantF[] = yield select((state: RootState) => state.merchant?.merchantPublicList?.content);
+      res.content = [...merchant, ...res?.content];
     }
 
     yield put(Actions.loadPublicMerchantListSuccess(res));
@@ -81,33 +81,27 @@ function* loadPublicMerchantList(action: ActionWithPayload<ActionType, SearchPar
     yield put(CommonActions.error(error));
   }
 }
+//私海分页
+function* loadPrivateMerchantList(action: ActionWithPayload<ActionType, SearchParam>) {
+  const params = action.payload;
 
-// //私海
-// function* loadPrivateMerchantList(action: ActionWithPayload<ActionType, SearchParam>) {
-//   const param = action.payload;
-//   try {
-//     const res: PagedData<MerchantSimpleF[]> = yield call(merchant.getMyMerchantSimple, {
-//       ...param,
-//       pageSize: 50,
-//     });
-//     yield put(Actions.loadMerchantSearchListSuccess(res.content));
-//   } catch (error) {
-//     yield put(CommonActions.error(error));
-//   }
-// }
-// //我的商家
-// function* loadMeMerchantList(action: ActionWithPayload<ActionType, SearchParam>) {
-//   const param = action.payload;
-//   try {
-//     const res: PagedData<MerchantSimpleF[]> = yield call(merchant.getMyMerchantSimple, {
-//       ...param,
-//       pageSize: 50,
-//     });
-//     yield put(Actions.loadMerchantSearchListSuccess(res.content));
-//   } catch (error) {
-//     yield put(CommonActions.error(error));
-//   }
-// }
+  try {
+    const {action, ...param} = params;
+    yield put(Actions.loadMerchantLoading());
+    const res: PagedData<MerchantF[]> = yield call(api.merchant.getPrivateSeaMerchants, param);
+    if (!res?.content?.length) {
+      const page: PageParam = yield select((state: RootState) => state.merchant.merchantPrivateList.page);
+      res.page = page;
+    }
+    if (action === RequestAction.load) {
+      const merchant: MerchantF[] = yield select((state: RootState) => state.merchant?.merchantPrivateList?.content);
+      res.content = [...merchant, ...res?.content];
+    }
+    yield put(Actions.loadPrivateMerchantListSuccess(res));
+  } catch (error) {
+    yield put(CommonActions.error(error));
+  }
+}
 
 export function* watchMerchantSagas() {
   yield takeLatest(ActionType.LOAD_MERCHANT_CATEGORIES, loadMerchantCategories);
@@ -116,6 +110,7 @@ export function* watchMerchantSagas() {
   yield takeLatest(ActionType.LOAD_MERCHANT_SEARCH_LIST, loadMerchantSearchList);
 
   yield takeLatest(ActionType.LOAD_MERCHANT_PUBLIC_LIST, loadPublicMerchantList);
+  yield takeLatest(ActionType.LOAD_MERCHANT_PRIVATE_LIST, loadPrivateMerchantList);
 }
 
 export default function* merchantSagas() {

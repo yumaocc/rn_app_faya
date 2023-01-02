@@ -2,13 +2,7 @@ import produce from 'immer';
 import {UserActions} from './actions';
 // import { ActionType } from './types';
 import {ActionType} from './types';
-import {
-  Bank,
-  LoginState,
-  UserInfo,
-  UserState as UserStateType,
-  WalletInfo,
-} from '../../models';
+import {Bank, LoginState, UserInfo, UserState as UserStateType, WalletInfo} from '../../models';
 
 export interface UserState {
   phone: string;

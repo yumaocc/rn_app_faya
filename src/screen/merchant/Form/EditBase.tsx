@@ -15,6 +15,7 @@ import {useSelector} from 'react-redux';
 import {ErrorMessage} from '@hookform/error-message';
 import {RootState} from '../../../redux/reducers';
 import {Icon} from '@ant-design/react-native';
+import {useLoadAllSite} from '../../../helper/hooks/common';
 
 interface EditBaseProps {
   type: MerchantCreateType; //用户的身份，公海还是私海
@@ -23,19 +24,35 @@ interface EditBaseProps {
   errors: FormErrors;
   setValue: FormSetValue;
   isHidden: boolean;
+  locationCompanyId?: number;
 }
 
-const EditBase: React.FC<EditBaseProps> = ({Controller, control, setValue, isHidden, errors}) => {
+const EditBase: React.FC<EditBaseProps> = ({Controller, control, setValue, isHidden, errors, locationCompanyId}) => {
   const {cityList} = useLoadCity();
   const [modalIsShow, setModalIsShow] = useState(false);
-  const areaInfo = useSelector<RootState, number[]>(state => {
-    return state.merchant.currentMerchant?.areaInfo;
-  });
+  const [sites] = useLoadAllSite();
   const categoryId = useSelector<RootState, number>(state => state.merchant.currentMerchant?.categoryId);
   const {fields, append} = useFieldArray({
     control,
     name: 'shopList',
   });
+
+  useEffect(() => {
+    if (sites?.length > 0 && cityList?.length) {
+      if (locationCompanyId > 0) {
+        for (let i = 0; i < sites.length; i++) {
+          for (let j = 0; j < sites[i].children.length; j++) {
+            for (let k = 0; k < sites[i].children[j].children.length; k++) {
+              if (sites[i].children[j].children[k].id === locationCompanyId) {
+                setValue('areaInfo', [sites[i].id, sites[i].children[j].id, locationCompanyId]);
+                break;
+              }
+            }
+          }
+        }
+      }
+    }
+  }, [sites, locationCompanyId, setValue, cityList?.length]);
 
   //商家类型
   const {data} = useRequest(async () => {
@@ -47,11 +64,6 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, control, setValue, isHid
     }));
     return category;
   });
-  useEffect(() => {
-    if (cityList?.length > 0 && areaInfo?.length > 0) {
-      setValue('areaInfo', areaInfo);
-    }
-  }, [areaInfo, cityList, setValue]);
 
   useEffect(() => {
     if (data?.length > 0) {
@@ -137,28 +149,32 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, control, setValue, isHid
             </Form.Item>
           )}
         />
-        {/* {cityList?.length && ( */}
-        <Controller
-          control={control}
-          name="areaInfo"
-          rules={{required: '请输入商家城市'}}
-          render={({field}) => (
-            <Form.Item label="商家城市">
-              <Cascader value={field.value} onChange={field.onChange} options={cityList || []} placeholder="请输入" />
-              <Text style={globalStyles.error}>
-                <ErrorMessage name={'areaInfo'} errors={errors} />
-              </Text>
-            </Form.Item>
-          )}
-        />
-        {/* )} */}
+        {cityList?.length && (
+          <Controller
+            control={control}
+            name="areaInfo"
+            rules={{required: '请输入商家城市'}}
+            render={({field}) => (
+              <Form.Item label="商家城市">
+                <Cascader value={field.value} onChange={field.onChange} options={cityList} placeholder="请输入" />
+                <Text style={globalStyles.error}>
+                  <ErrorMessage name={'areaInfo'} errors={errors} />
+                </Text>
+              </Form.Item>
+            )}
+          />
+        )}
 
         <Controller
           control={control}
           name="address"
+          rules={{required: '请输入商家地址'}}
           render={({field}) => (
             <Form.Item label="商家地址">
               <Input placeholder="请输入商家地址" onChange={field.onChange} value={field.value} />
+              <Text style={globalStyles.error}>
+                <ErrorMessage name={'address'} errors={errors} />
+              </Text>
             </Form.Item>
           )}
         />

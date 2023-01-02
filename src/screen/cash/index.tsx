@@ -8,15 +8,15 @@ import {useSelector} from 'react-redux';
 import {NavigationBar} from '../../component';
 import CutOffRule from '../../component/CutOffRule';
 import Title from '../../component/Title';
-import {FontSize, globalStyles} from '../../constants/styles';
+import {FontSize, globalStyles, globalStyleVariables} from '../../constants/styles';
 import {useSummaryDispatcher, useUserDispatcher} from '../../helper/hooks';
 import {FakeNavigation} from '../../models';
 import {RootState} from '../../redux/reducers';
 import CommodityTop from './rank/CommodityTop';
 import SalesTop from './rank/SalesTop';
-import {SvgUri} from 'react-native-svg';
+// import {SvgUri} from 'react-native-svg';
 import Icon from '../../component/Form/Icon';
-import {icons} from '../../assets/icon';
+// import {icons} from '../../assets/icon';
 
 const Cash: FC = () => {
   const navigation = useNavigation() as FakeNavigation;
@@ -40,8 +40,7 @@ const Cash: FC = () => {
       <SafeAreaView style={[globalStyles.wrapper]} edges={['bottom']}>
         <NavigationBar title="我的金库" />
         <ScrollView style={globalStyles.marginRightLeft}>
-          {/* <Button onPress={() => navigation.navigate('Tab')}>dianji</Button> */}
-          <SvgUri uri={icons.success} height={100} width={100} fill="#00000" />
+          {/* <SvgUri uri={icons.success} height={100} width={100} fill="#00000" /> */}
           <View style={styles.wrapper}>
             <View style={styles.content}>
               {/* <Button onPress={() => navigation.navigate('IconTest')}>选择icon：：：测试按钮</Button> */}
@@ -99,6 +98,7 @@ export default Cash;
 export const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
+    paddingBottom: globalStyleVariables.MODULE_SPACE,
   },
   content: {
     width: '100%',

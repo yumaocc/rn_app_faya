@@ -14,12 +14,15 @@ import * as api from '../../../../../apis';
 import LinkButton from '../../../../../component/LinkButton';
 import {useNavigation} from '@react-navigation/native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {useLoadAllSite} from '../../../../../helper/hooks/common';
 
 interface ShopInfoProps {
   id: number;
+  locationCompanyId?: number;
 }
-const AddMerchant: React.FC<ShopInfoProps> = ({id}) => {
+const AddMerchant: React.FC<ShopInfoProps> = ({id, locationCompanyId}) => {
   const {cityList} = useLoadCity();
+  const [sites] = useLoadAllSite();
   const {control, setValue} = useForm<FormMerchant>({
     mode: 'onBlur',
   });
@@ -43,6 +46,23 @@ const AddMerchant: React.FC<ShopInfoProps> = ({id}) => {
   });
 
   useEffect(() => {
+    if (sites?.length > 0 && cityList?.length) {
+      if (locationCompanyId > 0) {
+        for (let i = 0; i < sites.length; i++) {
+          for (let j = 0; j < sites[i].children.length; j++) {
+            for (let k = 0; k < sites[i].children[j].children.length; k++) {
+              if (sites[i].children[j].children[k].id === locationCompanyId) {
+                setValue('areaInfo', [sites[i].id, sites[i].children[j].id, locationCompanyId]);
+                break;
+              }
+            }
+          }
+        }
+      }
+    }
+  }, [sites, locationCompanyId, setValue, cityList?.length]);
+
+  useEffect(() => {
     if (id) {
       //获取私海数据
       merchantDispatcher.loadCurrentMerchantPrivate(id);
@@ -60,6 +80,7 @@ const AddMerchant: React.FC<ShopInfoProps> = ({id}) => {
       });
     }
   }, [merchantDetail, setValue]);
+
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
       <ScrollView>
@@ -230,8 +251,8 @@ const AddMerchant: React.FC<ShopInfoProps> = ({id}) => {
                 return null;
               }
               return (
-                <>
-                  <View key={item.id} style={styles.shop}>
+                <View key={item.id}>
+                  <View style={styles.shop}>
                     <Controller
                       control={control}
                       name={`shopList.${index}.shopName`}
@@ -268,7 +289,7 @@ const AddMerchant: React.FC<ShopInfoProps> = ({id}) => {
                       </TouchableOpacity>
                     </View>
                   )}
-                </>
+                </View>
               );
             })}
           </SectionGroup>

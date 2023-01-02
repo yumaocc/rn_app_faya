@@ -3,6 +3,7 @@ import {useFieldArray, Controller, Control, UseFormSetValue, UseFormGetValues, U
 import {Text, View} from 'react-native';
 import {FormTitle, SelfText} from '../../../../../component';
 import {globalStyles} from '../../../../../constants/styles';
+import {convertNumber2Han} from '../../../../../helper';
 interface ListProps {
   next: number;
   control?: Control<any, any>;
@@ -19,7 +20,7 @@ const List: React.FC<ListProps> = ({next, control}) => {
   return (
     <>
       <View style={[{borderRadius: 5, backgroundColor: '#00000008', padding: 10}]}>
-        <FormTitle style={{backgroundColor: '#f4f4f4'}} title={`套餐${next + 1}内容`} />
+        <FormTitle style={{backgroundColor: '#f4f4f4'}} title={`套餐${convertNumber2Han(next + 1)}内容`} />
         <View style={[globalStyles.containerLR]}>
           <Text style={[globalStyles.fontTertiary, {flex: 1}]}>名称</Text>
           <Text style={[globalStyles.fontTertiary, {flex: 1}]}>数量</Text>

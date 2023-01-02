@@ -8,7 +8,8 @@ export interface MerchantState {
   loadingCurrentMerchant: boolean;
   currentMerchant?: FormMerchant;
   merchantSearchList: MerchantSimpleF[];
-  merchantList?: PagedData<MerchantF[]>;
+  merchantPublicList?: PagedData<MerchantF[]>;
+  merchantPrivateList: PagedData<MerchantF[]>;
   merchantLoading: boolean;
 }
 
@@ -17,7 +18,15 @@ export const initialState: MerchantState = {
   loadingCurrentMerchant: false,
   merchantLoading: false,
   merchantSearchList: [],
-  merchantList: {
+  merchantPublicList: {
+    content: [],
+    page: {
+      pageIndex: 1,
+      pageSize: 10,
+      pageTotal: 0,
+    },
+  },
+  merchantPrivateList: {
     content: [],
     page: {
       pageIndex: 1,
@@ -54,7 +63,12 @@ export default (state = initialState, action: MerchantActions): MerchantState =>
     case ActionType.LOAD_MERCHANT_PUBLIC_LIST_SUCCESS:
       return produce(state, draft => {
         draft.merchantLoading = false;
-        draft.merchantList = action.payload;
+        draft.merchantPublicList = action.payload;
+      });
+    case ActionType.LOAD_MERCHANT_PRIVATE_LIST_SUCCESS:
+      return produce(state, draft => {
+        draft.merchantLoading = false;
+        draft.merchantPrivateList = action.payload;
       });
     case ActionType.LOAD_MERCHANT_LOADING:
       return produce(state, draft => {

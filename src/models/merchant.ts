@@ -17,6 +17,7 @@ export interface MerchantF {
   hasAuth: BoolNumber;
   multiStore: BoolNumber;
   avatar: string;
+  locationCompanyId?: number;
 }
 
 // 我的商家
@@ -30,6 +31,7 @@ export interface MyMerchantF {
   shopNums?: number;
   signTime?: DateTimeString;
   status?: BoolNumber;
+  locationCompanyId?: number;
 }
 export interface MyMerchantSimpleF {
   id: number;

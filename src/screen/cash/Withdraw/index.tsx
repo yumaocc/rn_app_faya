@@ -110,7 +110,7 @@ const Withdraw: FC = () => {
           )}
           {walletInfo?.status !== BankCardStatus.unverified && BankCardStatus.authenticated && (
             <>
-              <View style={[globalStyles.containerCenter, globalStyles.moduleMarginTop]}>
+              <View style={[globalStyles.moduleMarginTop]}>
                 <Text>认证失败，原因：{walletInfo?.reason}</Text>
               </View>
               <View style={globalStyles.moduleMarginTop}>

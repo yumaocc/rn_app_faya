@@ -1,4 +1,5 @@
 import produce from 'immer';
+import {Site} from '../../models';
 
 import {CommonActions} from './actions';
 import {ActionType} from './types';
@@ -13,6 +14,7 @@ export interface CommonState {
     currentIndex?: number;
     show: boolean;
   };
+  sites?: Site[];
 }
 
 export const initialState: CommonState = {
@@ -80,6 +82,10 @@ export default (state = initialState, action: CommonActions): CommonState => {
       return produce(state, draft => {
         const {payload} = action;
         draft.token = payload;
+      });
+    case ActionType.LOAD_AllSITE_SUCCESS:
+      return produce(state, draft => {
+        draft.sites = action.payload;
       });
     default:
       return state;

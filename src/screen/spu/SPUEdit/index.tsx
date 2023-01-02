@@ -5,7 +5,7 @@ import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 
 import {Steps, NavigationBar} from '../../../component';
-import {useCommonDispatcher, useContractDispatcher, useMerchantDispatcher, useParams, useRefCallback, useSKUDispatcher} from '../../../helper/hooks';
+import {useCommonDispatcher, useContractDispatcher, useSummaryDispatcher, useMerchantDispatcher, useParams, useRefCallback, useSKUDispatcher} from '../../../helper/hooks';
 import {globalStyleVariables} from '../../../constants/styles';
 import {useForm} from 'react-hook-form';
 import Base from './base/Base';
@@ -29,6 +29,7 @@ const EditSPU: React.FC = () => {
   const params = useParams<{id: number}>();
   const spuID = useMemo(() => Number(params.id), [params.id]); // 路由读取到商品ID
   const isEdit = useMemo(() => !!spuID, [spuID]); // 是否是编辑模式
+  const [summaryDispatcher] = useSummaryDispatcher();
   const [currentKey, setCurrentKey] = React.useState('base');
   const {
     control,
@@ -97,6 +98,7 @@ const EditSPU: React.FC = () => {
       setValue('modelList', spuDetail.modelList);
       setValue('packageList', spuDetail.packageList);
       setValue('stockAmount', spuDetail.stockAmount);
+      setValue('locationIds', spuDetail.locationIds);
       setValue('purchaseNoticeEntities', spuDetail.purchaseNoticeEntities);
       contractDetail.skuInfoReq.skuInfo.forEach((item, index) => {
         setValue(`skuList.${index}.skuDetails`, item?.skuDetails);
@@ -130,7 +132,7 @@ const EditSPU: React.FC = () => {
     const res = _.flatMap(value, e =>
       e?.message ? e : _.flatMap(e, item => (item?.message ? item : _.flatMap(item, element => (element?.message ? element : _.flatMap(element, e => e))))),
     );
-    commonDispatcher.info(res[0]);
+    commonDispatcher.info(res[0]?.message);
   };
 
   async function onHandleSubmit() {
@@ -152,6 +154,7 @@ const EditSPU: React.FC = () => {
       } else {
         await api.sku.createSPU(formData);
       }
+      summaryDispatcher.loadHome();
       commonDispatcher.success(isEdit ? '修改成功' : '创建成功');
       navigation.canGoBack() && navigation.goBack();
     } catch (error) {
@@ -163,8 +166,13 @@ const EditSPU: React.FC = () => {
     if (nextKey !== 'base') {
       const {bizUserId, contractId} = getValues();
       const valid = bizUserId && contractId;
-      if (!valid) {
-        commonDispatcher.info('请先选择商家和合同！');
+      if (!bizUserId) {
+        setError('bizUserId', {type: 'required', message: '请选择商家'});
+        commonDispatcher.info('请选择商家！');
+      }
+      if (!contractId) {
+        setError('contractId', {type: 'required', message: '请选择合同'});
+        commonDispatcher.info('请选择合同');
       }
       return valid;
     }
@@ -178,10 +186,19 @@ const EditSPU: React.FC = () => {
 
         <Steps steps={steps} currentKey={currentKey} onChange={setCurrentKey} onBeforeChangeKey={handleChangeStep} />
         <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
-          <View style={{width: windowWidth}}>
-            <Base control={control} setValue={setValue} getValues={getValues} watch={watch} handleSubmit={handleSubmit} onNext={() => setCurrentKey('sku')} errors={errors} />
+          <View style={[{width: windowWidth, paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
+            <Base
+              control={control}
+              setValue={setValue}
+              setError={setError}
+              getValues={getValues}
+              watch={watch}
+              handleSubmit={handleSubmit}
+              onNext={() => setCurrentKey('sku')}
+              errors={errors}
+            />
           </View>
-          <View style={{width: windowWidth}}>
+          <View style={[{width: windowWidth, paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
             <SKU
               handleSubmit={handleSubmit}
               setError={setError}
@@ -193,10 +210,10 @@ const EditSPU: React.FC = () => {
               errors={errors}
             />
           </View>
-          <View style={{width: windowWidth}}>
+          <View style={[{width: windowWidth, paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
             <Booking control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={() => setCurrentKey('detail')} errors={errors} />
           </View>
-          <View style={{width: windowWidth}}>
+          <View style={[{width: windowWidth, paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
             <ImageTextDetail control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={onHandleSubmit} error={errors} />
           </View>
         </ScrollView>

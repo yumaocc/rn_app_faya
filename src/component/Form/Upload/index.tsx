@@ -84,6 +84,9 @@ const Upload: React.FC<UploadProps> = props => {
     setFileList(newFileList);
     handleFileChange(newFileList);
   }
+  const handleClick = (index: number) => {
+    setFileList(fileList => fileList.filter((item, idx) => index !== idx));
+  };
 
   return (
     <View style={styles.container}>
@@ -91,7 +94,9 @@ const Upload: React.FC<UploadProps> = props => {
         const uri = file.uri || file.url;
         return (
           <View style={styles.block} key={`${file.uid}-${index}`}>
-            <Image source={{uri}} style={styles.image} />
+            <TouchableOpacity activeOpacity={0.5} onPress={() => handleClick(index)}>
+              <Image source={{uri}} style={styles.image} />
+            </TouchableOpacity>
             {file.state === 'uploading' && (
               <View style={styles.uploading}>
                 <Animated.View style={{transform: [{rotate: rotateDeg}]}}>

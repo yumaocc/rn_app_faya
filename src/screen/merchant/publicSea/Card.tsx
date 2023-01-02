@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 // import {BadgeFlag} from '../../../component';
 import Loading from '../../../component/Loading';
-import {useCommonDispatcher} from '../../../helper/hooks';
+import {useCommonDispatcher, useSummaryDispatcher} from '../../../helper/hooks';
 import * as api from '../../../apis';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {BoolEnum, FakeNavigation, MerchantAction, MerchantCreateType, MerchantF, StylePropView} from '../../../models';
@@ -21,12 +21,14 @@ const Card: React.FC<CardProps> = props => {
   const [loading, setLoading] = useState(false);
   const {merchant, style, update} = props;
   const [commonDispatcher] = useCommonDispatcher();
+  const [summaryDispatcher] = useSummaryDispatcher();
   const navigation = useNavigation() as FakeNavigation;
 
   const addMyPrivateSeas = async (id: number) => {
     try {
       setLoading(true);
       await api.merchant.drawMerchant(id);
+      summaryDispatcher.loadHome();
       commonDispatcher.success('添加成功');
       update();
     } catch (error) {
@@ -46,6 +48,7 @@ const Card: React.FC<CardProps> = props => {
               action: MerchantAction.VIEW,
               publicId: merchant.id,
               identity: MerchantCreateType.PUBLIC_SEA,
+              locationCompanyId: merchant?.locationCompanyId,
             },
           })
         }>

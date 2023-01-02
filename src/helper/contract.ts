@@ -56,7 +56,7 @@ export function getInitContractForm(): ContractForm {
   };
 }
 //格式化后端返回的数据
-export function generateContractFormPatch(contractForm: ContractF): Contract {
+export function generateContractFormPatch(contractForm: Contract): Contract {
   const {bookingBeginTime, useBeginTime, useEndTime, saleBeginTime, saleEndTime, bookingEarlyDay, bookingCancelDay} = contractForm.bookingReq || {};
   const {skuInfoReq} = contractForm;
   const {

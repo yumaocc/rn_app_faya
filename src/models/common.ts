@@ -135,3 +135,10 @@ export type FormErrors = Partial<
 
 //表单设置属性
 export type FormSetValue = UseFormSetValue<FieldValues>;
+
+// 二级站点,新建spu时使用
+export interface LocationTreeF {
+  id: number | string;
+  name: string;
+  children: LocationTreeF[];
+}

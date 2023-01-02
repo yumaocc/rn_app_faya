@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {TouchableOpacity} from 'react-native';
+import {TouchableOpacity, FlatList} from 'react-native';
 import {FC} from 'react';
 import {useDebounceFn} from 'ahooks';
 import {Icon as AntdIcon} from '@ant-design/react-native';
@@ -7,50 +7,40 @@ import {Input, NavigationBar} from '../../../component';
 import {View, StyleSheet, Text} from 'react-native';
 import {UnitNumber} from '../../../component';
 import {globalStyleVariables, globalStyles} from '../../../constants/styles';
-import {FakeNavigation, SearchParam, ContractList as ContractListType, RequestAction, Options, ContractAction, ContractStatus} from '../../../models';
+import {FakeNavigation, ContractList as ContractListType, RequestAction, Options, ContractAction, ContractStatus, PagedData} from '../../../models';
 import {useNavigation} from '@react-navigation/native';
-import * as api from '../../../apis';
 import ModalDropdown from 'react-native-modal-dropdown';
 import {PAGE_SIZE} from '../../../constants';
-import {useCommonDispatcher} from '../../../helper/hooks';
-import {FlatList} from 'react-native-gesture-handler';
+import {useContractDispatcher} from '../../../helper/hooks';
 import Icon from '../../../component/Form/Icon';
 import Loading from '../../../component/Loading';
 import {cleanTime} from '../../../helper/util';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../redux/reducers';
 
 const ContractList: FC = () => {
   const navigation = useNavigation() as FakeNavigation;
-  const [loading, setLoading] = useState(false);
-  const [commonDispatcher] = useCommonDispatcher();
+  const [contractDispatcher] = useContractDispatcher();
+
   const [valueType, setValueType] = useState<Options>(null);
-  const [len, setLen] = useState(0);
-  const [pageIndex, setPageIndex] = useState(1);
-  const [data, setData] = useState<ContractListType[]>([]);
+
+  const {contractList, loading, pageIndex} = useSelector<RootState, {contractList: PagedData<ContractListType[]>; loading: boolean; pageIndex: number}>(state => ({
+    contractList: state.contract?.contractList,
+    loading: state.contract.contractLoading,
+    pageIndex: state.contract?.contractList?.page?.pageIndex,
+  }));
   const [value, setValue] = useState('');
-  const {run} = useDebounceFn(async (name: string) => getData({pageIndex: 1, name}, RequestAction.other));
+  const {run} = useDebounceFn(
+    async (name: string) => contractDispatcher.loadContractList({pageIndex: 1, pageSize: PAGE_SIZE, multiStore: valueType?.value, name: name, action: RequestAction.other}),
+    {wait: 500},
+  );
 
   useEffect(() => {
-    getData({pageIndex: 1});
+    if (!contractList) {
+      contractDispatcher.loadContractList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.load});
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const getData = async (params: SearchParam, action?: RequestAction) => {
-    try {
-      setLoading(true);
-      const res = await api.contract.getMyContractList({...params, pageSize: PAGE_SIZE});
-      setLen(res?.page?.pageTotal);
-      if (action === RequestAction.other) {
-        setData(res.content);
-      } else {
-        setData(list => [...list, ...res.content]);
-      }
-      if (res.content.length) {
-        setPageIndex(pageIndex => pageIndex + 1);
-      }
-    } catch (error) {
-      commonDispatcher.error(error);
-    }
-    setLoading(false);
-  };
 
   function handleChangeFilter(e: Options) {
     navigation.navigate({
@@ -61,15 +51,6 @@ const ContractList: FC = () => {
     });
     setValueType(e);
   }
-  const pullUp = (index?: number) => {
-    getData(
-      {
-        name: value,
-        pageIndex: index || pageIndex,
-      },
-      RequestAction.load,
-    );
-  };
 
   const headerRight = (
     <>
@@ -100,10 +81,10 @@ const ContractList: FC = () => {
     }
   };
 
-  const renderItem = ({item}: {item: ContractListType}) => {
+  const renderItem = ({item, index}: {item: ContractListType; index: number}) => {
     return (
       <TouchableOpacity
-        key={item.id}
+        key={index}
         activeOpacity={0.5}
         style={{backgroundColor: '#fff', paddingLeft: globalStyleVariables.MODULE_SPACE, paddingRight: globalStyleVariables.MODULE_SPACE}}
         onPress={() => {
@@ -140,7 +121,7 @@ const ContractList: FC = () => {
         <View style={[globalStyles.lineHorizontal]} />
         <View style={[styles.header]}>
           <View>
-            <UnitNumber prefix="共" value={len} unit="份" />
+            <UnitNumber prefix="共" value={contractList?.page?.pageTotal} unit="份" />
           </View>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <View style={{width: 100}}>
@@ -150,7 +131,6 @@ const ContractList: FC = () => {
                 extra={<Icon name="FYLM_all_search" color="#f4f4f4" />}
                 onChange={e => {
                   setValue(e);
-                  setPageIndex(1);
                   run(e);
                 }}
                 textAlign="left"
@@ -159,26 +139,31 @@ const ContractList: FC = () => {
           </View>
         </View>
         <FlatList
-          data={data}
+          data={contractList?.content}
           renderItem={renderItem}
+          ListEmptyComponent={
+            <View style={[globalStyles.containerCenter, {width: '100%'}]}>
+              <Text>暂无数据</Text>
+            </View>
+          }
           ListFooterComponent={
             <View style={[globalStyles.containerCenter, {flex: 1, marginTop: globalStyleVariables.MODULE_SPACE, marginBottom: globalStyleVariables.MODULE_SPACE}]}>
               <Text style={[globalStyles.fontTertiary, {textAlign: 'center'}]}>已经到底</Text>
             </View>
           }
-          keyExtractor={key => key.id + ''}
           numColumns={1}
-          onEndReached={() => pullUp()}
-          refreshing={loading}
+          refreshing={false}
           onRefresh={() => {
-            pullUp(1);
+            contractDispatcher.loadContractList({pageIndex: 1, pageSize: PAGE_SIZE, multiStore: valueType?.value, name: value, action: RequestAction.other});
+          }}
+          onEndReached={() => {
+            contractDispatcher.loadContractList({pageIndex: pageIndex + 1, pageSize: PAGE_SIZE, multiStore: valueType?.value, name: value, action: RequestAction.load});
           }}
         />
       </View>
     </>
   );
 };
-
 const styles = StyleSheet.create({
   contract: {
     flex: 1,

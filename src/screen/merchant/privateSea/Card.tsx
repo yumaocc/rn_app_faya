@@ -35,6 +35,7 @@ const Card: React.FC<CardProps> = ({merchant, style}) => {
               name: 'ViewMerchant',
               params: {
                 privateId: merchant.id,
+                locationCompanyId: merchant?.locationCompanyId,
               },
             });
           } else {
@@ -44,6 +45,7 @@ const Card: React.FC<CardProps> = ({merchant, style}) => {
                 action: MerchantAction.EDIT,
                 privateId: merchant.id,
                 identity: MerchantCreateType.PRIVATE_SEA,
+                locationCompanyId: merchant?.locationCompanyId,
               },
             });
           }
@@ -53,6 +55,7 @@ const Card: React.FC<CardProps> = ({merchant, style}) => {
             <View style={[styles.logo]}>
               <Image source={{uri: merchant?.avatar || 'https://fakeimg.pl/100'}} style={{width: 40, height: 40}} />
             </View>
+
             <View style={styles.headerRight}>
               <View style={[globalStyles.flexNormal, {justifyContent: 'space-between'}]}>
                 <View style={{flex: 1, flexDirection: 'row'}}>
@@ -91,7 +94,7 @@ const Card: React.FC<CardProps> = ({merchant, style}) => {
               <View style={[{marginBottom: 5}]}>
                 <Text style={globalStyles.fontPrimary}>认领时间</Text>
               </View>
-              <Text style={globalStyles.fontSecondary}>{cleanTime(merchant?.createdTime)}</Text>
+              <Text style={globalStyles.fontSecondary}>{merchant?.claimTime ? cleanTime(merchant?.claimTime) : cleanTime(merchant?.createdTime)}</Text>
             </View>
             <View style={globalStyles.dividingLine} />
             <View style={[globalStyles.containerCenter, {paddingVertical: globalStyleVariables.MODULE_SPACE}]}>
@@ -102,7 +105,7 @@ const Card: React.FC<CardProps> = ({merchant, style}) => {
             </View>
           </View>
 
-          {merchant?.hasAuth ? (
+          {!!merchant?.hasAuth ? (
             <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('AddContract')}>
               <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
                 <Text style={styles.button}>邀请结算</Text>

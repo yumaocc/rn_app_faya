@@ -1,9 +1,10 @@
-import {Icon, InputItem} from '@ant-design/react-native';
+import {Icon as AntdIcon} from '@ant-design/react-native';
 import React, {FC, useState} from 'react';
 import {Control, useFieldArray, Controller} from 'react-hook-form';
 import {StyleSheet, Text, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import {PlusButton} from '../../../../component';
+import {Input, PlusButton} from '../../../../component';
+import Icon from '../../../../component/Form/Icon';
 import {globalStyles, globalStyleVariables} from '../../../../constants/styles';
 import {Contract} from '../../../../models';
 interface SKUContentProps {
@@ -35,7 +36,7 @@ const SKUContent: FC<SKUContentProps> = ({next, control, title}) => {
           <View style={[globalStyles.containerLR, {paddingBottom: globalStyleVariables.MODULE_SPACE}, globalStyles.borderBottom]}>
             <Text>示例</Text>
             <TouchableOpacity activeOpacity={0.5} onPress={() => setExampleIsShow(false)}>
-              <Icon name="close" style={globalStyles.fontPrimary} />
+              <AntdIcon name="close" style={globalStyles.fontPrimary} />
             </TouchableOpacity>
           </View>
           <View style={[globalStyles.containerLR, globalStyles.moduleMarginTop]}>
@@ -59,43 +60,43 @@ const SKUContent: FC<SKUContentProps> = ({next, control, title}) => {
 
       {fields.map((item, index) => {
         return (
-          <>
-            <View key={item.id} style={[globalStyles.containerLR, globalStyles.moduleMarginTop]}>
+          <View key={item.id} style={[globalStyles.containerLR, globalStyles.moduleMarginTop]}>
+            <Controller
+              control={control}
+              name={`skuInfoReq.skuInfo.${next}.skuDetails.${index}.name`}
+              render={({field: {value, onChange}}) => (
+                <View style={{flex: 1}}>
+                  <Input type="text" allowFontScaling={true} placeholder="商品名称" value={value} onChange={onChange}>
+                    <Icon name="diandian" />
+                  </Input>
+                </View>
+              )}
+            />
+            <View style={[globalStyles.containerLR, {width: 170}]}>
               <Controller
                 control={control}
-                name={`skuInfoReq.skuInfo.${next}.skuDetails.${index}.name`}
+                name={`skuInfoReq.skuInfo.${next}.skuDetails.${index}.nums`}
                 render={({field: {value, onChange}}) => (
-                  <View style={{flex: 1}}>
-                    <InputItem type="number" keyboardType="default" allowFontScaling={true} placeholder="商品名称" value={value} onChange={onChange} />
+                  <>
+                    <View style={globalStyles.dividingLine} />
+                    <View style={globalStyles.inputWidth}>
+                      <Input type="number" placeholder="数量" value={value} onChange={onChange} />
+                    </View>
+                    <View style={globalStyles.dividingLine} />
+                  </>
+                )}
+              />
+              <Controller
+                control={control}
+                name={`skuInfoReq.skuInfo.${next}.skuDetails.${index}.price`}
+                render={({field: {value, onChange}}) => (
+                  <View style={globalStyles.inputWidth}>
+                    <Input type="number" placeholder="价格" value={value} onChange={onChange} />
                   </View>
                 )}
               />
-              <View style={[globalStyles.containerLR, {width: 170}]}>
-                <Controller
-                  control={control}
-                  name={`skuInfoReq.skuInfo.${next}.skuDetails.${index}.nums`}
-                  render={({field: {value, onChange}}) => (
-                    <>
-                      <View style={globalStyles.dividingLine} />
-                      <View style={globalStyles.inputWidth}>
-                        <InputItem type="number" placeholder="数量" value={value} onChange={onChange} />
-                      </View>
-                      <View style={globalStyles.dividingLine} />
-                    </>
-                  )}
-                />
-                <Controller
-                  control={control}
-                  name={`skuInfoReq.skuInfo.${next}.skuDetails.${index}.price`}
-                  render={({field: {value, onChange}}) => (
-                    <View style={globalStyles.inputWidth}>
-                      <InputItem type="number" placeholder="价格" value={value} onChange={onChange} />
-                    </View>
-                  )}
-                />
-              </View>
             </View>
-          </>
+          </View>
         );
       })}
       <PlusButton title="新建一条套餐内容" style={[{justifyContent: 'center'}, globalStyles.moduleMarginTop]} onPress={addSku} />

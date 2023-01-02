@@ -2,7 +2,7 @@
 import {Button, Icon as AntdIcon} from '@ant-design/react-native';
 import Icon from '../../../../component/Form/Icon';
 import React, {useEffect, useMemo, useState} from 'react';
-import {Control, FieldErrorsImpl, UseFormGetValues, UseFormHandleSubmit, UseFormSetValue, UseFormWatch} from 'react-hook-form';
+import {Control, FieldErrorsImpl, UseFormGetValues, UseFormHandleSubmit, UseFormSetError, UseFormSetValue, UseFormWatch} from 'react-hook-form';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import {FormTitle, SectionGroup, Form, Input, Select, DatePicker, Footer, Cascader} from '../../../../component';
@@ -27,12 +27,13 @@ interface BaseProps {
   watch?: UseFormWatch<any>;
   errors?: Partial<FieldErrorsImpl<any>>;
   handleSubmit?: UseFormHandleSubmit<any>;
+  setError?: UseFormSetError<any>;
 }
 interface ListProps {
   value: number[];
 }
 
-const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch, errors}) => {
+const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch, errors, setError}) => {
   const bizUserId = watch('bizUserId');
   const contractId = watch('contractId');
   const canUseShopIds = watch('canUseShopIds');
@@ -59,13 +60,16 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
   useEffect(() => {
     merchantDispatcher.loadMerchantSearchList({});
   }, [merchantDispatcher]);
+
   useEffect(() => {
     if (bizUserId) {
+      console.log('bizUserId');
       contractDispatcher.loadContractSearchList({id: bizUserId});
     }
   }, [bizUserId, contractDispatcher]);
+
   useEffect(() => {
-    merchantDispatcher.loadCurrentMerchantPublic(19);
+    merchantDispatcher.loadCurrentMerchantPublic(bizUserId);
   }, [bizUserId, merchantDispatcher]);
 
   useEffect(() => {
@@ -85,9 +89,14 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
   }, [currentContract, setValue]);
   function onCheck() {
     const {bizUserId, contractId} = getValues();
-    const valid = bizUserId && contractId;
-    if (!valid) {
-      commonDispatcher.info('请先选择商家和合同！');
+    if (!bizUserId) {
+      setError('bizUserId', {type: 'required', message: '请选择商家'});
+      commonDispatcher.info('请选择商家！');
+      return;
+    }
+    if (!contractId) {
+      setError('contractId', {type: 'required', message: '请选择合同'});
+      commonDispatcher.info('请选择合同');
       return;
     }
     onNext && onNext();

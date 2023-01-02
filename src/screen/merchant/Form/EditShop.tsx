@@ -5,7 +5,6 @@ import {globalStyles} from '../../../constants/styles';
 import {useForm, Controller, UseFieldArrayAppend} from 'react-hook-form';
 import Modal from '../../../component/Modal';
 import {FormMerchant} from '../../../models';
-import {ErrorMessage} from '@hookform/error-message';
 import {InputItem} from '@ant-design/react-native';
 import {useCommonDispatcher} from '../../../helper/hooks';
 
@@ -48,11 +47,9 @@ const EditShop: FC<EditShopProps> = ({open, setOpen, setValue}) => {
           <View style={globalStyles.moduleMarginTop}>
             <Text style={[globalStyles.fontPrimary]}>商家名称</Text>
             <View style={[{padding: 0, margin: 0, backgroundColor: '#f4f4f4'}, globalStyles.moduleMarginTop]}>
-              <InputItem style={{padding: 0, margin: 0}} placeholder="请输入商家名称" onChange={field.onChange} value={field.value} />
-              <Text style={globalStyles.error}>
-                <ErrorMessage name={'shopName'} errors={errors} />
-              </Text>
+              <InputItem style={{padding: 0, margin: 0}} placeholder="请输入商家名称" onChange={field.onChange} value={field.value} onBlur={field.onBlur} />
             </View>
+            {errors.shopName && <Text style={globalStyles.error}>请输入商家名称</Text>}
           </View>
         )}
       />
@@ -64,7 +61,7 @@ const EditShop: FC<EditShopProps> = ({open, setOpen, setValue}) => {
           <View style={globalStyles.moduleMarginTop}>
             <Text style={[globalStyles.fontPrimary]}>商家电话</Text>
             <View style={[{padding: 0, margin: 0, backgroundColor: '#f4f4f4'}, globalStyles.moduleMarginTop]}>
-              <InputItem style={{padding: 0, margin: 0}} placeholder="请输入商家电话" onChange={field.onChange} value={field.value} onBlur={field.onBlur} />
+              <InputItem type="number" style={{padding: 0, margin: 0}} placeholder="请输入商家电话" onChange={field.onChange} value={field.value} onBlur={field.onBlur} />
             </View>
             {errors.contactPhone && <Text style={globalStyles.error}>请输入商家电话</Text>}
           </View>
@@ -77,7 +74,7 @@ const EditShop: FC<EditShopProps> = ({open, setOpen, setValue}) => {
           <View style={globalStyles.moduleMarginTop}>
             <Text style={[globalStyles.fontPrimary]}>纬度</Text>
             <View style={[{padding: 0, margin: 0, backgroundColor: '#f4f4f4'}, globalStyles.moduleMarginTop]}>
-              <InputItem style={{padding: 0, margin: 0}} placeholder="请输入纬度" onChange={field.onChange} value={field.value} onBlur={field.onBlur} />
+              <InputItem type="number" style={{padding: 0, margin: 0}} placeholder="请输入纬度" onChange={field.onChange} value={field.value} onBlur={field.onBlur} />
             </View>
           </View>
         )}
@@ -89,7 +86,7 @@ const EditShop: FC<EditShopProps> = ({open, setOpen, setValue}) => {
           <View style={globalStyles.moduleMarginTop}>
             <Text style={[globalStyles.fontPrimary]}>经度</Text>
             <View style={[{padding: 0, margin: 0, backgroundColor: '#f4f4f4'}, globalStyles.moduleMarginTop]}>
-              <InputItem style={{padding: 0, margin: 0}} placeholder="请输入经度" onChange={field.onChange} value={field.value} onBlur={field.onBlur} />
+              <InputItem type="number" style={{padding: 0, margin: 0}} placeholder="请输入经度" onChange={field.onChange} value={field.value} onBlur={field.onBlur} />
             </View>
           </View>
         )}

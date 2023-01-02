@@ -38,9 +38,7 @@ function* logout(): any {
   yield put(CommonActions.setToken(''));
 }
 
-function* certificate(
-  action: ActionWithPayload<ActionType, CertificateParam>,
-): any {
+function* certificate(action: ActionWithPayload<ActionType, CertificateParam>): any {
   const param = action.payload;
   try {
     const res = yield call(user.certificate, param);
@@ -68,6 +66,14 @@ function* getSupportBankList(): any {
     yield put(CommonActions.error(error));
   }
 }
+function* loadUserInfo() {
+  try {
+    const res: UserInfo = yield call(user.getUserInfo);
+    yield put(Actions.setUserInfo(res));
+  } catch (error) {
+    yield put(CommonActions.error(error));
+  }
+}
 
 function* watchUserSagas() {
   yield takeLatest(ActionType.INIT, initUser);
@@ -77,6 +83,7 @@ function* watchUserSagas() {
   yield takeLatest(ActionType.USER_CERTIFICATE, certificate);
   yield takeLatest(ActionType.GET_WALLET_INFO, getWalletInfo);
   yield takeLatest(ActionType.GET_SUPPORT_BANK_LIST, getSupportBankList);
+  yield takeLatest(ActionType.LOAD_USER_INFO, loadUserInfo);
 }
 
 export default function* userSagas() {

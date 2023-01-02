@@ -5,66 +5,52 @@ import {useDebounceFn} from 'ahooks';
 import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, SafeAreaView, FlatList} from 'react-native';
 import ModalDropdown from 'react-native-modal-dropdown';
-import * as api from '../../../apis';
+
 import {Input, PlusButton} from '../../../component';
 import {PAGE_SIZE} from '../../../constants';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
-import {useCommonDispatcher, useHomeSummary} from '../../../helper/hooks';
-import {FakeNavigation, MerchantAction, MerchantCreateType, MerchantF, Options, RequestAction, SearchParam} from '../../../models';
+import {useHomeSummary, useMerchantDispatcher} from '../../../helper/hooks';
+import {FakeNavigation, MerchantAction, MerchantCreateType, MerchantF, Options, PagedData, RequestAction} from '../../../models';
 import Card from './Card';
 import Loading from '../../../component/Loading';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../redux/reducers';
 
 const options = [
   {
     label: '单店',
-    value: 0,
+    value: 1,
   },
   {
-    label: '多店',
-    value: 1,
+    label: '连锁',
+    value: 2,
   },
 ];
 
 const PrivateSeaList: React.FC = () => {
   const [valueType, setValueType] = useState<Options>(null);
-  const [pageIndex, setPageIndex] = useState(1);
+  const [merchantDispatcher] = useMerchantDispatcher();
+  const merchantList = useSelector<RootState, PagedData<MerchantF[]>>(state => state.merchant.merchantPrivateList);
+  const pageIndex = useSelector<RootState, number>(state => state.merchant?.merchantPrivateList?.page?.pageIndex);
+  const loading = useSelector<RootState, boolean>(state => state.merchant.merchantLoading);
   const [value, setValue] = useState('');
-  const [loading, setLoading] = useState(false);
   const [summary] = useHomeSummary();
-  const [commonDispatcher] = useCommonDispatcher();
   const navigation = useNavigation() as FakeNavigation;
-  const [merchantList, setMerchantList] = React.useState<MerchantF[]>([]);
-  const [pullDown, setPullDown] = useState(false);
 
-  const getData = async (params: SearchParam, action?: RequestAction) => {
-    try {
-      setLoading(true);
-      const res = await api.merchant.getPrivateSeaMerchants({...params, pageSize: PAGE_SIZE});
-      if (action === RequestAction.other) {
-        setMerchantList(res.content);
-      } else {
-        setMerchantList(list => [...list, ...res.content]);
-      }
-      if (res?.content?.length) {
-        setPageIndex(pageIndex => pageIndex + 1);
-      }
-    } catch (error) {
-      commonDispatcher.error(error);
-    }
-    setLoading(false);
-  };
-
-  const {run} = useDebounceFn(async (name: string) => getData({pageIndex: 1, name}, RequestAction.other));
+  const {run} = useDebounceFn(async (name: string) => {
+    merchantDispatcher.loadPrivateMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, name: name, action: RequestAction.other});
+  });
 
   useEffect(() => {
-    getData({pageIndex: 1});
+    if (!merchantList?.content?.length) {
+      merchantDispatcher.loadPrivateMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.load});
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleChangeFilter = (value: Options) => {
     setValueType(value);
-    setPageIndex(1);
-    getData({pageIndex: 1, multiStore: value.value}, RequestAction.other);
+    merchantDispatcher.loadPrivateMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.other, multiStore: value.value});
   };
 
   return (
@@ -100,7 +86,6 @@ const PrivateSeaList: React.FC = () => {
               onChange={e => {
                 setValue(e);
                 run(e);
-                setPageIndex(1);
               }}
               textAlign="left"
             />
@@ -121,22 +106,31 @@ const PrivateSeaList: React.FC = () => {
           });
         }}
       />
-      <FlatList
-        refreshing={pullDown}
-        onRefresh={async () => {
-          setPullDown(true);
-          await getData({pageIndex: pageIndex, multiStore: valueType?.value, name: value});
-          setPullDown(false);
-        }}
-        data={merchantList}
-        renderItem={({item}) => <Card merchant={item} key={item.id} style={globalStyles.moduleMarginTop} />}
-        onEndReached={() => getData({pageIndex: pageIndex, multiStore: valueType?.value, name: value})}
-        ListFooterComponent={
-          <View style={[globalStyles.containerCenter, {flex: 1, marginTop: globalStyleVariables.MODULE_SPACE, marginBottom: globalStyleVariables.MODULE_SPACE}]}>
-            <Text style={[globalStyles.fontTertiary, {textAlign: 'center'}]}>已经到底</Text>
+      {!!merchantList?.content?.length ? (
+        <FlatList
+          refreshing={false}
+          onRefresh={async () => {
+            merchantDispatcher.loadPrivateMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, multiStore: valueType?.value, name: value, action: RequestAction.other});
+          }}
+          data={merchantList?.content}
+          renderItem={({item}) => <Card merchant={item} key={item.id} style={globalStyles.moduleMarginTop} />}
+          onEndReached={() =>
+            merchantDispatcher.loadPrivateMerchantList({pageIndex: pageIndex + 1, pageSize: PAGE_SIZE, multiStore: valueType?.value, name: value, action: RequestAction.load})
+          }
+          ListFooterComponent={
+            <View style={[globalStyles.containerCenter, {flex: 1, marginTop: globalStyleVariables.MODULE_SPACE, marginBottom: globalStyleVariables.MODULE_SPACE}]}>
+              <Text style={[globalStyles.fontTertiary, {textAlign: 'center'}]}>已经到底</Text>
+            </View>
+          }
+        />
+      ) : (
+        <View style={[{flex: 1, backgroundColor: '#fff'}, globalStyles.containerCenter]}>
+          <View style={[{width: 50, height: 50, borderRadius: 50, backgroundColor: '#f4f4f4', marginBottom: globalStyleVariables.MODULE_SPACE}, globalStyles.containerCenter]}>
+            <AntdIcon name="shop" />
           </View>
-        }
-      />
+          <Text style={globalStyles.fontTertiary}>还没有商家哦</Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 };

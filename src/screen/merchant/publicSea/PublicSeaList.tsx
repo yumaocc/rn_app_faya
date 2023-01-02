@@ -21,7 +21,7 @@ const options = [
     value: 1,
   },
   {
-    label: '多店',
+    label: '连锁',
     value: 2,
   },
 ];
@@ -30,8 +30,8 @@ const PublicSeaList: React.FC = () => {
   const [valueType, setValueType] = useState<Options>(null);
   const [merchantDispatcher] = useMerchantDispatcher();
   const [value, setValue] = useState('');
-  const merchantList = useSelector<RootState, PagedData<MerchantF[]>>(state => state.merchant.merchantList);
-  const pageIndex = useSelector<RootState, number>(state => state.merchant?.merchantList?.page?.pageIndex);
+  const merchantList = useSelector<RootState, PagedData<MerchantF[]>>(state => state.merchant.merchantPublicList);
+  const pageIndex = useSelector<RootState, number>(state => state.merchant?.merchantPublicList?.page?.pageIndex);
   const loading = useSelector<RootState, boolean>(state => state.merchant.merchantLoading);
   const navigation = useNavigation() as FakeNavigation;
   const {run} = useDebounceFn(async (name: string) => {
@@ -48,6 +48,10 @@ const PublicSeaList: React.FC = () => {
   const handleChangeFilter = (value: Options) => {
     setValueType(value);
     merchantDispatcher.loadPublicMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.other, multiStore: value.value});
+  };
+  const update = () => {
+    merchantDispatcher.loadPublicMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, multiStore: valueType?.value, name: value, action: RequestAction.other});
+    merchantDispatcher.loadPrivateMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.other});
   };
 
   return (
@@ -104,29 +108,32 @@ const PublicSeaList: React.FC = () => {
           }}
         />
       </View>
-      <FlatList
-        refreshing={false}
-        onRefresh={() => {
-          merchantDispatcher.loadPublicMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, multiStore: valueType?.value, name: value, action: RequestAction.other});
-        }}
-        data={merchantList?.content}
-        renderItem={({item}) => (
-          <Card
-            update={() => merchantDispatcher.loadPublicMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, multiStore: valueType?.value, name: value, action: RequestAction.other})}
-            merchant={item}
-            key={item.id}
-            style={globalStyles.moduleMarginTop}
-          />
-        )}
-        onEndReached={() => {
-          merchantDispatcher.loadPublicMerchantList({pageIndex: pageIndex + 1, pageSize: PAGE_SIZE, multiStore: valueType?.value, name: value, action: RequestAction.load});
-        }}
-        ListFooterComponent={
-          <View style={[globalStyles.containerCenter, {flex: 1, marginTop: globalStyleVariables.MODULE_SPACE, marginBottom: globalStyleVariables.MODULE_SPACE}]}>
-            <Text style={[globalStyles.fontTertiary, {textAlign: 'center'}]}>已经到底</Text>
+      {/* merchantList?.content?.length */}
+      {!!merchantList?.content?.length ? (
+        <FlatList
+          refreshing={false}
+          onRefresh={() => {
+            merchantDispatcher.loadPublicMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, multiStore: valueType?.value, name: value, action: RequestAction.other});
+          }}
+          onEndReached={() => {
+            merchantDispatcher.loadPublicMerchantList({pageIndex: pageIndex + 1, pageSize: PAGE_SIZE, multiStore: valueType?.value, name: value, action: RequestAction.load});
+          }}
+          data={merchantList?.content}
+          renderItem={({item}) => <Card update={update} merchant={item} key={item.id} style={globalStyles.moduleMarginTop} />}
+          ListFooterComponent={
+            <View style={[globalStyles.containerCenter, {flex: 1, marginTop: globalStyleVariables.MODULE_SPACE, marginBottom: globalStyleVariables.MODULE_SPACE}]}>
+              <Text style={[globalStyles.fontTertiary, {textAlign: 'center'}]}>已经到底</Text>
+            </View>
+          }
+        />
+      ) : (
+        <View style={[{flex: 1, backgroundColor: '#fff'}, globalStyles.containerCenter]}>
+          <View style={[{width: 50, height: 50, borderRadius: 50, backgroundColor: '#f4f4f4', marginBottom: globalStyleVariables.MODULE_SPACE}, globalStyles.containerCenter]}>
+            <AntdIcon name="shop" />
           </View>
-        }
-      />
+          <Text style={globalStyles.fontTertiary}>还没有商家哦，快去公海看看吧</Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 };

@@ -12,14 +12,15 @@ import {MyMerchantF, Options, RequestAction, SearchParam} from '../../../models'
 import Card from './Card';
 import Loading from '../../../component/Loading';
 import Icon from '../../../component/Form/Icon';
+
 const options = [
   {
     label: '单店',
-    value: 0,
+    value: 1,
   },
   {
-    label: '多店',
-    value: 1,
+    label: '连锁',
+    value: 2,
   },
 ];
 const MyList: React.FC = () => {
@@ -29,7 +30,6 @@ const MyList: React.FC = () => {
   const [len, setLen] = useState(0);
   const [pageIndex, setPageIndex] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [pullDown, setPullDown] = useState(false);
   const [commonDispatcher] = useCommonDispatcher();
 
   useEffect(() => {
@@ -105,24 +105,32 @@ const MyList: React.FC = () => {
           </View>
         </View>
       </View>
-      <FlatList
-        refreshing={pullDown}
-        onRefresh={async () => {
-          setPullDown(true);
-          await getData({pageIndex: pageIndex, multiStore: valueType?.value, name: value});
-          setPullDown(false);
-        }}
-        data={merchantList}
-        renderItem={({item}) => <Card merchant={item} key={item.id} style={globalStyles.moduleMarginTop} />}
-        onEndReached={() => {
-          getData({pageIndex: pageIndex, multiStore: valueType?.value, name: value});
-        }}
-        ListFooterComponent={
-          <View style={[globalStyles.containerCenter, {flex: 1, marginTop: globalStyleVariables.MODULE_SPACE, marginBottom: globalStyleVariables.MODULE_SPACE}]}>
-            <Text style={[globalStyles.fontTertiary, {textAlign: 'center'}]}>已经到底</Text>
+
+      {!!merchantList?.length ? (
+        <FlatList
+          refreshing={false}
+          onRefresh={async () => {
+            await getData({pageIndex: pageIndex, multiStore: valueType?.value, name: value});
+          }}
+          data={merchantList}
+          renderItem={({item}) => <Card merchant={item} key={item.id} style={globalStyles.moduleMarginTop} />}
+          onEndReached={() => {
+            getData({pageIndex: pageIndex, multiStore: valueType?.value, name: value});
+          }}
+          ListFooterComponent={
+            <View style={[globalStyles.containerCenter, {flex: 1, marginTop: globalStyleVariables.MODULE_SPACE, marginBottom: globalStyleVariables.MODULE_SPACE}]}>
+              <Text style={[globalStyles.fontTertiary, {textAlign: 'center'}]}>已经到底</Text>
+            </View>
+          }
+        />
+      ) : (
+        <View style={[{flex: 1, backgroundColor: '#fff'}, globalStyles.containerCenter]}>
+          <View style={[{width: 50, height: 50, borderRadius: 50, backgroundColor: '#f4f4f4', marginBottom: globalStyleVariables.MODULE_SPACE}, globalStyles.containerCenter]}>
+            <AntdIcon name="shop" />
           </View>
-        }
-      />
+          <Text style={globalStyles.fontTertiary}>还没有商家哦</Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 };

@@ -10,9 +10,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import {date} from '../../../constants';
 import {Icon} from '@ant-design/react-native';
 import CutOffRule from '../../../component/CutOffRule';
-import LinkButton from '../../../component/LinkButton';
 import {globalStyles} from '../../../constants/styles';
-import { useNavigation } from '@react-navigation/native';
 interface CommodityListProps {
   unit: string;
   title?: string;
@@ -20,7 +18,7 @@ interface CommodityListProps {
 const CommodityList: FC<CommodityListProps> = ({unit, title}) => {
   const [valueType, setValueType] = useState<Picker>({label: '日', value: 'day'});
   const commissionTop = useSelector((state: RootState) => state.summary.commissionTop);
-  const  = useNavigation() as 
+
   const [summaryDispatcher] = useSummaryDispatcher();
 
   useEffect(() => {
@@ -55,29 +53,29 @@ const CommodityList: FC<CommodityListProps> = ({unit, title}) => {
             </ModalDropdown>
           </View>
         </View>
-        {commissionTop?.map((item, index) => {
-          if (index > 4) {
-            return null;
-          }
-          return (
-            <View key={item.spuId}>
-              <View style={styles.rankList}>
-                <Text style={styles.index}>{index + 1}</Text>
-                <Text>{item.name}</Text>
-                <Text style={{color: '#4AB87D'}}>
-                  +{item.allCommissionYuan}&nbsp;
-                  {unit}
-                </Text>
-              </View>
-              <CutOffRule />
-              {index === 4 && (
-                <View style={styles.more}>
-                  <LinkButton title={'查看更多'} onPress={() => } />
+        {commissionTop.length > 0 ? (
+          <>
+            {commissionTop?.map((item, index) => {
+              return (
+                <View key={item.spuId}>
+                  <View style={styles.rankList}>
+                    <Text style={styles.index}>{index + 1}</Text>
+                    <Text>{item.name}</Text>
+                    <Text style={{color: '#4AB87D'}}>
+                      +{item.allCommissionYuan}&nbsp;
+                      {unit}
+                    </Text>
+                  </View>
+                  <CutOffRule />
                 </View>
-              )}
-            </View>
-          );
-        })}
+              );
+            })}
+          </>
+        ) : (
+          <View style={[globalStyles.containerCenter, {flex: 1}]}>
+            <Text style={globalStyles.fontPrimary}>暂无数据</Text>
+          </View>
+        )}
       </View>
     </>
   );

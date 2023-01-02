@@ -5,14 +5,15 @@ import {Control, FieldErrorsImpl, UseFormGetValues, UseFormHandleSubmit, UseForm
 import {View, Text} from 'react-native';
 import {DatePicker, Form, FormTitle, Input, SectionGroup, Select} from '../../../../component';
 import {cleanContractForm} from '../../../../helper';
-import {useCodeTypes, useCommonDispatcher} from '../../../../helper/hooks';
+import {useCodeTypes, useCommonDispatcher, useContractDispatcher} from '../../../../helper/hooks';
 import {formattingCodeType} from '../../../../helper/util';
-import {BookingType, BoolEnum, Contract, ContractAction, ContractStatus, FormControlC} from '../../../../models';
+import {BookingType, BoolEnum, Contract, ContractAction, ContractStatus, FormControlC, RequestAction} from '../../../../models';
 import {ErrorMessage} from '@hookform/error-message';
 import * as api from '../../../../apis';
 import {styles} from './style';
 import {useNavigation} from '@react-navigation/native';
 import {globalStyles} from '../../../../constants/styles';
+import {PAGE_SIZE} from '../../../../constants';
 
 interface BookingProps {
   onNext: () => void;
@@ -31,6 +32,7 @@ const Booking: FC<BookingProps> = ({Controller, control, watch, getValues, actio
   const bookingType = watch('bookingReq.bookingType');
   const bookingCanCancel = watch('bookingReq.bookingCanCancel');
   const [commonDispatcher] = useCommonDispatcher();
+  const [contractDispatcher] = useContractDispatcher();
   const navigation = useNavigation();
   const [codeTypes] = useCodeTypes();
 
@@ -44,6 +46,7 @@ const Booking: FC<BookingProps> = ({Controller, control, watch, getValues, actio
       if (action === ContractAction.ADD) {
         await api.contract.createContract(formData);
       }
+      contractDispatcher.loadContractList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.other});
       commonDispatcher.success(action === ContractAction.ADD ? '新增成功' : '保存成功');
       navigation.canGoBack() && navigation.goBack();
     } catch (error) {

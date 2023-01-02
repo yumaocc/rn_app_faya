@@ -25,11 +25,10 @@ export const Actions = {
     createAction(ActionType.LOAD_MERCHANT_PUBLIC_LIST, payload),
   loadPublicMerchantListSuccess: (payload: PagedData<MerchantF[]>): ActionWithPayload<ActionType.LOAD_MERCHANT_PUBLIC_LIST_SUCCESS, PagedData<MerchantF[]>> =>
     createAction(ActionType.LOAD_MERCHANT_PUBLIC_LIST_SUCCESS, payload),
-  // setPublicMerchantLoadList: (payLoad: PagedData<MerchantF[]>): ActionWithPayload<ActionType.SET_MERCHANT_PRIVATE_LOAD_LIST, PagedData<MerchantF[]>> =>
-  //   createAction(ActionType.SET_MERCHANT_PRIVATE_LOAD_LIST, payLoad),
 
-  // setPrivateMerchantList: (payload: PagedData<MerchantF[]>): ActionWithPayload<ActionType.SET_MERCHANT_PRIVATE_LIST, PagedData<MerchantF[]>> =>
-  //   createAction(ActionType.SET_MERCHANT_PRIVATE_LIST, payload),
-  // setMeMerchantList: (payload: MyMerchantF[]): ActionWithPayload<ActionType.SET_MERCHANT_ME_LIST, MyMerchantF[]> => createAction(ActionType.SET_MERCHANT_ME_LIST, payload),
+  loadPrivateMerchantList: (payload: SearchParam): ActionWithPayload<ActionType.LOAD_MERCHANT_PRIVATE_LIST, SearchParam> =>
+    createAction(ActionType.LOAD_MERCHANT_PRIVATE_LIST, payload),
+  loadPrivateMerchantListSuccess: (payload: PagedData<MerchantF[]>): ActionWithPayload<ActionType.LOAD_MERCHANT_PRIVATE_LIST_SUCCESS, PagedData<MerchantF[]>> =>
+    createAction(ActionType.LOAD_MERCHANT_PRIVATE_LIST_SUCCESS, payload),
 };
 export type MerchantActions = ActionsUnion<typeof Actions>;

@@ -1,6 +1,6 @@
 import {Action, ActionsUnion, ActionWithPayload, createAction} from '../types';
 import {ActionType} from './types';
-import {ErrorType, PreviewConfig} from '../../models';
+import {ErrorType, PreviewConfig, Site} from '../../models';
 
 export const Actions = {
   initApp: (): Action<ActionType.INIT_APP> => createAction(ActionType.INIT_APP),
@@ -16,6 +16,8 @@ export const Actions = {
     return createAction(ActionType.PREVIEW_END);
   },
   setToken: (token: string): ActionWithPayload<ActionType.SET_TOKEN, string> => createAction(ActionType.SET_TOKEN, token),
+  loadAllSites: (): Action<ActionType.LOAD_AllSITE> => createAction(ActionType.LOAD_AllSITE),
+  loadAllSitesSuccess: (payload: Site[]): ActionWithPayload<ActionType.LOAD_AllSITE_SUCCESS, Site[]> => createAction(ActionType.LOAD_AllSITE_SUCCESS, payload),
 };
 
 export type CommonActions = ActionsUnion<typeof Actions>;

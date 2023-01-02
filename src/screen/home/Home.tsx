@@ -1,17 +1,31 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Text, View, ScrollView, StyleSheet} from 'react-native';
 import {Header} from '@react-navigation/elements';
 import {Icon} from '@ant-design/react-native';
 import {PlusButton, UnitNumber} from '../../component';
 import {globalStyles, globalStyleVariables} from '../../constants/styles';
-import {useHomeSummary} from '../../helper/hooks';
+import {useHomeSummary, useUserDispatcher} from '../../helper/hooks';
 import {useNavigation} from '@react-navigation/native';
-import {ContractAction, FakeNavigation, MerchantAction, MerchantCreateType} from '../../models';
+import {ContractAction, FakeNavigation, MerchantAction, MerchantCreateType, UserInfo, UserState} from '../../models';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../redux/reducers';
 
 const Home: React.FC = () => {
   const [summary, commissionToday, myContractNums] = useHomeSummary();
   const navigation = useNavigation() as FakeNavigation;
+  const [userDispatcher] = useUserDispatcher();
+  const userInfo = useSelector<RootState, UserInfo>(state => state.user.userInfo);
+
+  useEffect(() => {
+    if (!userInfo) {
+      userDispatcher.loadUserInfo();
+    }
+  }, [userDispatcher, userInfo]);
+  if (userInfo?.status === UserState.UN_CERTIFIED) {
+    navigation.navigate('Cert');
+  }
+
   return (
     <>
       <Header title="首页" headerLeft={() => <Icon name="bell" />} headerLeftContainerStyle={{paddingLeft: 16}} />

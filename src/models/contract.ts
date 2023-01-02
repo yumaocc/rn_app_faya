@@ -366,7 +366,7 @@ export interface ContractList {
   typeStr: string;
 }
 export interface ContractF {
-  bizUserId: number;
+  bizUserId?: number;
   bookingReq: any;
   contractName: string;
   id?: number;
@@ -437,7 +437,7 @@ export interface SkuInfoF {
 export interface SkuInfo {
   buyLimitNum?: string;
   buyLimitType?: number;
-  contractSkuId?: number[];
+  contractSkuId?: number;
   skuDetails: SkuDetails[];
   skuName: string;
   skuSettlementPrice: string;

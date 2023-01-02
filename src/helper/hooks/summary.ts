@@ -1,36 +1,33 @@
-import {useRequest} from 'ahooks';
 import {useEffect} from 'react';
 import {useSelector} from 'react-redux';
-import {Commission, HomeStatisticsF} from '../../models';
+import {PAGE_SIZE} from '../../constants';
+import {Commission, HomeStatisticsF, RequestAction} from '../../models';
 import {RootState} from '../../redux/reducers';
 import {useForceUpdate} from './common';
-import {useSummaryDispatcher} from './dispatcher';
-import * as api from '../../apis';
+import {useSummaryDispatcher, useContractDispatcher} from './dispatcher';
+
 export function useHomeSummary(): [HomeStatisticsF, Commission, number, () => void] {
   const [signal, forceUpdate] = useForceUpdate();
+  const [contractDispatcher] = useContractDispatcher();
   const homeData = useSelector((state: RootState) => state.summary.home);
+  const contractLen = useSelector<RootState, number>(state => state?.contract?.contractList?.page?.pageTotal);
   const commissionToday = useSelector((state: RootState) => state.summary.commissionToday);
   const [summaryDispatcher] = useSummaryDispatcher();
-  const {data, run} = useRequest(async () => {
-    return api.contract.getMyContractList({
-      pageIndex: 1,
-      pageSize: 10,
-    });
-  });
+
   useEffect(() => {
     if (!homeData) {
+      contractDispatcher.loadContractList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.load});
       summaryDispatcher.loadCommissionToday();
       summaryDispatcher.loadHome();
     }
-  }, [homeData, summaryDispatcher]);
+  }, [contractDispatcher, homeData, summaryDispatcher]);
 
   useEffect(() => {
     if (signal) {
-      run();
       summaryDispatcher.loadHome();
       summaryDispatcher.loadCommissionToday();
     }
-  }, [run, signal, summaryDispatcher]);
+  }, [contractDispatcher, signal, summaryDispatcher]);
 
-  return [homeData, commissionToday, data?.page?.pageTotal, forceUpdate];
+  return [homeData, commissionToday, contractLen, forceUpdate];
 }
