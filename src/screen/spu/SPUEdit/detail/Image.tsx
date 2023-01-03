@@ -3,7 +3,7 @@ import React from 'react';
 import {View, ScrollView, Text} from 'react-native';
 import {Form, FormTitle, SectionGroup, Footer} from '../../../../component';
 import {styles} from '../style';
-import Upload from '../../../../component/Form/Upload';
+import Upload from './Upload';
 import {globalStyles} from '../../../../constants/styles';
 import {ErrorMessage} from '@hookform/error-message';
 import {Controller, FieldErrorsImpl} from 'react-hook-form';

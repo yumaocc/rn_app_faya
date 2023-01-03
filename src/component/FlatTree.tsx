@@ -133,7 +133,7 @@ const FlatTree: FC<FlatTreeProps> = props => {
       {treeData.map((dataChunk, index) => {
         return (
           <View key={dataChunk[keyName]} style={[styles.wrapper]}>
-            <View style={[globalStyles.containerLR]}>
+            <View style={globalStyles.containerLR}>
               <View>
                 <Checkbox
                   checked={isAllSelected(dataChunk[keyName])}
@@ -154,7 +154,9 @@ const FlatTree: FC<FlatTreeProps> = props => {
                     }),
                   )
                 }>
-                <Icon name={checkedIsShow[index].isShow ? 'caret-right' : 'caret-down'} style={styles.arrow} />
+                <View style={{width: 100, alignItems: 'flex-end'}}>
+                  <Icon name={checkedIsShow[index].isShow ? 'caret-right' : 'caret-down'} style={styles.arrow} />
+                </View>
               </TouchableOpacity>
             </View>
             <View />

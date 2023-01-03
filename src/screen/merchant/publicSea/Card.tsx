@@ -36,6 +36,7 @@ const Card: React.FC<CardProps> = props => {
     }
     setLoading(false);
   };
+
   return (
     <View style={globalStyles.marginRightLeft}>
       <Loading active={loading} />

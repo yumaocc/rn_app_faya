@@ -66,9 +66,10 @@ export function useMerchantBookingModel(merchantId: number): [MerchantBookingMod
   return useFetchData(api.merchant.getMerchantBookingModel, merchantId);
 }
 
-export const formattingCity = (city: Site) => {
+export const formattingCity = (city: Site, deep = 0) => {
+  const id = deep === 1 ? `1_${city.id}` : city.id;
   return {
-    value: city.id,
+    value: id,
     label: city.name,
   };
 };
@@ -84,16 +85,16 @@ export function useLoadCity() {
           let children;
           if (Array.isArray(e.children)) {
             children = e.children.map(element => {
-              return formattingCity(element);
+              return formattingCity(element, 0);
             });
           }
           return {
-            ...formattingCity(e),
+            ...formattingCity(e, 1),
             children,
           };
         });
       }
-      return {...formattingCity(item), children};
+      return {...formattingCity(item), value: `2_${item.id}`, children};
     });
     return data;
   });

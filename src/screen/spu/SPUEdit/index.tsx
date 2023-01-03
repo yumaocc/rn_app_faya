@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {View, ScrollView, useWindowDimensions} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
@@ -11,6 +11,7 @@ import {useForm} from 'react-hook-form';
 import Base from './base/Base';
 import SKU from './sku/SKU';
 import Booking from './booking/Booking';
+// import Image from './detail/Image';
 import ImageTextDetail from './detail/ImageTextDetail';
 
 import {cleanSPUForm, momentFromDateTime} from '../../../helper/util';
@@ -27,6 +28,7 @@ const steps = [
 
 const EditSPU: React.FC = () => {
   const params = useParams<{id: number}>();
+  const [loading, setLoading] = useState(false);
   const spuID = useMemo(() => Number(params.id), [params.id]); // 路由读取到商品ID
   const isEdit = useMemo(() => !!spuID, [spuID]); // 是否是编辑模式
   const [summaryDispatcher] = useSummaryDispatcher();
@@ -146,6 +148,7 @@ const EditSPU: React.FC = () => {
 
   async function submit() {
     try {
+      setLoading(true);
       const res = getValues();
       const formData = cleanSPUForm(res, contractDetail);
       if (isEdit) {
@@ -160,6 +163,7 @@ const EditSPU: React.FC = () => {
     } catch (error) {
       commonDispatcher.error(error || '哎呀，出错了~');
     }
+    setLoading(false);
   }
 
   function handleChangeStep(currentKey: string, nextKey: string) {
@@ -214,7 +218,8 @@ const EditSPU: React.FC = () => {
             <Booking control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={() => setCurrentKey('detail')} errors={errors} />
           </View>
           <View style={[{width: windowWidth, paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
-            <ImageTextDetail control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={onHandleSubmit} error={errors} />
+            <ImageTextDetail loading={loading} control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={onHandleSubmit} error={errors} />
+            {/* <Image loading={loading} control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={onHandleSubmit} error={errors} /> */}
           </View>
         </ScrollView>
       </SafeAreaView>

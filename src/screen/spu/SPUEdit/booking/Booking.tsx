@@ -98,6 +98,7 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
       </>
     );
   };
+
   const Site = (props: {value: number[]}) => {
     const {value} = props;
     return (
@@ -200,7 +201,6 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
                   key="id"
                   value={value}
                   onChange={e => {
-                    console.log(e);
                     onChange(e);
                   }}
                   options={
@@ -221,7 +221,6 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
         selectedKeys={locationIds}
         visible={siteModalIsShow}
         onOk={(value: number[]) => {
-          console.log(value);
           setValue('locationIds', value);
           setSiteModalIsShow(false);
         }}

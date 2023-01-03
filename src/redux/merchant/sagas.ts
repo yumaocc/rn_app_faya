@@ -39,7 +39,7 @@ function* loadCurrentMerchantPublic(action: ActionWithPayload<ActionType, number
     return yield put(Actions.loadCurrentMerchantPrivateSuccess(null as any));
   }
   try {
-    const res = yield call(merchant.getMerchantDetail, id);
+    const res = yield call(merchant.getPublicMerchantDetail, id);
     const data = formattingMerchantEdit(res);
     yield put(Actions.loadCurrentMerchantPublicSuccess(data));
   } catch (error) {

@@ -24,7 +24,7 @@ export const getMerchantDispatcher = (dispatch: Dispatch): MerchantDispatcher =>
       dispatch(Actions.loadCurrentMerchantPrivate(payload));
     },
     loadCurrentMerchantPublic(payload: number) {
-      dispatch(Actions.loadCurrentMerchantPrivate(payload));
+      dispatch(Actions.loadCurrentMerchantPublic(payload));
     },
     loadMerchantSearchList(payload: SearchParam) {
       dispatch(Actions.loadMerchantSearchList(payload));

@@ -51,6 +51,11 @@ export default (state = initialState, action: MerchantActions): MerchantState =>
         draft.loadingCurrentMerchant = false;
         draft.currentMerchant = action.payload;
       });
+    case ActionType.LOAD_CURRENT_MERCHANT_PUBIC_SUCCESS:
+      return produce(state, draft => {
+        draft.loadingCurrentMerchant = false;
+        draft.currentMerchant = action.payload;
+      });
     case ActionType.LOAD_MERCHANT_SEARCH_LIST_SUCCESS:
       return produce(state, draft => {
         draft.merchantSearchList = action.payload;

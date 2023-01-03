@@ -11,12 +11,15 @@ export const Actions = {
     createAction(ActionType.LOAD_CURRENT_MERCHANT_PRIVATE, payload),
   loadCurrentMerchantPrivateSuccess: (payload: FormMerchant): ActionWithPayload<ActionType.LOAD_CURRENT_MERCHANT_PRIVATE_SUCCESS, FormMerchant> =>
     createAction(ActionType.LOAD_CURRENT_MERCHANT_PRIVATE_SUCCESS, payload),
-  loadCurrentMerchantPublic: (payload: number): ActionWithPayload<ActionType.LOAD_CURRENT_MERCHANT_PRIVATE, number> =>
-    createAction(ActionType.LOAD_CURRENT_MERCHANT_PRIVATE, payload),
-  loadCurrentMerchantPublicSuccess: (payload: FormMerchant): ActionWithPayload<ActionType.LOAD_CURRENT_MERCHANT_PRIVATE_SUCCESS, FormMerchant> =>
-    createAction(ActionType.LOAD_CURRENT_MERCHANT_PRIVATE_SUCCESS, payload),
+  loadCurrentMerchantPublic: (payload: number): ActionWithPayload<ActionType.LOAD_CURRENT_MERCHANT_PUBLIC, number> =>
+    createAction(ActionType.LOAD_CURRENT_MERCHANT_PUBLIC, payload),
+
+  loadCurrentMerchantPublicSuccess: (payload: FormMerchant): ActionWithPayload<ActionType.LOAD_CURRENT_MERCHANT_PUBIC_SUCCESS, FormMerchant> =>
+    createAction(ActionType.LOAD_CURRENT_MERCHANT_PUBIC_SUCCESS, payload),
+
   loadMerchantSearchList: (payload: SearchParam): ActionWithPayload<ActionType.LOAD_MERCHANT_SEARCH_LIST, SearchParam> =>
     createAction(ActionType.LOAD_MERCHANT_SEARCH_LIST, payload),
+
   loadMerchantSearchListSuccess: (payload: MerchantSimpleF[]): ActionWithPayload<ActionType.LOAD_MERCHANT_SEARCH_LIST_SUCCESS, MerchantSimpleF[]> =>
     createAction(ActionType.LOAD_MERCHANT_SEARCH_LIST_SUCCESS, payload),
   endEdit: (): Action<ActionType.END_EDIT> => createAction(ActionType.END_EDIT),

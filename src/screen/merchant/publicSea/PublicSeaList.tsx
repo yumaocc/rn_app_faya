@@ -108,7 +108,6 @@ const PublicSeaList: React.FC = () => {
           }}
         />
       </View>
-      {/* merchantList?.content?.length */}
       {!!merchantList?.content?.length ? (
         <FlatList
           refreshing={false}

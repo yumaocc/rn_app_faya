@@ -41,7 +41,6 @@ const SelectSiteModal: FC<SelectSiteModalProps> = props => {
 
   useEffect(() => {
     api.common.getSites().then(res => {
-      console.log('站点', res);
       setSites(res);
     });
   }, []);

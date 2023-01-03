@@ -370,17 +370,10 @@ export interface ContractF {
   bookingReq: any;
   contractName: string;
   id?: number;
-  // partyAAccountType?: number;
-  // partyABankAccount?: number;
-  // partyABankAccountName?: string;
-  // partyABankAddress?: string;
-  // partyAIsLegalPerson?: number;
   partyAName?: string;
   partyBName?: string;
   protocolType?: number;
   settlementType?: number;
-  // status?: number;
-  // type?: number;
   spuInfoReq: SpuInfoReq;
   skuInfoReq: SkuInfoReqF;
 }

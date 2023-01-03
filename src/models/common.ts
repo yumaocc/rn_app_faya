@@ -112,7 +112,7 @@ export interface Site {
 }
 
 export interface City {
-  value: number;
+  value: number | string;
   label: string;
   children?: City[];
 }

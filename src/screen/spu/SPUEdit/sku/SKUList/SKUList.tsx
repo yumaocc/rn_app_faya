@@ -59,13 +59,15 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
     }
   }, [packListForm, spuDetail]);
 
-  function deletePack(index: number) {
+  //删除组合套餐
+  function deletePackage(index: number) {
     const {packageList = []} = getValues();
     const newPackageList = packageList.filter((_: any, idx: number) => index !== idx);
     setValue('packageList', newPackageList);
   }
 
-  async function onSubmitPack() {
+  //新增组合套餐
+  async function onSubmitPackage() {
     const res = packListForm.getValues();
     const skus: any = [];
     res.skus.forEach((item: any, index: number) => {
@@ -82,6 +84,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
       packListForm.setError('packageNums', {type: 'value', message: '如果只选择一个套餐，套餐数量必须大于1'});
       return;
     }
+
     const formData = {
       show: 1,
       packageName: res.packageName,
@@ -99,22 +102,21 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
       setValue('packageList', [...packageList]);
       setPackageListEdit(-1);
       packListForm.reset();
-      setIsShowPackageModal(false);
-      return;
+    } else {
+      setValue('packageList', [...packageList, formData]);
     }
-    setValue('packageList', [...packageList, formData]);
     packListForm.reset();
     setIsShowPackageModal(false);
   }
-
-  const editPackList = (index: number, item: PackagedSKU) => {
-    setIsShowPackageModal(true);
-    setPackageListEdit(index);
-    const skus: {_selected: boolean}[] = [];
+  //编辑组合套餐
+  const editPackageList = (index: number, item: PackagedSKU) => {
+    const skus: any[] = [];
     item.skus.forEach(item => {
       skus.push({_selected: true, ...item});
       return item;
     });
+    setIsShowPackageModal(true);
+    setPackageListEdit(index);
     packListForm.setValue('skus', skus);
     packListForm.setValue('packageName', item.packageName);
   };
@@ -132,13 +134,13 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                   text: '编辑',
                   color: 'white',
                   backgroundColor: globalStyleVariables.COLOR_PRIMARY,
-                  onPress: () => editPackList(index, item),
+                  onPress: () => editPackageList(index, item),
                 },
                 {
                   text: '删除',
                   color: 'white',
                   backgroundColor: globalStyleVariables.COLOR_DANGER,
-                  onPress: () => deletePack(index),
+                  onPress: () => deletePackage(index),
                 },
               ]}>
               <View style={{margin: globalStyleVariables.MODULE_SPACE}} key={item.id}>
@@ -146,7 +148,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                   <Text style={globalStyles.fontSecondary}>名称：{item.packageName}</Text>
                 </View>
                 <View style={{margin: globalStyleVariables.MODULE_SPACE}}>
-                  {item?.skus?.map(sku => {
+                  {item?.skus?.map((sku, index) => {
                     let skuItem;
                     if (spuDetail) {
                       skuItem = findItem(spuDetail?.skuList, item => item.skuId === sku.skuId);
@@ -157,7 +159,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                       skuItem = findItem(contractDetail?.skuInfoReq?.skuInfo, item => item.contractSkuId === sku.contractSkuId);
                     }
                     return (
-                      <View key={sku.skuId}>
+                      <View key={index}>
                         <Text style={globalStyles.fontTertiary}>{`${skuItem?.skuName} * ${sku.nums}`}</Text>
                       </View>
                     );
@@ -248,8 +250,6 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                     });
                     const maxShareCommission = Number(res.maxShareCommissionYuan) || 0;
                     const [min, max] = getDirectCommissionRange(maxShareCommission, earnCommission);
-                    console.log('躺赚佣金');
-                    console.log('min', min, 'max', max);
                     if (value < min) {
                       setError(`skuList.${index}.directSalesCommission`, {type: 'validate', message: `直售佣金不能小于${min}元`});
                       return Promise.reject(`直售佣金不能小于${min}元`);
@@ -291,8 +291,6 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                     });
                     const maxShareCommission = Number(res.maxShareCommissionYuan) || 0;
                     const [min, max] = getEarnCommissionRange(maxShareCommission, directSalesCommission);
-                    console.log('躺赚佣金');
-                    console.log('min', min, 'max', max);
                     if (value < min) {
                       setError(`skuList.${index}.earnCommission`, {type: 'validate', message: `躺赚佣金不能小于${min}元`});
                       return Promise.reject(`躺赚佣金不能小于${min}元`);
@@ -369,7 +367,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
       <Modal
         title="组合套餐"
         visible={isShowPackageModal}
-        onOk={packListForm.handleSubmit(onSubmitPack)}
+        onOk={packListForm.handleSubmit(onSubmitPackage)}
         onClose={() => {
           setIsShowPackageModal(false);
           packListForm.reset();
@@ -418,12 +416,12 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                           control={packListForm.control}
                           name={`sku.${index}.skuName`}
                           render={({field: {value}}) => (
-                            <View>
+                            <View style={{flex: 1}}>
                               <Text>套餐{convertNumber2Han(index + 1)}</Text>
                               <SelfText style={globalStyles.fontSecondary} value={value} />
                               {checked && (
-                                <View style={[globalStyles.containerLR, globalStyles.borderTop, {paddingTop: 5, marginTop: 5}]}>
-                                  <Text style={globalStyles.fontTertiary}>设置份数</Text>
+                                <View style={[globalStyles.containerLR, globalStyles.borderTop, {flex: 1, paddingTop: 5, marginTop: 5}]}>
+                                  <Text style={[globalStyles.fontTertiary]}>设置份数</Text>
                                   <Controller
                                     name={`skus.${index}.nums`}
                                     control={packListForm.control}
@@ -434,7 +432,9 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                                         return true;
                                       },
                                     }}
-                                    render={({field: {value, onChange}}) => <Stepper value={value} onChange={onChange} styles={stepperStyle} step={1} min={1} />}
+                                    render={({field: {value, onChange}}) => (
+                                      <Stepper style={{marginLeft: 65}} value={value} onChange={onChange} styles={stepperStyle} step={1} min={1} />
+                                    )}
                                   />
                                 </View>
                               )}

@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-// import {useDebounceFn} from 'ahooks';
 import {View, Text, StyleSheet, Image, FlatList, useWindowDimensions} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Icon as AntdIcon} from '@ant-design/react-native';
@@ -7,7 +6,7 @@ import * as api from '../../../apis';
 import {NavigationBar} from '../../../component';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {CommissionDetail, Picker, RequestAction, SearchParam} from '../../../models';
-import {useSummaryDispatcher} from '../../../helper/hooks';
+import {useCommonDispatcher, useSummaryDispatcher} from '../../../helper/hooks';
 import {date, PAGE_SIZE} from '../../../constants';
 import Title from '../../../component/Title';
 import ModalDropdown from 'react-native-modal-dropdown';
@@ -16,20 +15,19 @@ import moment from 'moment';
 import {formatMoment} from '../../../helper';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/reducers';
-// import Icon from '../../../component/Form/Icon';
 import Loading from '../../../component/Loading';
 
 //今日收益页面
 const TodayEarnings: React.FC = () => {
   const [loading, setLoading] = useState(false);
+  const [value] = useState('');
   const [valueType, setValueType] = useState<Picker>(null);
   const [pageIndex, setPageIndex] = useState(1);
   const [data, setData] = useState<CommissionDetail[]>([]);
   const {width: windowWidth} = useWindowDimensions();
   const [summaryDispatcher] = useSummaryDispatcher();
+  const [commonDispatcher] = useCommonDispatcher();
   const commissionToday = useSelector((state: RootState) => state.summary);
-  const [value] = useState('');
-  // const {run} = useDebounceFn(async (name: string) => getData({pageIndex: 1, name}, RequestAction.other));
 
   useEffect(() => {
     summaryDispatcher.loadCommissionToday();
@@ -58,7 +56,7 @@ const TodayEarnings: React.FC = () => {
         setPageIndex(pageIndex => pageIndex + 1);
       }
     } catch (error) {
-      // commonDispatcher.error(error);
+      commonDispatcher.error(error);
     }
     setLoading(false);
   };

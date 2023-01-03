@@ -24,6 +24,9 @@ export function resetToken(token: string) {
 
 axios.interceptors.response.use((response: AxiosResponse) => {
   const {data} = response;
+  if (__DEV__) {
+    // console.log('响应体', data.data?.content || data);
+  }
   switch (data.code) {
     case 8000:
       const {code, msg} = data;

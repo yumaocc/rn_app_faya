@@ -100,7 +100,7 @@ const PrivateSeaList: React.FC = () => {
           navigation.navigate({
             name: 'AddMerchant',
             params: {
-              type: MerchantCreateType.PRIVATE_SEA,
+              identity: MerchantCreateType.PRIVATE_SEA,
               action: MerchantAction.ADD,
             },
           });

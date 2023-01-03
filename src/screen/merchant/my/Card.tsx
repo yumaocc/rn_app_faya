@@ -14,7 +14,6 @@ interface CardProps {
 const Card: React.FC<CardProps> = props => {
   const {merchant, style} = props;
   const navigation = useNavigation() as FakeNavigation;
-  console.log('merchant', merchant);
   return (
     <View style={[styles.container, style, {marginLeft: globalStyleVariables.MODULE_SPACE, marginRight: globalStyleVariables.MODULE_SPACE}]}>
       <TouchableOpacity

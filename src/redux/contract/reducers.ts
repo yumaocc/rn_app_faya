@@ -8,7 +8,7 @@ import {PAGE_SIZE} from '../../constants';
 export interface ContractState {
   currentContract?: Contract;
   loadingCurrentContract: boolean;
-  contractSearchList: Contract[];
+  contractSearchList: ContractList[];
   contractList?: PagedData<ContractList[]>;
   contractLoading: boolean;
 }

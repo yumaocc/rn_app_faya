@@ -76,6 +76,7 @@ const AddMerchant: React.FC = () => {
       //获取私海数据
       merchantDispatcher.loadCurrentMerchantPrivate(privateId);
     } else if (publicId) {
+      //获取公海数据
       merchantDispatcher.loadCurrentMerchantPublic(publicId);
     }
     return () => {
@@ -100,13 +101,19 @@ const AddMerchant: React.FC = () => {
 
   useEffect(() => {
     if (merchantDetail) {
-      console.log(merchantDetail);
       const keys = Object.keys(merchantDetail) as MerchantFormEnum[];
       keys.forEach(key => {
         setValue(key, merchantDetail[key]);
       });
     }
   }, [merchantDetail, setValue]);
+
+  //刷新公私海数据
+  const update = () => {
+    merchantDispatcher.loadPrivateMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.other});
+    merchantDispatcher.loadPublicMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.other});
+    summaryDispatcher.loadHome();
+  };
 
   //新建商家
   const onSubmit = async () => {
@@ -115,15 +122,17 @@ const AddMerchant: React.FC = () => {
       const newFormData = formattingMerchantRequest(formData, identity) as MerchantForm;
 
       if (action === MerchantAction.EDIT) {
+        console.log('商家信息', newFormData);
         await updateMerchant(newFormData);
+        update();
+        commonDispatcher.success('修改成功');
+        navigation.canGoBack() && navigation.goBack();
+        return;
       }
       if (action === MerchantAction.ADD) {
         await createMerchant(newFormData);
       }
-      summaryDispatcher.loadHome();
-      merchantDispatcher.loadPrivateMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.other});
-      merchantDispatcher.loadPublicMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.other});
-      // commonDispatcher.success(action === MerchantAction.ADD ? '添加成功' : '修改成功');
+      update();
       setIsShowModal(true);
     } catch (error) {
       commonDispatcher.error(error || '添加失败');
@@ -135,25 +144,27 @@ const AddMerchant: React.FC = () => {
     try {
       await api.merchant.drawMerchant(id);
       commonDispatcher.success('添加成功');
-      merchantDispatcher.loadPublicMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.other});
-      merchantDispatcher.loadPrivateMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.other});
+      update();
       navigation.goBack();
     } catch (error) {
       commonDispatcher.error((error as string) || '添加失败');
     }
   };
+
   //邀请认证
   const inviteAuth = async (id: number) => {
     try {
       setLoading(true);
       await api.merchant.inviteAuth(id);
       navigation.goBack();
-      merchantDispatcher.loadPublicMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.other});
+      commonDispatcher.success('已发送邀请');
+      update();
     } catch (error) {
       commonDispatcher.error((error as string) || '邀请失败');
     }
     setLoading(false);
   };
+
   const getTitle = () => {
     if (merchantDetail) {
       return merchantDetail?.name;
@@ -161,13 +172,14 @@ const AddMerchant: React.FC = () => {
       return identity === MerchantCreateType.PUBLIC_SEA ? '新建公海商家' : '新建私海商家';
     }
   };
+
+  //归还公海
   const handleEdit = async () => {
     setLoading(true);
     try {
       await api.merchant.returnPublic(merchantDetail.id);
       setLoading(false);
-      merchantDispatcher.loadPrivateMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.other});
-      merchantDispatcher.loadPublicMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.other});
+      update();
       commonDispatcher.success('归还成功');
       navigation.goBack();
     } catch (error) {
@@ -201,7 +213,16 @@ const AddMerchant: React.FC = () => {
           <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
             <View style={{width: windowWidth}}>
               <ScrollView>
-                <EditBase locationCompanyId={locationCompanyId} isHidden={isHidden} errors={errors} control={control} Controller={Controller} type={identity} setValue={setValue} />
+                <EditBase
+                  getValues={getValues}
+                  locationCompanyId={locationCompanyId}
+                  isHidden={isHidden}
+                  errors={errors}
+                  control={control}
+                  Controller={Controller}
+                  type={identity}
+                  setValue={setValue}
+                />
               </ScrollView>
             </View>
             <View style={{width: windowWidth}}>
@@ -266,11 +287,13 @@ const AddMerchant: React.FC = () => {
     </>
   );
 };
+
 export default AddMerchant;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
   },
   sectionGroup: {
     paddingHorizontal: 10,

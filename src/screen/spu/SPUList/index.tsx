@@ -76,7 +76,6 @@ const SPUList: React.FC = () => {
                   {/* <TouchableOpacity
                     activeOpacity={0.5}
                     onPress={() => {
-                      console.log(1);
                     }}>
                     <View style={styles.showSale}>
                       <Text style={[globalStyles.fontPrimary, {color: globalStyleVariables.COLOR_PRIMARY}]}>查看销售详情</Text>

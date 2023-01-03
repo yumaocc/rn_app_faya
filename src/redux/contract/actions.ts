@@ -8,7 +8,7 @@ export const Actions = {
     createAction(ActionType.LOAD_CURRENT_CONTRACT_SUCCESS, payload),
   loadContractSearchList: (payload: SearchParam): ActionWithPayload<ActionType.LOAD_CONTRACT_SEARCH_LIST, SearchParam> =>
     createAction(ActionType.LOAD_CONTRACT_SEARCH_LIST, payload),
-  loadContractSearchListSuccess: (payload: Contract[]): ActionWithPayload<ActionType.LOAD_CONTRACT_SEARCH_LIST_SUCCESS, Contract[]> =>
+  loadContractSearchListSuccess: (payload: ContractList[]): ActionWithPayload<ActionType.LOAD_CONTRACT_SEARCH_LIST_SUCCESS, ContractList[]> =>
     createAction(ActionType.LOAD_CONTRACT_SEARCH_LIST_SUCCESS, payload),
   loadContractList: (payload: SearchParam): ActionWithPayload<ActionType.LOAD_CONTRACT_LIST, SearchParam> => createAction(ActionType.LOAD_CONTRACT_LIST, payload),
   loadContractListSuccess: (payload: PagedData<ContractList[]>): ActionWithPayload<ActionType.LOAD_CONTRACT_LIST_SUCCESS, PagedData<ContractList[]>> =>

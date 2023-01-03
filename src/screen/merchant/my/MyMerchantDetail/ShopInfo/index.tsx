@@ -15,6 +15,7 @@ import LinkButton from '../../../../../component/LinkButton';
 import {useNavigation} from '@react-navigation/native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useLoadAllSite} from '../../../../../helper/hooks/common';
+import {getSitesIndex} from '../../../../../helper/util';
 
 interface ShopInfoProps {
   id: number;
@@ -23,7 +24,7 @@ interface ShopInfoProps {
 const AddMerchant: React.FC<ShopInfoProps> = ({id, locationCompanyId}) => {
   const {cityList} = useLoadCity();
   const [sites] = useLoadAllSite();
-  const {control, setValue} = useForm<FormMerchant>({
+  const {control, setValue, getValues} = useForm<FormMerchant>({
     mode: 'onBlur',
   });
   const [merchantDispatcher] = useMerchantDispatcher();
@@ -48,16 +49,9 @@ const AddMerchant: React.FC<ShopInfoProps> = ({id, locationCompanyId}) => {
   useEffect(() => {
     if (sites?.length > 0 && cityList?.length) {
       if (locationCompanyId > 0) {
-        for (let i = 0; i < sites.length; i++) {
-          for (let j = 0; j < sites[i].children.length; j++) {
-            for (let k = 0; k < sites[i].children[j].children.length; k++) {
-              if (sites[i].children[j].children[k].id === locationCompanyId) {
-                setValue('areaInfo', [sites[i].id, sites[i].children[j].id, locationCompanyId]);
-                break;
-              }
-            }
-          }
-        }
+        const res = getSitesIndex(sites, locationCompanyId);
+        console.log(res);
+        setValue('areaInfo', res as any);
       }
     }
   }, [sites, locationCompanyId, setValue, cityList?.length]);
@@ -80,6 +74,15 @@ const AddMerchant: React.FC<ShopInfoProps> = ({id, locationCompanyId}) => {
       });
     }
   }, [merchantDetail, setValue]);
+  //点击店铺
+  const handleClickShop = (index: number) => {
+    const {shopList} = getValues();
+    const item = shopList.find((item, idx) => idx === index);
+    navigation.navigate({
+      name: 'ShopDetail',
+      params: {shopDetail: item, id: id},
+    });
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
@@ -252,27 +255,29 @@ const AddMerchant: React.FC<ShopInfoProps> = ({id, locationCompanyId}) => {
               }
               return (
                 <View key={item.id}>
-                  <View style={styles.shop}>
-                    <Controller
-                      control={control}
-                      name={`shopList.${index}.shopName`}
-                      render={({field: {value}}) => (
-                        <View style={[globalStyles.borderBottom, {paddingBottom: 10}]}>
-                          <SelfText value={value} style={[globalStyles.fontPrimary, globalStyles.borderBottom]} />
-                        </View>
-                      )}
-                    />
-                    <Controller
-                      control={control}
-                      name={`shopList.${index}.addressDetail`}
-                      render={({field: {value}}) => <SelfText value={value} style={[globalStyles.fontTertiary, globalStyles.moduleMarginTop]} />}
-                    />
-                    <Controller
-                      control={control}
-                      name={`shopList.${index}.contactPhone`}
-                      render={({field: {value}}) => <SelfText value={value} style={globalStyles.fontTertiary} />}
-                    />
-                  </View>
+                  <TouchableOpacity activeOpacity={0.5} onPress={() => handleClickShop(index)}>
+                    <View style={styles.shop}>
+                      <Controller
+                        control={control}
+                        name={`shopList.${index}.shopName`}
+                        render={({field: {value}}) => (
+                          <View style={[globalStyles.borderBottom, {paddingBottom: 10}]}>
+                            <SelfText value={value} style={[globalStyles.fontPrimary, globalStyles.borderBottom]} />
+                          </View>
+                        )}
+                      />
+                      <Controller
+                        control={control}
+                        name={`shopList.${index}.addressDetail`}
+                        render={({field: {value}}) => <SelfText value={value} style={[globalStyles.fontTertiary, globalStyles.moduleMarginTop]} />}
+                      />
+                      <Controller
+                        control={control}
+                        name={`shopList.${index}.contactPhone`}
+                        render={({field: {value}}) => <SelfText value={value} style={globalStyles.fontTertiary} />}
+                      />
+                    </View>
+                  </TouchableOpacity>
                   {index === 2 && (
                     <View style={[globalStyles.borderTop]}>
                       <TouchableOpacity

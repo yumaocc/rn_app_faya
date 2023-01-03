@@ -7,17 +7,17 @@ import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import {FormTitle, SectionGroup, Form, Input, Select, DatePicker, Footer, Cascader} from '../../../../component';
 import {globalStyles, globalStyleVariables} from '../../../../constants/styles';
-import {useMerchantDispatcher, useContractDispatcher, useSPUCategories, useCommonDispatcher} from '../../../../helper/hooks';
-import {BoolEnum} from '../../../../models';
+import {useMerchantDispatcher, useContractDispatcher, useSPUCategories, useCommonDispatcher, useLoadCity} from '../../../../helper/hooks';
+import {BoolEnum, ContractList} from '../../../../models';
 import {RootState} from '../../../../redux/reducers';
 import {styles} from '../style';
 import {ErrorMessage} from '@hookform/error-message';
 
 import {Controller} from 'react-hook-form';
-import Error from '../../../../component/Error';
 import SelectShop from './SelectShop';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import {findItem, momentFromDateTime} from '../../../../helper/util';
+import {findItem, getSitesIndex, momentFromDateTime} from '../../../../helper/util';
+import {useLoadAllSite} from '../../../../helper/hooks/common';
 
 interface BaseProps {
   onNext?: () => void;
@@ -37,13 +37,14 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
   const bizUserId = watch('bizUserId');
   const contractId = watch('contractId');
   const canUseShopIds = watch('canUseShopIds');
+  const {cityList} = useLoadCity();
+  const [sites] = useLoadAllSite();
 
   const currentMerchant = useSelector((state: RootState) => state.merchant.currentMerchant);
   const merchantList = useSelector((state: RootState) => state.merchant.merchantSearchList);
   const currentContract = useSelector((state: RootState) => state.contract.currentContract);
   const contractList = useSelector((state: RootState) => state.contract.contractSearchList);
   const [showUseShop, setShowUseShop] = useState(false);
-
   const [SPUCategories] = useSPUCategories();
   const [merchantDispatcher] = useMerchantDispatcher();
   const [contractDispatcher] = useContractDispatcher();
@@ -63,7 +64,6 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
 
   useEffect(() => {
     if (bizUserId) {
-      console.log('bizUserId');
       contractDispatcher.loadContractSearchList({id: bizUserId});
     }
   }, [bizUserId, contractDispatcher]);
@@ -72,12 +72,24 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
     merchantDispatcher.loadCurrentMerchantPublic(bizUserId);
   }, [bizUserId, merchantDispatcher]);
 
+  //设置城市
+  useEffect(() => {
+    if (sites?.length > 0 && currentMerchant?.locationWithCompanyId) {
+      if (currentMerchant?.locationWithCompanyId > 0) {
+        const res = getSitesIndex(sites, currentMerchant?.locationWithCompanyId);
+        setValue('areaInfo', res);
+      }
+    }
+  }, [sites, currentMerchant?.locationWithCompanyId, setValue]);
+
+  //加载合同
   useEffect(() => {
     if (contractId) {
       contractDispatcher.loadCurrentContract(contractId);
     }
   }, [contractDispatcher, contractId]);
 
+  //设置合同相应的值
   useEffect(() => {
     if (currentContract) {
       setValue('saleBeginTime', momentFromDateTime(currentContract.bookingReq.saleBeginTime));
@@ -87,6 +99,7 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
       setValue('spuName', currentContract.spuInfoReq.spuName);
     }
   }, [currentContract, setValue]);
+
   function onCheck() {
     const {bizUserId, contractId} = getValues();
     if (!bizUserId) {
@@ -110,10 +123,17 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
     }
     commonDispatcher.info('请先选择合同');
   };
+  //删除店铺
   const delTheShop = (id: number) => {
     const {canUseShopIds} = getValues();
     const newCanUseShopIdS = canUseShopIds.filter((item: number) => item !== id);
     setValue('canUseShopIds', newCanUseShopIdS);
+  };
+  const cleanContract = (list: ContractList[]) => {
+    const res = list?.map(e => {
+      return {label: e.name, value: e.id};
+    });
+    return res;
   };
 
   const List: React.FC<ListProps> = props => {
@@ -141,10 +161,22 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
         <Controller
           control={control}
           name="bizUserId"
+          rules={{required: '请选择商家'}}
           render={({field: {value, onChange}}) => (
             <Form.Item label="选择商家">
-              <Select onChange={onChange} value={value} options={merchantList.map((e: {name: any; id: any}) => ({label: e.name, value: e.id}))} placeholder="请选择" />
-              {errors.bizUserId && <Error value="请先选择商家" />}
+              <Select onChange={onChange} value={value} options={merchantList?.map((e: {name: any; id: any}) => ({label: e.name, value: e.id}))} placeholder="请选择" />
+              <Text style={globalStyles.error}>
+                <ErrorMessage name={'bizUserId'} errors={errors} />
+              </Text>
+            </Form.Item>
+          )}
+        />
+        <Controller
+          control={control}
+          name="areaInfo"
+          render={({field}) => (
+            <Form.Item label="商家城市">
+              <Cascader value={field.value} onChange={field.onChange} options={cityList || []} placeholder="请输入" />
             </Form.Item>
           )}
         />
@@ -152,10 +184,13 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
         <Controller
           control={control}
           name="contractId"
+          rules={{required: '请选择合同'}}
           render={({field: {value, onChange}}) => (
             <Form.Item label="选择合同">
-              <Select onChange={onChange} value={value} options={contractList.map(e => ({label: e.name, value: e.id}))} placeholder="请选择" />
-              {errors.contractId && <Error value="请先选择合同" />}
+              <Select onChange={onChange} value={value} options={cleanContract(contractList) || []} placeholder="请选择" />
+              <Text style={globalStyles.error}>
+                <ErrorMessage name={'contractId'} errors={errors} />
+              </Text>
             </Form.Item>
           )}
         />

@@ -194,7 +194,6 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action,
                   control={control}
                   rules={{
                     validate: () => {
-                      console.log(111222);
                       const {skuInfoReq} = getValues();
                       const {spuStock = 0, skuInfo} = skuInfoReq;
                       const skuStockNums = skuInfo.reduce((pre: any, idx: any) => idx.skuStock + pre, 0);

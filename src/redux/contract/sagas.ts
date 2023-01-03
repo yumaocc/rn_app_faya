@@ -24,7 +24,7 @@ function* loadCurrentContract(action: ActionWithPayload<ActionType.LOAD_CURRENT_
 
 function* loadContractSearchList(action: ActionWithPayload<ActionType, SearchForm>): any {
   try {
-    const res: PagedData<Contract[]> = yield call(api.contract.getContractList, action.payload);
+    const res: PagedData<ContractList[]> = yield call(api.contract.getContractList, action.payload);
     yield put(Actions.loadContractSearchListSuccess(res.content));
   } catch (error) {
     yield put(CommonActions.error(error));
@@ -39,7 +39,6 @@ function* loadContractList(action: ActionWithPayload<ActionType, SearchParam>) {
     yield put(Actions.loadContractLoading());
     const res: PagedData<ContractList[]> = yield call(api.contract.getMyContractList, param);
     //根据是否有数据返回来判断是不是最后一页，方式pageIndex一直增加
-    console.log(111);
     if (!res?.content?.length) {
       const page: PageParam = yield select((state: RootState) => state.contract.contractList.page);
       res.page = page;

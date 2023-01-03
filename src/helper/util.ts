@@ -1,6 +1,6 @@
 import moment, {Moment} from 'moment';
 import {DATE_TIME_FORMAT} from '../constants';
-import {Environment, DateTimeString, FormMerchant, MerchantForm, MerchantCreateType, UploadFile, SPUCategory, SPUCodeType, SKUBuyNoticeF, Notice, Contract} from '../models';
+import {Environment, DateTimeString, FormMerchant, MerchantForm, MerchantCreateType, UploadFile, SPUCategory, SPUCodeType, SKUBuyNoticeF, Notice, Contract, Site} from '../models';
 
 // 用来模拟异步操作
 export async function wait(ms: number) {
@@ -241,4 +241,17 @@ export const cleanTime = (time: string) => {
     return null;
   }
   return moment(time).format('YYYY-MM-DD');
+};
+
+//获取城市的值
+export const getSitesIndex = (sites: Site[], locationWithCompanyId: number) => {
+  for (let i = 0; i < sites.length; i++) {
+    for (let j = 0; j < sites[i].children.length; j++) {
+      for (let k = 0; k < sites[i].children[j].children.length; k++) {
+        if (sites[i].children[j].children[k].id === locationWithCompanyId) {
+          return [`2_${sites[i].id}`, `1_${sites[i].children[j].id}`, locationWithCompanyId];
+        }
+      }
+    }
+  }
 };
