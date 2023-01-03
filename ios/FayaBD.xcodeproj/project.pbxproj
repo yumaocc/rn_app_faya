@@ -540,7 +540,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = life.faya.bd;
 				PRODUCT_NAME = FayaBD;
-				PROVISIONING_PROFILE_SPECIFIER = life.faya.bd;
+				PROVISIONING_PROFILE_SPECIFIER = dev_bd;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
