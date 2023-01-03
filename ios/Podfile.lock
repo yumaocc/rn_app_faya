@@ -303,6 +303,8 @@ PODS:
     - React-Core
   - react-native-slider (4.2.4):
     - React-Core
+  - react-native-webview (11.26.0):
+    - React-Core
   - React-perflogger (0.69.2)
   - React-RCTActionSheet (0.69.2):
     - React-Core/RCTActionSheetHeaders (= 0.69.2)
@@ -375,12 +377,22 @@ PODS:
     - React-Core
   - RNGestureHandler (2.5.0):
     - React-Core
+  - RNImageCropPicker (0.39.0):
+    - React-Core
+    - React-RCTImage
+    - RNImageCropPicker/QBImagePickerController (= 0.39.0)
+    - TOCropViewController
+  - RNImageCropPicker/QBImagePickerController (0.39.0):
+    - React-Core
+    - React-RCTImage
+    - TOCropViewController
   - RNScreens (3.15.0):
     - React-Core
     - React-RCTImage
   - RNSVG (13.6.0):
     - React-Core
   - SocketRocket (0.6.0)
+  - TOCropViewController (2.6.1)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
@@ -436,6 +448,7 @@ DEPENDENCIES:
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - "react-native-segmented-control (from `../node_modules/@react-native-community/segmented-control`)"
   - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
+  - react-native-webview (from `../node_modules/react-native-webview`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
@@ -451,6 +464,7 @@ DEPENDENCIES:
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCPicker (from `../node_modules/@react-native-picker/picker`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -471,6 +485,7 @@ SPEC REPOS:
     - libevent
     - OpenSSL-Universal
     - SocketRocket
+    - TOCropViewController
     - YogaKit
 
 EXTERNAL SOURCES:
@@ -526,6 +541,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/segmented-control"
   react-native-slider:
     :path: "../node_modules/@react-native-community/slider"
+  react-native-webview:
+    :path: "../node_modules/react-native-webview"
   React-perflogger:
     :path: "../node_modules/react-native/ReactCommon/reactperflogger"
   React-RCTActionSheet:
@@ -556,6 +573,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-picker/picker"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNImageCropPicker:
+    :path: "../node_modules/react-native-image-crop-picker"
   RNScreens:
     :path: "../node_modules/react-native-screens"
   RNSVG:
@@ -603,6 +622,7 @@ SPEC CHECKSUMS:
   react-native-safe-area-context: 6c12e3859b6f27b25de4fee8201cfb858432d8de
   react-native-segmented-control: 65df6cd0619b780b3843d574a72d4c7cec396097
   react-native-slider: cecabb58ecffad671d2ad3ccc58c7f4d2d029e95
+  react-native-webview: 994b9f8fbb504d6314dc40d83f94f27c6831b3bf
   React-perflogger: 281c34e42f13245c7a4d6932364d9182f8655e1a
   React-RCTActionSheet: 92f4292754a1b4a0e42bf9b1489206a06f878929
   React-RCTAnimation: 2a5bb5549758e4e594481633f3db649d11519f75
@@ -618,9 +638,11 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: d81ee5c3db1060afd49ea7045ad460eff82d2b7d
   RNCPicker: 0250e95ad170569a96f5b0555cdd5e65b9084dca
   RNGestureHandler: bad495418bcbd3ab47017a38d93d290ebd406f50
+  RNImageCropPicker: 14fe1c29298fb4018f3186f455c475ab107da332
   RNScreens: 4a1af06327774490d97342c00aee0c2bafb497b7
   RNSVG: 3a79c0c4992213e4f06c08e62730c5e7b9e4dc17
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
+  TOCropViewController: edfd4f25713d56905ad1e0b9f5be3fbe0f59c863
   Yoga: 236056dd74cda4d9d76c20306fd8c20bb087614d
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 

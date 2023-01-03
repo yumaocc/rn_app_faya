@@ -137,6 +137,7 @@ export interface SPUForm {
   _openSKUStock?: boolean; // 是否开启套餐单独设置库存
   subName?: string;
   locationWithCompanyId?: number; //站点
+  locationIds?: number[];
 }
 export interface SPUDetailF extends SPUForm {
   id: number;
@@ -191,7 +192,7 @@ export interface Notice {
 }
 // 获取销售佣金的请求类型
 export interface SaleParams {
-  salePrice: string;
+  salePrice: number;
   settlePrice: string;
 }
 // 商品销售佣金

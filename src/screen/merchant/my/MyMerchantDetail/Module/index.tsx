@@ -54,14 +54,12 @@ const Module: FC<ModuleProps> = ({id}) => {
         <ScrollView style={{flex: 1}}>
           {bookingModels?.map(item => {
             return (
-              <>
-                <View key={item.id} style={[globalStyles.borderBottom, styles.box, globalStyles.moduleMarginTop, globalStyles.containerLR]}>
-                  <Text>{item.name}</Text>
-                  <TouchableOpacity activeOpacity={0.5} onPress={() => handleDelete(item)}>
-                    <Icon name="minus-circle" style={[{color: 'red'}]} />
-                  </TouchableOpacity>
-                </View>
-              </>
+              <View key={item.id} style={[globalStyles.borderBottom, styles.box, globalStyles.moduleMarginTop, globalStyles.containerLR]}>
+                <Text>{item.name}</Text>
+                <TouchableOpacity activeOpacity={0.5} onPress={() => handleDelete(item)}>
+                  <Icon name="minus-circle" style={[{color: 'red'}]} />
+                </TouchableOpacity>
+              </View>
             );
           })}
         </ScrollView>

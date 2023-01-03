@@ -15,7 +15,6 @@ interface BaseProps {
 
 const Base: React.FC<BaseProps> = props => {
   const {spuDetail, merchantDetail, contractDetail} = props;
-  console.log(spuDetail);
   const [SPUCategories] = useSPUCategories();
 
   const canUseShopList = useMemo(() => {

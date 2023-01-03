@@ -54,7 +54,7 @@ const BuyNotice: React.FC<BuyNoticeProps> = ({setValue, control, getValues}) => 
       return (
         <>
           {value?.[type]?.map((item, index) => (
-            <View style={[style.noticeBox]}>
+            <View key={index} style={[style.noticeBox]}>
               <SwipeAction
                 key={index}
                 right={[

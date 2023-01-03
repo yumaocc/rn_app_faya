@@ -170,6 +170,11 @@ export const globalStyles = StyleSheet.create({
   inputWidth: {
     width: 60,
   },
+  //左右边距
+  marginRightLeft: {
+    marginLeft: globalStyleVariables.MODULE_SPACE,
+    marginRight: globalStyleVariables.MODULE_SPACE,
+  },
 });
 
 export const FontSize = StyleSheet.create({

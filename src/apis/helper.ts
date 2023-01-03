@@ -24,6 +24,9 @@ export function resetToken(token: string) {
 
 axios.interceptors.response.use((response: AxiosResponse) => {
   const {data} = response;
+  if (__DEV__) {
+    // console.log('响应体', data.data?.content || data);
+  }
   switch (data.code) {
     case 8000:
       const {code, msg} = data;
@@ -32,14 +35,17 @@ axios.interceptors.response.use((response: AxiosResponse) => {
       return response;
   }
 });
+// axios.interceptors.request.use(res => {
+//   console.log('请求体', res);
+//   return res;
+// });
 
 export async function getPaged<T>(url: string, config?: AxiosRequestConfig): Promise<PagedData<T>> {
   const res = await axios.get<Response<T>>(url, config);
   if (res.data.code === 1) {
     return res.data.data;
   }
-  // throw new CustomError(res.data.msg, res.data.code);
-  return Promise.reject(res.data.msg);
+  throw new CustomError(res.data.msg, res.data.code);
 }
 
 export async function postPaged<T, P>(url: string, data?: P, config?: AxiosRequestConfig): Promise<PagedData<T>> {

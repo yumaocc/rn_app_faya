@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-// import {useDebounceFn} from 'ahooks';
 import {View, Text, StyleSheet, Image, FlatList, useWindowDimensions} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Icon as AntdIcon} from '@ant-design/react-native';
@@ -7,7 +6,7 @@ import * as api from '../../../apis';
 import {NavigationBar} from '../../../component';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {CommissionDetail, Picker, RequestAction, SearchParam} from '../../../models';
-import {useSummaryDispatcher} from '../../../helper/hooks';
+import {useCommonDispatcher, useSummaryDispatcher} from '../../../helper/hooks';
 import {date, PAGE_SIZE} from '../../../constants';
 import Title from '../../../component/Title';
 import ModalDropdown from 'react-native-modal-dropdown';
@@ -16,20 +15,19 @@ import moment from 'moment';
 import {formatMoment} from '../../../helper';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/reducers';
-// import Icon from '../../../component/Form/Icon';
 import Loading from '../../../component/Loading';
 
 //今日收益页面
 const TodayEarnings: React.FC = () => {
   const [loading, setLoading] = useState(false);
+  const [value] = useState('');
   const [valueType, setValueType] = useState<Picker>(null);
   const [pageIndex, setPageIndex] = useState(1);
   const [data, setData] = useState<CommissionDetail[]>([]);
   const {width: windowWidth} = useWindowDimensions();
   const [summaryDispatcher] = useSummaryDispatcher();
+  const [commonDispatcher] = useCommonDispatcher();
   const commissionToday = useSelector((state: RootState) => state.summary);
-  const [value] = useState('');
-  // const {run} = useDebounceFn(async (name: string) => getData({pageIndex: 1, name}, RequestAction.other));
 
   useEffect(() => {
     summaryDispatcher.loadCommissionToday();
@@ -58,7 +56,7 @@ const TodayEarnings: React.FC = () => {
         setPageIndex(pageIndex => pageIndex + 1);
       }
     } catch (error) {
-      // commonDispatcher.error(error);
+      commonDispatcher.error(error);
     }
     setLoading(false);
   };
@@ -134,62 +132,68 @@ const TodayEarnings: React.FC = () => {
               </View>
             </ModalDropdown>
           </View>
-          <FlatList
-            data={data}
-            refreshing={false}
-            ListFooterComponent={
-              <View style={[globalStyles.containerCenter, {flex: 1, marginTop: globalStyleVariables.MODULE_SPACE, marginBottom: globalStyleVariables.MODULE_SPACE}]}>
-                <Text style={[globalStyles.fontTertiary, {textAlign: 'center'}]}>已经到底</Text>
-              </View>
-            }
-            onRefresh={() => {
-              pullUp(1);
-            }}
-            renderItem={({item}) => (
-              <>
-                <View style={styles.spuContainer}>
-                  <View style={{flexDirection: 'row', marginBottom: globalStyleVariables.MODULE_SPACE}}>
-                    <View style={{paddingTop: 10}}>
-                      <Image source={{uri: item.poster}} style={{width: 60, height: 80}} />
-                    </View>
-                    <View style={{flex: 1, marginLeft: 10}}>
-                      <View style={globalStyles.containerLR}>
-                        <View style={{flexDirection: 'row'}}>
-                          <AntdIcon name="shop" />
-                          <Text style={globalStyles.fontPrimary}>{item.bizName}</Text>
-                        </View>
-                        {item?.status === 3 && (
-                          <View style={globalStyles.tagWrapper}>
-                            <Text style={globalStyles.tag}>·&nbsp;{item.statusStr}</Text>
-                          </View>
-                        )}
-                        {item?.status === 1 && (
-                          <View style={styles.tagWrapper}>
-                            <Text style={styles.tag}>·&nbsp;{item.statusStr}</Text>
-                          </View>
-                        )}
-                        {item?.status === 2 && (
-                          <View style={globalStyles.tagWrapper}>
-                            <Text style={globalStyles.tag}>·&nbsp;{item.statusStr}</Text>
-                          </View>
-                        )}
+          {!!data?.length ? (
+            <FlatList
+              data={data}
+              refreshing={false}
+              ListFooterComponent={
+                <View style={[globalStyles.containerCenter, {flex: 1, marginTop: globalStyleVariables.MODULE_SPACE, marginBottom: globalStyleVariables.MODULE_SPACE}]}>
+                  <Text style={[globalStyles.fontTertiary, {textAlign: 'center'}]}>已经到底</Text>
+                </View>
+              }
+              onRefresh={() => {
+                pullUp(1);
+              }}
+              renderItem={({item}) => (
+                <>
+                  <View style={styles.spuContainer}>
+                    <View style={{flexDirection: 'row', marginBottom: globalStyleVariables.MODULE_SPACE}}>
+                      <View style={{paddingTop: 10}}>
+                        <Image source={{uri: item.poster}} style={{width: 60, height: 80}} />
                       </View>
-                      <Text numberOfLines={1}>{item.spuName}</Text>
+                      <View style={{flex: 1, marginLeft: 10}}>
+                        <View style={globalStyles.containerLR}>
+                          <View style={{flexDirection: 'row'}}>
+                            <AntdIcon name="shop" />
+                            <Text style={globalStyles.fontPrimary}>{item.bizName}</Text>
+                          </View>
+                          {item?.status === 3 && (
+                            <View style={globalStyles.tagWrapper}>
+                              <Text style={globalStyles.tag}>·&nbsp;{item.statusStr}</Text>
+                            </View>
+                          )}
+                          {item?.status === 1 && (
+                            <View style={styles.tagWrapper}>
+                              <Text style={styles.tag}>·&nbsp;{item.statusStr}</Text>
+                            </View>
+                          )}
+                          {item?.status === 2 && (
+                            <View style={globalStyles.tagWrapper}>
+                              <Text style={globalStyles.tag}>·&nbsp;{item.statusStr}</Text>
+                            </View>
+                          )}
+                        </View>
+                        <Text numberOfLines={1}>{item.spuName}</Text>
 
-                      <Text style={[globalStyles.fontSize12]}>{`售卖开始时间：${item.saleBeginTime}`}</Text>
-                      <Text style={[globalStyles.fontSize12]}>{`售卖结束时间：${item.saleEndTime}`}</Text>
-                      <Text style={[globalStyles.fontSize12]}>{`成交时间：${item.paidTime}`}</Text>
-                      <View style={{marginTop: globalStyleVariables.MODULE_SPACE, backgroundColor: '#f4f4f4', padding: 10, borderRadius: 5}}>
-                        <Text>{`订单提成${item?.moneyYuan || 0}元`}</Text>
+                        <Text style={[globalStyles.fontSize12]}>{`售卖开始时间：${item.saleBeginTime}`}</Text>
+                        <Text style={[globalStyles.fontSize12]}>{`售卖结束时间：${item.saleEndTime}`}</Text>
+                        <Text style={[globalStyles.fontSize12]}>{`成交时间：${item.paidTime}`}</Text>
+                        <View style={{marginTop: globalStyleVariables.MODULE_SPACE, backgroundColor: '#f4f4f4', padding: 10, borderRadius: 5}}>
+                          <Text>{`订单提成${item?.moneyYuan || 0}元`}</Text>
+                        </View>
                       </View>
                     </View>
                   </View>
-                </View>
-              </>
-            )}
-            keyExtractor={(item, index) => ' ' + index}
-            onEndReached={() => pullUp()}
-          />
+                </>
+              )}
+              keyExtractor={(item, index) => ' ' + index}
+              onEndReached={() => pullUp()}
+            />
+          ) : (
+            <View style={[{flex: 1, backgroundColor: '#fff'}, globalStyles.containerCenter]}>
+              <Text>暂无收益</Text>
+            </View>
+          )}
         </View>
       </SafeAreaView>
     </>

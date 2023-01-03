@@ -43,6 +43,7 @@ const ShopDetail: FC = () => {
   const amendShop = async () => {
     try {
       const res = getValues() as ShopF;
+      console.log(res);
       await api.merchant.modifyShop(res);
       commonDispatcher.success('修改成功');
       merchantDispatcher.loadCurrentMerchantPrivate(id);
@@ -82,7 +83,7 @@ const ShopDetail: FC = () => {
               control={control}
               render={({field}) => (
                 <Form.Item label="纬度">
-                  <Input style={{padding: 0, margin: 0}} placeholder="请输入纬度" onChange={field.onChange} value={field.value} />
+                  <Input type="number" style={{padding: 0, margin: 0}} placeholder="请输入纬度" onChange={field.onChange} value={field.value} />
                 </Form.Item>
               )}
             />
@@ -91,7 +92,7 @@ const ShopDetail: FC = () => {
               control={control}
               render={({field}) => (
                 <Form.Item label="经度">
-                  <Input style={{padding: 0, margin: 0}} placeholder="请输入经度" onChange={field.onChange} value={field.value} />
+                  <Input type="number" style={{padding: 0, margin: 0}} placeholder="请输入经度" onChange={field.onChange} value={field.value} />
                 </Form.Item>
               )}
             />
@@ -111,7 +112,7 @@ const ShopDetail: FC = () => {
             <Button style={{borderColor: 'red', flex: 1, marginRight: globalStyleVariables.MODULE_SPACE}} onPress={() => delShop(shopDetail.id)} type="ghost">
               <Text style={{color: 'red'}}> 删除</Text>
             </Button>
-            <Button type="primary" style={{width: 260}} onPress={amendShop}>
+            <Button type="primary" style={{width: 200}} onPress={amendShop}>
               保存
             </Button>
           </View>

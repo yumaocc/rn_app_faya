@@ -1,17 +1,31 @@
-import React from 'react';
-import {Text, View, ScrollView, StyleSheet, Button} from 'react-native';
+import React, {useEffect} from 'react';
+import {Text, View, ScrollView, StyleSheet} from 'react-native';
 import {Header} from '@react-navigation/elements';
 import {Icon} from '@ant-design/react-native';
 import {PlusButton, UnitNumber} from '../../component';
 import {globalStyles, globalStyleVariables} from '../../constants/styles';
-import {useHomeSummary} from '../../helper/hooks';
+import {useHomeSummary, useUserDispatcher} from '../../helper/hooks';
 import {useNavigation} from '@react-navigation/native';
-import {ContractAction, FakeNavigation, MerchantAction, MerchantCreateType} from '../../models';
+import {ContractAction, FakeNavigation, MerchantAction, MerchantCreateType, UserInfo, UserState} from '../../models';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../redux/reducers';
 
 const Home: React.FC = () => {
   const [summary, commissionToday, myContractNums] = useHomeSummary();
   const navigation = useNavigation() as FakeNavigation;
+  const [userDispatcher] = useUserDispatcher();
+  const userInfo = useSelector<RootState, UserInfo>(state => state.user.userInfo);
+
+  useEffect(() => {
+    if (!userInfo) {
+      userDispatcher.loadUserInfo();
+    }
+  }, [userDispatcher, userInfo]);
+  if (userInfo?.status === UserState.UN_CERTIFIED) {
+    navigation.navigate('Cert');
+  }
+
   return (
     <>
       <Header title="首页" headerLeft={() => <Icon name="bell" />} headerLeftContainerStyle={{paddingLeft: 16}} />
@@ -74,19 +88,33 @@ const Home: React.FC = () => {
         <View style={[globalStyles.moduleMarginTop, styles.cardContainer]}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <View style={{flex: 1, paddingRight: 10}}>
-              <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Tab')}>
+              <TouchableOpacity
+                activeOpacity={0.5}
+                onPress={() =>
+                  navigation.navigate({
+                    name: 'Merchant',
+                    params: {tab: 'private'},
+                  })
+                }>
                 <View style={styles.cardTitleContainer}>
                   <Text style={[globalStyles.textColorPrimary, styles.cardTitle]}>我的私海</Text>
                   <Icon name="right" style={globalStyles.iconRight} />
                 </View>
-                <UnitNumber style={{paddingTop: 10}} value={summary?.privateSeaNums || 0} unit={`/${summary?.privateSeaLimit || 0}`} />
+                <UnitNumber style={{paddingTop: 10}} value={`${summary?.privateSeaNums || 0}`} unit={`/${summary?.privateSeaLimit || 0} 家`} />
               </TouchableOpacity>
             </View>
 
             <View style={[globalStyles.lineVertical, {marginHorizontal: 5, height: 29}]} />
 
             <View style={{flex: 1, paddingLeft: 10}}>
-              <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Tab')}>
+              <TouchableOpacity
+                activeOpacity={0.5}
+                onPress={() =>
+                  navigation.navigate({
+                    name: 'Merchant',
+                    params: {tab: 'mine'},
+                  })
+                }>
                 <View style={styles.cardTitleContainer}>
                   <Text style={[globalStyles.textColorPrimary, styles.cardTitle]}>我的商家</Text>
                   <Icon name="right" style={globalStyles.iconRight} />

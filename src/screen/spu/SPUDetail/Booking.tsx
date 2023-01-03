@@ -32,6 +32,12 @@ const Booking: React.FC<BookingProps> = props => {
       <SectionGroup style={styles.sectionGroupStyle}>
         <FormTitle title="预约设置" />
         <Form.Item label="预约方式">
+          <Text>{`已选${spuDetail?.locationIds?.length || 0}个站点`}</Text>
+        </Form.Item>
+      </SectionGroup>
+      <SectionGroup style={styles.sectionGroupStyle}>
+        <FormTitle title="预约设置" />
+        <Form.Item label="预约方式">
           <Text>{getBookingType(contractDetail?.bookingReq?.bookingType)}</Text>
         </Form.Item>
         {needBooking && (

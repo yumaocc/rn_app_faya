@@ -1,39 +1,65 @@
 import {useNavigation} from '@react-navigation/native';
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {FC} from 'react';
-import {ListView} from '@ant-design/react-native';
 import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {PlusButton} from '../../../../../component';
 import * as api from '../../../../../apis';
 import {globalStyles, globalStyleVariables} from '../../../../../constants/styles';
-import {ContractList, FakeNavigation} from '../../../../../models';
+import {ContractList as ContractType, FakeNavigation} from '../../../../../models';
+import {FlatList} from 'react-native-gesture-handler';
+import {useCommonDispatcher} from '../../../../../helper/hooks';
+import Loading from '../../../../../component/Loading';
 
-interface CommodityListProps {
+interface ContractListProps {
   id: number;
 }
 
-type StartFetchFunction = (rowData: any[], pageSize: number) => void;
-type abortFetchFunction = () => void;
-
-const CommodityList: FC<CommodityListProps> = ({id}) => {
+const ContractList: FC<ContractListProps> = ({id}) => {
   const navigation = useNavigation() as FakeNavigation;
+  const [loading, setLoading] = useState(false);
   const [len, setLen] = useState(0);
+  const [commonDispatcher] = useCommonDispatcher();
+  const [pageIndex, setPageIndex] = useState(1);
+  const [contractList, setContractList] = useState<ContractType[]>([]);
+  const fetchData = useCallback(
+    async (pageIndex = 1) => {
+      try {
+        setLoading(true);
+        const pageSize = 10;
+        const res = await api.contract.getContractList({pageIndex, pageSize, id});
+        if (res?.content?.length) {
+          setPageIndex(pageIndex + 1);
+        }
+        setLen(res.page.pageTotal);
+        setLoading(false);
+        return res.content;
+      } catch (error) {
+        commonDispatcher.error(error || '哎呀，~出错了');
+      }
+      setLoading(false);
+    },
+    [commonDispatcher, id],
+  );
 
-  async function fetchData(pageIndex = 1, startFetch: StartFetchFunction, abortFetch: abortFetchFunction) {
-    try {
-      const pageSize = 10;
-      const res = await api.contract.getContractList({pageIndex, pageSize, id});
-      const rowData: ContractList[] = res.content;
-      setLen(res.page.pageTotal);
-      startFetch(rowData, pageSize);
-    } catch (error) {
-      abortFetch();
-    }
-  }
+  useEffect(() => {
+    fetchData(1).then(res => {
+      setContractList(res);
+    });
+  }, [fetchData]);
 
-  const renderItem = (item: ContractList) => {
+  const onRefresh = async () => {
+    const res = await fetchData(pageIndex);
+    setContractList(contractList => [...contractList, ...res]);
+  };
+
+  const onEndReached = async () => {
+    const res = await fetchData(1);
+    setContractList(res);
+  };
+
+  const renderItem = ({item}: {item: ContractType}) => {
     return (
-      <View style={[styles.content]}>
+      <View key={item.id} style={[styles.content]}>
         <Text style={[globalStyles.fontPrimary]}>{item.name}</Text>
         <View style={[globalStyles.containerLR, globalStyles.moduleMarginTop]}>
           <Text style={globalStyles.fontTertiary}>签约时间：{item.createdTime}</Text>
@@ -45,16 +71,31 @@ const CommodityList: FC<CommodityListProps> = ({id}) => {
   return (
     <>
       <SafeAreaView style={styles.wrapper}>
+        <Loading active={loading} />
         <View style={[globalStyles.containerLR, styles.box]}>
           <Text>共{len}份合同</Text>
           <PlusButton title="新增合同" onPress={() => navigation.navigate('AddContract')} />
         </View>
-        <ListView refreshViewStyle={styles.freshHeader} numColumns={1} renderItem={renderItem} keyExtractor={item => '' + item.id} onFetch={fetchData} />
+        <FlatList
+          refreshing={loading}
+          onRefresh={onRefresh}
+          onEndReached={onEndReached}
+          data={contractList || []}
+          ListEmptyComponent={<Text>暂无数据</Text>}
+          numColumns={1}
+          renderItem={renderItem}
+          keyExtractor={item => 'con' + item.id}
+          ListFooterComponent={
+            <View style={[globalStyles.containerCenter, {marginTop: globalStyleVariables.MODULE_SPACE}]}>
+              <Text style={globalStyles.fontTertiary}>已经到底了</Text>
+            </View>
+          }
+        />
       </SafeAreaView>
     </>
   );
 };
-export default CommodityList;
+export default ContractList;
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -62,7 +103,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   freshHeader: {
-    height: 50,
+    height: 60,
   },
   box: {
     margin: globalStyleVariables.MODULE_SPACE,

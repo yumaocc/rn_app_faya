@@ -2,6 +2,10 @@
 
 import {BoolEnum, DateTimeString, BoolNumber} from './common';
 
+export enum ShopType {
+  one = 1, //1是单店
+  more = 2, //2是多店
+}
 // 通用商家
 export interface MerchantF {
   id: number;
@@ -13,6 +17,7 @@ export interface MerchantF {
   hasAuth: BoolNumber;
   multiStore: BoolNumber;
   avatar: string;
+  locationCompanyId?: number;
 }
 
 // 我的商家
@@ -26,6 +31,7 @@ export interface MyMerchantF {
   shopNums?: number;
   signTime?: DateTimeString;
   status?: BoolNumber;
+  locationCompanyId?: number;
 }
 export interface MyMerchantSimpleF {
   id: number;

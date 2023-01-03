@@ -1,7 +1,8 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Image, Animated} from 'react-native';
-import {useRNSelectPhoto, useInfinityRotate} from '../../../helper/hooks';
-import * as api from '../../../apis';
+import {useRNSelectPhoto, useInfinityRotate} from '../../../../helper/hooks';
+import * as ImagePicker from 'react-native-image-crop-picker';
+import * as api from '../../../../apis';
 import uniqueId from 'lodash/uniqueId';
 import {Icon} from '@ant-design/react-native';
 
@@ -37,6 +38,19 @@ const Upload: React.FC<UploadProps> = props => {
   const handleFileChange = useCallback(
     (fileList: UploadFile[]): void => {
       if (onChange) {
+        fileList.forEach(item => {
+          console.log('进入循环');
+          ImagePicker.openCropper({
+            path: item.url,
+            width: 300,
+            height: 400,
+            mediaType: 'photo',
+          })
+            .then(image => {
+              console.log('裁剪之后的图片', image);
+            })
+            .catch(err => console.log(err));
+        });
         onChange(fileList);
       }
     },
@@ -87,7 +101,6 @@ const Upload: React.FC<UploadProps> = props => {
   const handleClick = (index: number) => {
     setFileList(fileList => fileList.filter((item, idx) => index !== idx));
   };
-
   return (
     <View style={styles.container}>
       {fileList.map((file, index) => {

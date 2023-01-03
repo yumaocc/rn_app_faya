@@ -8,6 +8,10 @@ export interface MerchantDispatcher {
   loadCurrentMerchantPrivate(payload: number): void;
   loadCurrentMerchantPublic(payload: number): void;
   loadMerchantSearchList(payload: SearchParam): void;
+
+  loadPublicMerchantList(payload: SearchParam): void;
+  loadPrivateMerchantList(payload: SearchParam): void;
+
   exitMerchantPage(): void;
 }
 
@@ -20,13 +24,20 @@ export const getMerchantDispatcher = (dispatch: Dispatch): MerchantDispatcher =>
       dispatch(Actions.loadCurrentMerchantPrivate(payload));
     },
     loadCurrentMerchantPublic(payload: number) {
-      dispatch(Actions.loadCurrentMerchantPrivate(payload));
+      dispatch(Actions.loadCurrentMerchantPublic(payload));
     },
     loadMerchantSearchList(payload: SearchParam) {
       dispatch(Actions.loadMerchantSearchList(payload));
     },
     exitMerchantPage() {
       dispatch(Actions.endEdit());
+    },
+
+    loadPublicMerchantList(payload: SearchParam) {
+      dispatch(Actions.loadPublicMerchantList(payload));
+    },
+    loadPrivateMerchantList(payload: SearchParam) {
+      dispatch(Actions.loadPrivateMerchantList(payload));
     },
   };
 };

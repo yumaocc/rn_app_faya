@@ -2,42 +2,56 @@ import React from 'react';
 import {FC} from 'react';
 import {Text, View} from 'react-native';
 import {globalStyles} from '../../../constants/styles';
-import {useForm, Controller, UseFieldArrayAppend} from 'react-hook-form';
+import {Controller, UseFieldArrayAppend, FieldValues, UseFormReturn, UseFormGetValues} from 'react-hook-form';
 import Modal from '../../../component/Modal';
-import {FormMerchant} from '../../../models';
-import {ErrorMessage} from '@hookform/error-message';
-import {InputItem} from '@ant-design/react-native';
+import {FormMerchant, FormSetValue} from '../../../models';
 import {useCommonDispatcher} from '../../../helper/hooks';
+import {Input} from '../../../component';
 
 interface EditShopProps {
   nextIndex?: number;
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setValue: UseFieldArrayAppend<FormMerchant, any>;
+  append: UseFieldArrayAppend<FormMerchant, any>;
+  shopListForm?: UseFormReturn<FieldValues, any>;
+  editShopIndex?: number;
+  getValues?: UseFormGetValues<FormMerchant>;
+  setValue: FormSetValue;
+  setEditShopIndex: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const EditShop: FC<EditShopProps> = ({open, setOpen, setValue}) => {
+const EditShop: FC<EditShopProps> = ({open, setOpen, append, shopListForm, editShopIndex, getValues, setValue, setEditShopIndex}) => {
   const [commonDispatcher] = useCommonDispatcher();
   const {
     control,
     formState: {errors},
     handleSubmit,
-  } = useForm({
-    mode: 'onBlur',
-  });
+  } = shopListForm;
 
   const onOk = async (value: any) => {
     try {
-      const errorLength = Object.keys(errors);
-      setValue(value);
-
-      if (!errorLength.length) {
-        setOpen(false);
+      if (editShopIndex !== -1) {
+        const {shopList} = getValues();
+        const newShopList = shopList.map((item, idx) => {
+          if (idx === editShopIndex) {
+            return value;
+          }
+          return item;
+        });
+        setValue('shopList', newShopList);
+        setEditShopIndex(-1);
+      } else {
+        append({
+          ...value,
+        });
       }
+      shopListForm.reset();
+      setOpen(false);
     } catch (error) {
       commonDispatcher.error(error || '哎呀，出错了~');
     }
   };
+
   return (
     <Modal visible={open} onOk={handleSubmit(onOk)} onClose={() => setOpen(false)}>
       <Controller
@@ -48,11 +62,9 @@ const EditShop: FC<EditShopProps> = ({open, setOpen, setValue}) => {
           <View style={globalStyles.moduleMarginTop}>
             <Text style={[globalStyles.fontPrimary]}>商家名称</Text>
             <View style={[{padding: 0, margin: 0, backgroundColor: '#f4f4f4'}, globalStyles.moduleMarginTop]}>
-              <InputItem style={{padding: 0, margin: 0}} placeholder="请输入商家名称" onChange={field.onChange} value={field.value} />
-              <Text style={globalStyles.error}>
-                <ErrorMessage name={'shopName'} errors={errors} />
-              </Text>
+              <Input textAlign="left" style={{padding: 0, margin: 0}} placeholder="请输入商家名称" onChange={field.onChange} value={field.value} onBlur={field.onBlur} />
             </View>
+            {errors.shopName && <Text style={globalStyles.error}>请输入商家名称</Text>}
           </View>
         )}
       />
@@ -64,7 +76,15 @@ const EditShop: FC<EditShopProps> = ({open, setOpen, setValue}) => {
           <View style={globalStyles.moduleMarginTop}>
             <Text style={[globalStyles.fontPrimary]}>商家电话</Text>
             <View style={[{padding: 0, margin: 0, backgroundColor: '#f4f4f4'}, globalStyles.moduleMarginTop]}>
-              <InputItem style={{padding: 0, margin: 0}} placeholder="请输入商家电话" onChange={field.onChange} value={field.value} onBlur={field.onBlur} />
+              <Input
+                textAlign="left"
+                type="number"
+                style={{padding: 0, margin: 0}}
+                placeholder="请输入商家电话"
+                onChange={field.onChange}
+                value={field.value}
+                onBlur={field.onBlur}
+              />
             </View>
             {errors.contactPhone && <Text style={globalStyles.error}>请输入商家电话</Text>}
           </View>
@@ -77,7 +97,7 @@ const EditShop: FC<EditShopProps> = ({open, setOpen, setValue}) => {
           <View style={globalStyles.moduleMarginTop}>
             <Text style={[globalStyles.fontPrimary]}>纬度</Text>
             <View style={[{padding: 0, margin: 0, backgroundColor: '#f4f4f4'}, globalStyles.moduleMarginTop]}>
-              <InputItem style={{padding: 0, margin: 0}} placeholder="请输入纬度" onChange={field.onChange} value={field.value} onBlur={field.onBlur} />
+              <Input textAlign="left" type="number" style={{padding: 0, margin: 0}} placeholder="请输入纬度" onChange={field.onChange} value={field.value} onBlur={field.onBlur} />
             </View>
           </View>
         )}
@@ -89,7 +109,7 @@ const EditShop: FC<EditShopProps> = ({open, setOpen, setValue}) => {
           <View style={globalStyles.moduleMarginTop}>
             <Text style={[globalStyles.fontPrimary]}>经度</Text>
             <View style={[{padding: 0, margin: 0, backgroundColor: '#f4f4f4'}, globalStyles.moduleMarginTop]}>
-              <InputItem style={{padding: 0, margin: 0}} placeholder="请输入经度" onChange={field.onChange} value={field.value} onBlur={field.onBlur} />
+              <Input textAlign="left" type="number" style={{padding: 0, margin: 0}} placeholder="请输入经度" onChange={field.onChange} value={field.value} onBlur={field.onBlur} />
             </View>
           </View>
         )}
@@ -101,7 +121,7 @@ const EditShop: FC<EditShopProps> = ({open, setOpen, setValue}) => {
           <View style={globalStyles.moduleMarginTop}>
             <Text style={[globalStyles.fontPrimary]}>店铺地址</Text>
             <View style={[{padding: 0, margin: 0, backgroundColor: '#f4f4f4'}, globalStyles.moduleMarginTop]}>
-              <InputItem style={{padding: 0, margin: 0}} placeholder="请输入店铺地址" onChange={field.onChange} value={field.value} onBlur={field.onBlur} />
+              <Input textAlign="left" style={{padding: 0, margin: 0}} placeholder="请输入店铺地址" onChange={field.onChange} value={field.value} onBlur={field.onBlur} />
             </View>
           </View>
         )}

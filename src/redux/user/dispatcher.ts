@@ -9,14 +9,15 @@ export interface UserDispatcher {
   certificate(param: CertificateParam): void;
   getWallet(): void;
   getSupportBankList(): void;
+  loadUserInfo(): void;
 }
 
 export const getUserDispatcher = (dispatch: Dispatch): UserDispatcher => ({
   login: (param: LoginParam) => dispatch(Actions.login(param)),
   logout: () => dispatch(Actions.logout()),
   resetLoginState: () => dispatch(Actions.resetLoginState()),
-  certificate: (param: CertificateParam) =>
-    dispatch(Actions.certificate(param)),
+  certificate: (param: CertificateParam) => dispatch(Actions.certificate(param)),
   getWallet: () => dispatch(Actions.getWalletInfo()),
   getSupportBankList: () => dispatch(Actions.getSupportBankList()),
+  loadUserInfo: () => dispatch(Actions.loadUserInfo()),
 });

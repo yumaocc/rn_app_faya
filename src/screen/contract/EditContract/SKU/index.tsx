@@ -5,7 +5,7 @@ import {Cascader, Form, FormTitle, Input, SectionGroup, Select, Switch} from '..
 import {globalStyles, globalStyleVariables} from '../../../../constants/styles';
 import {useSPUCategories} from '../../../../helper/hooks';
 import {convertNumber2Han, formattingGoodsCategory} from '../../../../helper/util';
-import {BuyLimitType, Contract, ContractAction, InvoiceType} from '../../../../models';
+import {BuyLimitType, ContractAction, InvoiceType} from '../../../../models';
 import SKUContent from './SKUContent';
 import {ErrorMessage} from '@hookform/error-message';
 import {Controller} from 'react-hook-form';
@@ -14,10 +14,10 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../../../../redux/reducers';
 interface SKUProps {
   onNext: () => void;
-  control: Control<Contract, any>;
-  setValue: UseFormSetValue<Contract>;
-  getValues: UseFormGetValues<Contract>;
-  watch: UseFormWatch<Contract>;
+  control: Control<any, any>;
+  setValue: UseFormSetValue<any>;
+  getValues: UseFormGetValues<any>;
+  watch: UseFormWatch<any>;
   action: ContractAction;
   handleSubmit?: UseFormHandleSubmit<any>;
   errors?: Partial<FieldErrorsImpl<any>>;
@@ -192,11 +192,24 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action,
               {openSkuStock && (
                 <Controller
                   control={control}
-                  rules={{required: true}}
+                  rules={{
+                    validate: () => {
+                      const {skuInfoReq} = getValues();
+                      const {spuStock = 0, skuInfo} = skuInfoReq;
+                      const skuStockNums = skuInfo.reduce((pre: any, idx: any) => idx.skuStock + pre, 0);
+                      if (spuStock < skuStockNums) {
+                        return '单独套餐库存不能大于总库存';
+                      }
+                      return true;
+                    },
+                  }}
                   name={`skuInfoReq.skuInfo.${index}.skuStock`}
                   render={({field: {value, onChange}}) => (
                     <Form.Item label="套餐库存">
                       <Input type="number" value={value} onChange={onChange} />
+                      <Text style={globalStyles.error}>
+                        <ErrorMessage name={`skuInfoReq.skuInfo.${index}.skuStock`} errors={errors} />
+                      </Text>
                     </Form.Item>
                   )}
                 />
@@ -204,7 +217,6 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action,
 
               <Controller
                 control={control}
-                rules={{required: true}}
                 defaultValue={BuyLimitType.NONE || 0}
                 name={`skuInfoReq.skuInfo.${index}.buyLimitType`}
                 render={({field: {value, onChange}}) => (
@@ -232,7 +244,6 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action,
                         <View style={[{width: 100}, globalStyles.moduleMarginLeft]}>
                           <Controller
                             control={control}
-                            rules={{required: true}}
                             name={`skuInfoReq.skuInfo.${index}.buyLimitNum`}
                             render={({field: {value, onChange}}) => <Input style={{width: 30}} value={value} onChange={onChange} extra="份" />}
                           />

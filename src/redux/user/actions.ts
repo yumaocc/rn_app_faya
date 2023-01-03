@@ -12,6 +12,7 @@ export const Actions = {
   loginError: (): Action<ActionType.LOGIN_ERROR> => createAction(ActionType.LOGIN_ERROR),
 
   resetLoginState: (): Action<ActionType.RESET_LOGIN_STATE> => createAction(ActionType.RESET_LOGIN_STATE),
+  loadUserInfo: (): Action<ActionType.LOAD_USER_INFO> => createAction(ActionType.LOAD_USER_INFO),
 
   setUserInfo: (userInfo?: UserInfo): ActionWithPayload<ActionType.SET_USER_INFO, UserInfo> => createAction(ActionType.SET_USER_INFO, userInfo),
 

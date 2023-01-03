@@ -13,7 +13,7 @@ export function getBookingType(type: BookingType) {
   }
 }
 
-export function getBuyLimitStr(buyLimitType: BuyLimitType, buyLimitNum: number) {
+export function getBuyLimitStr(buyLimitType: BuyLimitType, buyLimitNum: number | string) {
   switch (buyLimitType) {
     case BuyLimitType.NONE:
       return '不限购';

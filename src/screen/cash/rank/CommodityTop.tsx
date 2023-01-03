@@ -56,6 +56,9 @@ const CommodityTop: FC<CommodityTopProps> = ({unit, title}) => {
           </View>
         </View>
         {commissionTop?.map((item, index) => {
+          if (index > 4) {
+            return null;
+          }
           return (
             <View key={item.spuId}>
               <View style={styles.rankList}>

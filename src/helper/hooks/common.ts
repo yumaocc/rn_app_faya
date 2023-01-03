@@ -1,8 +1,12 @@
 import {useRoute} from '@react-navigation/native';
 import {useCallback, useEffect, useRef, useState, useMemo, MutableRefObject} from 'react';
 import {Animated, Easing} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
 import {getEnv} from '../../helper';
+import {Site} from '../../models';
 import {FakeRoute} from '../../models/route';
+import {getCommonDispatcher} from '../../redux/common/dispatcher';
+import {RootState} from '../../redux/reducers';
 
 // 用于检测是否已卸载
 export function useUnmountRef() {
@@ -80,6 +84,18 @@ export function useRefCallback<T = any>(initValue?: T): [MutableRefObject<T>, (v
   }, []);
 
   return [ref, setRef, isReady];
+}
+
+export function useLoadAllSite(): [Site[]] {
+  const sites = useSelector((state: RootState) => state.common.sites);
+  const dispatch = useDispatch();
+  const commonDispatcher = getCommonDispatcher(dispatch);
+  useEffect(() => {
+    if (!sites?.length) {
+      commonDispatcher.loadAllSite();
+    }
+  }, [sites, commonDispatcher]);
+  return [sites];
 }
 
 export function useInfinityRotate() {

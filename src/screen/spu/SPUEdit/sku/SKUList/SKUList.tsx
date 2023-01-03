@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {useSelector} from 'react-redux';
-import {Stepper, SwipeAction} from '@ant-design/react-native';
+import {Stepper, SwipeAction, Checkbox} from '@ant-design/react-native';
 
-import {Checkbox, Form, FormTitle, Input, Modal, PlusButton, SectionGroup, SelfText} from '../../../../../component';
+import {Form, FormTitle, Input, Modal, PlusButton, SectionGroup, SelfText} from '../../../../../component';
 import {globalStyles, globalStyleVariables} from '../../../../../constants/styles';
-import {findItem, getBuyLimitStr, getDirectCommissionRange, getEarnCommissionRange} from '../../../../../helper';
+import {convertNumber2Han, findItem, getBuyLimitStr, getDirectCommissionRange, getEarnCommissionRange} from '../../../../../helper';
 import {PackagedSKU} from '../../../../../models';
 import {RootState} from '../../../../../redux/reducers';
 import {ErrorMessage} from '@hookform/error-message';
@@ -59,13 +59,15 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
     }
   }, [packListForm, spuDetail]);
 
-  function deletePack(index: number) {
+  //删除组合套餐
+  function deletePackage(index: number) {
     const {packageList = []} = getValues();
     const newPackageList = packageList.filter((_: any, idx: number) => index !== idx);
     setValue('packageList', newPackageList);
   }
 
-  async function onSubmitPack() {
+  //新增组合套餐
+  async function onSubmitPackage() {
     const res = packListForm.getValues();
     const skus: any = [];
     res.skus.forEach((item: any, index: number) => {
@@ -73,6 +75,16 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
         skus.push({contractSkuId: res.sku[index].contractSkuId, nums: item.nums});
       }
     });
+    if (skus?.length === 0) {
+      packListForm.setError('packageList', {type: 'value', message: '请选择一个套餐'});
+      return;
+    }
+
+    if (skus?.length === 1 && skus[0].nums === 1) {
+      packListForm.setError('packageNums', {type: 'value', message: '如果只选择一个套餐，套餐数量必须大于1'});
+      return;
+    }
+
     const formData = {
       show: 1,
       packageName: res.packageName,
@@ -81,22 +93,32 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
 
     let {packageList = []} = getValues();
     if (packageListEdit !== -1) {
-      packageList = packageList.filter((item: any, idx: number) => idx !== packageListEdit);
+      packageList = packageList.map((item: any, idx: number) => {
+        if (idx === packageListEdit) {
+          return formData;
+        }
+        return item;
+      });
+      setValue('packageList', [...packageList]);
+      setPackageListEdit(-1);
+      packListForm.reset();
+    } else {
+      setValue('packageList', [...packageList, formData]);
     }
-    setPackageListEdit(-1);
-    setValue('packageList', [...packageList, formData]);
     packListForm.reset();
     setIsShowPackageModal(false);
   }
-
-  const editPackList = (index: number, item: PackagedSKU) => {
+  //编辑组合套餐
+  const editPackageList = (index: number, item: PackagedSKU) => {
+    const skus: any[] = [];
+    item.skus.forEach(item => {
+      skus.push({_selected: true, ...item});
+      return item;
+    });
     setIsShowPackageModal(true);
     setPackageListEdit(index);
-    const sku = item.skus.map(item => ({...item, _selected: true}));
+    packListForm.setValue('skus', skus);
     packListForm.setValue('packageName', item.packageName);
-    sku.map((item, index) => {
-      packListForm.setValue(`sku.${index}`, item);
-    });
   };
 
   const PackageList: React.FC<PackListProps> = props => {
@@ -105,20 +127,20 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
       <>
         {value?.map((item, index) => (
           <SectionGroup key={index} style={styles.sectionGroupStyle}>
-            <FormTitle title={`组合套餐${index + 1}`} />
+            <FormTitle title={`组合套餐${convertNumber2Han(index + 1)}`} />
             <SwipeAction
               right={[
                 {
                   text: '编辑',
                   color: 'white',
                   backgroundColor: globalStyleVariables.COLOR_PRIMARY,
-                  onPress: () => editPackList(index, item),
+                  onPress: () => editPackageList(index, item),
                 },
                 {
                   text: '删除',
                   color: 'white',
                   backgroundColor: globalStyleVariables.COLOR_DANGER,
-                  onPress: () => deletePack(index),
+                  onPress: () => deletePackage(index),
                 },
               ]}>
               <View style={{margin: globalStyleVariables.MODULE_SPACE}} key={item.id}>
@@ -126,7 +148,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                   <Text style={globalStyles.fontSecondary}>名称：{item.packageName}</Text>
                 </View>
                 <View style={{margin: globalStyleVariables.MODULE_SPACE}}>
-                  {item?.skus?.map(sku => {
+                  {item?.skus?.map((sku, index) => {
                     let skuItem;
                     if (spuDetail) {
                       skuItem = findItem(spuDetail?.skuList, item => item.skuId === sku.skuId);
@@ -137,7 +159,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                       skuItem = findItem(contractDetail?.skuInfoReq?.skuInfo, item => item.contractSkuId === sku.contractSkuId);
                     }
                     return (
-                      <View key={sku.skuId}>
+                      <View key={index}>
                         <Text style={globalStyles.fontTertiary}>{`${skuItem?.skuName} * ${sku.nums}`}</Text>
                       </View>
                     );
@@ -150,13 +172,12 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
       </>
     );
   };
-
   return (
     <View>
       {fields.map((item, index) => {
         return (
           <SectionGroup key={item.id} style={styles.sectionGroupStyle}>
-            <FormTitle title={`套餐${index + 1}设置`} />
+            <FormTitle title={`套餐${convertNumber2Han(index + 1)}设置`} />
             <Controller
               name={`skuList.${index}.skuName`}
               control={control}
@@ -166,11 +187,9 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                 </Form.Item>
               )}
             />
-
             <Form.Item label="套餐结算价（元）">
               <SelfText value={contractDetail?.skuInfoReq?.skuInfo[index]?.skuSettlementPrice} />
             </Form.Item>
-
             <Controller
               name={`skuList.[${index}].originPrice`}
               control={control}
@@ -198,9 +217,9 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                       setError(`skuList.${index}.salePrice`, {type: 'validate', message: message});
                       return Promise.reject({message: message});
                     }
-                  } catch (error) {
-                    commonDispatcher.info((error as string) || '哎呀，出错了~');
-                    setError(`skuList.${index}.salePrice`, {type: 'validate', message: error as string});
+                  } catch (error: any) {
+                    commonDispatcher.info(error.message || '哎呀，出错了~');
+                    setError(`skuList.${index}.salePrice`, {type: 'validate', message: error.message});
                     return Promise.reject({message: '套餐价格过低'});
                   }
                   return true;
@@ -215,7 +234,6 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                 </Form.Item>
               )}
             />
-
             <Controller
               name={`skuList.${index}.directSalesCommission`}
               control={control}
@@ -241,9 +259,9 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                       return Promise.reject(`直售佣金不能大于${max}元`);
                     }
                     return true;
-                  } catch (error) {
-                    commonDispatcher.info((error as string) || '哎呀，出错了~');
-                    setError(`skuList.${index}.directSalesCommission`, {type: 'validate', message: error as string});
+                  } catch (error: any) {
+                    commonDispatcher.info(error.message || '哎呀，出错了~');
+                    setError(`skuList.${index}.directSalesCommission`, {type: 'validate', message: error.message});
                     return Promise.reject({message: '套餐价格过低'});
                   }
                 },
@@ -257,7 +275,6 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                 </Form.Item>
               )}
             />
-
             <Controller
               name={`skuList.[${index}].earnCommission`}
               control={control}
@@ -283,10 +300,10 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                       return Promise.reject(`躺赚佣金不能大于${max}元`);
                     }
                     return true;
-                  } catch (error) {
-                    commonDispatcher.info((error as string) || '哎呀，出错了~');
-                    setError(`skuList.${index}.earnCommission`, {type: 'validate', message: error as string});
-                    return Promise.reject({message: error as string});
+                  } catch (error: any) {
+                    commonDispatcher.info(error.message || '哎呀，出错了~');
+                    setError(`skuList.${index}.earnCommission`, {type: 'validate', message: error.message});
+                    return Promise.reject({message: error.message});
                   }
                 },
               }}
@@ -299,6 +316,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                 </Form.Item>
               )}
             />
+
             {!!contractDetail?.skuInfoReq?.openSkuStock ? (
               <Controller
                 name={`skuList.[${index}].skuStock`}
@@ -311,8 +329,6 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                       const {skuStock = 0} = idx;
                       return pre + skuStock;
                     }, 0);
-                    console.log(stockAmount);
-                    console.log('套餐总库存', stockSum);
                     if (stockSum > stockAmount) {
                       setError(`skuList.[${index}].skuStock`, {message: '套餐单独库存不能大于总库存'});
                       return Promise.reject({message: '套餐单独库存不能大于总库存'});
@@ -335,9 +351,8 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
               </Form.Item>
             )}
             <Form.Item label="购买上限">
-              <SelfText value={getBuyLimitStr(contractDetail?.skuInfoReq?.skuInfo[index]?.buyLimitType, contractDetail?.skuInfoReq?.skuInfo[index]?.buyLimitType)} />
+              <SelfText value={getBuyLimitStr(contractDetail?.skuInfoReq?.skuInfo[index]?.buyLimitType, contractDetail?.skuInfoReq?.skuInfo[index]?.buyLimitNum)} />
             </Form.Item>
-
             <List control={control} next={index} />
           </SectionGroup>
         );
@@ -349,65 +364,105 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
         <PlusButton style={[globalStyles.containerCenter]} onPress={() => setIsShowPackageModal(true)} title="组合现有套餐" />
       </SectionGroup>
 
-      <Modal title="组合套餐" visible={isShowPackageModal} onOk={packListForm.handleSubmit(onSubmitPack)} onClose={() => setIsShowPackageModal(false)}>
+      <Modal
+        title="组合套餐"
+        visible={isShowPackageModal}
+        onOk={packListForm.handleSubmit(onSubmitPackage)}
+        onClose={() => {
+          setIsShowPackageModal(false);
+          packListForm.reset();
+        }}>
         <Controller
           control={packListForm.control}
           name="packageName"
-          rules={{required: true}}
+          rules={{required: '请输入组合套餐的名字'}}
           render={({field: {value, onChange}}) => (
-            <Form.Item label="组合套餐名称" vertical>
-              <Input
-                textAlign="left"
-                value={value}
-                onChange={onChange}
-                styles={{container: {height: 40, paddingHorizontal: 15, margin: 0, borderRadius: 5, backgroundColor: '#0000000D'}}}
-                placeholder="请输入组合套餐名称"
-              />
-              {packListForm.formState.errors.packageName && (
-                <Text style={[globalStyles.error, globalStyles.moduleMarginLeft, globalStyles.moduleMarginTop]}>请输入组合套餐名称</Text>
-              )}
-            </Form.Item>
+            <>
+              <Text style={[globalStyles.fontPrimary, {marginBottom: globalStyleVariables.MODULE_SPACE, marginTop: globalStyleVariables.MODULE_SPACE}]}>组合套餐名称</Text>
+              <View style={{backgroundColor: '#f4f4f4'}}>
+                <Input textAlign="left" value={value} onChange={onChange} placeholder="请输入组合套餐名称" />
+              </View>
+              <Text style={[globalStyles.error, {marginTop: 5}]}>
+                <ErrorMessage name={'packageName'} errors={packListForm.formState.errors} />
+              </Text>
+            </>
           )}
         />
 
-        <Form.Item label="选择套餐" vertical>
+        <View>
+          <View style={[globalStyles.borderBottom]}>
+            <Text style={[globalStyles.fontPrimary, {marginBottom: globalStyleVariables.MODULE_SPACE, marginTop: globalStyleVariables.MODULE_SPACE}]}>选择套餐</Text>
+          </View>
           {packArray.fields.map((item, index) => {
             const checked = packListForm.watch(`skus[${index}]._selected`);
             return (
-              <>
-                <View key={item.id} style={[{marginBottom: 10}]}>
-                  <Controller
-                    name={`skus[${index}]._selected`}
-                    rules={{required: true}}
-                    control={packListForm.control}
-                    render={({field: {value, onChange}}) => (
-                      <Form.Item noStyle>
-                        <Checkbox checked={value} onChange={onChange}>
-                          <Controller control={packListForm.control} name={`sku.${index}.skuName`} render={({field: {value}}) => <SelfText value={value} />} />
-                        </Checkbox>
-                      </Form.Item>
-                    )}
-                  />
-                  {checked && (
-                    <View style={[globalStyles.containerLR, {paddingLeft: 20}]}>
-                      <Text>数量</Text>
-                      <Controller
-                        name={`skus.${index}.nums`}
-                        defaultValue={2}
-                        control={packListForm.control}
-                        render={({field: {value, onChange}}) => (
-                          <Form.Item noStyle>
-                            <Stepper value={value} onChange={onChange} styles={stepperStyle} step={1} min={2} />
-                          </Form.Item>
-                        )}
-                      />
+              <View key={item.id} style={[{marginBottom: 10}]}>
+                <Controller
+                  name={`skus[${index}]._selected`}
+                  rules={{
+                    validate: value => {
+                      if (value) {
+                        packListForm.clearErrors();
+                      }
+
+                      return true;
+                    },
+                  }}
+                  control={packListForm.control}
+                  render={({field: {value, onChange}}) => (
+                    <View style={[globalStyles.moduleMarginTop]}>
+                      <Checkbox style={{alignItems: 'flex-start'}} checked={value} onChange={e => onChange(e.target.checked)}>
+                        <Controller
+                          control={packListForm.control}
+                          name={`sku.${index}.skuName`}
+                          render={({field: {value}}) => (
+                            <View style={{flex: 1}}>
+                              <Text>套餐{convertNumber2Han(index + 1)}</Text>
+                              <SelfText style={globalStyles.fontSecondary} value={value} />
+                              {checked && (
+                                <View style={[globalStyles.containerLR, globalStyles.borderTop, {flex: 1, paddingTop: 5, marginTop: 5}]}>
+                                  <Text style={[globalStyles.fontTertiary]}>设置份数</Text>
+                                  <Controller
+                                    name={`skus.${index}.nums`}
+                                    control={packListForm.control}
+                                    defaultValue={1}
+                                    rules={{
+                                      validate: () => {
+                                        packListForm.clearErrors();
+                                        return true;
+                                      },
+                                    }}
+                                    render={({field: {value, onChange}}) => (
+                                      <Stepper style={{marginLeft: 65}} value={value} onChange={onChange} styles={stepperStyle} step={1} min={1} />
+                                    )}
+                                  />
+                                </View>
+                              )}
+                            </View>
+                          )}
+                        />
+                      </Checkbox>
                     </View>
                   )}
-                </View>
-              </>
+                />
+              </View>
             );
           })}
-        </Form.Item>
+
+          <Controller name={'packageNums'} control={packListForm.control} render={() => null} />
+          <Controller name={'packageList'} control={packListForm.control} render={() => null} />
+
+          {packListForm?.formState?.errors?.packageList && (
+            <Text style={[globalStyles.error]}>
+              <ErrorMessage name={'packageList'} errors={packListForm.formState.errors} />
+            </Text>
+          )}
+          {packListForm?.formState?.errors?.packageNums && (
+            <Text style={[globalStyles.error]}>
+              <ErrorMessage name={'packageNums'} errors={packListForm.formState.errors} />
+            </Text>
+          )}
+        </View>
       </Modal>
     </View>
   );

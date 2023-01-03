@@ -5,16 +5,18 @@ import {StyleSheet, Text, View} from 'react-native';
 import {BoolEnum, FormSetValue} from '../../../models/common';
 import {SectionGroup, FormTitle, Form, Input, Select, PlusButton, Cascader, SelfText} from '../../../component';
 import * as api from '../../../apis';
-import {MerchantCreateType, MerchantType, FormControlC, FormErrors, FormMerchant} from '../../../models';
+import {MerchantCreateType, MerchantType, FormControlC, FormErrors, FormMerchant, ShopForm} from '../../../models';
 import Upload from '../../../component/Form/Upload';
 import {useLoadCity} from '../../../helper/hooks';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import EditShop from './EditShop';
-import {Control, useFieldArray} from 'react-hook-form';
+import {Control, useFieldArray, useForm, UseFormGetValues} from 'react-hook-form';
 import {useSelector} from 'react-redux';
 import {ErrorMessage} from '@hookform/error-message';
 import {RootState} from '../../../redux/reducers';
-import {Icon} from '@ant-design/react-native';
+import {Icon, SwipeAction} from '@ant-design/react-native';
+import {useLoadAllSite} from '../../../helper/hooks/common';
+import {getSitesIndex} from '../../../helper/util';
 
 interface EditBaseProps {
   type: MerchantCreateType; //用户的身份，公海还是私海
@@ -23,19 +25,33 @@ interface EditBaseProps {
   errors: FormErrors;
   setValue: FormSetValue;
   isHidden: boolean;
+  locationCompanyId?: number;
+  getValues?: UseFormGetValues<FormMerchant>;
 }
 
-const EditBase: React.FC<EditBaseProps> = ({Controller, control, setValue, isHidden, errors}) => {
+const EditBase: React.FC<EditBaseProps> = ({Controller, control, setValue, getValues, isHidden, errors, locationCompanyId}) => {
   const {cityList} = useLoadCity();
   const [modalIsShow, setModalIsShow] = useState(false);
-  const areaInfo = useSelector<RootState, number[]>(state => {
-    return state.merchant.currentMerchant?.areaInfo;
-  });
+  const [editShopIndex, setEditShopIndex] = useState(-1);
+  const [sites] = useLoadAllSite();
   const categoryId = useSelector<RootState, number>(state => state.merchant.currentMerchant?.categoryId);
-  const {fields, append} = useFieldArray({
+  const shopListForm = useForm({
+    mode: 'onBlur',
+  });
+
+  const {fields, append, remove} = useFieldArray({
     control,
     name: 'shopList',
   });
+
+  useEffect(() => {
+    if (sites?.length > 0 && cityList?.length) {
+      if (locationCompanyId > 0) {
+        const res = getSitesIndex(sites, locationCompanyId);
+        setValue('areaInfo', res);
+      }
+    }
+  }, [sites, locationCompanyId, setValue, cityList?.length]);
 
   //商家类型
   const {data} = useRequest(async () => {
@@ -47,17 +63,27 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, control, setValue, isHid
     }));
     return category;
   });
-  useEffect(() => {
-    if (cityList?.length > 0 && areaInfo?.length > 0) {
-      setValue('areaInfo', areaInfo);
-    }
-  }, [areaInfo, cityList, setValue]);
 
   useEffect(() => {
     if (data?.length > 0) {
       setValue('categoryId', categoryId);
     }
   }, [categoryId, data, setValue]);
+
+  //编辑店铺
+  const editShopList = (index: number) => {
+    setEditShopIndex(index);
+    const {shopList} = getValues();
+    const item = shopList.find((item, idx) => idx === index);
+    for (const key in item) {
+      if (Object.prototype.hasOwnProperty.call(item, key)) {
+        const index = key as keyof ShopForm;
+        const element = item[index];
+        shopListForm.setValue(index, element);
+      }
+    }
+    setModalIsShow(true);
+  };
 
   return (
     <>
@@ -86,7 +112,6 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, control, setValue, isHid
           )}
         />
 
-        {/* {data?.length && ( */}
         <Controller
           control={control}
           name="categoryId"
@@ -100,7 +125,6 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, control, setValue, isHid
             </Form.Item>
           )}
         />
-        {/* )} */}
 
         <Controller
           control={control}
@@ -137,28 +161,32 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, control, setValue, isHid
             </Form.Item>
           )}
         />
-        {/* {cityList?.length && ( */}
-        <Controller
-          control={control}
-          name="areaInfo"
-          rules={{required: '请输入商家城市'}}
-          render={({field}) => (
-            <Form.Item label="商家城市">
-              <Cascader value={field.value} onChange={field.onChange} options={cityList || []} placeholder="请输入" />
-              <Text style={globalStyles.error}>
-                <ErrorMessage name={'areaInfo'} errors={errors} />
-              </Text>
-            </Form.Item>
-          )}
-        />
-        {/* )} */}
+        {cityList?.length && (
+          <Controller
+            control={control}
+            name="areaInfo"
+            rules={{required: '请输入商家城市'}}
+            render={({field}) => (
+              <Form.Item label="商家城市">
+                <Cascader value={field.value} onChange={field.onChange} options={cityList} placeholder="请输入" />
+                <Text style={globalStyles.error}>
+                  <ErrorMessage name={'areaInfo'} errors={errors} />
+                </Text>
+              </Form.Item>
+            )}
+          />
+        )}
 
         <Controller
           control={control}
           name="address"
+          rules={{required: '请输入商家地址'}}
           render={({field}) => (
             <Form.Item label="商家地址">
               <Input placeholder="请输入商家地址" onChange={field.onChange} value={field.value} />
+              <Text style={globalStyles.error}>
+                <ErrorMessage name={'address'} errors={errors} />
+              </Text>
             </Form.Item>
           )}
         />
@@ -180,21 +208,41 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, control, setValue, isHid
             {fields.map((item, index) => {
               return (
                 <View key={item.id} style={styles.shop}>
-                  <Controller
-                    control={control}
-                    name={`shopList.${index}.shopName`}
-                    render={({field: {value}}) => <SelfText value={value} style={[globalStyles.fontPrimary, globalStyles.borderBottom]} />}
-                  />
-                  <Controller
-                    control={control}
-                    name={`shopList.${index}.addressDetail`}
-                    render={({field: {value}}) => <SelfText value={value} style={globalStyles.fontTertiary} />}
-                  />
-                  <Controller
-                    control={control}
-                    name={`shopList.${index}.contactPhone`}
-                    render={({field: {value}}) => <SelfText value={value} style={globalStyles.fontTertiary} />}
-                  />
+                  <SwipeAction
+                    right={[
+                      {
+                        text: '修改',
+                        color: 'white',
+
+                        backgroundColor: globalStyleVariables.COLOR_PRIMARY,
+                        onPress: () => {
+                          editShopList(index);
+                        },
+                      },
+                      {
+                        text: '删除',
+                        color: 'white',
+
+                        backgroundColor: globalStyleVariables.COLOR_ERROR,
+                        onPress: () => remove(index),
+                      },
+                    ]}>
+                    <Controller
+                      control={control}
+                      name={`shopList.${index}.shopName`}
+                      render={({field: {value}}) => <SelfText value={value} style={[globalStyles.fontPrimary, globalStyles.borderBottom]} />}
+                    />
+                    <Controller
+                      control={control}
+                      name={`shopList.${index}.addressDetail`}
+                      render={({field: {value}}) => <SelfText value={value} style={globalStyles.fontTertiary} />}
+                    />
+                    <Controller
+                      control={control}
+                      name={`shopList.${index}.contactPhone`}
+                      render={({field: {value}}) => <SelfText value={value} style={globalStyles.fontTertiary} />}
+                    />
+                  </SwipeAction>
                 </View>
               );
             })}
@@ -206,7 +254,16 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, control, setValue, isHid
           </SectionGroup>
         )}
 
-        <EditShop open={modalIsShow} setOpen={setModalIsShow} setValue={append} />
+        <EditShop
+          shopListForm={shopListForm}
+          setEditShopIndex={setEditShopIndex}
+          setValue={setValue}
+          getValues={getValues}
+          editShopIndex={editShopIndex}
+          open={modalIsShow}
+          setOpen={setModalIsShow}
+          append={append}
+        />
       </SectionGroup>
     </>
   );

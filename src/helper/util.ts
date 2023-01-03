@@ -1,6 +1,6 @@
 import moment, {Moment} from 'moment';
 import {DATE_TIME_FORMAT} from '../constants';
-import {Environment, DateTimeString, FormMerchant, MerchantForm, MerchantCreateType, UploadFile, SPUCategory, SPUCodeType, SKUBuyNoticeF, Notice, ContractF} from '../models';
+import {Environment, DateTimeString, FormMerchant, MerchantForm, MerchantCreateType, UploadFile, SPUCategory, SPUCodeType, SKUBuyNoticeF, Notice, Contract, Site} from '../models';
 
 // 用来模拟异步操作
 export async function wait(ms: number) {
@@ -92,12 +92,13 @@ export function flattenTree<T>(tree: any[], childrenKey: string = 'children'): T
 // 格式化商家发送请求的数据
 export function formattingMerchantRequest(data: FormMerchant, type: MerchantCreateType) {
   const {avatar, businessLicense, areaInfo} = data;
-  let avatarUrl = '';
-  let businessLicenseUrl = businessLicense?.length ? businessLicense[0].url : null;
-  if (avatar.length) {
+  let avatarUrl = null;
+  let businessLicenseUrl = null;
+  if (avatar?.length) {
     avatarUrl = avatar[0].url;
-  } else {
-    return Promise.reject('图片正在上传中');
+  }
+  if (businessLicense?.length) {
+    businessLicenseUrl = businessLicense[0].url;
   }
   const newData: MerchantForm = {...data, avatar: avatarUrl, businessLicense: businessLicenseUrl, type, locationWithCompanyId: areaInfo[2]};
   return newData;
@@ -106,8 +107,14 @@ export function formattingMerchantRequest(data: FormMerchant, type: MerchantCrea
 //格式化商家用于编辑和查看的数据
 export function formattingMerchantEdit(data: MerchantForm) {
   const {avatar, businessLicense, areaInfo = []} = data;
-  const newAvatar: UploadFile[] = [{url: avatar, uid: avatar}];
-  const newBusinessLicense: UploadFile[] = [{url: businessLicense, uid: businessLicense}];
+  const newAvatar: UploadFile[] = [];
+  const newBusinessLicense: UploadFile[] = [];
+  if (businessLicense) {
+    newBusinessLicense.push({url: businessLicense, uid: businessLicense});
+  }
+  if (avatar) {
+    newAvatar.push({url: avatar, uid: avatar});
+  }
   const newData: FormMerchant = {...data, businessLicense: newBusinessLicense, avatar: newAvatar, areaInfo};
   return newData;
 }
@@ -153,7 +160,7 @@ export function formattingCodeType(data: SPUCodeType[]) {
 }
 
 //格式化新建商品的数据
-export function cleanSPUForm(formData: any, contractDetail: ContractF) {
+export function cleanSPUForm(formData: any, contractDetail: Contract) {
   const form = {...formData};
 
   form.saleBeginTime = formatMoment(formData?.saleBeginTime) || null;
@@ -230,5 +237,21 @@ export const cleanNotice = (value: SKUBuyNoticeF[]) => {
 };
 //去掉日后面的参数
 export const cleanTime = (time: string) => {
+  if (!moment(time).isValid()) {
+    return null;
+  }
   return moment(time).format('YYYY-MM-DD');
+};
+
+//获取城市的值
+export const getSitesIndex = (sites: Site[], locationWithCompanyId: number) => {
+  for (let i = 0; i < sites.length; i++) {
+    for (let j = 0; j < sites[i].children.length; j++) {
+      for (let k = 0; k < sites[i].children[j].children.length; k++) {
+        if (sites[i].children[j].children[k].id === locationWithCompanyId) {
+          return [`2_${sites[i].id}`, `1_${sites[i].children[j].id}`, locationWithCompanyId];
+        }
+      }
+    }
+  }
 };

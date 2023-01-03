@@ -6,7 +6,7 @@ import PrivateSeaList from './privateSea/PrivateSeaList';
 import PublicSeaList from './publicSea/PublicSeaList';
 import MyList from './my/MyList';
 import {Tabs} from '../../component';
-import {useRefCallback} from '../../helper/hooks';
+import {useParams, useRefCallback} from '../../helper/hooks';
 import {globalStyleVariables} from '../../constants/styles';
 const tabs = [
   {title: '私海商家', key: 'private'},
@@ -17,7 +17,14 @@ const tabs = [
 const Merchant: React.FC = () => {
   const [currentTab, setCurrentTab] = React.useState('private');
   const windowSize = useWindowDimensions();
+  const {tab} = useParams<{tab: string}>();
   const [ref, setRef, isReady] = useRefCallback<ScrollView>();
+
+  useEffect(() => {
+    if (tab) {
+      setCurrentTab(tab);
+    }
+  }, [tab]);
 
   useEffect(() => {
     if (!isReady) {

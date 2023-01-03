@@ -1,8 +1,8 @@
 import React from 'react';
 import {Text, ScrollView, View} from 'react-native';
-import {Footer, Form, FormTitle, SectionGroup, Switch} from '../../../component';
-import {globalStyles} from '../../../constants/styles';
-import {findItem, getBuyLimitStr} from '../../../helper';
+import {Footer, Form, FormTitle, SectionGroup, SelfText, Switch} from '../../../component';
+import {globalStyles, globalStyleVariables} from '../../../constants/styles';
+import {convertNumber2Han, findItem, getBuyLimitStr} from '../../../helper';
 import {BoolEnum, ContractDetailF, MerchantDetailF, SPUDetailF} from '../../../models';
 import {styles} from './style';
 
@@ -34,7 +34,7 @@ const SKU: React.FC<SKUProps> = props => {
         const isShareStock = contractDetail?.skuInfoReq?.openSkuStock === BoolEnum.TRUE;
         return (
           <SectionGroup key={sku.skuId} style={styles.sectionGroupStyle}>
-            <FormTitle title={`套餐${index + 1}信息`} />
+            <FormTitle title={`套餐${convertNumber2Han(index + 1)}信息`} />
             <Form.Item label="套餐名称">
               <Text>{sku.skuName}</Text>
             </Form.Item>
@@ -73,13 +73,28 @@ const SKU: React.FC<SKUProps> = props => {
                 <Text>{isShareStock ? '共享库存' : sku.skuStock || '-'}</Text>
               </Form.Item>
             )}
+            <FormTitle title={`套餐${convertNumber2Han(index + 1)}内容`} />
+            <View style={{backgroundColor: '#f4f4f4', padding: globalStyleVariables.MODULE_SPACE, borderRadius: 5, marginBottom: 5}}>
+              <View style={[globalStyles.containerLR]}>
+                <Text style={[globalStyles.fontTertiary, {flex: 1}]}>名称</Text>
+                <Text style={[globalStyles.fontTertiary, {flex: 1}]}>数量</Text>
+                <Text style={[globalStyles.fontTertiary, {flex: 1}]}>价格</Text>
+              </View>
+              {sku?.list?.map((item, index) => (
+                <View style={[globalStyles.containerLR, globalStyles.moduleMarginTop]} key={index}>
+                  <SelfText style={{flex: 1}} value={item?.name} />
+                  <SelfText value={item?.nums} style={{flex: 1}} />
+                  <SelfText style={{flex: 1}} value={item?.price + '元'} />
+                </View>
+              ))}
+            </View>
           </SectionGroup>
         );
       })}
       {packList.map((pack, index) => {
         return (
           <SectionGroup key={pack.id} style={styles.sectionGroupStyle}>
-            <FormTitle title={`组合套餐${index + 1}信息`} />
+            <FormTitle title={`组合套餐${convertNumber2Han(index + 1)}信息`} />
             <View style={{padding: 10}}>
               <View>
                 <Text style={globalStyles.fontSecondary}>名称：{pack?.packageName}</Text>

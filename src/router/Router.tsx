@@ -15,6 +15,8 @@ import RouterCash from './RouterCash';
 import IconTest from '../screen/IconTest/IconTest';
 import MineDetail from '../screen/mine/MineDetail';
 import {RootStackParamList, ValidRoute} from '../models';
+import Cert from '../screen/Cert';
+import Agreement from '../screen/common/Agreement';
 const Navigator: React.FC = () => {
   const token = useSelector((state: RootState) => state.common.token);
   const isLogout = useSelector((state: RootState) => state.user.isLogout);
@@ -43,6 +45,14 @@ const Navigator: React.FC = () => {
               headerShown: false,
             }}
           />
+          <Stack.Screen
+            name="Cert"
+            component={Cert}
+            options={{
+              headerShown: false,
+              animationTypeForReplace: 'pop',
+            }}
+          />
 
           {RouterSPU}
           {RouterMerchant}
@@ -57,6 +67,13 @@ const Navigator: React.FC = () => {
             options={{
               headerShown: false,
               animationTypeForReplace: isLogout ? 'pop' : 'push',
+            }}
+          />
+          <Stack.Screen
+            name="Agreement"
+            component={Agreement}
+            options={{
+              headerShown: false,
             }}
           />
         </>
@@ -117,4 +134,3 @@ export function navigateBack() {
     navigationRef.dispatch(StackActions.pop());
   }
 }
-

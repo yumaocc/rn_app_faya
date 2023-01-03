@@ -366,21 +366,14 @@ export interface ContractList {
   typeStr: string;
 }
 export interface ContractF {
-  bizUserId: number;
+  bizUserId?: number;
   bookingReq: any;
   contractName: string;
   id?: number;
-  // partyAAccountType?: number;
-  // partyABankAccount?: number;
-  // partyABankAccountName?: string;
-  // partyABankAddress?: string;
-  // partyAIsLegalPerson?: number;
   partyAName?: string;
   partyBName?: string;
   protocolType?: number;
   settlementType?: number;
-  // status?: number;
-  // type?: number;
   spuInfoReq: SpuInfoReq;
   skuInfoReq: SkuInfoReqF;
 }
@@ -437,7 +430,7 @@ export interface SkuInfoF {
 export interface SkuInfo {
   buyLimitNum?: string;
   buyLimitType?: number;
-  contractSkuId?: number[];
+  contractSkuId?: number;
   skuDetails: SkuDetails[];
   skuName: string;
   skuSettlementPrice: string;

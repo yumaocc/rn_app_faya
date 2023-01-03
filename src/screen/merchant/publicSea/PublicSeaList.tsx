@@ -4,69 +4,54 @@ import {useDebounceFn} from 'ahooks';
 import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, FlatList, SafeAreaView} from 'react-native';
 import ModalDropdown from 'react-native-modal-dropdown';
-import * as api from '../../../apis';
+import {useSelector} from 'react-redux';
 import {Input, PlusButton} from '../../../component';
 import Icon from '../../../component/Form/Icon';
 import Loading from '../../../component/Loading';
 import {PAGE_SIZE} from '../../../constants';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
-import {useCommonDispatcher} from '../../../helper/hooks';
-import {FakeNavigation, MerchantCreateType, MerchantAction, Options, MerchantF, SearchParam, RequestAction} from '../../../models';
+import {useMerchantDispatcher} from '../../../helper/hooks';
+import {FakeNavigation, MerchantCreateType, MerchantAction, Options, MerchantF, RequestAction, PagedData} from '../../../models';
+import {RootState} from '../../../redux/reducers';
 import Card from './Card';
 
 const options = [
   {
     label: '单店',
-    value: 0,
+    value: 1,
   },
   {
-    label: '多店',
-    value: 1,
+    label: '连锁',
+    value: 2,
   },
 ];
 
 const PublicSeaList: React.FC = () => {
   const [valueType, setValueType] = useState<Options>(null);
-  const [pageIndex, setPageIndex] = useState(1);
+  const [merchantDispatcher] = useMerchantDispatcher();
   const [value, setValue] = useState('');
-  const [len, setLen] = useState(0);
-  const [merchantList, setMerchantList] = useState<MerchantF[]>([]);
-  const [commonDispatcher] = useCommonDispatcher();
-  const [loading, setLoading] = useState(false);
-  const [pullDown, setPullDown] = useState(false);
+  const merchantList = useSelector<RootState, PagedData<MerchantF[]>>(state => state.merchant.merchantPublicList);
+  const pageIndex = useSelector<RootState, number>(state => state.merchant?.merchantPublicList?.page?.pageIndex);
+  const loading = useSelector<RootState, boolean>(state => state.merchant.merchantLoading);
   const navigation = useNavigation() as FakeNavigation;
-
-  const {run} = useDebounceFn(async (name: string) => getData({pageIndex: 1, name}, RequestAction.other));
-
-  const getData = async (params: SearchParam, action?: RequestAction) => {
-    try {
-      setLoading(true);
-      const res = await api.merchant.getPublicSeaMerchants({...params, pageSize: PAGE_SIZE});
-      if (action === RequestAction.other) {
-        setMerchantList(res.content);
-      } else {
-        setMerchantList(list => [...list, ...res.content]);
-      }
-      if (res?.content?.length) {
-        setPageIndex(pageIndex => pageIndex + 1);
-      }
-      setLen(res.page.pageTotal);
-    } catch (error) {
-      commonDispatcher.error(error);
-    }
-    setLoading(false);
-  };
+  const {run} = useDebounceFn(async (name: string) => {
+    merchantDispatcher.loadPublicMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, name: name, action: RequestAction.other});
+  });
 
   useEffect(() => {
-    getData({pageIndex: 1});
-
+    if (!merchantList?.content?.length) {
+      merchantDispatcher.loadPublicMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.load});
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleChangeFilter = (value: Options) => {
     setValueType(value);
-    setPageIndex(1);
-    getData({pageIndex: 1, multiStore: value.value}, RequestAction.other);
+    merchantDispatcher.loadPublicMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.other, multiStore: value.value});
+  };
+  const update = () => {
+    merchantDispatcher.loadPublicMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, multiStore: valueType?.value, name: value, action: RequestAction.other});
+    merchantDispatcher.loadPrivateMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.other});
   };
 
   return (
@@ -74,7 +59,7 @@ const PublicSeaList: React.FC = () => {
       <Loading active={loading} />
       <View style={[styles.header, globalStyles.containerLR]}>
         <Text style={(globalStyles.moduleMarginLeft, {flex: 1})}>
-          <Text style={globalStyles.fontPrimary}>共{len}家</Text>
+          <Text style={globalStyles.fontPrimary}>共{merchantList?.page?.pageTotal || 0}家</Text>
         </Text>
 
         <View style={[{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}]}>
@@ -100,9 +85,7 @@ const PublicSeaList: React.FC = () => {
               extra={<Icon name="FYLM_all_search" color="#f4f4f4" />}
               onChange={e => {
                 setValue(e);
-                setPageIndex(1);
                 run(e);
-                getData({pageIndex: 1, name: e}, RequestAction.other);
               }}
               textAlign="left"
             />
@@ -125,24 +108,31 @@ const PublicSeaList: React.FC = () => {
           }}
         />
       </View>
-      <FlatList
-        refreshing={pullDown}
-        onRefresh={async () => {
-          setPullDown(true);
-          await getData({pageIndex: pageIndex, multiStore: valueType?.value, name: value});
-          setPullDown(false);
-        }}
-        data={merchantList}
-        renderItem={({item}) => <Card update={() => getData({pageIndex: 1})} merchant={item} key={item.id} style={globalStyles.moduleMarginTop} />}
-        onEndReached={() => {
-          getData({pageIndex: pageIndex, multiStore: valueType?.value, name: value});
-        }}
-        ListFooterComponent={
-          <View style={[globalStyles.containerCenter, {flex: 1, marginTop: globalStyleVariables.MODULE_SPACE, marginBottom: globalStyleVariables.MODULE_SPACE}]}>
-            <Text style={[globalStyles.fontTertiary, {textAlign: 'center'}]}>已经到底</Text>
+      {!!merchantList?.content?.length ? (
+        <FlatList
+          refreshing={false}
+          onRefresh={() => {
+            merchantDispatcher.loadPublicMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, multiStore: valueType?.value, name: value, action: RequestAction.other});
+          }}
+          onEndReached={() => {
+            merchantDispatcher.loadPublicMerchantList({pageIndex: pageIndex + 1, pageSize: PAGE_SIZE, multiStore: valueType?.value, name: value, action: RequestAction.load});
+          }}
+          data={merchantList?.content}
+          renderItem={({item}) => <Card update={update} merchant={item} key={item.id} style={globalStyles.moduleMarginTop} />}
+          ListFooterComponent={
+            <View style={[globalStyles.containerCenter, {flex: 1, marginTop: globalStyleVariables.MODULE_SPACE, marginBottom: globalStyleVariables.MODULE_SPACE}]}>
+              <Text style={[globalStyles.fontTertiary, {textAlign: 'center'}]}>已经到底</Text>
+            </View>
+          }
+        />
+      ) : (
+        <View style={[{flex: 1, backgroundColor: '#fff'}, globalStyles.containerCenter]}>
+          <View style={[{width: 50, height: 50, borderRadius: 50, backgroundColor: '#f4f4f4', marginBottom: globalStyleVariables.MODULE_SPACE}, globalStyles.containerCenter]}>
+            <AntdIcon name="shop" />
           </View>
-        }
-      />
+          <Text style={globalStyles.fontTertiary}>还没有商家哦，快去公海看看吧</Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 };

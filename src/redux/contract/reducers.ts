@@ -2,17 +2,29 @@ import produce from 'immer';
 
 import {ContractActions} from './actions';
 import {ActionType} from './types';
-import {ContractF, ContractList} from '../../models';
+import {Contract, ContractList, PagedData} from '../../models';
+import {PAGE_SIZE} from '../../constants';
 
 export interface ContractState {
-  currentContract?: ContractF;
+  currentContract?: Contract;
   loadingCurrentContract: boolean;
   contractSearchList: ContractList[];
+  contractList?: PagedData<ContractList[]>;
+  contractLoading: boolean;
 }
 
 export const initialState: ContractState = {
   loadingCurrentContract: false,
   contractSearchList: [],
+  contractLoading: false,
+  contractList: {
+    content: [],
+    page: {
+      pageIndex: 1,
+      pageSize: PAGE_SIZE,
+      pageTotal: 0,
+    },
+  },
 };
 
 export default (state = initialState, action: ContractActions): ContractState => {
@@ -34,6 +46,15 @@ export default (state = initialState, action: ContractActions): ContractState =>
       return produce(state, draft => {
         draft.currentContract = undefined;
         draft.contractSearchList = [];
+      });
+    case ActionType.LOAD_CONTRACT_LIST_SUCCESS:
+      return produce(state, draft => {
+        draft.contractLoading = false;
+        draft.contractList = action.payload;
+      });
+    case ActionType.LOAD_CONTRACT_LOADING:
+      return produce(state, draft => {
+        draft.contractLoading = true;
       });
     default:
       return state;

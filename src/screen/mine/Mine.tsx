@@ -74,6 +74,7 @@ const Mine: React.FC = () => {
         <SectionGroup>
           <Button
             type="warning"
+            style={globalStyles.marginRightLeft}
             onPress={() => {
               userDispatcher.logout();
             }}>

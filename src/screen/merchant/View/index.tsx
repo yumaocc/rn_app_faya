@@ -6,7 +6,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {Cascader, Form, FormTitle, Input, NavigationBar, SectionGroup, Select, SelfText} from '../../../component';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {useParams, useCommonDispatcher, useMerchantDispatcher, useLoadCity} from '../../../helper/hooks';
-import {MerchantCreateType, MerchantAction, FormMerchant, MerchantFormEnum, MerchantType, BoolEnum} from '../../../models'; // FormMerchant
+import {MerchantCreateType, MerchantAction, FormMerchant, MerchantFormEnum, MerchantType, BoolEnum, RequestAction} from '../../../models'; // FormMerchant
 import {useForm, Controller, useFieldArray} from 'react-hook-form';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/reducers';
@@ -15,6 +15,7 @@ import Upload from '../../../component/Form/Upload';
 import {useRequest} from 'ahooks';
 import * as api from '../../../apis';
 import ModalDropdown from 'react-native-modal-dropdown';
+import {PAGE_SIZE} from '../../../constants';
 // add 新增  edit 编辑 view 查看
 // 当id === MerchantCreateType.PRIVATE_SEA, 并且 action === view的时候不能编辑
 // 当id === MerchantCreateType.PRIVATE_SEA, 并且 action === edit 或者add的时候可以编辑
@@ -66,18 +67,21 @@ const AddMerchant: React.FC = () => {
       });
     }
   }, [merchantDetail, setValue]);
-  //商家类型
+
   const handleEdit = async () => {
     setLoading(true);
     try {
       await api.merchant.returnPublic(merchantDetail.id);
       setLoading(false);
+      merchantDispatcher.loadPrivateMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.other});
+      merchantDispatcher.loadPublicMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.other});
       commonDispatcher.success('归还成功');
       navigation.goBack();
     } catch (error) {
       commonDispatcher.error(error || '归还失败');
     }
   };
+
   return (
     <>
       <Loading active={loading} />

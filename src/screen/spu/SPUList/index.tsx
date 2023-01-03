@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableWithoutFeedback, Image, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, TouchableWithoutFeedback, Image} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Icon, ListView} from '@ant-design/react-native';
 
@@ -40,14 +40,7 @@ const SPUList: React.FC = () => {
       <View style={styles.spuContainer}>
         <TouchableWithoutFeedback
           onPress={() => {
-            if (item.status === 2) {
-              viewDetail(item.id);
-            } else {
-              navigation.navigate({
-                name: 'EditSPU',
-                params: {id: item.id},
-              });
-            }
+            viewDetail(item.id);
           }}>
           <View style={{flexDirection: 'row'}}>
             <View style={{paddingTop: 10}}>
@@ -80,18 +73,17 @@ const SPUList: React.FC = () => {
               </View>
               <View>
                 <View style={styles.footer}>
-                  <TouchableOpacity
+                  {/* <TouchableOpacity
                     activeOpacity={0.5}
                     onPress={() => {
-                      console.log(1);
                     }}>
-                    {/* <View style={styles.showSale}>
+                    <View style={styles.showSale}>
                       <Text style={[globalStyles.fontPrimary, {color: globalStyleVariables.COLOR_PRIMARY}]}>查看销售详情</Text>
-                    </View> */}
-                  </TouchableOpacity>
-                  <View style={styles.setting}>
+                    </View>
+                  </TouchableOpacity> */}
+                  {/* <View style={styles.setting}>
                     <Icon name="setting" color={globalStyleVariables.COLOR_PRIMARY} />
-                  </View>
+                  </View> */}
                 </View>
               </View>
             </View>

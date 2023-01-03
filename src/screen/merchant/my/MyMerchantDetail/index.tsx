@@ -17,7 +17,7 @@ const tabs = [
 const MyMerchantDetail: FC = () => {
   const [ref, setRef, isReady] = useRefCallback<ScrollView>();
   const {width: windowWidth} = useWindowDimensions();
-  const {id, name, status, from} = useParams<{id: number; name: string; status: string; from: string}>();
+  const {id, name, status, from, locationCompanyId} = useParams<{id: number; name: string; status: string; from: string; locationCompanyId: number}>();
   const [currentKey, setCurrentKey] = useState('contract');
   // 自动切换到指定step
   useEffect(() => {
@@ -58,7 +58,7 @@ const MyMerchantDetail: FC = () => {
           </View>
           <View style={{width: windowWidth}}>
             <ScrollView>
-              <ShopInfo id={id} />
+              <ShopInfo id={id} locationCompanyId={locationCompanyId} />
             </ScrollView>
           </View>
           <View style={{width: windowWidth}}>

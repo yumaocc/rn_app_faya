@@ -1,7 +1,7 @@
 // 资质信息
 import React from 'react';
-import {StyleSheet} from 'react-native';
-import {SectionGroup, FormTitle, Form, Input, Select} from '../../../component';
+import {View} from 'react-native';
+import {Form, Input, Select} from '../../../component';
 import {MerchantCreateType, FormControlC, MerchantAgentType, FormWatch, FormErrors, FormMerchant} from '../../../models';
 import Upload from '../../../component/Form/Upload';
 import {Control} from 'react-hook-form';
@@ -19,8 +19,7 @@ const Certification: React.FC<CertificationProps> = ({Controller, control, watch
 
   return (
     <>
-      <SectionGroup style={styles.sectionGroup}>
-        <FormTitle title="基本信息" />
+      <View style={{paddingLeft: 10, paddingRight: 10, backgroundColor: '#fff'}}>
         <Controller
           name="businessName"
           control={control}
@@ -39,7 +38,17 @@ const Certification: React.FC<CertificationProps> = ({Controller, control, watch
             </Form.Item>
           )}
         />
-
+        <Controller
+          name="businessLicense"
+          control={control}
+          render={({field}) => (
+            <Form.Item label="营业执照" horizontal>
+              <Upload maxCount={1} value={field.value || []} onChange={field.onChange} />
+            </Form.Item>
+          )}
+        />
+      </View>
+      <View style={{paddingLeft: 10, paddingRight: 10, backgroundColor: '#fff', marginTop: 10}}>
         <Controller
           name="legalAuthType"
           control={control}
@@ -85,29 +94,9 @@ const Certification: React.FC<CertificationProps> = ({Controller, control, watch
             </Form.Item>
           )}
         />
-        <Controller
-          name="businessLicense"
-          control={control}
-          render={({field}) => (
-            <Form.Item label="营业执照" horizontal>
-              <Upload maxCount={1} value={field.value} onChange={field.onChange} />
-            </Form.Item>
-          )}
-        />
-      </SectionGroup>
+      </View>
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  sectionGroup: {
-    paddingHorizontal: 10,
-    backgroundColor: '#fff',
-    paddingTop: 13,
-  },
-});
 
 export default Certification;

@@ -9,7 +9,7 @@ import {useForm, Controller} from 'react-hook-form';
 import Base from './Base';
 import SKU from './SKU';
 import Booking from './Booking';
-import {BookingType, BoolEnum, ContractAction, ContractDetailEnum, ContractF, ContractStatus} from '../../../models';
+import {BookingType, BoolEnum, Contract, ContractAction, ContractDetailEnum, ContractStatus} from '../../../models';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/reducers';
 import {COMPANY_NAME} from '../../../constants';
@@ -59,10 +59,12 @@ const EditSPU: React.FC = () => {
     formState: {errors},
   } = useForm<any>({
     defaultValues,
+    mode: 'all',
   });
 
   const [contractDispatcher] = useContractDispatcher();
-  const contractDetail = useSelector<RootState, ContractF>(state => state.contract.currentContract);
+  const contractDetail = useSelector<RootState, Contract>(state => state.contract.currentContract);
+
   // 自动切换到指定step
   useEffect(() => {
     if (!isReady) {
