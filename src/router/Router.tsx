@@ -16,7 +16,7 @@ import IconTest from '../screen/IconTest/IconTest';
 import MineDetail from '../screen/mine/MineDetail';
 import {RootStackParamList, ValidRoute} from '../models';
 import Cert from '../screen/Cert';
-import Agreement from '../screen/common/Agreement';
+import Browser from '../component/Browser';
 const Navigator: React.FC = () => {
   const token = useSelector((state: RootState) => state.common.token);
   const isLogout = useSelector((state: RootState) => state.user.isLogout);
@@ -70,8 +70,8 @@ const Navigator: React.FC = () => {
             }}
           />
           <Stack.Screen
-            name="Agreement"
-            component={Agreement}
+            name="Browser"
+            component={Browser}
             options={{
               headerShown: false,
             }}
