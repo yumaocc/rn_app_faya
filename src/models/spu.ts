@@ -150,8 +150,10 @@ export interface SPUTableSKU {
   saleAmount: number;
   skuStock: number;
   skuSettlePrice: number; // 结算价
+  skuSettlePriceYuan?: number; // 结算价
   skuRemainingStock: number;
   skuSalePrice: number;
+  skuSalePriceYuan?: number;
 }
 export interface SPUF {
   id: number;

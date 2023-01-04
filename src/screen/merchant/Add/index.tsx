@@ -28,12 +28,13 @@ const AddMerchant: React.FC = () => {
   const [isShowModal, setIsShowModal] = useState(false);
   const [summaryDispatcher] = useSummaryDispatcher();
 
-  const {identity, publicId, privateId, action, locationCompanyId} = useParams<{
+  const {identity, publicId, privateId, action, locationCompanyId, status} = useParams<{
     identity: MerchantCreateType;
     action: MerchantAction;
     publicId: number;
     privateId: number;
     locationCompanyId: number;
+    status: number;
   }>();
   const [commonDispatcher] = useCommonDispatcher();
   const [currentKey, setCurrentKey] = React.useState('base');
@@ -64,11 +65,13 @@ const AddMerchant: React.FC = () => {
   }, [action]);
 
   const tabs = useMemo(() => {
-    const tab = [{title: '基础信息', key: 'base'}];
     if (!publicId) {
-      tab.push({title: '资质信息', key: 'qualification'});
+      return [
+        {title: '资质信息', key: 'qualification'},
+        {title: '基础信息', key: 'base'},
+      ];
     }
-    return tab;
+    return [];
   }, [publicId]);
 
   useEffect(() => {
@@ -122,7 +125,6 @@ const AddMerchant: React.FC = () => {
       const newFormData = formattingMerchantRequest(formData, identity) as MerchantForm;
 
       if (action === MerchantAction.EDIT) {
-        console.log('商家信息', newFormData);
         await updateMerchant(newFormData);
         update();
         commonDispatcher.success('修改成功');
@@ -165,9 +167,17 @@ const AddMerchant: React.FC = () => {
     setLoading(false);
   };
 
-  const getTitle = () => {
+  const getTitle = (status: number) => {
     if (merchantDetail) {
-      return merchantDetail?.name;
+      return (
+        <View style={globalStyles.containerCenter}>
+          <Text>{merchantDetail?.name}</Text>
+
+          {identity === MerchantCreateType.PUBLIC_SEA && (
+            <Text style={globalStyles.fontSize12}>{status ? <Text style={{color: '#4AB87D'}}>已认证</Text> : <Text style={{color: '#999999'}}>未认证</Text>}</Text>
+          )}
+        </View>
+      );
     } else {
       return identity === MerchantCreateType.PUBLIC_SEA ? '新建公海商家' : '新建私海商家';
     }
@@ -206,14 +216,15 @@ const AddMerchant: React.FC = () => {
     <>
       <Loading active={loading} />
       <SafeAreaView style={styles.container} edges={['bottom']}>
-        <NavigationBar title={getTitle()} headerRight={identity === MerchantCreateType.PRIVATE_SEA && header} />
+        <NavigationBar title={getTitle(status)} headerRight={identity === MerchantCreateType.PRIVATE_SEA && action === MerchantAction.EDIT && header} />
 
         <View style={styles.container}>
-          <Tabs tabs={tabs} currentKey={currentKey} onChange={setCurrentKey} style={{backgroundColor: '#fff'}} />
+          {!!tabs?.length && <Tabs tabs={tabs} currentKey={currentKey} onChange={setCurrentKey} style={{backgroundColor: '#fff'}} />}
           <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
             <View style={{width: windowWidth}}>
               <ScrollView>
                 <EditBase
+                  status={status}
                   getValues={getValues}
                   locationCompanyId={locationCompanyId}
                   isHidden={isHidden}
@@ -235,8 +246,8 @@ const AddMerchant: React.FC = () => {
           <View style={styles.sectionGroup}>
             {identity === MerchantCreateType.PRIVATE_SEA && action === MerchantAction.EDIT && (
               <View style={styles.privateView}>
-                <Button style={{margin: 10}} type="ghost" onPress={() => inviteAuth(privateId)}>
-                  邀请认证
+                <Button style={{margin: 10, borderColor: globalStyleVariables.COLOR_PRIMARY}} type="ghost" onPress={() => inviteAuth(privateId)}>
+                  <Text style={{color: globalStyleVariables.COLOR_PRIMARY}}>邀请认证</Text>
                 </Button>
                 <Button style={{margin: 10, flex: 1}} type="primary" onPress={handleSubmit(onSubmit)}>
                   保存
@@ -244,8 +255,8 @@ const AddMerchant: React.FC = () => {
               </View>
             )}
             {identity === MerchantCreateType.PRIVATE_SEA && action === MerchantAction.VIEW && (
-              <Button style={{margin: 10}} type="primary" onPress={() => inviteAuth(privateId)}>
-                邀请认证
+              <Button style={[{margin: 10}]} type="primary" onPress={() => inviteAuth(privateId)}>
+                <Text style={globalStyles.primaryColor}>邀请认证</Text>
               </Button>
             )}
             {/* 这是公海过来的按钮 */}
@@ -271,7 +282,7 @@ const AddMerchant: React.FC = () => {
           showCancel
           onOk={() => navigation.canGoBack() && navigation.goBack()}
           onClose={() => {
-            reset();
+            reset({shopList: []});
             setIsShowModal(false);
           }}
           okText="确定"

@@ -22,7 +22,7 @@ const options = [
     value: 1,
   },
   {
-    label: '连锁',
+    label: '多店',
     value: 2,
   },
 ];

@@ -87,7 +87,7 @@ const Card: React.FC<CardProps> = ({merchant, style}) => {
               <View style={[{marginBottom: 5}]}>
                 <Text style={globalStyles.fontSecondary}>商户模式</Text>
               </View>
-              <Text style={globalStyles.fontPrimary}>{merchant.multiStore === BoolEnum.TRUE ? '连锁' : '单店'}</Text>
+              <Text style={globalStyles.fontPrimary}>{merchant.multiStore === BoolEnum.TRUE ? '多店' : '单店'}</Text>
             </View>
             <View style={globalStyles.dividingLine} />
             <View style={[globalStyles.containerCenter, {paddingVertical: globalStyleVariables.MODULE_SPACE}]}>

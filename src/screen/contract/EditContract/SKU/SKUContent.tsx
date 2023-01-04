@@ -66,7 +66,7 @@ const SKUContent: FC<SKUContentProps> = ({next, control, title}) => {
               name={`skuInfoReq.skuInfo.${next}.skuDetails.${index}.name`}
               render={({field: {value, onChange}}) => (
                 <View style={{flex: 1}}>
-                  <Input type="text" allowFontScaling={true} placeholder="商品名称" value={value} onChange={onChange}>
+                  <Input type="text" allowFontScaling={true} value={value} onChange={onChange}>
                     <Icon name="diandian" />
                   </Input>
                 </View>
@@ -80,7 +80,7 @@ const SKUContent: FC<SKUContentProps> = ({next, control, title}) => {
                   <>
                     <View style={globalStyles.dividingLine} />
                     <View style={globalStyles.inputWidth}>
-                      <Input type="number" placeholder="数量" value={value} onChange={onChange} />
+                      <Input type="number" value={value} onChange={onChange} />
                     </View>
                     <View style={globalStyles.dividingLine} />
                   </>
@@ -91,7 +91,7 @@ const SKUContent: FC<SKUContentProps> = ({next, control, title}) => {
                 name={`skuInfoReq.skuInfo.${next}.skuDetails.${index}.price`}
                 render={({field: {value, onChange}}) => (
                   <View style={globalStyles.inputWidth}>
-                    <Input type="number" placeholder="价格" value={value} onChange={onChange} />
+                    <Input type="number" value={value} onChange={onChange} />
                   </View>
                 )}
               />

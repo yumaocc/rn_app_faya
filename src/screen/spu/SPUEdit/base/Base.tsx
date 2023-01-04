@@ -164,7 +164,7 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
           rules={{required: '请选择商家'}}
           render={({field: {value, onChange}}) => (
             <Form.Item label="选择商家">
-              <Select onChange={onChange} value={value} options={merchantList?.map((e: {name: any; id: any}) => ({label: e.name, value: e.id}))} placeholder="请选择" />
+              <Select onChange={onChange} value={value} options={merchantList?.map((e: {name: any; id: any}) => ({label: e.name, value: e.id}))} />
               <Text style={globalStyles.error}>
                 <ErrorMessage name={'bizUserId'} errors={errors} />
               </Text>
@@ -176,7 +176,7 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
           name="areaInfo"
           render={({field}) => (
             <Form.Item label="商家城市">
-              <Cascader value={field.value} onChange={field.onChange} options={cityList || []} placeholder="请输入" />
+              <Cascader disabled={true} value={field.value} onChange={field.onChange} options={cityList || []} />
             </Form.Item>
           )}
         />
@@ -220,10 +220,10 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
         <Controller
           control={control}
           name="spuName"
-          rules={{required: true}}
+          rules={{required: '请输入商品名称'}}
           render={({field: {value, onChange}}) => (
             <Form.Item label="商品名称">
-              <Input placeholder="商品名称" value={value} onChange={onChange} />
+              <Input placeholder="请输入" value={value} onChange={onChange} />
               <Text style={globalStyles.error}>
                 <ErrorMessage name={'spuName'} errors={errors} />
               </Text>
@@ -235,12 +235,12 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
           name="subName"
           render={({field: {value, onChange}}) => (
             <Form.Item label="商品副标题">
-              <Input placeholder="商品副标题" value={value} onChange={onChange} />
+              <Input placeholder="请输入" value={value} onChange={onChange} />
             </Form.Item>
           )}
         />
         <Form.Item label="商品分类">
-          <Cascader value={currentContract?.spuInfoReq?.spuCategoryIds} disabled options={SPUCategories} labelKey="name" valueKey="id" placeholder="商品分类" />
+          <Cascader textColor value={currentContract?.spuInfoReq?.spuCategoryIds} disabled options={SPUCategories} labelKey="name" valueKey="id" placeholder="商品分类" />
         </Form.Item>
         <Controller
           control={control}
@@ -330,7 +330,7 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
           control={control}
           render={({field: {value, onChange}}) => (
             <Form.Item label="展示时间" desc="用于提前展示，不提前展示的商品无需设置">
-              <DatePicker mode="datetime" value={value} onChange={onChange} />
+              <DatePicker placeholder="请选择" mode="datetime" value={value} onChange={onChange} />
             </Form.Item>
           )}
         />

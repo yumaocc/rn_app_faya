@@ -19,6 +19,7 @@ interface SelectProps {
   disabled?: boolean;
   children?: React.ReactNode | RenderPickerChildren;
   onChange?: (value: string | number | any) => void;
+  textColor?: boolean;
 }
 
 const Select: React.FC<SelectProps> = props => {
@@ -33,7 +34,11 @@ const Select: React.FC<SelectProps> = props => {
 
       return (
         <View style={styles.childrenWrapper}>
-          {!showPlaceholder ? <Text>{foundOption?.label || value}</Text> : <Text style={styles.placeholder}>{props.placeholder}</Text>}
+          {!showPlaceholder ? (
+            <Text style={{color: props.textColor ? '#666666' : 'black'}}>{foundOption?.label || value}</Text>
+          ) : (
+            <Text style={styles.placeholder}>{props.placeholder}</Text>
+          )}
           <Icon name="caret-right" style={styles.arrow} />
         </View>
       );

@@ -23,6 +23,7 @@ interface CascaderProps {
   title?: string;
   value?: Array<string | number>;
   style?: StylePropView;
+  textColor?: boolean;
   options: PickerOption[];
   placeholder?: string;
   disabled?: boolean;
@@ -60,13 +61,13 @@ const Cascader: React.FC<CascaderProps> = props => {
       });
 
       return (
-        <View style={styles.childrenWrapper}>
-          {value?.length ? <Text>{labels.join('/')}</Text> : <Text style={styles.placeholder}>{props.placeholder}</Text>}
+        <View style={[styles.childrenWrapper]}>
+          {value?.length ? <Text style={{color: props?.textColor ? '#666666' : 'black'}}>{labels.join('/')}</Text> : <Text style={styles.placeholder}>{props.placeholder}</Text>}
           <Icon name="caret-right" style={styles.arrow} />
         </View>
       );
     }
-  }, [flattenOptions, labelKey, props.children, props.placeholder, value, valueKey]);
+  }, [flattenOptions, labelKey, props.children, props.placeholder, props?.textColor, value, valueKey]);
 
   const getValue = useCallback((index: number) => currentValue[index], [currentValue]);
   const setValue = useCallback((index: number, value: string | number) => {

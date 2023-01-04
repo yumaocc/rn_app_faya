@@ -4,7 +4,7 @@ import {View, Text, StyleSheet, Image} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 // import {BadgeFlag} from '../../../component';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
-import {FakeNavigation, MyMerchantF, StylePropView} from '../../../models';
+import {BoolEnum, FakeNavigation, MyMerchantF, StylePropView} from '../../../models';
 
 interface CardProps {
   merchant: MyMerchantF;
@@ -72,7 +72,7 @@ const Card: React.FC<CardProps> = props => {
           ]}>
           <View>
             <Text style={[globalStyles.fontSize12, styles.centerText]}>商户模式</Text>
-            <Text style={[globalStyles.fontPrimary, styles.centerTextValue]}>{merchant.multiStore ? '连锁' : '单店'}</Text>
+            <Text style={[globalStyles.fontPrimary, styles.centerTextValue]}>{merchant.multiStore === BoolEnum.TRUE ? '多店' : '单店'}</Text>
           </View>
           <View>
             <Text style={[globalStyles.fontSize12, styles.centerText]}>店铺数量</Text>

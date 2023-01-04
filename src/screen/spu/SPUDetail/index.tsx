@@ -1,12 +1,13 @@
 import {Icon} from '@ant-design/react-native';
 import {useNavigation} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
-import {View, ScrollView, useWindowDimensions} from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {View, ScrollView, useWindowDimensions, Text} from 'react-native';
+import ModalDropdown from 'react-native-modal-dropdown';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {NavigationBar, Tabs} from '../../../component';
-import {globalStyleVariables} from '../../../constants/styles';
+import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {useContractDetail, useMerchantDetail, useParams, useRefCallback, useSPUDetail} from '../../../helper/hooks';
+import {getStatusColor} from '../../../helper/util';
 import {FakeNavigation} from '../../../models';
 import Base from './Base';
 import Booking from './Booking';
@@ -20,7 +21,7 @@ const steps = [
 ];
 
 const SPUDetail: React.FC = () => {
-  const params = useParams<{id: number}>();
+  const params = useParams<{id: number; status: number; statusStr: string}>();
   const [currentKey, setCurrentKey] = useState('base');
   const {width: windowWidth} = useWindowDimensions();
   const [ref, setRef, isReady] = useRefCallback<ScrollView>();
@@ -48,18 +49,30 @@ const SPUDetail: React.FC = () => {
   function handleEdit() {
     navigation.navigate('EditSPU', {id: params.id});
   }
-
   return (
     <>
       <SafeAreaView style={{flex: 1}} edges={['bottom']}>
         <NavigationBar
-          title="商品详情"
+          title={
+            <View style={globalStyles.containerCenter}>
+              <Text>商品详情</Text>
+              <Text style={[globalStyles.fontSize12, {color: getStatusColor(params?.status).color}]}>·{params?.statusStr}</Text>
+            </View>
+          }
           headerRight={
-            <TouchableOpacity activeOpacity={0.5} onPress={handleEdit}>
-              <View style={{height: '100%', justifyContent: 'center', paddingHorizontal: 10}}>
-                <Icon name="ellipsis" size={26} color={globalStyleVariables.TEXT_COLOR_PRIMARY} />
-              </View>
-            </TouchableOpacity>
+            <ModalDropdown
+              dropdownStyle={[globalStyles.dropDownItem, {height: 40, width: 90}]}
+              renderRow={item => (
+                <View style={[globalStyles.dropDownText, {width: '100%'}]}>
+                  <Text>{item.label}</Text>
+                </View>
+              )}
+              options={[{label: '编辑商品', value: 1}]}
+              onSelect={() => {
+                handleEdit();
+              }}>
+              <Icon name="ellipsis" size={26} color={globalStyleVariables.TEXT_COLOR_PRIMARY} />
+            </ModalDropdown>
           }
         />
         <View style={{flex: 1}}>

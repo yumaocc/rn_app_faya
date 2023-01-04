@@ -1,6 +1,7 @@
 import moment, {Moment} from 'moment';
 import {DATE_TIME_FORMAT} from '../constants';
 import {Environment, DateTimeString, FormMerchant, MerchantForm, MerchantCreateType, UploadFile, SPUCategory, SPUCodeType, SKUBuyNoticeF, Notice, Contract, Site} from '../models';
+import {SPUStatus} from '../models/spu';
 
 // 用来模拟异步操作
 export async function wait(ms: number) {
@@ -253,5 +254,17 @@ export const getSitesIndex = (sites: Site[], locationWithCompanyId: number) => {
         }
       }
     }
+  }
+};
+
+//根据spu状态设置颜色
+export const getStatusColor = (status: number) => {
+  switch (status) {
+    case SPUStatus.ON_SALE:
+      return {bg: 'rgba(74, 184, 125, 0.2)', color: '#4AB87D'};
+    case SPUStatus.WILL_SOLD_OUT:
+      return {bg: 'rgba(255, 180, 67, 0.2)', color: '#FF7715'};
+    default:
+      return {bg: 'rgba(0, 0, 0, 0.05)', color: '#333333'};
   }
 };

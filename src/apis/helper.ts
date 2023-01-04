@@ -25,7 +25,7 @@ export function resetToken(token: string) {
 axios.interceptors.response.use((response: AxiosResponse) => {
   const {data} = response;
   if (__DEV__) {
-    // console.log('响应体', data.data?.content || data);
+    console.log('响应体', data.data?.content || data);
   }
   switch (data.code) {
     case 8000:
@@ -35,10 +35,10 @@ axios.interceptors.response.use((response: AxiosResponse) => {
       return response;
   }
 });
-// axios.interceptors.request.use(res => {
-//   console.log('请求体', res);
-//   return res;
-// });
+axios.interceptors.request.use(res => {
+  console.log('请求体', res);
+  return res;
+});
 
 export async function getPaged<T>(url: string, config?: AxiosRequestConfig): Promise<PagedData<T>> {
   const res = await axios.get<Response<T>>(url, config);

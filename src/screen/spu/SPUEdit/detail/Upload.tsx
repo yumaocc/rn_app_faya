@@ -38,19 +38,6 @@ const Upload: React.FC<UploadProps> = props => {
   const handleFileChange = useCallback(
     (fileList: UploadFile[]): void => {
       if (onChange) {
-        fileList.forEach(item => {
-          console.log('进入循环');
-          ImagePicker.openCropper({
-            path: item.url,
-            width: 300,
-            height: 400,
-            mediaType: 'photo',
-          })
-            .then(image => {
-              console.log('裁剪之后的图片', image);
-            })
-            .catch(err => console.log(err));
-        });
         onChange(fileList);
       }
     },
@@ -90,6 +77,15 @@ const Upload: React.FC<UploadProps> = props => {
     const uploadedFileList: UploadFile[] = await Promise.all(
       newFileList.map(async file => {
         const {uri, name} = file;
+        const newUri = await ImagePicker.openCropper({
+          path: uri,
+          width: 300,
+          height: 400,
+          mediaType: 'photo',
+          multiple: false,
+        });
+        console.log(uri);
+        console.log(newUri);
         const url = await api.common.uploadToOSS(uri, name);
         return {...file, url, state: 'success'};
       }),

@@ -9,6 +9,7 @@ import {FakeNavigation, SPUF} from '../../../models';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {getBookingType} from '../../../helper';
 import {useNavigation} from '@react-navigation/native';
+import {cleanTime, getStatusColor} from '../../../helper/util';
 
 type StartFetchFunction = (rowData: any[], pageSize: number) => void;
 type abortFetchFunction = () => void;
@@ -29,8 +30,8 @@ const SPUList: React.FC = () => {
     }
   }
 
-  function viewDetail(spuId: number) {
-    navigation.navigate('SPUDetail', {id: spuId});
+  function viewDetail(item: SPUF) {
+    navigation.navigate('SPUDetail', {id: item?.id, status: item?.status, statusStr: item.statusStr});
   }
 
   function renderItem(item: SPUF) {
@@ -40,7 +41,7 @@ const SPUList: React.FC = () => {
       <View style={styles.spuContainer}>
         <TouchableWithoutFeedback
           onPress={() => {
-            viewDetail(item.id);
+            viewDetail(item);
           }}>
           <View style={{flexDirection: 'row'}}>
             <View style={{paddingTop: 10}}>
@@ -52,21 +53,26 @@ const SPUList: React.FC = () => {
                   <Icon name="shop" />
                   <Text>{item.bizName}</Text>
                 </View>
-                <View style={globalStyles.tagWrapper}>
-                  <Text style={globalStyles.tag}>{item.statusStr}</Text>
+                <View style={[globalStyles.tagWrapper, {backgroundColor: getStatusColor(item?.status).bg}]}>
+                  <Text style={[globalStyles.tag, {color: getStatusColor(item?.status).color}]}>·{item.statusStr}</Text>
                 </View>
               </View>
-              <Text numberOfLines={1}>{item.spuName}</Text>
-              <Text numberOfLines={1}>{item.categoryName}</Text>
-              <Text>{`售卖时间：${item.saleBeginTime}-${item.saleEndTime}`}</Text>
-              <Text>{`预约方式：${getBookingType(item.bookingType)}`}</Text>
+              <Text style={globalStyles.fontPrimary} numberOfLines={1}>
+                {item.spuName}
+              </Text>
+              <Text style={{color: '#666666'}} numberOfLines={1}>
+                {item.categoryName}
+              </Text>
+              <Text>{`售卖时间:${cleanTime(item.saleBeginTime)}-${cleanTime(item.saleEndTime)}`}</Text>
+              <Text>{`预约方式:${getBookingType(item.bookingType)}`}</Text>
               <View>
                 {showSKUList.map(sku => {
                   return (
                     <View key={sku.skuId} style={{marginTop: globalStyleVariables.MODULE_SPACE, backgroundColor: '#f4f4f4', padding: 10, borderRadius: 5}}>
                       <Text>{sku.skuName}</Text>
-                      <Text>{`实销：${sku.saleAmount} / 剩余：${sku.skuRemainingStock} / 库存：${sku.skuStock}`}</Text>
-                      <Text>{`结算价：${sku.skuSettlePrice}元`}</Text>
+                      <Text>{`实销:${sku?.saleAmount} / 剩余：${sku.skuRemainingStock} / 库存：${sku.skuStock}`}</Text>
+                      <Text>{`结算价:${sku?.skuSettlePriceYuan}元`}</Text>
+                      <Text>{`售价:${sku?.skuSalePriceYuan}元`}</Text>
                     </View>
                   );
                 })}

@@ -4,6 +4,7 @@ import {useRNSelectPhoto, useInfinityRotate} from '../../../helper/hooks';
 import * as api from '../../../apis';
 import uniqueId from 'lodash/uniqueId';
 import {Icon} from '@ant-design/react-native';
+import {globalStyles} from '../../../constants/styles';
 
 export interface UploadFile {
   url?: string;
@@ -93,17 +94,23 @@ const Upload: React.FC<UploadProps> = props => {
       {fileList.map((file, index) => {
         const uri = file.uri || file.url;
         return (
-          <View style={styles.block} key={`${file.uid}-${index}`}>
-            <TouchableOpacity activeOpacity={0.5} onPress={() => handleClick(index)}>
-              <Image source={{uri}} style={styles.image} />
-            </TouchableOpacity>
-            {file.state === 'uploading' && (
-              <View style={styles.uploading}>
-                <Animated.View style={{transform: [{rotate: rotateDeg}]}}>
-                  <Icon name="loading-3-quarters" />
-                </Animated.View>
+          <View style={[globalStyles.containerLR, {position: 'relative'}]}>
+            <View style={styles.block} key={`${file.uid}-${index}`}>
+              <View style={[globalStyles.containerLR, {flex: 1, width: 100}]}>
+                <Image source={{uri}} style={styles.image} />
               </View>
-            )}
+
+              {file.state === 'uploading' && (
+                <View style={styles.uploading}>
+                  <Animated.View style={{transform: [{rotate: rotateDeg}]}}>
+                    <Icon name="loading-3-quarters" />
+                  </Animated.View>
+                </View>
+              )}
+            </View>
+            <TouchableOpacity style={{position: 'absolute', top: -5, right: 0}} activeOpacity={0.5} onPress={() => handleClick(index)}>
+              <Icon name="minus-circle" color="red" />
+            </TouchableOpacity>
           </View>
         );
       })}
@@ -157,5 +164,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#0000002D',
+  },
+  wrapper: {
+    position: 'relative',
+  },
+  wrapperIcon: {
+    position: 'absolute',
   },
 });

@@ -28,7 +28,8 @@ const Home: React.FC = () => {
 
   return (
     <>
-      <Header title="首页" headerLeft={() => <Icon name="bell" />} headerLeftContainerStyle={{paddingLeft: 16}} />
+      {/* headerLeft={() => <Icon name="bell" />} headerLeftContainerStyle={{paddingLeft: 16}} */}
+      <Header title="首页" />
       <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} contentContainerStyle={{padding: 16}}>
         {/* 今日收益 */}
 

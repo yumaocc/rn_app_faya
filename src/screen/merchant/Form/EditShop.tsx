@@ -62,7 +62,7 @@ const EditShop: FC<EditShopProps> = ({open, setOpen, append, shopListForm, editS
           <View style={globalStyles.moduleMarginTop}>
             <Text style={[globalStyles.fontPrimary]}>商家名称</Text>
             <View style={[{padding: 0, margin: 0, backgroundColor: '#f4f4f4'}, globalStyles.moduleMarginTop]}>
-              <Input textAlign="left" style={{padding: 0, margin: 0}} placeholder="请输入商家名称" onChange={field.onChange} value={field.value} onBlur={field.onBlur} />
+              <Input textAlign="left" style={{padding: 0, margin: 0}} onChange={field.onChange} value={field.value} onBlur={field.onBlur} />
             </View>
             {errors.shopName && <Text style={globalStyles.error}>请输入商家名称</Text>}
           </View>
@@ -76,15 +76,7 @@ const EditShop: FC<EditShopProps> = ({open, setOpen, append, shopListForm, editS
           <View style={globalStyles.moduleMarginTop}>
             <Text style={[globalStyles.fontPrimary]}>商家电话</Text>
             <View style={[{padding: 0, margin: 0, backgroundColor: '#f4f4f4'}, globalStyles.moduleMarginTop]}>
-              <Input
-                textAlign="left"
-                type="number"
-                style={{padding: 0, margin: 0}}
-                placeholder="请输入商家电话"
-                onChange={field.onChange}
-                value={field.value}
-                onBlur={field.onBlur}
-              />
+              <Input textAlign="left" type="number" style={{padding: 0, margin: 0}} onChange={field.onChange} value={field.value} onBlur={field.onBlur} />
             </View>
             {errors.contactPhone && <Text style={globalStyles.error}>请输入商家电话</Text>}
           </View>
@@ -97,7 +89,7 @@ const EditShop: FC<EditShopProps> = ({open, setOpen, append, shopListForm, editS
           <View style={globalStyles.moduleMarginTop}>
             <Text style={[globalStyles.fontPrimary]}>纬度</Text>
             <View style={[{padding: 0, margin: 0, backgroundColor: '#f4f4f4'}, globalStyles.moduleMarginTop]}>
-              <Input textAlign="left" type="number" style={{padding: 0, margin: 0}} placeholder="请输入纬度" onChange={field.onChange} value={field.value} onBlur={field.onBlur} />
+              <Input textAlign="left" type="number" style={{padding: 0, margin: 0}} onChange={field.onChange} value={field.value} onBlur={field.onBlur} />
             </View>
           </View>
         )}
@@ -109,7 +101,7 @@ const EditShop: FC<EditShopProps> = ({open, setOpen, append, shopListForm, editS
           <View style={globalStyles.moduleMarginTop}>
             <Text style={[globalStyles.fontPrimary]}>经度</Text>
             <View style={[{padding: 0, margin: 0, backgroundColor: '#f4f4f4'}, globalStyles.moduleMarginTop]}>
-              <Input textAlign="left" type="number" style={{padding: 0, margin: 0}} placeholder="请输入经度" onChange={field.onChange} value={field.value} onBlur={field.onBlur} />
+              <Input textAlign="left" type="number" style={{padding: 0, margin: 0}} onChange={field.onChange} value={field.value} onBlur={field.onBlur} />
             </View>
           </View>
         )}
@@ -121,7 +113,7 @@ const EditShop: FC<EditShopProps> = ({open, setOpen, append, shopListForm, editS
           <View style={globalStyles.moduleMarginTop}>
             <Text style={[globalStyles.fontPrimary]}>店铺地址</Text>
             <View style={[{padding: 0, margin: 0, backgroundColor: '#f4f4f4'}, globalStyles.moduleMarginTop]}>
-              <Input textAlign="left" style={{padding: 0, margin: 0}} placeholder="请输入店铺地址" onChange={field.onChange} value={field.value} onBlur={field.onBlur} />
+              <Input textAlign="left" style={{padding: 0, margin: 0}} onChange={field.onChange} value={field.value} onBlur={field.onBlur} />
             </View>
           </View>
         )}

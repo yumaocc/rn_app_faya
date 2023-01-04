@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import {View, ScrollView, useWindowDimensions} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import {View, ScrollView, useWindowDimensions, KeyboardAvoidingView, Platform} from 'react-native';
+import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 
@@ -11,7 +11,6 @@ import {useForm} from 'react-hook-form';
 import Base from './base/Base';
 import SKU from './sku/SKU';
 import Booking from './booking/Booking';
-// import Image from './detail/Image';
 import ImageTextDetail from './detail/ImageTextDetail';
 
 import {cleanSPUForm, momentFromDateTime} from '../../../helper/util';
@@ -28,6 +27,7 @@ const steps = [
 
 const EditSPU: React.FC = () => {
   const params = useParams<{id: number}>();
+  const {bottom} = useSafeAreaInsets();
   const [loading, setLoading] = useState(false);
   const spuID = useMemo(() => Number(params.id), [params.id]); // 路由读取到商品ID
   const isEdit = useMemo(() => !!spuID, [spuID]); // 是否是编辑模式
@@ -81,28 +81,28 @@ const EditSPU: React.FC = () => {
     if (!contractDetail) {
       return;
     } else if (spuDetail && contractDetail) {
-      setValue('skuList', spuDetail.skuList);
-      setValue('baseSaleAmount', spuDetail.baseSaleAmount);
-      setValue('baseShareCount', spuDetail.baseShareCount);
-      setValue('id', spuDetail.id);
-      setValue('saleBeginTime', momentFromDateTime(spuDetail.saleBeginTime));
-      setValue('saleEndTime', momentFromDateTime(spuDetail.saleEndTime));
-      setValue('stockAmount', spuDetail.stockAmount);
-      setValue('spuName', spuDetail.spuName);
-      setValue('showBeginTime', momentFromDateTime(spuDetail.showBeginTime));
-      setValue('bizUserId', spuDetail.bizUserId);
-      setValue('needIdCard', spuDetail.needIdCard);
-      setValue('subName', spuDetail.subName);
-      setValue('canUseShopIds', spuDetail.canUseShopIds);
-      setValue('poster', [{url: spuDetail.poster, id: 1}]);
-      setValue('bannerPhotos', spuDetail.bannerPhotos);
-      setValue('contractId', spuDetail.contractId);
-      setValue('modelList', spuDetail.modelList);
-      setValue('packageList', spuDetail.packageList);
-      setValue('stockAmount', spuDetail.stockAmount);
-      setValue('locationIds', spuDetail.locationIds);
-      setValue('purchaseNoticeEntities', spuDetail.purchaseNoticeEntities);
-      contractDetail.skuInfoReq.skuInfo.forEach((item, index) => {
+      setValue('skuList', spuDetail?.skuList);
+      setValue('baseSaleAmount', spuDetail?.baseSaleAmount);
+      setValue('baseShareCount', spuDetail?.baseShareCount);
+      setValue('id', spuDetail?.id);
+      setValue('saleBeginTime', momentFromDateTime(spuDetail?.saleBeginTime));
+      setValue('saleEndTime', momentFromDateTime(spuDetail?.saleEndTime));
+      setValue('stockAmount', spuDetail?.stockAmount);
+      setValue('spuName', spuDetail?.spuName);
+      setValue('showBeginTime', momentFromDateTime(spuDetail?.showBeginTime));
+      setValue('bizUserId', spuDetail?.bizUserId);
+      setValue('needIdCard', spuDetail?.needIdCard);
+      setValue('subName', spuDetail?.subName);
+      setValue('canUseShopIds', spuDetail?.canUseShopIds);
+      setValue('poster', [{url: spuDetail?.poster, id: 1}]);
+      setValue('bannerPhotos', spuDetail?.bannerPhotos);
+      setValue('contractId', spuDetail?.contractId);
+      setValue('modelList', spuDetail?.modelList);
+      setValue('packageList', spuDetail?.packageList);
+      setValue('stockAmount', spuDetail?.stockAmount);
+      setValue('locationIds', spuDetail?.locationIds);
+      setValue('purchaseNoticeEntities', spuDetail?.purchaseNoticeEntities);
+      contractDetail?.skuInfoReq?.skuInfo?.forEach((item, index) => {
         setValue(`skuList.${index}.skuDetails`, item?.skuDetails);
       });
     }
@@ -172,11 +172,9 @@ const EditSPU: React.FC = () => {
       const valid = bizUserId && contractId;
       if (!bizUserId) {
         setError('bizUserId', {type: 'required', message: '请选择商家'});
-        commonDispatcher.info('请选择商家！');
       }
       if (!contractId) {
         setError('contractId', {type: 'required', message: '请选择合同'});
-        commonDispatcher.info('请选择合同');
       }
       return valid;
     }
@@ -189,39 +187,41 @@ const EditSPU: React.FC = () => {
         <NavigationBar title={isEdit ? '编辑商品' : '新增商品'} />
 
         <Steps steps={steps} currentKey={currentKey} onChange={setCurrentKey} onBeforeChangeKey={handleChangeStep} />
-        <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
-          <View style={[{width: windowWidth, paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
-            <Base
-              control={control}
-              setValue={setValue}
-              setError={setError}
-              getValues={getValues}
-              watch={watch}
-              handleSubmit={handleSubmit}
-              onNext={() => setCurrentKey('sku')}
-              errors={errors}
-            />
-          </View>
-          <View style={[{width: windowWidth, paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
-            <SKU
-              handleSubmit={handleSubmit}
-              setError={setError}
-              control={control}
-              setValue={setValue}
-              getValues={getValues}
-              watch={watch}
-              onNext={() => setCurrentKey('booking')}
-              errors={errors}
-            />
-          </View>
-          <View style={[{width: windowWidth, paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
-            <Booking control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={() => setCurrentKey('detail')} errors={errors} />
-          </View>
-          <View style={[{width: windowWidth, paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
-            <ImageTextDetail loading={loading} control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={onHandleSubmit} error={errors} />
-            {/* <Image loading={loading} control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={onHandleSubmit} error={errors} /> */}
-          </View>
-        </ScrollView>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{flex: 1}} keyboardVerticalOffset={-bottom - 64}>
+          <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
+            <View style={[{width: windowWidth, paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
+              <Base
+                control={control}
+                setValue={setValue}
+                setError={setError}
+                getValues={getValues}
+                watch={watch}
+                handleSubmit={handleSubmit}
+                onNext={() => setCurrentKey('sku')}
+                errors={errors}
+              />
+            </View>
+            <View style={[{width: windowWidth, paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
+              <SKU
+                handleSubmit={handleSubmit}
+                setError={setError}
+                control={control}
+                setValue={setValue}
+                getValues={getValues}
+                watch={watch}
+                onNext={() => setCurrentKey('booking')}
+                errors={errors}
+              />
+            </View>
+            <View style={[{width: windowWidth, paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
+              <Booking control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={() => setCurrentKey('detail')} errors={errors} />
+            </View>
+            <View style={[{width: windowWidth, paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
+              <ImageTextDetail loading={loading} control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={onHandleSubmit} error={errors} />
+              {/* <Image loading={loading} control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={onHandleSubmit} error={errors} /> */}
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </>
   );

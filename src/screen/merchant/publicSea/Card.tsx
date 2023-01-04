@@ -50,6 +50,7 @@ const Card: React.FC<CardProps> = props => {
               publicId: merchant.id,
               identity: MerchantCreateType.PUBLIC_SEA,
               locationCompanyId: merchant?.locationCompanyId,
+              status: merchant?.hasAuth,
             },
           })
         }>

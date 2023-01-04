@@ -68,7 +68,7 @@ export function generateContractFormPatch(contractForm: Contract): Contract {
     item.skuStock = `${item.skuStock}`;
     item.skuSettlementPrice = `${item.skuSettlementPrice}`;
     item.buyLimitNum = `${item.buyLimitNum}`;
-    item.skuDetails.forEach(item => {
+    item?.skuDetails?.forEach(item => {
       item.nums = `${item.nums}`;
       item.price = `${item.price}`;
     });
@@ -104,9 +104,9 @@ export function cleanContractForm(contractForm: Contract): ContractF {
     item.skuStock = Number(item.skuStock);
     item.skuSettlementPrice = Number(item.skuSettlementPrice);
     item.buyLimitNum = Number(item.buyLimitNum);
-    item.skuDetails.forEach(item => {
-      item.nums = Number(item.nums);
-      item.price = Number(item.price);
+    item?.skuDetails?.forEach(item => {
+      item.nums = Number(item?.nums);
+      item.price = Number(item?.price);
     });
   });
   const _skuInfoReq = {...skuInfoReq, openSkuStock: skuInfoReq.openSkuStock ? 1 : 0, skuInfo: _skuInfo, spuStock: Number(spuStock)};

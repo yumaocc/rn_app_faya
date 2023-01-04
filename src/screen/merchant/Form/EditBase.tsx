@@ -27,9 +27,10 @@ interface EditBaseProps {
   isHidden: boolean;
   locationCompanyId?: number;
   getValues?: UseFormGetValues<FormMerchant>;
+  status?: number; // 商家是否认证
 }
 
-const EditBase: React.FC<EditBaseProps> = ({Controller, control, setValue, getValues, isHidden, errors, locationCompanyId}) => {
+const EditBase: React.FC<EditBaseProps> = ({Controller, status, control, setValue, getValues, isHidden, errors, locationCompanyId}) => {
   const {cityList} = useLoadCity();
   const [modalIsShow, setModalIsShow] = useState(false);
   const [editShopIndex, setEditShopIndex] = useState(-1);
@@ -104,7 +105,7 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, control, setValue, getVa
           rules={{required: '请输入商家名称'}}
           render={({field}) => (
             <Form.Item label="商家名称">
-              <Input placeholder="请输入商家名称" value={field.value} onChange={field.onChange} />
+              <Input placeholder="请输入" value={field.value} onChange={field.onChange} />
               <Text style={globalStyles.error}>
                 <ErrorMessage name={'name'} errors={errors} />
               </Text>
@@ -144,23 +145,25 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, control, setValue, getVa
           )}
         />
 
-        <Controller
-          control={control}
-          name="businessType"
-          defaultValue={MerchantType.ENTERPRISE}
-          render={({field}) => (
-            <Form.Item label="商家类型">
-              <Select
-                value={field.value}
-                onChange={field.onChange}
-                options={[
-                  {value: MerchantType.ENTERPRISE, label: '企业'},
-                  {value: MerchantType.INDIVIDUAL, label: '个体工商户'},
-                ]}
-              />
-            </Form.Item>
-          )}
-        />
+        {!!!status && (
+          <Controller
+            control={control}
+            name="businessType"
+            defaultValue={MerchantType.ENTERPRISE}
+            render={({field}) => (
+              <Form.Item label="商家类型">
+                <Select
+                  value={field.value}
+                  onChange={field.onChange}
+                  options={[
+                    {value: MerchantType.ENTERPRISE, label: '企业'},
+                    {value: MerchantType.INDIVIDUAL, label: '个体工商户'},
+                  ]}
+                />
+              </Form.Item>
+            )}
+          />
+        )}
         {cityList?.length && (
           <Controller
             control={control}
@@ -168,7 +171,7 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, control, setValue, getVa
             rules={{required: '请输入商家城市'}}
             render={({field}) => (
               <Form.Item label="商家城市">
-                <Cascader value={field.value} onChange={field.onChange} options={cityList} placeholder="请输入" />
+                <Cascader value={field.value} onChange={field.onChange} options={cityList} />
                 <Text style={globalStyles.error}>
                   <ErrorMessage name={'areaInfo'} errors={errors} />
                 </Text>
@@ -183,7 +186,7 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, control, setValue, getVa
           rules={{required: '请输入商家地址'}}
           render={({field}) => (
             <Form.Item label="商家地址">
-              <Input placeholder="请输入商家地址" onChange={field.onChange} value={field.value} />
+              <Input onChange={field.onChange} value={field.value} />
               <Text style={globalStyles.error}>
                 <ErrorMessage name={'address'} errors={errors} />
               </Text>

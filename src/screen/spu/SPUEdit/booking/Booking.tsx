@@ -1,3 +1,4 @@
+//72数组解构会报错
 import {Button, Icon, SwipeAction} from '@ant-design/react-native';
 import React, {useState} from 'react';
 import {Control, Controller, FieldErrorsImpl, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
@@ -8,7 +9,7 @@ import {BoolOptions} from '../../../../constants';
 import {globalStyles, globalStyleVariables} from '../../../../constants/styles';
 import {findItem, getBookingType} from '../../../../helper';
 import {useCodeTypes, useCommonDispatcher, useMerchantBookingModel} from '../../../../helper/hooks';
-import {BoolEnum} from '../../../../models';
+import {BookingType, BoolEnum} from '../../../../models';
 import {RootState} from '../../../../redux/reducers';
 import {styles} from '../style';
 import {useForm} from 'react-hook-form';
@@ -65,11 +66,11 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
   };
 
   const BookingModel: React.FC<ModelListProps> = props => {
-    const {value} = props;
+    const {value = []} = props;
     return (
       <>
         {value?.map((item, index) => {
-          const [bookingItem] = booking?.filter(e => e.id === item.modelId);
+          const bookingItem = booking?.filter(e => e?.id === item?.modelId)[0]; ///这里还要找找原因，为什么解构会报错
           return (
             <View key={index} style={[style.module, globalStyles.moduleMarginTop]}>
               <SwipeAction
@@ -83,8 +84,8 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
                   },
                 ]}>
                 <Text style={[globalStyles.fontPrimary, globalStyles.borderBottom]}>型号：{bookingItem?.name}</Text>
-                {item.contractSkuIds?.map(skuId => {
-                  const skuItem = findItem(contractDetail?.skuInfoReq?.skuInfo, item => item.contractSkuId === skuId);
+                {item?.contractSkuIds?.map(skuId => {
+                  const skuItem = findItem(contractDetail?.skuInfoReq?.skuInfo, item => item?.contractSkuId === skuId);
                   return (
                     <Text key={skuId} style={[globalStyles.fontTertiary, globalStyles.moduleMarginTop]}>
                       {skuItem?.skuName}
@@ -131,20 +132,25 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
           <Form.Item label="预约类型">
             <Text>{getBookingType(contractDetail?.bookingReq?.bookingType)}</Text>
           </Form.Item>
-          <Form.Item label="可提前几天预约">
-            <Text>{contractDetail?.bookingReq?.bookingEarlyDay || '-'}天</Text>
-          </Form.Item>
-          <Form.Item label="预约开始时间">
-            <Text>{contractDetail?.bookingReq?.bookingBeginTime}</Text>
-          </Form.Item>
-          <Form.Item label="可取消预约">
-            <Select disabled value={contractDetail?.bookingReq?.bookingCanCancel} options={BoolOptions} />
-          </Form.Item>
-          {contractDetail?.bookingReq?.bookingCanCancel === BoolEnum.TRUE && (
-            <Form.Item label="需提前几天取消预约">
-              <Text>{contractDetail?.bookingReq?.bookingCancelDay || '-'}天</Text>
-            </Form.Item>
+          {contractDetail?.bookingReq?.bookingType !== BookingType.NONE && (
+            <>
+              <Form.Item label="可提前几天预约">
+                <Text>{contractDetail?.bookingReq?.bookingEarlyDay || '-'}天</Text>
+              </Form.Item>
+              <Form.Item label="预约开始时间">
+                <Text>{contractDetail?.bookingReq?.bookingBeginTime}</Text>
+              </Form.Item>
+              <Form.Item label="可取消预约">
+                <Select disabled value={contractDetail?.bookingReq?.bookingCanCancel} options={BoolOptions} />
+              </Form.Item>
+              {contractDetail?.bookingReq?.bookingCanCancel === BoolEnum.TRUE && (
+                <Form.Item label="需提前几天取消预约">
+                  <Text>{contractDetail?.bookingReq?.bookingCancelDay || '-'}天</Text>
+                </Form.Item>
+              )}
+            </>
           )}
+
           <Form.Item label="绑定预约型号" vertical>
             <View style={{flexDirection: 'row'}}>
               <PlusButton title="绑定预约型号" style={{marginRight: 20}} onPress={openBindingModal} />

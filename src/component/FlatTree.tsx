@@ -155,7 +155,7 @@ const FlatTree: FC<FlatTreeProps> = props => {
                   )
                 }>
                 <View style={{width: 100, alignItems: 'flex-end'}}>
-                  <Icon name={checkedIsShow[index].isShow ? 'caret-right' : 'caret-down'} style={styles.arrow} />
+                  <Icon name={checkedIsShow[index].isShow ? 'caret-down' : 'caret-right'} style={styles.arrow} />
                 </View>
               </TouchableOpacity>
             </View>
@@ -207,7 +207,6 @@ const styles = StyleSheet.create({
     marginBottom: globalStyleVariables.MODULE_SPACE,
   },
   arrow: {
-    transform: [{rotate: '90deg'}],
     marginLeft: 3,
     color: '#000',
     fontSize: 10,
