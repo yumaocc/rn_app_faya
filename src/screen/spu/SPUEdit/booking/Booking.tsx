@@ -162,7 +162,7 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
         <SectionGroup style={styles.sectionGroupStyle}>
           <FormTitle title="发码设置" />
           <Form.Item label="发码方式">
-            <Select disabled value={contractDetail?.bookingReq?.codeType} options={codeTypes.map(item => ({label: item.name, value: item.codeType}))} />
+            <Select textColor disabled value={contractDetail?.bookingReq?.codeType} options={codeTypes.map(item => ({label: item.name, value: item.codeType}))} />
           </Form.Item>
         </SectionGroup>
 

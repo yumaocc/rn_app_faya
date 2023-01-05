@@ -1,8 +1,10 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {Text, StyleSheet, View} from 'react-native';
 import {globalStyles, globalStyleVariables} from '../../constants/styles';
 import {StylePropView} from '../../models';
+import {FormDisabledContext} from './Context';
 import {useFormInstance} from './hooks';
+import Icon from './Icon';
 
 export interface FormItemProps {
   children: React.ReactNode;
@@ -17,13 +19,25 @@ export interface FormItemProps {
   vertical?: boolean;
   noStyle?: boolean;
   style?: StylePropView;
+  showAsterisk?: boolean; //是否显示红色星号
   horizontal?: boolean; //图片和label 上下居中， 两端对齐
 }
 
 const FormItem: React.FC<FormItemProps> = props => {
-  const {label, hiddenBorderBottom, hiddenBorderTop, valueKey, onChangeKey} = props;
+  const {label, hiddenBorderBottom, hiddenBorderTop, valueKey, onChangeKey, showAsterisk} = props;
   const formInstance = useFormInstance();
-
+  const {disabled} = useContext(FormDisabledContext);
+  function childrenWithDisabled(): React.ReactElement {
+    const children = React.Children.map(props.children as React.ReactElement, (child: React.ReactElement) => {
+      const childProps = child.props || {};
+      const newProps = {
+        ...childProps,
+        disabled,
+      };
+      return React.cloneElement(child, newProps);
+    });
+    return <>{children}</>;
+  }
   function renderChildren(): React.ReactElement {
     const name = props.name;
     if (name) {
@@ -33,6 +47,7 @@ const FormItem: React.FC<FormItemProps> = props => {
         const oldOnChange = childProps[onChangeKey];
         const newProps = {
           ...childProps,
+          disabled,
           [valueKey]: formInstance.getFieldValue(name),
           [onChangeKey]: (value: any) => {
             formInstance.setFieldValue(name, value);
@@ -41,10 +56,10 @@ const FormItem: React.FC<FormItemProps> = props => {
         };
         return React.cloneElement(child, newProps);
       } catch (error) {
-        return props.children as React.ReactElement;
+        return childrenWithDisabled();
       }
     }
-    return props.children as React.ReactElement;
+    return childrenWithDisabled();
   }
 
   if (props.noStyle) {
@@ -106,6 +121,7 @@ const FormItem: React.FC<FormItemProps> = props => {
       <View style={[styles.item]}>
         <View style={[styles.labelLeft, {maxWidth: '100%'}]}>
           <View style={styles.labelWrapper}>
+            {showAsterisk && <Icon name="xinhao" color="red" size={9} />}
             <Text style={[globalStyles.fontPrimary, styles.label]}>{label}</Text>
           </View>
           {props.desc && (
@@ -156,6 +172,7 @@ const styles = StyleSheet.create({
   labelWrapper: {
     flex: 1,
     justifyContent: 'center',
+    flexDirection: 'row',
   },
   label: {
     fontSize: 16,

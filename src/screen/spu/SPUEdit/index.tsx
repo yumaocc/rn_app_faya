@@ -1,12 +1,12 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import {View, ScrollView, useWindowDimensions, KeyboardAvoidingView, Platform} from 'react-native';
+import {View, ScrollView, useWindowDimensions, KeyboardAvoidingView, Platform, Text} from 'react-native';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 
-import {Steps, NavigationBar} from '../../../component';
+import {Steps, NavigationBar, Modal} from '../../../component';
 import {useCommonDispatcher, useContractDispatcher, useSummaryDispatcher, useMerchantDispatcher, useParams, useRefCallback, useSKUDispatcher} from '../../../helper/hooks';
-import {globalStyleVariables} from '../../../constants/styles';
+import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {useForm} from 'react-hook-form';
 import Base from './base/Base';
 import SKU from './sku/SKU';
@@ -17,6 +17,7 @@ import {cleanSPUForm, momentFromDateTime} from '../../../helper/util';
 import {RootState} from '../../../redux/reducers';
 import * as api from '../../../apis';
 import _ from 'lodash';
+import {FormDisabledContext} from '../../../component/Form/Context';
 
 const steps = [
   {title: '基本信息', key: 'base'},
@@ -26,8 +27,9 @@ const steps = [
 ];
 
 const EditSPU: React.FC = () => {
-  const params = useParams<{id: number}>();
+  const params = useParams<{id: number; action: string}>();
   const {bottom} = useSafeAreaInsets();
+  const [isShowModal, setIsShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const spuID = useMemo(() => Number(params.id), [params.id]); // 路由读取到商品ID
   const isEdit = useMemo(() => !!spuID, [spuID]); // 是否是编辑模式
@@ -180,48 +182,71 @@ const EditSPU: React.FC = () => {
     }
     return true;
   }
-
+  const handleGoBack = () => {
+    if (params?.action === 'edit') {
+      onOk();
+      return;
+    }
+    const formData = getValues(['bizUserId', 'contractId']);
+    for (let i = 0; i < formData?.length; i++) {
+      if (formData[i]) {
+        setIsShowModal(true);
+        return;
+      }
+    }
+    onOk();
+  };
+  const onOk = () => {
+    navigation.canGoBack() && navigation.goBack();
+  };
   return (
     <>
       <SafeAreaView style={{flex: 1, backgroundColor: '#f4f4f4'}} edges={['bottom']}>
-        <NavigationBar title={isEdit ? '编辑商品' : '新增商品'} />
+        <NavigationBar handleClick={handleGoBack} title={isEdit ? '编辑商品' : '新增商品'} />
 
         <Steps steps={steps} currentKey={currentKey} onChange={setCurrentKey} onBeforeChangeKey={handleChangeStep} />
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{flex: 1}} keyboardVerticalOffset={-bottom - 64}>
-          <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
-            <View style={[{width: windowWidth, paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
-              <Base
-                control={control}
-                setValue={setValue}
-                setError={setError}
-                getValues={getValues}
-                watch={watch}
-                handleSubmit={handleSubmit}
-                onNext={() => setCurrentKey('sku')}
-                errors={errors}
-              />
-            </View>
-            <View style={[{width: windowWidth, paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
-              <SKU
-                handleSubmit={handleSubmit}
-                setError={setError}
-                control={control}
-                setValue={setValue}
-                getValues={getValues}
-                watch={watch}
-                onNext={() => setCurrentKey('booking')}
-                errors={errors}
-              />
-            </View>
-            <View style={[{width: windowWidth, paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
-              <Booking control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={() => setCurrentKey('detail')} errors={errors} />
-            </View>
-            <View style={[{width: windowWidth, paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
-              <ImageTextDetail loading={loading} control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={onHandleSubmit} error={errors} />
-              {/* <Image loading={loading} control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={onHandleSubmit} error={errors} /> */}
-            </View>
-          </ScrollView>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{flex: 1}} keyboardVerticalOffset={-bottom + 30}>
+          <FormDisabledContext.Provider value={{disabled: false}}>
+            <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
+              <View style={[{width: windowWidth, paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
+                <Base
+                  control={control}
+                  setValue={setValue}
+                  setError={setError}
+                  getValues={getValues}
+                  watch={watch}
+                  handleSubmit={handleSubmit}
+                  onNext={() => setCurrentKey('sku')}
+                  errors={errors}
+                />
+              </View>
+              <View style={[{width: windowWidth, paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
+                <SKU
+                  handleSubmit={handleSubmit}
+                  setError={setError}
+                  control={control}
+                  setValue={setValue}
+                  getValues={getValues}
+                  watch={watch}
+                  onNext={() => setCurrentKey('booking')}
+                  errors={errors}
+                />
+              </View>
+              <View style={[{width: windowWidth, paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
+                <Booking control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={() => setCurrentKey('detail')} errors={errors} />
+              </View>
+              <View style={[{width: windowWidth, paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
+                <ImageTextDetail loading={loading} control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={onHandleSubmit} error={errors} />
+                {/* <Image loading={loading} control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={onHandleSubmit} error={errors} /> */}
+              </View>
+            </ScrollView>
+          </FormDisabledContext.Provider>
         </KeyboardAvoidingView>
+        <Modal visible={isShowModal} cancelText="取消" showCancel onCancel={() => setIsShowModal(false)} onClose={() => setIsShowModal(false)} onOk={onOk} title="提示">
+          <View style={{padding: globalStyleVariables.MODULE_SPACE}}>
+            <Text style={[globalStyles.fontPrimary, {color: globalStyleVariables.COLOR_ERROR}]}>您还未提交商品，退出编辑将清空，确定退出吗？</Text>
+          </View>
+        </Modal>
       </SafeAreaView>
     </>
   );

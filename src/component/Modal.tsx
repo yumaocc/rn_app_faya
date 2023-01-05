@@ -59,7 +59,7 @@ const Modal: React.FC<ModalProps> = props => {
       <View style={styles.defaultFooterWrapper}>
         {props.showCancel && (
           <Button style={[styles.footerButton, {marginRight: globalStyleVariables.MODULE_SPACE}]} onPress={handleCancel}>
-            {props.cancelText}
+            <Text style={{color: globalStyleVariables.COLOR_PRIMARY}}>{props.cancelText}</Text>
           </Button>
         )}
         <Button style={[styles.footerButton]} type="primary" onPress={handleOk}>
@@ -170,6 +170,7 @@ const styles = StyleSheet.create({
   },
   footerButton: {
     flex: 1,
+    borderColor: globalStyleVariables.COLOR_PRIMARY,
   },
   defaultFooterWrapper: {
     flexDirection: 'row',

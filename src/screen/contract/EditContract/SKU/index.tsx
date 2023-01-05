@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useContext, useEffect, useState} from 'react';
 import {Control, FieldErrorsImpl, useFieldArray, UseFormGetValues, UseFormHandleSubmit, UseFormSetValue, UseFormWatch} from 'react-hook-form';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import {Cascader, Form, FormTitle, Input, SectionGroup, Select, Switch} from '../../../../component';
@@ -12,8 +12,9 @@ import {Controller} from 'react-hook-form';
 import {Button} from '@ant-design/react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../../redux/reducers';
+import {FormDisabledContext} from '../../../../component/Form/Context';
 interface SKUProps {
-  onNext: () => void;
+  onNext?: () => void;
   control: Control<any, any>;
   setValue: UseFormSetValue<any>;
   getValues: UseFormGetValues<any>;
@@ -24,11 +25,13 @@ interface SKUProps {
 }
 
 const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action, errors}) => {
-  useSPUCategories();
+  const {disabled} = useContext(FormDisabledContext);
+  const [moreMeals, setMoreMeals] = useState(true);
   const SPUCategories = useSelector((state: RootState) => {
     return formattingGoodsCategory(state.sku.categories);
   });
-  const [moreMeals, setMoreMeals] = useState(true);
+  useSPUCategories();
+
   const {fields, remove, append} = useFieldArray({
     name: 'skuInfoReq.skuInfo',
     control: control,
@@ -45,6 +48,9 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action,
   }, [SPUCategories, action, setValue, spuCategoryIds]);
   //增加一个套餐
   const addSkuInfo = () => {
+    if (disabled) {
+      return;
+    }
     append({
       skuName: '',
       skuDetails: [
@@ -83,7 +89,7 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action,
           name="spuInfoReq.spuName"
           rules={{required: '请输入商品名称'}}
           render={({field: {value, onChange}}) => (
-            <Form.Item label="商品名称">
+            <Form.Item showAsterisk label="商品名称">
               <Input value={value} onChange={onChange} />
               <Text style={globalStyles.error}>
                 <ErrorMessage name={'spuInfoReq.spuName'} errors={errors} />
@@ -96,7 +102,7 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action,
           name="spuInfoReq.spuCategoryIds"
           rules={{required: '请选择商品分类'}}
           render={({field: {value, onChange}}) => (
-            <Form.Item label="商品分类">
+            <Form.Item showAsterisk label="商品分类">
               <Cascader value={value || []} onChange={onChange} options={SPUCategories} />
               <Text style={globalStyles.error}>
                 <ErrorMessage name={'spuInfoReq.spuCategoryIds'} errors={errors} />
@@ -122,7 +128,7 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action,
           rules={{required: '请输入商品总库存'}}
           name="skuInfoReq.spuStock"
           render={({field: {value, onChange}}) => (
-            <Form.Item label="商品总库存">
+            <Form.Item showAsterisk label="商品总库存">
               <Input value={value} type="number" onChange={onChange} />
               <Text style={globalStyles.error}>
                 <ErrorMessage name={'skuInfoReq.spuStock'} errors={errors} />
@@ -155,7 +161,13 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action,
                         <TouchableOpacity onPress={addSkuInfo}>
                           <Text style={{marginRight: globalStyleVariables.MODULE_SPACE, color: globalStyleVariables.COLOR_PRIMARY}}>复制</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => delSkuInfo(index)}>
+                        <TouchableOpacity
+                          onPress={() => {
+                            if (disabled) {
+                              return;
+                            }
+                            delSkuInfo(index);
+                          }}>
                           <Text style={{color: globalStyleVariables.COLOR_ERROR}}>删除</Text>
                         </TouchableOpacity>
                       </>
@@ -168,7 +180,7 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action,
                 rules={{required: '请输入套餐名称'}}
                 name={`skuInfoReq.skuInfo.${index}.skuName`}
                 render={({field: {value, onChange}}) => (
-                  <Form.Item label="套餐名称">
+                  <Form.Item showAsterisk label="套餐名称">
                     <Input value={value} onChange={onChange} />
                     <Text style={globalStyles.error}>
                       <ErrorMessage name={`skuInfoReq.skuInfo.${index}.skuName`} errors={errors} />
@@ -181,7 +193,7 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action,
                 rules={{required: '请输入套餐结算价'}}
                 name={`skuInfoReq.skuInfo.${index}.skuSettlementPrice`}
                 render={({field: {value, onChange}}) => (
-                  <Form.Item label="套餐结算价">
+                  <Form.Item showAsterisk label="套餐结算价">
                     <Input value={value} type="number" onChange={onChange} />
                     <Text style={globalStyles.error}>
                       <ErrorMessage name={`skuInfoReq.skuInfo.${index}.skuSettlementPrice`} errors={errors} />
@@ -259,9 +271,11 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action,
           );
         })}
       </SectionGroup>
-      <Button style={{margin: 10}} type="primary" onPress={onNext}>
-        下一步
-      </Button>
+      {disabled ? null : (
+        <Button style={{margin: 10}} type="primary" onPress={onNext}>
+          下一步
+        </Button>
+      )}
     </View>
   );
 };

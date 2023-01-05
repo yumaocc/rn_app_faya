@@ -7,6 +7,7 @@ interface NavigationBarProps {
   title?: string | React.ReactNode;
   headerLeft?: React.ReactNode;
   headerRight?: React.ReactNode;
+  handleClick?: () => void;
 }
 
 const NavigationBar: React.FC<NavigationBarProps> = props => {
@@ -22,7 +23,15 @@ const NavigationBar: React.FC<NavigationBarProps> = props => {
       return props.headerLeft;
     }
     return (
-      <TouchableOpacity activeOpacity={0.5} onPress={handleBack}>
+      <TouchableOpacity
+        activeOpacity={0.5}
+        onPress={() => {
+          if (props.handleClick) {
+            props.handleClick();
+            return;
+          }
+          handleBack();
+        }}>
         <View style={styles.defaultLeft}>
           <View style={styles.arrow} />
         </View>

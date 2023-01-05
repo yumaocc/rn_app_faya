@@ -16,6 +16,7 @@ import {useNavigation} from '@react-navigation/native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useLoadAllSite} from '../../../../../helper/hooks/common';
 import {getSitesIndex} from '../../../../../helper/util';
+import {FormDisabledContext} from '../../../../../component/Form/Context';
 
 interface ShopInfoProps {
   id: number;
@@ -86,224 +87,226 @@ const AddMerchant: React.FC<ShopInfoProps> = ({id, locationCompanyId}) => {
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
-      <ScrollView>
-        <View style={styles.container}>
-          <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
-            <View style={{width: windowWidth}}>
-              <SectionGroup style={styles.sectionGroup}>
-                <FormTitle title="基本信息" />
-                <Controller
-                  control={control}
-                  name="avatar"
-                  rules={{required: true}}
-                  render={({field}) => (
-                    <Form.Item label="商家LOGO" horizontal desc="大于300px*300px jpg/png/gif">
-                      <Upload maxCount={1} value={field.value} onChange={field.onChange} />
-                    </Form.Item>
-                  )}
-                />
-                <Controller
-                  control={control}
-                  name="name"
-                  rules={{required: true}}
-                  render={({field: {value}}) => (
-                    <Form.Item label="商家名称">
-                      <SelfText value={value} />
-                    </Form.Item>
-                  )}
-                />
-
-                {data?.length && (
+      <FormDisabledContext.Provider value={{disabled: true}}>
+        <ScrollView>
+          <View style={styles.container}>
+            <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
+              <View style={{width: windowWidth}}>
+                <SectionGroup style={styles.sectionGroup}>
+                  <FormTitle title="基本信息" />
                   <Controller
                     control={control}
-                    name="categoryId"
-                    render={({field}) => (
-                      <Form.Item label="商家行业">
-                        <Select disabled options={data} value={field.value} onChange={field.onChange} />
-                      </Form.Item>
-                    )}
-                  />
-                )}
-
-                <Controller
-                  control={control}
-                  name="multiStore"
-                  defaultValue={BoolEnum.FALSE}
-                  render={({field}) => (
-                    <Form.Item label="商家模式">
-                      <Select
-                        disabled
-                        value={field.value}
-                        onChange={field.onChange}
-                        options={[
-                          {value: BoolEnum.FALSE, label: '单店'},
-                          {value: BoolEnum.TRUE, label: '多店'},
-                        ]}
-                      />
-                    </Form.Item>
-                  )}
-                />
-
-                <Controller
-                  control={control}
-                  name="businessType"
-                  defaultValue={MerchantType.ENTERPRISE}
-                  render={({field}) => (
-                    <Form.Item label="商家类型">
-                      <Select
-                        disabled
-                        value={field.value}
-                        onChange={field.onChange}
-                        options={[
-                          {value: MerchantType.ENTERPRISE, label: '企业'},
-                          {value: MerchantType.INDIVIDUAL, label: '个体工商户'},
-                        ]}
-                      />
-                    </Form.Item>
-                  )}
-                />
-                {cityList?.length && (
-                  <Controller
-                    control={control}
-                    name="areaInfo"
+                    name="avatar"
                     rules={{required: true}}
                     render={({field}) => (
-                      <Form.Item label="商家城市">
-                        <Cascader disabled value={field.value} onChange={field.onChange} options={cityList} placeholder="请输入" />
+                      <Form.Item label="商家LOGO" horizontal desc="大于300px*300px jpg/png/gif">
+                        <Upload maxCount={1} value={field.value} onChange={field.onChange} />
                       </Form.Item>
                     )}
                   />
-                )}
-                <Controller
-                  control={control}
-                  name="address"
-                  rules={{required: true, maxLength: 100}}
-                  render={({field}) => (
-                    <Form.Item label="商家地址">
-                      <SelfText value={field.value} />
-                    </Form.Item>
-                  )}
-                />
-              </SectionGroup>
+                  <Controller
+                    control={control}
+                    name="name"
+                    rules={{required: true}}
+                    render={({field: {value}}) => (
+                      <Form.Item label="商家名称">
+                        <SelfText value={value} />
+                      </Form.Item>
+                    )}
+                  />
 
-              <SectionGroup style={styles.sectionGroup}>
-                <FormTitle title="基本信息" />
-                <Controller
-                  name="businessName"
-                  control={control}
-                  render={({field: {value}}) => (
-                    <Form.Item label="商家主体名称">
-                      <SelfText value={value} />
-                    </Form.Item>
+                  {data?.length && (
+                    <Controller
+                      control={control}
+                      name="categoryId"
+                      render={({field}) => (
+                        <Form.Item label="商家行业">
+                          <Select disabled options={data} value={field.value} onChange={field.onChange} />
+                        </Form.Item>
+                      )}
+                    />
                   )}
-                />
-                <Controller
-                  name="enterpriseUsci"
-                  control={control}
-                  render={({field}) => (
-                    <Form.Item label="统一社会信用代码">
-                      <SelfText value={field.value} />
-                    </Form.Item>
-                  )}
-                />
 
-                <Controller
-                  name="legalPhone"
-                  control={control}
-                  render={({field: {value}}) => (
-                    <Form.Item label="法人">
-                      <SelfText value={value} />
-                    </Form.Item>
-                  )}
-                />
-                <Controller
-                  name="legalName"
-                  control={control}
-                  render={({field: {value}}) => (
-                    <Form.Item label={'法人'}>
-                      <SelfText value={value} />
-                    </Form.Item>
-                  )}
-                />
+                  <Controller
+                    control={control}
+                    name="multiStore"
+                    defaultValue={BoolEnum.FALSE}
+                    render={({field}) => (
+                      <Form.Item label="商家模式">
+                        <Select
+                          disabled
+                          value={field.value}
+                          onChange={field.onChange}
+                          options={[
+                            {value: BoolEnum.FALSE, label: '单店'},
+                            {value: BoolEnum.TRUE, label: '多店'},
+                          ]}
+                        />
+                      </Form.Item>
+                    )}
+                  />
 
-                <Controller
-                  name="legalNumber"
-                  control={control}
-                  render={({field: {value}}) => (
-                    <Form.Item label={'法人'}>
-                      <SelfText value={value} />
-                    </Form.Item>
+                  <Controller
+                    control={control}
+                    name="businessType"
+                    defaultValue={MerchantType.ENTERPRISE}
+                    render={({field}) => (
+                      <Form.Item label="商家类型">
+                        <Select
+                          disabled
+                          value={field.value}
+                          onChange={field.onChange}
+                          options={[
+                            {value: MerchantType.ENTERPRISE, label: '企业'},
+                            {value: MerchantType.INDIVIDUAL, label: '个体工商户'},
+                          ]}
+                        />
+                      </Form.Item>
+                    )}
+                  />
+                  {cityList?.length && (
+                    <Controller
+                      control={control}
+                      name="areaInfo"
+                      rules={{required: true}}
+                      render={({field}) => (
+                        <Form.Item label="商家城市">
+                          <Cascader disabled value={field.value} onChange={field.onChange} options={cityList} placeholder="请输入" />
+                        </Form.Item>
+                      )}
+                    />
                   )}
-                />
-                <Controller
-                  name="businessLicense"
-                  control={control}
-                  render={({field}) => (
-                    <Form.Item label="营业执照" horizontal>
-                      <Upload maxCount={1} value={field.value} onChange={field.onChange} />
-                    </Form.Item>
-                  )}
-                />
-              </SectionGroup>
-            </View>
-          </ScrollView>
-          <SectionGroup style={styles.sectionGroup}>
-            <FormTitle title="店铺信息" style={{height: 40, alignItems: 'center'}} />
-            {fields.map((item, index) => {
-              if (index > 2) {
-                return null;
-              }
-              return (
-                <View key={item.id}>
-                  <TouchableOpacity activeOpacity={0.5} onPress={() => handleClickShop(index)}>
-                    <View style={styles.shop}>
-                      <Controller
-                        control={control}
-                        name={`shopList.${index}.shopName`}
-                        render={({field: {value}}) => (
-                          <View style={[globalStyles.borderBottom, {paddingBottom: 10}]}>
-                            <SelfText value={value} style={[globalStyles.fontPrimary, globalStyles.borderBottom]} />
-                          </View>
-                        )}
-                      />
-                      <Controller
-                        control={control}
-                        name={`shopList.${index}.addressDetail`}
-                        render={({field: {value}}) => <SelfText value={value} style={[globalStyles.fontTertiary, globalStyles.moduleMarginTop]} />}
-                      />
-                      <Controller
-                        control={control}
-                        name={`shopList.${index}.contactPhone`}
-                        render={({field: {value}}) => <SelfText value={value} style={globalStyles.fontTertiary} />}
-                      />
-                    </View>
-                  </TouchableOpacity>
-                  {index === 2 && (
-                    <View style={[globalStyles.borderTop]}>
-                      <TouchableOpacity
-                        activeOpacity={0.5}
-                        onPress={() =>
-                          navigation.navigate({
-                            name: 'ShopList',
-                            params: {
-                              id: id,
-                            },
-                          })
-                        }>
-                        <LinkButton title="查看更多" />
-                      </TouchableOpacity>
-                    </View>
-                  )}
-                </View>
-              );
-            })}
-          </SectionGroup>
-        </View>
+                  <Controller
+                    control={control}
+                    name="address"
+                    rules={{required: true, maxLength: 100}}
+                    render={({field}) => (
+                      <Form.Item label="商家地址">
+                        <SelfText value={field.value} />
+                      </Form.Item>
+                    )}
+                  />
+                </SectionGroup>
 
-        <View style={[globalStyles.containerCenter, {margin: globalStyleVariables.MODULE_SPACE}]}>
-          <Text style={globalStyles.fontTertiary}>已经到底了</Text>
-        </View>
-      </ScrollView>
+                <SectionGroup style={styles.sectionGroup}>
+                  <FormTitle title="基本信息" />
+                  <Controller
+                    name="businessName"
+                    control={control}
+                    render={({field: {value}}) => (
+                      <Form.Item label="商家主体名称">
+                        <SelfText value={value} />
+                      </Form.Item>
+                    )}
+                  />
+                  <Controller
+                    name="enterpriseUsci"
+                    control={control}
+                    render={({field}) => (
+                      <Form.Item label="统一社会信用代码">
+                        <SelfText value={field.value} />
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Controller
+                    name="legalPhone"
+                    control={control}
+                    render={({field: {value}}) => (
+                      <Form.Item label="法人">
+                        <SelfText value={value} />
+                      </Form.Item>
+                    )}
+                  />
+                  <Controller
+                    name="legalName"
+                    control={control}
+                    render={({field: {value}}) => (
+                      <Form.Item label={'法人'}>
+                        <SelfText value={value} />
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Controller
+                    name="legalNumber"
+                    control={control}
+                    render={({field: {value}}) => (
+                      <Form.Item label={'法人'}>
+                        <SelfText value={value} />
+                      </Form.Item>
+                    )}
+                  />
+                  <Controller
+                    name="businessLicense"
+                    control={control}
+                    render={({field}) => (
+                      <Form.Item label="营业执照" horizontal>
+                        <Upload maxCount={1} value={field.value} onChange={field.onChange} />
+                      </Form.Item>
+                    )}
+                  />
+                </SectionGroup>
+              </View>
+            </ScrollView>
+            <SectionGroup style={styles.sectionGroup}>
+              <FormTitle title="店铺信息" style={{height: 40, alignItems: 'center'}} />
+              {fields.map((item, index) => {
+                if (index > 2) {
+                  return null;
+                }
+                return (
+                  <View key={item.id}>
+                    <TouchableOpacity activeOpacity={0.5} onPress={() => handleClickShop(index)}>
+                      <View style={styles.shop}>
+                        <Controller
+                          control={control}
+                          name={`shopList.${index}.shopName`}
+                          render={({field: {value}}) => (
+                            <View style={[globalStyles.borderBottom, {paddingBottom: 10}]}>
+                              <SelfText value={value} style={[globalStyles.fontPrimary, globalStyles.borderBottom]} />
+                            </View>
+                          )}
+                        />
+                        <Controller
+                          control={control}
+                          name={`shopList.${index}.addressDetail`}
+                          render={({field: {value}}) => <SelfText value={value} style={[globalStyles.fontTertiary, globalStyles.moduleMarginTop]} />}
+                        />
+                        <Controller
+                          control={control}
+                          name={`shopList.${index}.contactPhone`}
+                          render={({field: {value}}) => <SelfText value={value} style={globalStyles.fontTertiary} />}
+                        />
+                      </View>
+                    </TouchableOpacity>
+                    {index === 2 && (
+                      <View style={[globalStyles.borderTop]}>
+                        <TouchableOpacity
+                          activeOpacity={0.5}
+                          onPress={() =>
+                            navigation.navigate({
+                              name: 'ShopList',
+                              params: {
+                                id: id,
+                              },
+                            })
+                          }>
+                          <LinkButton title="查看更多" />
+                        </TouchableOpacity>
+                      </View>
+                    )}
+                  </View>
+                );
+              })}
+            </SectionGroup>
+          </View>
+
+          <View style={[globalStyles.containerCenter, {margin: globalStyleVariables.MODULE_SPACE}]}>
+            <Text style={globalStyles.fontTertiary}>已经到底了</Text>
+          </View>
+        </ScrollView>
+      </FormDisabledContext.Provider>
     </SafeAreaView>
   );
 };

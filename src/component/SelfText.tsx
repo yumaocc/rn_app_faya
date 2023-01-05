@@ -1,12 +1,13 @@
 import React from 'react';
 import {FC} from 'react';
-import {Text as HyperText} from 'react-native';
+import {Text as RNText} from 'react-native';
 
 interface TextProps {
   value?: string | number;
   style?: any;
 }
-const Text: FC<TextProps> = ({value, style}) => {
-  return <HyperText style={style}>{value}</HyperText>;
+const Text: FC<TextProps> = props => {
+  const {value, style} = props;
+  return <RNText style={style}>{value}</RNText>;
 };
 export default Text;

@@ -1,7 +1,7 @@
-import React from 'react';
-import {View, Text, StyleSheet, TouchableWithoutFeedback, Image} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, StyleSheet, TouchableWithoutFeedback, Image, FlatList} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {Icon, ListView} from '@ant-design/react-native';
+import {Icon} from '@ant-design/react-native';
 
 import * as api from '../../../apis';
 import {NavigationBar} from '../../../component';
@@ -10,31 +10,54 @@ import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {getBookingType} from '../../../helper';
 import {useNavigation} from '@react-navigation/native';
 import {cleanTime, getStatusColor} from '../../../helper/util';
-
-type StartFetchFunction = (rowData: any[], pageSize: number) => void;
-type abortFetchFunction = () => void;
+import {useCommonDispatcher} from '../../../helper/hooks';
+import Loading from '../../../component/Loading';
 
 const SPUList: React.FC = () => {
-  // const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [pageIndex, setPageIndex] = useState<number>(1);
+  const [spuList, setSpuList] = useState<SPUF[]>([]);
   const navigation = useNavigation<FakeNavigation>();
+  const [commonDispatcher] = useCommonDispatcher();
 
-  async function fetchData(pageIndex = 1, startFetch: StartFetchFunction, abortFetch: abortFetchFunction) {
+  async function fetchData(index: number) {
     try {
-      const pageSize = 5;
-      // const skip = (pageIndex - 1) * pageSize;
-      const res = await api.sku.getSPUList({pageIndex, pageSize});
-      const rowData: SPUF[] = res.content;
-      startFetch(rowData, pageSize);
+      setLoading(true);
+      const pageSize = 10;
+      const res = await api.sku.getSPUList({pageIndex: index, pageSize});
+      if (res?.content?.length) {
+        setPageIndex(res.page.pageIndex + 1);
+      }
+      setLoading(false);
+      return res;
     } catch (error) {
-      abortFetch();
+      commonDispatcher.error(error || '哎呀，出错了~');
     }
+    setLoading(false);
   }
+  useEffect(() => {
+    fetchData(1).then(res => {
+      setSpuList(res?.content);
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const onEndReached = async () => {
+    const res = await fetchData(pageIndex);
+    setSpuList([...spuList, ...res?.content]);
+  };
+
+  const onRefresh = async () => {
+    const res = await fetchData(1);
+    setSpuList(res?.content);
+  };
 
   function viewDetail(item: SPUF) {
     navigation.navigate('SPUDetail', {id: item?.id, status: item?.status, statusStr: item.statusStr});
   }
 
-  function renderItem(item: SPUF) {
+  function renderItem({item}: {item: SPUF}) {
     const skuList = item.skuList || [];
     const showSKUList = skuList.slice(0, 3);
     return (
@@ -104,7 +127,27 @@ const SPUList: React.FC = () => {
       <NavigationBar title="商品列表" />
       <View style={{overflow: 'hidden', flex: 1}}>
         <SafeAreaView style={styles.container} edges={['bottom']}>
-          <ListView refreshViewStyle={styles.freshHeader} numColumns={1} renderItem={renderItem} keyExtractor={item => 'spu' + item.id} onFetch={fetchData} />
+          <Loading active={loading} />
+          {!!spuList.length ? (
+            <FlatList
+              refreshing={loading}
+              onRefresh={onRefresh}
+              onEndReached={onEndReached}
+              numColumns={1}
+              renderItem={renderItem}
+              keyExtractor={item => 'spu' + item.id}
+              data={spuList}
+              ListFooterComponent={
+                <View style={[globalStyles.containerCenter, {flex: 1, marginTop: globalStyleVariables.MODULE_SPACE, marginBottom: globalStyleVariables.MODULE_SPACE}]}>
+                  <Text style={[globalStyles.fontTertiary, {textAlign: 'center'}]}>已经到底</Text>
+                </View>
+              }
+            />
+          ) : (
+            <View style={[{flex: 1, backgroundColor: '#fff'}, globalStyles.containerCenter]}>
+              <Text style={globalStyles.fontTertiary}>暂无商品</Text>
+            </View>
+          )}
         </SafeAreaView>
       </View>
     </>

@@ -104,7 +104,7 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, status, control, setValu
           name="name"
           rules={{required: '请输入商家名称'}}
           render={({field}) => (
-            <Form.Item label="商家名称">
+            <Form.Item showAsterisk label="商家名称">
               <Input placeholder="请输入" value={field.value} onChange={field.onChange} />
               <Text style={globalStyles.error}>
                 <ErrorMessage name={'name'} errors={errors} />
@@ -118,7 +118,7 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, status, control, setValu
           name="categoryId"
           rules={{required: '请选择商家行业'}}
           render={({field}) => (
-            <Form.Item label="商家行业">
+            <Form.Item showAsterisk label="商家行业">
               <Select options={data || []} value={field.value} onChange={field.onChange} />
               <Text style={globalStyles.error}>
                 <ErrorMessage name={'categoryId'} errors={errors} />
@@ -132,7 +132,7 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, status, control, setValu
           name="multiStore"
           defaultValue={BoolEnum.FALSE}
           render={({field}) => (
-            <Form.Item label="商家模式">
+            <Form.Item showAsterisk label="商家模式">
               <Select
                 value={field.value}
                 onChange={field.onChange}
@@ -151,7 +151,7 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, status, control, setValu
             name="businessType"
             defaultValue={MerchantType.ENTERPRISE}
             render={({field}) => (
-              <Form.Item label="商家类型">
+              <Form.Item showAsterisk label="商家类型">
                 <Select
                   value={field.value}
                   onChange={field.onChange}
@@ -170,7 +170,7 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, status, control, setValu
             name="areaInfo"
             rules={{required: '请输入商家城市'}}
             render={({field}) => (
-              <Form.Item label="商家城市">
+              <Form.Item showAsterisk label="商家城市">
                 <Cascader value={field.value} onChange={field.onChange} options={cityList} />
                 <Text style={globalStyles.error}>
                   <ErrorMessage name={'areaInfo'} errors={errors} />
@@ -185,7 +185,7 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, status, control, setValu
           name="address"
           rules={{required: '请输入商家地址'}}
           render={({field}) => (
-            <Form.Item label="商家地址">
+            <Form.Item showAsterisk label="商家地址">
               <Input onChange={field.onChange} value={field.value} />
               <Text style={globalStyles.error}>
                 <ErrorMessage name={'address'} errors={errors} />

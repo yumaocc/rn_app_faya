@@ -3,8 +3,9 @@ import {View, Text, StyleSheet, TouchableOpacity, Image, Animated} from 'react-n
 import {useRNSelectPhoto, useInfinityRotate} from '../../../helper/hooks';
 import * as api from '../../../apis';
 import uniqueId from 'lodash/uniqueId';
-import {Icon} from '@ant-design/react-native';
+import {Icon as AntdIcon} from '@ant-design/react-native';
 import {globalStyles} from '../../../constants/styles';
+import Icon from '../Icon';
 
 export interface UploadFile {
   url?: string;
@@ -21,10 +22,11 @@ interface UploadProps {
   value?: Value;
   maxCount?: number; // 0 代表不限制
   onChange?: (value: Value) => void;
+  disabled?: boolean;
 }
 
 const Upload: React.FC<UploadProps> = props => {
-  const {maxCount, value, onChange} = props;
+  const {maxCount, value, onChange, disabled} = props;
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const rotateDeg = useInfinityRotate();
   const [selectPhotos] = useRNSelectPhoto();
@@ -103,14 +105,16 @@ const Upload: React.FC<UploadProps> = props => {
               {file.state === 'uploading' && (
                 <View style={styles.uploading}>
                   <Animated.View style={{transform: [{rotate: rotateDeg}]}}>
-                    <Icon name="loading-3-quarters" />
+                    <AntdIcon name="loading-3-quarters" />
                   </Animated.View>
                 </View>
               )}
             </View>
-            <TouchableOpacity style={{position: 'absolute', top: -5, right: 0}} activeOpacity={0.5} onPress={() => handleClick(index)}>
-              <Icon name="minus-circle" color="red" />
-            </TouchableOpacity>
+            {disabled ? null : (
+              <TouchableOpacity style={styles.wrapperIcon} activeOpacity={0.5} onPress={() => handleClick(index)}>
+                <Icon name="del" color="red" />
+              </TouchableOpacity>
+            )}
           </View>
         );
       })}
@@ -170,5 +174,7 @@ const styles = StyleSheet.create({
   },
   wrapperIcon: {
     position: 'absolute',
+    top: -15,
+    right: 0,
   },
 });

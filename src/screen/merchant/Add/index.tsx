@@ -1,8 +1,8 @@
 import {Button, Icon as AntdIcon} from '@ant-design/react-native';
 import {useNavigation} from '@react-navigation/native';
 import React, {useEffect, useMemo, useState} from 'react';
-import {View, StyleSheet, ScrollView, useWindowDimensions, Text} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import {View, StyleSheet, ScrollView, useWindowDimensions, Text, KeyboardAvoidingView, Platform} from 'react-native';
+import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {createMerchant, updateMerchant} from '../../../apis/merchant';
 import {Modal, NavigationBar, Tabs} from '../../../component';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
@@ -19,6 +19,7 @@ import * as api from '../../../apis';
 import {PAGE_SIZE} from '../../../constants';
 import ModalDropdown from 'react-native-modal-dropdown';
 import Icon from '../../../component/Form/Icon';
+import {FormDisabledContext} from '../../../component/Form/Context';
 // add 新增  edit 编辑 view 查看
 // 当id === MerchantCreateType.PRIVATE_SEA, 并且 action === view的时候不能编辑
 // 当id === MerchantCreateType.PRIVATE_SEA, 并且 action === edit 或者add的时候可以编辑
@@ -27,7 +28,7 @@ const AddMerchant: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [isShowModal, setIsShowModal] = useState(false);
   const [summaryDispatcher] = useSummaryDispatcher();
-
+  const {bottom} = useSafeAreaInsets();
   const {identity, publicId, privateId, action, locationCompanyId, status} = useParams<{
     identity: MerchantCreateType;
     action: MerchantAction;
@@ -67,8 +68,8 @@ const AddMerchant: React.FC = () => {
   const tabs = useMemo(() => {
     if (!publicId) {
       return [
-        {title: '资质信息', key: 'qualification'},
         {title: '基础信息', key: 'base'},
+        {title: '资质信息', key: 'qualification'},
       ];
     }
     return [];
@@ -123,7 +124,7 @@ const AddMerchant: React.FC = () => {
     try {
       const formData = getValues();
       const newFormData = formattingMerchantRequest(formData, identity) as MerchantForm;
-
+      console.log(newFormData);
       if (action === MerchantAction.EDIT) {
         await updateMerchant(newFormData);
         update();
@@ -172,7 +173,6 @@ const AddMerchant: React.FC = () => {
       return (
         <View style={globalStyles.containerCenter}>
           <Text>{merchantDetail?.name}</Text>
-
           {identity === MerchantCreateType.PUBLIC_SEA && (
             <Text style={globalStyles.fontSize12}>{status ? <Text style={{color: '#4AB87D'}}>已认证</Text> : <Text style={{color: '#999999'}}>未认证</Text>}</Text>
           )}
@@ -215,86 +215,90 @@ const AddMerchant: React.FC = () => {
   return (
     <>
       <Loading active={loading} />
-      <SafeAreaView style={styles.container} edges={['bottom']}>
-        <NavigationBar title={getTitle(status)} headerRight={identity === MerchantCreateType.PRIVATE_SEA && action === MerchantAction.EDIT && header} />
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{flex: 1}} keyboardVerticalOffset={-bottom + 30}>
+        <SafeAreaView style={styles.container} edges={['bottom']}>
+          <NavigationBar title={getTitle(status)} headerRight={identity === MerchantCreateType.PRIVATE_SEA && action === MerchantAction.EDIT && header} />
 
-        <View style={styles.container}>
-          {!!tabs?.length && <Tabs tabs={tabs} currentKey={currentKey} onChange={setCurrentKey} style={{backgroundColor: '#fff'}} />}
-          <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
-            <View style={{width: windowWidth}}>
-              <ScrollView>
-                <EditBase
-                  status={status}
-                  getValues={getValues}
-                  locationCompanyId={locationCompanyId}
-                  isHidden={isHidden}
-                  errors={errors}
-                  control={control}
-                  Controller={Controller}
-                  type={identity}
-                  setValue={setValue}
-                />
+          <View style={styles.container}>
+            {!!tabs?.length && <Tabs tabs={tabs} currentKey={currentKey} onChange={setCurrentKey} style={{backgroundColor: '#fff'}} />}
+            <FormDisabledContext.Provider value={{disabled: identity === MerchantCreateType.PUBLIC_SEA && action !== MerchantAction.ADD ? true : false}}>
+              <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
+                <View style={{width: windowWidth}}>
+                  <ScrollView>
+                    <EditBase
+                      status={status}
+                      getValues={getValues}
+                      locationCompanyId={locationCompanyId}
+                      isHidden={isHidden}
+                      errors={errors}
+                      control={control}
+                      Controller={Controller}
+                      type={identity}
+                      setValue={setValue}
+                    />
+                  </ScrollView>
+                </View>
+                <View style={{width: windowWidth}}>
+                  <ScrollView>
+                    <Certification errors={errors} type={1} control={control} watch={watch} Controller={Controller} />
+                  </ScrollView>
+                </View>
               </ScrollView>
-            </View>
-            <View style={{width: windowWidth}}>
-              <ScrollView>
-                <Certification errors={errors} type={1} control={control} watch={watch} Controller={Controller} />
-              </ScrollView>
-            </View>
-          </ScrollView>
-          {/* 这是私海过来的按钮 */}
-          <View style={styles.sectionGroup}>
-            {identity === MerchantCreateType.PRIVATE_SEA && action === MerchantAction.EDIT && (
-              <View style={styles.privateView}>
-                <Button style={{margin: 10, borderColor: globalStyleVariables.COLOR_PRIMARY}} type="ghost" onPress={() => inviteAuth(privateId)}>
-                  <Text style={{color: globalStyleVariables.COLOR_PRIMARY}}>邀请认证</Text>
+            </FormDisabledContext.Provider>
+            {/* 这是私海过来的按钮 */}
+            <View style={styles.sectionGroup}>
+              {identity === MerchantCreateType.PRIVATE_SEA && action === MerchantAction.EDIT && (
+                <View style={styles.privateView}>
+                  <Button style={{margin: 10, borderColor: globalStyleVariables.COLOR_PRIMARY}} type="ghost" onPress={() => inviteAuth(privateId)}>
+                    <Text style={{color: globalStyleVariables.COLOR_PRIMARY}}>邀请认证</Text>
+                  </Button>
+                  <Button style={{margin: 10, flex: 1}} type="primary" onPress={handleSubmit(onSubmit)}>
+                    保存
+                  </Button>
+                </View>
+              )}
+              {identity === MerchantCreateType.PRIVATE_SEA && action === MerchantAction.VIEW && (
+                <Button style={[{margin: 10}]} type="primary" onPress={() => inviteAuth(privateId)}>
+                  <Text style={globalStyles.primaryColor}>邀请认证</Text>
                 </Button>
-                <Button style={{margin: 10, flex: 1}} type="primary" onPress={handleSubmit(onSubmit)}>
+              )}
+              {/* 这是公海过来的按钮 */}
+              {identity === MerchantCreateType.PUBLIC_SEA && action !== MerchantAction.ADD && (
+                <Button
+                  style={{margin: 10}}
+                  type="primary"
+                  onPress={() => {
+                    addMyPrivateSeas(publicId);
+                  }}>
+                  加入我的私海
+                </Button>
+              )}
+              {action === MerchantAction.ADD && (
+                <Button style={{margin: 10}} type="primary" onPress={handleSubmit(onSubmit)}>
                   保存
                 </Button>
-              </View>
-            )}
-            {identity === MerchantCreateType.PRIVATE_SEA && action === MerchantAction.VIEW && (
-              <Button style={[{margin: 10}]} type="primary" onPress={() => inviteAuth(privateId)}>
-                <Text style={globalStyles.primaryColor}>邀请认证</Text>
-              </Button>
-            )}
-            {/* 这是公海过来的按钮 */}
-            {identity === MerchantCreateType.PUBLIC_SEA && action !== MerchantAction.ADD && (
-              <Button
-                style={{margin: 10}}
-                type="primary"
-                onPress={() => {
-                  addMyPrivateSeas(publicId);
-                }}>
-                加入我的私海
-              </Button>
-            )}
-            {action === MerchantAction.ADD && (
-              <Button style={{margin: 10}} type="primary" onPress={handleSubmit(onSubmit)}>
-                保存
-              </Button>
-            )}
-          </View>
-        </View>
-        <Modal
-          visible={isShowModal}
-          showCancel
-          onOk={() => navigation.canGoBack() && navigation.goBack()}
-          onClose={() => {
-            reset({shopList: []});
-            setIsShowModal(false);
-          }}
-          okText="确定"
-          cancelText="继续新增">
-          <View style={{justifyContent: 'space-around', alignItems: 'center'}}>
-            <View>
-              <Icon name="FYLM_all_feedback_true" style={{marginBottom: globalStyleVariables.MODULE_SPACE}} color="#546DAD" size={85} />
-              <Text style={globalStyles.fontPrimary}>商家添加成功</Text>
+              )}
             </View>
           </View>
-        </Modal>
-      </SafeAreaView>
+          <Modal
+            visible={isShowModal}
+            showCancel
+            onOk={() => navigation.canGoBack() && navigation.goBack()}
+            onClose={() => {
+              reset({shopList: []});
+              setIsShowModal(false);
+            }}
+            okText="确定"
+            cancelText="继续新增">
+            <View style={{justifyContent: 'space-around', alignItems: 'center'}}>
+              <View>
+                <Icon name="FYLM_all_feedback_true" style={{marginBottom: globalStyleVariables.MODULE_SPACE}} color="#546DAD" size={85} />
+                <Text style={globalStyles.fontPrimary}>商家添加成功</Text>
+              </View>
+            </View>
+          </Modal>
+        </SafeAreaView>
+      </KeyboardAvoidingView>
     </>
   );
 };

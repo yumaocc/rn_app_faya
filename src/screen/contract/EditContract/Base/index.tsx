@@ -1,5 +1,5 @@
 import {Button} from '@ant-design/react-native';
-import React, {FC, useEffect} from 'react';
+import React, {FC, useContext, useEffect} from 'react';
 import {Control, FieldErrorsImpl, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
 import {StyleSheet, Text} from 'react-native';
 import {useSelector} from 'react-redux';
@@ -9,8 +9,9 @@ import {Contract, FormControlC, ProtocolType, SettlementType} from '../../../../
 import {ErrorMessage} from '@hookform/error-message';
 import {RootState} from '../../../../redux/reducers';
 import {globalStyles} from '../../../../constants/styles';
+import {FormDisabledContext} from '../../../../component/Form/Context';
 interface BaseProps {
-  onNext: () => void;
+  onNext?: () => void;
   Controller: FormControlC;
   control: Control<Contract, any>;
   setValue: UseFormSetValue<Contract>;
@@ -21,6 +22,7 @@ interface BaseProps {
 const Base: FC<BaseProps> = ({Controller, control, watch, setValue, onNext, errors}) => {
   const [merchantDispatcher] = useMerchantDispatcher();
   const [commonDispatcher] = useCommonDispatcher();
+  const {disabled} = useContext(FormDisabledContext);
   const bizUserId = watch('bizUserId');
   //商家列表
   const merchantList = useSelector((state: RootState) => {
@@ -61,7 +63,7 @@ const Base: FC<BaseProps> = ({Controller, control, watch, setValue, onNext, erro
           control={control}
           rules={{required: '请选择商家'}}
           render={({field: {value, onChange}}) => (
-            <Form.Item label="商家">
+            <Form.Item showAsterisk label="商家">
               <Select value={value} onChange={onChange} options={merchantList || []} />
               <Text style={globalStyles.error}>
                 <ErrorMessage name={'bizUserId'} errors={errors} />
@@ -73,7 +75,7 @@ const Base: FC<BaseProps> = ({Controller, control, watch, setValue, onNext, erro
           name="partyAName"
           control={control}
           render={({field: {value}}) => (
-            <Form.Item label="甲方">
+            <Form.Item showAsterisk label="甲方">
               <SelfText value={value} />
             </Form.Item>
           )}
@@ -82,7 +84,7 @@ const Base: FC<BaseProps> = ({Controller, control, watch, setValue, onNext, erro
           name="partyBName"
           control={control}
           render={({field: {value}}) => (
-            <Form.Item label="乙方">
+            <Form.Item showAsterisk label="乙方">
               <SelfText value={value} />
             </Form.Item>
           )}
@@ -95,7 +97,7 @@ const Base: FC<BaseProps> = ({Controller, control, watch, setValue, onNext, erro
           control={control}
           rules={{required: '请输入合同名称'}}
           render={({field: {value, onChange}}) => (
-            <Form.Item label="合同名称">
+            <Form.Item showAsterisk label="合同名称">
               <Input value={value} onChange={onChange} />
               <Text style={globalStyles.error}>
                 <ErrorMessage name={'contractName'} errors={errors} />
@@ -108,7 +110,7 @@ const Base: FC<BaseProps> = ({Controller, control, watch, setValue, onNext, erro
           control={control}
           defaultValue={ProtocolType.TWO_PARTY}
           render={({field: {value}}) => (
-            <Form.Item label="协议类型">
+            <Form.Item showAsterisk label="协议类型">
               <Select options={[{label: '两方协议', value: ProtocolType.TWO_PARTY}]} value={value} />
             </Form.Item>
           )}
@@ -121,15 +123,17 @@ const Base: FC<BaseProps> = ({Controller, control, watch, setValue, onNext, erro
           control={control}
           defaultValue={SettlementType.T1}
           render={({field: {value}}) => (
-            <Form.Item label="结算方式">
+            <Form.Item showAsterisk label="结算方式">
               <Select options={[{label: 'T+1', value: SettlementType.T1}]} value={value} />
             </Form.Item>
           )}
         />
       </SectionGroup>
-      <Button style={{margin: 10}} type="primary" onPress={next}>
-        下一步
-      </Button>
+      {disabled ? null : (
+        <Button style={{margin: 10}} type="primary" onPress={next}>
+          下一步
+        </Button>
+      )}
     </>
   );
 };

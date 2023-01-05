@@ -222,7 +222,7 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
           name="spuName"
           rules={{required: '请输入商品名称'}}
           render={({field: {value, onChange}}) => (
-            <Form.Item label="商品名称">
+            <Form.Item showAsterisk label="商品名称">
               <Input placeholder="请输入" value={value} onChange={onChange} />
               <Text style={globalStyles.error}>
                 <ErrorMessage name={'spuName'} errors={errors} />
@@ -240,7 +240,7 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
           )}
         />
         <Form.Item label="商品分类">
-          <Cascader textColor value={currentContract?.spuInfoReq?.spuCategoryIds} disabled options={SPUCategories} labelKey="name" valueKey="id" placeholder="商品分类" />
+          <Cascader textColor value={currentContract?.spuInfoReq?.spuCategoryIds} disabled={true} options={SPUCategories} labelKey="name" valueKey="id" placeholder="商品分类" />
         </Form.Item>
         <Controller
           control={control}

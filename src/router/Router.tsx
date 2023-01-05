@@ -1,5 +1,5 @@
 import React from 'react';
-import {createNavigationContainerRef, StackActions} from '@react-navigation/native';
+import {createNavigationContainerRef} from '@react-navigation/native';
 
 import TabNavigator from '../screen/tabs/TabNavigator';
 import Login from '../screen/common/Login';
@@ -14,7 +14,7 @@ import RouteContract from './RouterContract';
 import RouterCash from './RouterCash';
 import IconTest from '../screen/IconTest/IconTest';
 import MineDetail from '../screen/mine/MineDetail';
-import {RootStackParamList, ValidRoute} from '../models';
+// import {RootStackParamList, ValidRoute} from '../models';
 import Cert from '../screen/Cert';
 import Browser from '../component/Browser';
 const Navigator: React.FC = () => {
@@ -98,39 +98,39 @@ export function isInLogin(): boolean {
   return false;
 }
 
-// 编程式导航
-export function goLogin(loginParams?: GoLoginParams) {
-  if (isInLogin()) {
-    return;
-  }
-  navigateTo('Login', loginParams?.params, loginParams?.behavior === 'replace');
-}
+// // 编程式导航
+// export function goLogin(loginParams?: GoLoginParams) {
+//   if (isInLogin()) {
+//     return;
+//   }
+//   navigateTo('Login', loginParams?.params, loginParams?.behavior === 'replace');
+// }
 
-export function relaunch() {
-  if (navigationRef.isReady()) {
-    navigationRef.dispatch(StackActions.popToTop());
-  }
-}
+// export function relaunch() {
+//   if (navigationRef.isReady()) {
+//     navigationRef.dispatch(StackActions.popToTop());
+//   }
+// }
 
-export function relaunchTo(url: ValidRoute, params?: any) {
-  if (navigationRef.isReady()) {
-    navigationRef.dispatch(StackActions.popToTop());
-    navigationRef.dispatch(StackActions.push(url, params));
-  }
-}
+// export function relaunchTo(url: ValidRoute, params?: any) {
+//   if (navigationRef.isReady()) {
+//     navigationRef.dispatch(StackActions.popToTop());
+//     navigationRef.dispatch(StackActions.push(url, params));
+//   }
+// }
 
-export function navigateTo(url: keyof RootStackParamList, params?: any, redirect = false) {
-  if (navigationRef.isReady()) {
-    if (redirect) {
-      navigationRef.dispatch(StackActions.replace(url, params));
-    } else {
-      navigationRef.dispatch(StackActions.push(url, params));
-    }
-  }
-}
+// export function navigateTo(url: keyof RootStackParamList, params?: any, redirect = false) {
+//   if (navigationRef.isReady()) {
+//     if (redirect) {
+//       navigationRef.dispatch(StackActions.replace(url, params));
+//     } else {
+//       navigationRef.dispatch(StackActions.push(url, params));
+//     }
+//   }
+// }
 
-export function navigateBack() {
-  if (navigationRef.isReady()) {
-    navigationRef.dispatch(StackActions.pop());
-  }
-}
+// export function navigateBack() {
+//   if (navigationRef.isReady()) {
+//     navigationRef.dispatch(StackActions.pop());
+//   }
+// }

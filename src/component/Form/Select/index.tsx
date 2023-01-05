@@ -61,6 +61,7 @@ const Select: React.FC<SelectProps> = props => {
   return (
     <>
       <TouchableOpacity
+        activeOpacity={props.disabled ? 1 : 0.8}
         onPress={() => {
           if (!props.disabled) {
             setShow(true);

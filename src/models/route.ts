@@ -54,6 +54,7 @@ export type RootStackParamList = {
   SalesTopList: undefined;
   MineDetail: undefined;
   Cert: undefined;
+  ViewContract: undefined;
   Browser: undefined;
 };
 

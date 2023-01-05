@@ -89,7 +89,7 @@ const ContractList: FC = () => {
         style={{backgroundColor: '#fff', paddingLeft: globalStyleVariables.MODULE_SPACE, paddingRight: globalStyleVariables.MODULE_SPACE}}
         onPress={() => {
           navigation.navigate({
-            name: 'EditContract',
+            name: 'ViewContract',
             params: {
               id: item.id,
               action: item.status === ContractStatus.SignSuccess ? ContractAction.VIEW : ContractAction.EDIT,

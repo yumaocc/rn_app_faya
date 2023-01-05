@@ -5,6 +5,7 @@ import {View, ScrollView, useWindowDimensions, Text} from 'react-native';
 import ModalDropdown from 'react-native-modal-dropdown';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {NavigationBar, Tabs} from '../../../component';
+import {FormDisabledContext} from '../../../component/Form/Context';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {useContractDetail, useMerchantDetail, useParams, useRefCallback, useSPUDetail} from '../../../helper/hooks';
 import {getStatusColor} from '../../../helper/util';
@@ -47,7 +48,7 @@ const SPUDetail: React.FC = () => {
   }, [currentKey, isReady, ref, windowWidth]);
 
   function handleEdit() {
-    navigation.navigate('EditSPU', {id: params.id});
+    navigation.navigate('EditSPU', {id: params.id, action: 'edit'});
   }
   return (
     <>
@@ -77,20 +78,22 @@ const SPUDetail: React.FC = () => {
         />
         <View style={{flex: 1}}>
           <Tabs style={{backgroundColor: '#fff'}} tabs={steps} currentKey={currentKey} onChange={setCurrentKey} />
-          <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
-            <View style={{width: windowWidth}}>
-              <Base spuDetail={spuDetail} merchantDetail={merchantDetail} contractDetail={contractDetail} />
-            </View>
-            <View style={{width: windowWidth}}>
-              <SKU spuDetail={spuDetail} merchantDetail={merchantDetail} contractDetail={contractDetail} />
-            </View>
-            <View style={{width: windowWidth}}>
-              <Booking spuDetail={spuDetail} merchantDetail={merchantDetail} contractDetail={contractDetail} />
-            </View>
-            <View style={{width: windowWidth}}>
-              <ImageDetail spuDetail={spuDetail} merchantDetail={merchantDetail} contractDetail={contractDetail} />
-            </View>
-          </ScrollView>
+          <FormDisabledContext.Provider value={{disabled: false}}>
+            <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
+              <View style={{width: windowWidth}}>
+                <Base spuDetail={spuDetail} merchantDetail={merchantDetail} contractDetail={contractDetail} />
+              </View>
+              <View style={{width: windowWidth}}>
+                <SKU spuDetail={spuDetail} merchantDetail={merchantDetail} contractDetail={contractDetail} />
+              </View>
+              <View style={{width: windowWidth}}>
+                <Booking spuDetail={spuDetail} merchantDetail={merchantDetail} contractDetail={contractDetail} />
+              </View>
+              <View style={{width: windowWidth}}>
+                <ImageDetail spuDetail={spuDetail} merchantDetail={merchantDetail} contractDetail={contractDetail} />
+              </View>
+            </ScrollView>
+          </FormDisabledContext.Provider>
         </View>
       </SafeAreaView>
     </>

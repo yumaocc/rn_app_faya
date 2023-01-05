@@ -1,12 +1,15 @@
 import {Icon as AntdIcon} from '@ant-design/react-native';
 import React, {FC, useState} from 'react';
+import {useContext} from 'react';
 import {Control, useFieldArray, Controller} from 'react-hook-form';
 import {StyleSheet, Text, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {Input, PlusButton} from '../../../../component';
+import {FormDisabledContext} from '../../../../component/Form/Context';
 import Icon from '../../../../component/Form/Icon';
 import {globalStyles, globalStyleVariables} from '../../../../constants/styles';
 import {Contract} from '../../../../models';
+
 interface SKUContentProps {
   next: number;
   control: Control<Contract, any>;
@@ -14,6 +17,7 @@ interface SKUContentProps {
 }
 const SKUContent: FC<SKUContentProps> = ({next, control, title}) => {
   const [exampleIsShow, setExampleIsShow] = useState(true);
+  const {disabled} = useContext(FormDisabledContext);
   const {fields, append} = useFieldArray({
     control,
     name: `skuInfoReq.skuInfo.${next}.skuDetails`,
@@ -80,7 +84,7 @@ const SKUContent: FC<SKUContentProps> = ({next, control, title}) => {
                   <>
                     <View style={globalStyles.dividingLine} />
                     <View style={globalStyles.inputWidth}>
-                      <Input type="number" value={value} onChange={onChange} />
+                      <Input type="text" allowFontScaling={true} value={value} onChange={onChange} />
                     </View>
                     <View style={globalStyles.dividingLine} />
                   </>
@@ -91,7 +95,7 @@ const SKUContent: FC<SKUContentProps> = ({next, control, title}) => {
                 name={`skuInfoReq.skuInfo.${next}.skuDetails.${index}.price`}
                 render={({field: {value, onChange}}) => (
                   <View style={globalStyles.inputWidth}>
-                    <Input type="number" value={value} onChange={onChange} />
+                    <Input type="text" allowFontScaling={true} value={value} onChange={onChange} />
                   </View>
                 )}
               />
@@ -99,7 +103,7 @@ const SKUContent: FC<SKUContentProps> = ({next, control, title}) => {
           </View>
         );
       })}
-      <PlusButton title="新建一条套餐内容" style={[{justifyContent: 'center'}, globalStyles.moduleMarginTop]} onPress={addSku} />
+      {disabled ? null : <PlusButton title="新建一条套餐内容" style={[{justifyContent: 'center'}, globalStyles.moduleMarginTop]} onPress={addSku} />}
     </View>
   );
 };

@@ -1,5 +1,5 @@
 import {Button} from '@ant-design/react-native';
-import React, {FC} from 'react';
+import React, {FC, useContext} from 'react';
 import _ from 'lodash';
 import {Control, FieldErrorsImpl, UseFormGetValues, UseFormHandleSubmit, UseFormSetValue, UseFormWatch} from 'react-hook-form';
 import {View, Text} from 'react-native';
@@ -7,16 +7,17 @@ import {DatePicker, Form, FormTitle, Input, SectionGroup, Select} from '../../..
 import {cleanContractForm} from '../../../../helper';
 import {useCodeTypes, useCommonDispatcher, useContractDispatcher} from '../../../../helper/hooks';
 import {formattingCodeType} from '../../../../helper/util';
-import {BookingType, BoolEnum, Contract, ContractAction, ContractStatus, FormControlC, RequestAction} from '../../../../models';
+import {BookingType, BoolEnum, Contract, ContractAction, FormControlC, RequestAction} from '../../../../models';
 import {ErrorMessage} from '@hookform/error-message';
 import * as api from '../../../../apis';
 import {styles} from './style';
 import {useNavigation} from '@react-navigation/native';
 import {globalStyles} from '../../../../constants/styles';
 import {PAGE_SIZE} from '../../../../constants';
+import {FormDisabledContext} from '../../../../component/Form/Context';
 
 interface BookingProps {
-  onNext: () => void;
+  onNext?: () => void;
   Controller: FormControlC;
   control: Control<Contract, any>;
   setValue: UseFormSetValue<Contract>;
@@ -24,12 +25,13 @@ interface BookingProps {
   watch: UseFormWatch<Contract>;
   action: ContractAction;
   errors: Partial<FieldErrorsImpl<any>>;
-  status: ContractStatus;
+  // status: ;
   handleSubmit: UseFormHandleSubmit<any>;
 }
 
-const Booking: FC<BookingProps> = ({Controller, control, watch, getValues, action, status, handleSubmit, errors}) => {
+const Booking: FC<BookingProps> = ({Controller, control, watch, getValues, action, handleSubmit, errors}) => {
   const bookingType = watch('bookingReq.bookingType');
+  const {disabled} = useContext(FormDisabledContext);
   const bookingCanCancel = watch('bookingReq.bookingCanCancel');
   const [commonDispatcher] = useCommonDispatcher();
   const [contractDispatcher] = useContractDispatcher();
@@ -216,7 +218,7 @@ const Booking: FC<BookingProps> = ({Controller, control, watch, getValues, actio
           )}
         />
       </SectionGroup>
-      {status === ContractStatus.SignSuccess ? null : (
+      {disabled ? null : (
         <Button style={{margin: 10}} type="primary" onPress={onHandleSubmit}>
           立即发起签约
         </Button>

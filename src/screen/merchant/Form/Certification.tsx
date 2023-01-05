@@ -1,10 +1,12 @@
 // 资质信息
 import React from 'react';
-import {View} from 'react-native';
+import {View, Text} from 'react-native';
 import {Form, Input, Select} from '../../../component';
 import {MerchantCreateType, FormControlC, MerchantAgentType, FormWatch, FormErrors, FormMerchant} from '../../../models';
 import Upload from '../../../component/Form/Upload';
 import {Control} from 'react-hook-form';
+import {ErrorMessage} from '@hookform/error-message';
+import {globalStyles} from '../../../constants/styles';
 
 interface CertificationProps {
   type: MerchantCreateType;
@@ -14,9 +16,9 @@ interface CertificationProps {
   errors: FormErrors;
 }
 
-const Certification: React.FC<CertificationProps> = ({Controller, control, watch}) => {
+const Certification: React.FC<CertificationProps> = ({Controller, control, watch, errors}) => {
   const [legalAuthType] = watch(['legalAuthType']);
-
+  console.log(errors);
   return (
     <>
       <View style={{paddingLeft: 10, paddingRight: 10, backgroundColor: '#fff'}}>
@@ -69,9 +71,19 @@ const Certification: React.FC<CertificationProps> = ({Controller, control, watch
         <Controller
           name="legalPhone"
           control={control}
+          rules={{
+            validate: e => {
+              if (e?.length < 11) {
+                return '请输入正确的手机号';
+              }
+            },
+          }}
           render={({field}) => (
             <Form.Item label={`${legalAuthType === MerchantAgentType.LEGAL ? '法人' : '经办人'}手机号`}>
-              <Input type="number" value={field.value} onChange={field.onChange} />
+              <Input value={field.value} onChange={field.onChange} />
+              <Text style={globalStyles.error}>
+                <ErrorMessage name={'legalPhone'} errors={errors} />
+              </Text>
             </Form.Item>
           )}
         />
@@ -88,9 +100,20 @@ const Certification: React.FC<CertificationProps> = ({Controller, control, watch
         <Controller
           name="legalNumber"
           control={control}
+          rules={{
+            validate: e => {
+              if (e?.length < 18) {
+                return '请输入正确的身份证号码';
+              }
+              return true;
+            },
+          }}
           render={({field}) => (
             <Form.Item label={`${legalAuthType === MerchantAgentType.LEGAL ? '法人' : '经办人'}身份证`}>
               <Input value={field.value} onChange={field.onChange} />
+              <Text style={globalStyles.error}>
+                <ErrorMessage name={'legalNumber'} errors={errors} />
+              </Text>
             </Form.Item>
           )}
         />

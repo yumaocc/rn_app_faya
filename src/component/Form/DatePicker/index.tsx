@@ -18,6 +18,7 @@ interface DatePickerProps {
   title?: string;
   min?: Moment;
   max?: Moment;
+  disabled?: boolean;
   placeholder?: string;
   children?: React.ReactNode | RenderDateFunction;
   onChange?: (date: Moment) => void;
@@ -169,12 +170,16 @@ const DatePicker: React.FC<DatePickerProps> = props => {
 
   return (
     <>
-      <TouchableOpacity
-        onPress={() => {
-          setShow(true);
-        }}>
-        {renderChild()}
-      </TouchableOpacity>
+      {props.disabled ? (
+        renderChild()
+      ) : (
+        <TouchableOpacity
+          onPress={() => {
+            setShow(true);
+          }}>
+          {renderChild()}
+        </TouchableOpacity>
+      )}
       <Popup visible={show} onClose={handleClose}>
         <View style={styles.container}>
           <View style={[globalStyles.borderBottom, styles.headerWrapper]}>

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import {InputItem, Button, Radio, Toast} from '@ant-design/react-native';
+import {InputItem, Button, Toast} from '@ant-design/react-native';
 import {useSelector} from 'react-redux';
 import {useCommonDispatcher, useUserDispatcher} from '../../helper/hooks';
 import {RootState} from '../../redux/reducers';
@@ -9,9 +9,10 @@ import * as api from '../../apis';
 import {globalStyles, globalStyleVariables} from '../../constants/styles';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useNavigation} from '@react-navigation/native';
+import Radio from '../../component/Form/Radio';
 
 const Login: React.FC = () => {
-  const [radio, setRadio] = useState<number>();
+  const [radio, setRadio] = useState(false);
   const [phone, setPhone] = React.useState('');
   const [code, setCode] = React.useState(''); // 验证码
   const navigation = useNavigation() as FakeNavigation;
@@ -108,27 +109,26 @@ const Login: React.FC = () => {
         </Button>
         <View style={{flexDirection: 'row', alignItems: 'center', marginTop: globalStyleVariables.MODULE_SPACE}}>
           <Radio
-            defaultChecked={false}
+            checked={radio}
             onChange={() => {
-              setRadio(1);
-            }}
-            style={{marginRight: globalStyleVariables.MODULE_SPACE}}
-          />
-          <Text style={[globalStyles.fontTertiary, {lineHeight: 15}]}>
-            登录即表示您同意
-            <TouchableOpacity
-              activeOpacity={0.5}
-              onPress={() =>
-                navigation.navigate({
-                  name: 'Browser',
-                  params: {
-                    url: 'https://faya-manually-file.faya.life/protocol/faya-user-bd.html',
-                  },
-                })
-              }>
-              <Text style={globalStyles.primaryColor}> 《发芽联盟入驻协议》</Text>
-            </TouchableOpacity>
-          </Text>
+              setRadio(!radio);
+            }}>
+            <Text style={[globalStyles.fontTertiary, {lineHeight: 15}]}>
+              登录即表示您同意
+              <TouchableOpacity
+                activeOpacity={0.5}
+                onPress={() =>
+                  navigation.navigate({
+                    name: 'Browser',
+                    params: {
+                      url: 'https://faya-manually-file.faya.life/protocol/faya-user-bd.html',
+                    },
+                  })
+                }>
+                <Text style={globalStyles.primaryColor}> 《发芽联盟入驻协议》</Text>
+              </TouchableOpacity>
+            </Text>
+          </Radio>
         </View>
       </View>
     </View>

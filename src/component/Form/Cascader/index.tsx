@@ -89,14 +89,16 @@ const Cascader: React.FC<CascaderProps> = props => {
 
   return (
     <>
-      <TouchableOpacity
-        onPress={() => {
-          if (!props.disabled) {
+      {props.disabled ? (
+        renderChildren()
+      ) : (
+        <TouchableOpacity
+          onPress={() => {
             setShow(true);
-          }
-        }}>
-        {renderChildren()}
-      </TouchableOpacity>
+          }}>
+          {renderChildren()}
+        </TouchableOpacity>
+      )}
       <Popup visible={show} onClose={handleClose}>
         <View style={styles.container}>
           <View style={[globalStyles.borderBottom, styles.headerWrapper]}>

@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
-import {View, ScrollView, useWindowDimensions, StyleSheet} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import {View, ScrollView, useWindowDimensions, StyleSheet, KeyboardAvoidingView, Platform} from 'react-native';
+import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 
 import {Steps, NavigationBar} from '../../../component';
 import {useCommonDispatcher, useParams, useRefCallback, useContractDispatcher} from '../../../helper/hooks';
@@ -13,7 +13,9 @@ import {BookingType, BoolEnum, Contract, ContractAction, ContractDetailEnum, Con
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/reducers';
 import {COMPANY_NAME} from '../../../constants';
+
 import {generateContractFormPatch} from '../../../helper';
+import {FormDisabledContext} from '../../../component/Form/Context';
 
 const steps = [
   {title: '基础信息', key: 'base'},
@@ -45,8 +47,9 @@ const defaultValues = {
 };
 
 const EditSPU: React.FC = () => {
-  const {id, action, status} = useParams<{id: number; action: ContractAction; status: ContractStatus}>();
+  const {id, action} = useParams<{id: number; action: ContractAction; status: ContractStatus}>();
   const [currentKey, setCurrentKey] = React.useState('base');
+  const {bottom} = useSafeAreaInsets();
   const {width: windowWidth} = useWindowDimensions();
   const [commonDispatcher] = useCommonDispatcher();
   const [ref, setRef, isReady] = useRefCallback<ScrollView>();
@@ -118,47 +121,50 @@ const EditSPU: React.FC = () => {
 
   return (
     <>
-      <SafeAreaView style={{flex: 1, backgroundColor: '#f4f4f4'}} edges={['bottom']}>
-        <NavigationBar title={'签结算合同'} />
-        <Steps steps={steps} currentKey={currentKey} onChange={setCurrentKey} onBeforeChangeKey={handleChangeStep} />
-        <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
-          <View style={[{width: windowWidth, padding: globalStyleVariables.MODULE_SPACE}]}>
-            <ScrollView>
-              <Base errors={errors} watch={watch} setValue={setValue} getValues={getValues} control={control} Controller={Controller} onNext={() => setCurrentKey('sku')} />
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{flex: 1}} keyboardVerticalOffset={-bottom + 30}>
+        <SafeAreaView style={{flex: 1, backgroundColor: '#f4f4f4'}} edges={['bottom']}>
+          <NavigationBar title={'签结算合同'} />
+          <Steps steps={steps} currentKey={currentKey} onChange={setCurrentKey} onBeforeChangeKey={handleChangeStep} />
+          <FormDisabledContext.Provider value={{disabled: false}}>
+            <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
+              <View style={[{width: windowWidth, padding: globalStyleVariables.MODULE_SPACE}]}>
+                <ScrollView>
+                  <Base errors={errors} watch={watch} setValue={setValue} getValues={getValues} control={control} Controller={Controller} onNext={() => setCurrentKey('sku')} />
+                </ScrollView>
+              </View>
+              <View style={{width: windowWidth}}>
+                <ScrollView>
+                  <SKU
+                    handleSubmit={handleSubmit}
+                    errors={errors}
+                    watch={watch}
+                    action={action}
+                    setValue={setValue}
+                    getValues={getValues}
+                    control={control}
+                    onNext={() => setCurrentKey('booking')}
+                  />
+                </ScrollView>
+              </View>
+              <View style={{width: windowWidth}}>
+                <ScrollView>
+                  <Booking
+                    action={action}
+                    watch={watch}
+                    setValue={setValue}
+                    getValues={getValues}
+                    control={control}
+                    Controller={Controller}
+                    handleSubmit={handleSubmit}
+                    errors={errors}
+                    onNext={() => setCurrentKey('detail')}
+                  />
+                </ScrollView>
+              </View>
             </ScrollView>
-          </View>
-          <View style={{width: windowWidth}}>
-            <ScrollView>
-              <SKU
-                handleSubmit={handleSubmit}
-                errors={errors}
-                watch={watch}
-                action={action}
-                setValue={setValue}
-                getValues={getValues}
-                control={control}
-                onNext={() => setCurrentKey('booking')}
-              />
-            </ScrollView>
-          </View>
-          <View style={{width: windowWidth}}>
-            <ScrollView>
-              <Booking
-                action={action}
-                watch={watch}
-                setValue={setValue}
-                getValues={getValues}
-                control={control}
-                Controller={Controller}
-                handleSubmit={handleSubmit}
-                errors={errors}
-                onNext={() => setCurrentKey('detail')}
-                status={status}
-              />
-            </ScrollView>
-          </View>
-        </ScrollView>
-      </SafeAreaView>
+          </FormDisabledContext.Provider>
+        </SafeAreaView>
+      </KeyboardAvoidingView>
     </>
   );
 };
