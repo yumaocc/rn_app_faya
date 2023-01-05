@@ -1,13 +1,12 @@
 // 资质信息
 import React from 'react';
-import {View, Text} from 'react-native';
+import {View} from 'react-native';
 import {Form, Input, Select} from '../../../component';
 import {MerchantCreateType, FormControlC, MerchantAgentType, FormWatch, FormErrors, FormMerchant} from '../../../models';
 import Upload from '../../../component/Form/Upload';
 import {Control} from 'react-hook-form';
 import {ErrorMessage} from '@hookform/error-message';
-import {globalStyles} from '../../../constants/styles';
-
+import Error from '../../../component/Error';
 interface CertificationProps {
   type: MerchantCreateType;
   control: Control<FormMerchant, any>;
@@ -81,9 +80,9 @@ const Certification: React.FC<CertificationProps> = ({Controller, control, watch
           render={({field}) => (
             <Form.Item label={`${legalAuthType === MerchantAgentType.LEGAL ? '法人' : '经办人'}手机号`}>
               <Input value={field.value} onChange={field.onChange} />
-              <Text style={globalStyles.error}>
+              <Error top={-9}>
                 <ErrorMessage name={'legalPhone'} errors={errors} />
-              </Text>
+              </Error>
             </Form.Item>
           )}
         />
@@ -111,9 +110,9 @@ const Certification: React.FC<CertificationProps> = ({Controller, control, watch
           render={({field}) => (
             <Form.Item label={`${legalAuthType === MerchantAgentType.LEGAL ? '法人' : '经办人'}身份证`}>
               <Input value={field.value} onChange={field.onChange} />
-              <Text style={globalStyles.error}>
+              <Error top={-9}>
                 <ErrorMessage name={'legalNumber'} errors={errors} />
-              </Text>
+              </Error>
             </Form.Item>
           )}
         />

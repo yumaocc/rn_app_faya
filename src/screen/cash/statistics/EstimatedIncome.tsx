@@ -139,53 +139,51 @@ const EstimatedIncome: React.FC = () => {
             <FlatList
               data={data}
               renderItem={({item}) => (
-                <>
-                  <View style={styles.spuContainer}>
-                    <View style={{flexDirection: 'row', marginBottom: globalStyleVariables.MODULE_SPACE}}>
-                      <View style={{paddingTop: 10}}>
-                        <Image source={{uri: item.poster}} style={{width: 60, height: 80}} />
-                      </View>
-                      <View style={{flex: 1, marginLeft: 10}}>
-                        <View style={globalStyles.containerLR}>
-                          <View style={{flexDirection: 'row'}}>
-                            <AntdIcon name="shop" />
-                            <Text style={globalStyles.fontPrimary}>{item.bizName}</Text>
+                <View style={styles.spuContainer}>
+                  <View style={{flexDirection: 'row', marginBottom: globalStyleVariables.MODULE_SPACE}}>
+                    <View style={{paddingTop: 10}}>
+                      <Image source={{uri: item.poster}} style={{width: 60, height: 80}} />
+                    </View>
+                    <View style={{flex: 1, marginLeft: 10}}>
+                      <View style={globalStyles.containerLR}>
+                        <View style={{flexDirection: 'row'}}>
+                          <AntdIcon name="shop" />
+                          <Text style={globalStyles.fontPrimary}>{item.bizName}</Text>
+                        </View>
+                        {item?.status === 3 && (
+                          <View style={globalStyles.tagWrapper}>
+                            <Text style={globalStyles.tag}>·&nbsp;{item.statusStr}</Text>
                           </View>
-                          {item?.status === 3 && (
-                            <View style={globalStyles.tagWrapper}>
-                              <Text style={globalStyles.tag}>·&nbsp;{item.statusStr}</Text>
-                            </View>
-                          )}
-                          {item?.status === 1 && (
-                            <View style={styles.tagWrapper}>
-                              <Text style={styles.tag}>·&nbsp;{item.statusStr}</Text>
-                            </View>
-                          )}
-                          {item?.status === 2 && (
-                            <View style={globalStyles.tagWrapper}>
-                              <Text style={globalStyles.tag}>·&nbsp;{item.statusStr}</Text>
-                            </View>
-                          )}
-                        </View>
-                        <Text numberOfLines={1}>{item.spuName}</Text>
+                        )}
+                        {item?.status === 1 && (
+                          <View style={styles.tagWrapper}>
+                            <Text style={styles.tag}>·&nbsp;{item.statusStr}</Text>
+                          </View>
+                        )}
+                        {item?.status === 2 && (
+                          <View style={globalStyles.tagWrapper}>
+                            <Text style={globalStyles.tag}>·&nbsp;{item.statusStr}</Text>
+                          </View>
+                        )}
+                      </View>
+                      <Text numberOfLines={1}>{item.spuName}</Text>
 
-                        <Text style={[globalStyles.fontSize12]}>{`售卖开始时间：${item.saleBeginTime}`}</Text>
-                        <Text style={[globalStyles.fontSize12]}>{`售卖结束时间：${item.saleEndTime}`}</Text>
-                        <Text style={[globalStyles.fontSize12]}>{`成交时间：${item.paidTime}`}</Text>
-                        <View style={{marginTop: globalStyleVariables.MODULE_SPACE, backgroundColor: '#f4f4f4', padding: 10, borderRadius: 5}}>
-                          <Text>{`订单提成${item?.moneyYuan || 0}元`}</Text>
-                        </View>
+                      <Text style={[globalStyles.fontSize12]}>{`售卖开始时间：${item.saleBeginTime}`}</Text>
+                      <Text style={[globalStyles.fontSize12]}>{`售卖结束时间：${item.saleEndTime}`}</Text>
+                      <Text style={[globalStyles.fontSize12]}>{`成交时间：${item.paidTime}`}</Text>
+                      <View style={{marginTop: globalStyleVariables.MODULE_SPACE, backgroundColor: '#f4f4f4', padding: 10, borderRadius: 5}}>
+                        <Text>{`订单提成${item?.moneyYuan || 0}元`}</Text>
                       </View>
                     </View>
                   </View>
-                </>
+                </View>
               )}
               ListFooterComponent={
                 <View style={[globalStyles.containerCenter, {flex: 1, marginTop: globalStyleVariables.MODULE_SPACE, marginBottom: globalStyleVariables.MODULE_SPACE}]}>
                   <Text style={[globalStyles.fontTertiary, {textAlign: 'center'}]}>已经到底</Text>
                 </View>
               }
-              keyExtractor={item => ' ' + item?.spuId}
+              keyExtractor={(_, index) => index + 'estimated'}
               onEndReached={() => pullUp()}
             />
           ) : (

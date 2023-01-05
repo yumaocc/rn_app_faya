@@ -1,11 +1,12 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Image, Animated} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Image, Animated, Modal} from 'react-native';
 import {useRNSelectPhoto, useInfinityRotate} from '../../../helper/hooks';
 import * as api from '../../../apis';
 import uniqueId from 'lodash/uniqueId';
 import {Icon as AntdIcon} from '@ant-design/react-native';
 import {globalStyles} from '../../../constants/styles';
 import Icon from '../Icon';
+import ImageViewer from 'react-native-image-zoom-viewer';
 
 export interface UploadFile {
   url?: string;
@@ -27,7 +28,9 @@ interface UploadProps {
 
 const Upload: React.FC<UploadProps> = props => {
   const {maxCount, value, onChange, disabled} = props;
+  const [showPreview, setShowPreview] = useState(false);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [previewIndex, setPreviewIndex] = React.useState(0);
   const rotateDeg = useInfinityRotate();
   const [selectPhotos] = useRNSelectPhoto();
   const isLimited = useMemo(() => {
@@ -90,6 +93,11 @@ const Upload: React.FC<UploadProps> = props => {
   const handleClick = (index: number) => {
     setFileList(fileList => fileList.filter((item, idx) => index !== idx));
   };
+  const previewList = useMemo(() => {
+    let list: {url: string}[] = [];
+    fileList?.forEach(item => list.push({url: item?.uri}));
+    return list;
+  }, [fileList]);
 
   return (
     <View style={styles.container}>
@@ -99,7 +107,14 @@ const Upload: React.FC<UploadProps> = props => {
           <View style={[globalStyles.containerLR, {position: 'relative'}]}>
             <View style={styles.block} key={`${file.uid}-${index}`}>
               <View style={[globalStyles.containerLR, {flex: 1, width: 100}]}>
-                <Image source={{uri}} style={styles.image} />
+                <TouchableOpacity
+                  activeOpacity={0.5}
+                  onPress={() => {
+                    setPreviewIndex(index);
+                    setShowPreview(true);
+                  }}>
+                  <Image source={{uri}} style={styles.image} />
+                </TouchableOpacity>
               </View>
 
               {file.state === 'uploading' && (
@@ -125,6 +140,9 @@ const Upload: React.FC<UploadProps> = props => {
           </View>
         </TouchableOpacity>
       )}
+      <Modal visible={showPreview} transparent={true} animationType="fade" onRequestClose={() => setShowPreview(false)}>
+        <ImageViewer imageUrls={previewList} index={previewIndex} enableSwipeDown={true} onSwipeDown={() => setShowPreview(false)} />
+      </Modal>
     </View>
   );
 };

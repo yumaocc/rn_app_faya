@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {useSelector} from 'react-redux';
 import {Stepper, SwipeAction, Checkbox} from '@ant-design/react-native';
-
+import Error from '../../../../../component/Error';
 import {Form, FormTitle, Input, Modal, PlusButton, SectionGroup, SelfText} from '../../../../../component';
 import {globalStyles, globalStyleVariables} from '../../../../../constants/styles';
 import {convertNumber2Han, findItem, getBuyLimitStr, getDirectCommissionRange, getEarnCommissionRange} from '../../../../../helper';
@@ -199,9 +199,9 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
               render={({field: {value, onChange}}) => (
                 <Form.Item label="套餐门市价（元）">
                   <Input placeholder="请输入" type="number" value={value} onChange={onChange} />
-                  <Text style={globalStyles.error}>
+                  <Error top={-9} left={-95}>
                     <ErrorMessage name={`skuList.[${index}].originPrice`} errors={errors} />
-                  </Text>
+                  </Error>
                 </Form.Item>
               )}
             />
@@ -220,7 +220,6 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                       return Promise.reject({message: message});
                     }
                   } catch (error: any) {
-                    // commonDispatcher.info(error.message || '哎呀，出错了~');
                     setError(`skuList.${index}.salePrice`, {type: 'validate', message: error.message});
                     return Promise.reject({message: '套餐价格过低'});
                   }
@@ -230,9 +229,9 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
               render={({field: {value, onChange}}) => (
                 <Form.Item label="套餐售价（元）">
                   <Input placeholder="请输入" type="number" value={value} onChange={onChange} />
-                  <Text style={globalStyles.error}>
+                  <Error top={-9} left={-35}>
                     <ErrorMessage name={`skuList.${index}.salePrice`} errors={errors} />
-                  </Text>
+                  </Error>
                 </Form.Item>
               )}
             />
@@ -275,9 +274,9 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
               render={({field: {value, onChange}}) => (
                 <Form.Item label="直售佣金（元）">
                   <Input placeholder="请输入" type="number" value={value} onChange={onChange} />
-                  <Text style={globalStyles.error}>
+                  <Error top={-9} left={-35}>
                     <ErrorMessage name={`skuList.${index}.directSalesCommission`} errors={errors} />
-                  </Text>
+                  </Error>
                 </Form.Item>
               )}
             />
@@ -320,9 +319,9 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
               render={({field: {value, onChange}}) => (
                 <Form.Item label="躺赚佣金（元）">
                   <Input placeholder="请输入" type="number" value={value} onChange={onChange} />
-                  <Text style={globalStyles.error}>
+                  <Error top={-9} left={-35}>
                     <ErrorMessage name={`skuList.${index}.earnCommission`} errors={errors} />
-                  </Text>
+                  </Error>
                 </Form.Item>
               )}
             />

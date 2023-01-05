@@ -12,7 +12,7 @@ import {BoolEnum, ContractList} from '../../../../models';
 import {RootState} from '../../../../redux/reducers';
 import {styles} from '../style';
 import {ErrorMessage} from '@hookform/error-message';
-
+import Error from '../../../../component/Error';
 import {Controller} from 'react-hook-form';
 import SelectShop from './SelectShop';
 import {TouchableOpacity} from 'react-native-gesture-handler';
@@ -165,9 +165,9 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
           render={({field: {value, onChange}}) => (
             <Form.Item label="选择商家">
               <Select onChange={onChange} value={value} options={merchantList?.map((e: {name: any; id: any}) => ({label: e.name, value: e.id}))} />
-              <Text style={globalStyles.error}>
+              <Error left={-60}>
                 <ErrorMessage name={'bizUserId'} errors={errors} />
-              </Text>
+              </Error>
             </Form.Item>
           )}
         />
@@ -188,9 +188,9 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
           render={({field: {value, onChange}}) => (
             <Form.Item label="选择合同">
               <Select onChange={onChange} value={value} options={cleanContract(contractList) || []} placeholder="请选择" />
-              <Text style={globalStyles.error}>
+              <Error left={-60}>
                 <ErrorMessage name={'contractId'} errors={errors} />
-              </Text>
+              </Error>
             </Form.Item>
           )}
         />
@@ -224,9 +224,9 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
           render={({field: {value, onChange}}) => (
             <Form.Item showAsterisk label="商品名称">
               <Input placeholder="请输入" value={value} onChange={onChange} />
-              <Text style={globalStyles.error}>
+              <Error top={-9}>
                 <ErrorMessage name={'spuName'} errors={errors} />
-              </Text>
+              </Error>
             </Form.Item>
           )}
         />

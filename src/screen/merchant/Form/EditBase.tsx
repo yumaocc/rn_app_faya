@@ -15,6 +15,7 @@ import {useSelector} from 'react-redux';
 import {ErrorMessage} from '@hookform/error-message';
 import {RootState} from '../../../redux/reducers';
 import {Icon, SwipeAction} from '@ant-design/react-native';
+import Error from '../../../component/Error';
 import {useLoadAllSite} from '../../../helper/hooks/common';
 import {getSitesIndex} from '../../../helper/util';
 
@@ -106,9 +107,9 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, status, control, setValu
           render={({field}) => (
             <Form.Item showAsterisk label="商家名称">
               <Input placeholder="请输入" value={field.value} onChange={field.onChange} />
-              <Text style={globalStyles.error}>
+              <Error top={-9}>
                 <ErrorMessage name={'name'} errors={errors} />
-              </Text>
+              </Error>
             </Form.Item>
           )}
         />
@@ -120,9 +121,9 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, status, control, setValu
           render={({field}) => (
             <Form.Item showAsterisk label="商家行业">
               <Select options={data || []} value={field.value} onChange={field.onChange} />
-              <Text style={globalStyles.error}>
+              <Error top={1}>
                 <ErrorMessage name={'categoryId'} errors={errors} />
-              </Text>
+              </Error>
             </Form.Item>
           )}
         />
@@ -172,9 +173,9 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, status, control, setValu
             render={({field}) => (
               <Form.Item showAsterisk label="商家城市">
                 <Cascader value={field.value} onChange={field.onChange} options={cityList} />
-                <Text style={globalStyles.error}>
+                <Error>
                   <ErrorMessage name={'areaInfo'} errors={errors} />
-                </Text>
+                </Error>
               </Form.Item>
             )}
           />
@@ -187,9 +188,9 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, status, control, setValu
           render={({field}) => (
             <Form.Item showAsterisk label="商家地址">
               <Input onChange={field.onChange} value={field.value} />
-              <Text style={globalStyles.error}>
+              <Error top={-9}>
                 <ErrorMessage name={'address'} errors={errors} />
-              </Text>
+              </Error>
             </Form.Item>
           )}
         />

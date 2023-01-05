@@ -13,6 +13,7 @@ import {Button} from '@ant-design/react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../../redux/reducers';
 import {FormDisabledContext} from '../../../../component/Form/Context';
+import Error from '../../../../component/Error';
 interface SKUProps {
   onNext?: () => void;
   control: Control<any, any>;
@@ -91,9 +92,9 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action,
           render={({field: {value, onChange}}) => (
             <Form.Item showAsterisk label="商品名称">
               <Input value={value} onChange={onChange} />
-              <Text style={globalStyles.error}>
+              <Error top={-9}>
                 <ErrorMessage name={'spuInfoReq.spuName'} errors={errors} />
-              </Text>
+              </Error>
             </Form.Item>
           )}
         />
@@ -104,9 +105,9 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action,
           render={({field: {value, onChange}}) => (
             <Form.Item showAsterisk label="商品分类">
               <Cascader value={value || []} onChange={onChange} options={SPUCategories} />
-              <Text style={globalStyles.error}>
+              <Error>
                 <ErrorMessage name={'spuInfoReq.spuCategoryIds'} errors={errors} />
-              </Text>
+              </Error>
             </Form.Item>
           )}
         />
@@ -130,9 +131,9 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action,
           render={({field: {value, onChange}}) => (
             <Form.Item showAsterisk label="商品总库存">
               <Input value={value} type="number" onChange={onChange} />
-              <Text style={globalStyles.error}>
+              <Error top={-9} left={-96}>
                 <ErrorMessage name={'skuInfoReq.spuStock'} errors={errors} />
-              </Text>
+              </Error>
             </Form.Item>
           )}
         />
@@ -182,9 +183,9 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action,
                 render={({field: {value, onChange}}) => (
                   <Form.Item showAsterisk label="套餐名称">
                     <Input value={value} onChange={onChange} />
-                    <Text style={globalStyles.error}>
+                    <Error top={-9}>
                       <ErrorMessage name={`skuInfoReq.skuInfo.${index}.skuName`} errors={errors} />
-                    </Text>
+                    </Error>
                   </Form.Item>
                 )}
               />
@@ -195,9 +196,9 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action,
                 render={({field: {value, onChange}}) => (
                   <Form.Item showAsterisk label="套餐结算价">
                     <Input value={value} type="number" onChange={onChange} />
-                    <Text style={globalStyles.error}>
+                    <Error top={-9} left={-95}>
                       <ErrorMessage name={`skuInfoReq.skuInfo.${index}.skuSettlementPrice`} errors={errors} />
-                    </Text>
+                    </Error>
                   </Form.Item>
                 )}
               />

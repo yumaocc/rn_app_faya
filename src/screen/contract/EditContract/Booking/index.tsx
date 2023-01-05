@@ -7,7 +7,7 @@ import {DatePicker, Form, FormTitle, Input, SectionGroup, Select} from '../../..
 import {cleanContractForm} from '../../../../helper';
 import {useCodeTypes, useCommonDispatcher, useContractDispatcher} from '../../../../helper/hooks';
 import {formattingCodeType} from '../../../../helper/util';
-import {BookingType, BoolEnum, Contract, ContractAction, FormControlC, RequestAction} from '../../../../models';
+import {BookingType, BoolEnum, ContractAction, FormControlC, RequestAction} from '../../../../models';
 import {ErrorMessage} from '@hookform/error-message';
 import * as api from '../../../../apis';
 import {styles} from './style';
@@ -19,10 +19,10 @@ import {FormDisabledContext} from '../../../../component/Form/Context';
 interface BookingProps {
   onNext?: () => void;
   Controller: FormControlC;
-  control: Control<Contract, any>;
-  setValue: UseFormSetValue<Contract>;
-  getValues: UseFormGetValues<Contract>;
-  watch: UseFormWatch<Contract>;
+  control: Control<any, any>;
+  setValue: UseFormSetValue<any>;
+  getValues: UseFormGetValues<any>;
+  watch: UseFormWatch<any>;
   action: ContractAction;
   errors: Partial<FieldErrorsImpl<any>>;
   // status: ;

@@ -5,18 +5,19 @@ import {StyleSheet, Text} from 'react-native';
 import {useSelector} from 'react-redux';
 import {Form, FormTitle, Input, SectionGroup, Select, SelfText} from '../../../../component';
 import {useCommonDispatcher, useMerchantDispatcher} from '../../../../helper/hooks';
-import {Contract, FormControlC, ProtocolType, SettlementType} from '../../../../models';
+import {FormControlC, ProtocolType, SettlementType} from '../../../../models';
 import {ErrorMessage} from '@hookform/error-message';
 import {RootState} from '../../../../redux/reducers';
 import {globalStyles} from '../../../../constants/styles';
 import {FormDisabledContext} from '../../../../component/Form/Context';
+import Error from '../../../../component/Error';
 interface BaseProps {
   onNext?: () => void;
   Controller: FormControlC;
-  control: Control<Contract, any>;
-  setValue: UseFormSetValue<Contract>;
-  getValues: UseFormGetValues<Contract>;
-  watch: UseFormWatch<Contract>;
+  control: Control<any, any>;
+  setValue: UseFormSetValue<any>;
+  getValues: UseFormGetValues<any>;
+  watch: UseFormWatch<any>;
   errors: Partial<FieldErrorsImpl<any>>;
 }
 const Base: FC<BaseProps> = ({Controller, control, watch, setValue, onNext, errors}) => {
@@ -65,9 +66,13 @@ const Base: FC<BaseProps> = ({Controller, control, watch, setValue, onNext, erro
           render={({field: {value, onChange}}) => (
             <Form.Item showAsterisk label="商家">
               <Select value={value} onChange={onChange} options={merchantList || []} />
-              <Text style={globalStyles.error}>
-                <ErrorMessage name={'bizUserId'} errors={errors} />
-              </Text>
+              <>
+                {errors?.bizUserId && (
+                  <Text style={globalStyles.error}>
+                    <ErrorMessage name={'bizUserId'} errors={errors} />
+                  </Text>
+                )}
+              </>
             </Form.Item>
           )}
         />
@@ -99,9 +104,13 @@ const Base: FC<BaseProps> = ({Controller, control, watch, setValue, onNext, erro
           render={({field: {value, onChange}}) => (
             <Form.Item showAsterisk label="合同名称">
               <Input value={value} onChange={onChange} />
-              <Text style={globalStyles.error}>
-                <ErrorMessage name={'contractName'} errors={errors} />
-              </Text>
+              <>
+                {errors?.contractName && (
+                  <Error top={-9}>
+                    <ErrorMessage name={'contractName'} errors={errors} />
+                  </Error>
+                )}
+              </>
             </Form.Item>
           )}
         />
