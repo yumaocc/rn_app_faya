@@ -84,6 +84,7 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
                   },
                 ]}>
                 <Text style={[globalStyles.fontPrimary, globalStyles.borderBottom]}>型号：{bookingItem?.name}</Text>
+
                 {item?.contractSkuIds?.map(skuId => {
                   const skuItem = findItem(contractDetail?.skuInfoReq?.skuInfo, item => item?.contractSkuId === skuId);
                   return (

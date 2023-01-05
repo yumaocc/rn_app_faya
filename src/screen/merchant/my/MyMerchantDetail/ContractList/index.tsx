@@ -76,21 +76,27 @@ const ContractList: FC<ContractListProps> = ({id}) => {
           <Text>共{len}份合同</Text>
           <PlusButton title="新增合同" onPress={() => navigation.navigate('AddContract')} />
         </View>
-        <FlatList
-          refreshing={loading}
-          onRefresh={onRefresh}
-          onEndReached={onEndReached}
-          data={contractList || []}
-          ListEmptyComponent={<Text>暂无数据</Text>}
-          numColumns={1}
-          renderItem={renderItem}
-          keyExtractor={item => 'con' + item.id}
-          ListFooterComponent={
-            <View style={[globalStyles.containerCenter, {marginTop: globalStyleVariables.MODULE_SPACE}]}>
-              <Text style={globalStyles.fontTertiary}>已经到底了</Text>
-            </View>
-          }
-        />
+        {!!contractList?.length ? (
+          <FlatList
+            refreshing={loading}
+            onRefresh={onRefresh}
+            onEndReached={onEndReached}
+            data={contractList || []}
+            ListEmptyComponent={<Text>暂无数据</Text>}
+            numColumns={1}
+            renderItem={renderItem}
+            keyExtractor={item => 'con' + item.id}
+            ListFooterComponent={
+              <View style={[globalStyles.containerCenter, {marginTop: globalStyleVariables.MODULE_SPACE}]}>
+                <Text style={globalStyles.fontTertiary}>已经到底了</Text>
+              </View>
+            }
+          />
+        ) : (
+          <View style={[globalStyles.containerCenter]}>
+            <Text style={globalStyles.fontTertiary}>暂无数据</Text>
+          </View>
+        )}
       </SafeAreaView>
     </>
   );

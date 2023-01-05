@@ -21,19 +21,22 @@ export interface FormItemProps {
   style?: StylePropView;
   showAsterisk?: boolean; //是否显示红色星号
   horizontal?: boolean; //图片和label 上下居中， 两端对齐
+  errorElement?: React.ReactNode;
 }
 
 const FormItem: React.FC<FormItemProps> = props => {
-  const {label, hiddenBorderBottom, hiddenBorderTop, valueKey, onChangeKey, showAsterisk} = props;
+  const {label, hiddenBorderBottom, hiddenBorderTop, valueKey, onChangeKey, showAsterisk, errorElement} = props;
   const formInstance = useFormInstance();
-  const {disabled} = useContext(FormDisabledContext);
+  const formDisabled = useContext(FormDisabledContext);
   function childrenWithDisabled(): React.ReactElement {
     const children = React.Children.map(props.children as React.ReactElement, (child: React.ReactElement) => {
       const childProps = child.props || {};
       const newProps = {
         ...childProps,
-        disabled,
       };
+      if (formDisabled?.disabled) {
+        newProps.disabled = formDisabled?.disabled;
+      }
       return React.cloneElement(child, newProps);
     });
     return <>{children}</>;
@@ -47,7 +50,7 @@ const FormItem: React.FC<FormItemProps> = props => {
         const oldOnChange = childProps[onChangeKey];
         const newProps = {
           ...childProps,
-          disabled,
+          disabled: formDisabled?.disabled,
           [valueKey]: formInstance.getFieldValue(name),
           [onChangeKey]: (value: any) => {
             formInstance.setFieldValue(name, value);
@@ -68,7 +71,14 @@ const FormItem: React.FC<FormItemProps> = props => {
 
   if (props.vertical) {
     return (
-      <View style={[hiddenBorderBottom ? {} : globalStyles.borderBottom, hiddenBorderTop ? {} : globalStyles.borderTop, styles.container, props.style]}>
+      <View
+        style={[
+          hiddenBorderBottom ? {} : globalStyles.borderBottom,
+          hiddenBorderTop ? {} : globalStyles.borderTop,
+          styles.container,
+          {paddingBottom: errorElement ? 0 : 16},
+          props.style,
+        ]}>
         <View style={[styles.item]}>
           <View style={[styles.labelLeft, {maxWidth: '100%'}]}>
             <View style={styles.labelWrapper}>
@@ -84,6 +94,7 @@ const FormItem: React.FC<FormItemProps> = props => {
           </View>
         </View>
         <View style={styles.extra}>{renderChildren()}</View>
+        {<Text style={{color: globalStyleVariables.COLOR_ERROR}}>{errorElement}</Text>}
       </View>
     );
   }
@@ -117,7 +128,14 @@ const FormItem: React.FC<FormItemProps> = props => {
   }
 
   return (
-    <View style={[hiddenBorderBottom ? {} : globalStyles.borderBottom, hiddenBorderTop ? {} : globalStyles.borderTop, styles.container, props.style]}>
+    <View
+      style={[
+        hiddenBorderBottom ? {} : globalStyles.borderBottom,
+        hiddenBorderTop ? {} : globalStyles.borderTop,
+        styles.container,
+        {paddingBottom: errorElement ? 0 : 16},
+        props.style,
+      ]}>
       <View style={[styles.item]}>
         <View style={[styles.labelLeft, {maxWidth: '100%'}]}>
           <View style={styles.labelWrapper}>
@@ -134,6 +152,11 @@ const FormItem: React.FC<FormItemProps> = props => {
         </View>
         <View style={styles.children}>{renderChildren()}</View>
       </View>
+      {errorElement && (
+        <View style={{alignItems: 'flex-end', height: 16}}>
+          <Text style={{color: globalStyleVariables.COLOR_ERROR}}>{errorElement}</Text>
+        </View>
+      )}
       {props.extra && <View style={styles.extra}>{props.extra}</View>}
     </View>
   );
@@ -153,12 +176,11 @@ export default FormItem;
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    paddingVertical: 16,
+    paddingTop: 16,
   },
   item: {
     flexDirection: 'row',
     alignItems: 'center',
-    // backgroundColor: '#6cf',
   },
   labelLeft: {
     alignItems: 'flex-start',

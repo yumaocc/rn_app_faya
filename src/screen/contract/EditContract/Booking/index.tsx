@@ -2,7 +2,7 @@ import {Button} from '@ant-design/react-native';
 import React, {FC, useContext} from 'react';
 import _ from 'lodash';
 import {Control, FieldErrorsImpl, UseFormGetValues, UseFormHandleSubmit, UseFormSetValue, UseFormWatch} from 'react-hook-form';
-import {View, Text} from 'react-native';
+import {View} from 'react-native';
 import {DatePicker, Form, FormTitle, Input, SectionGroup, Select} from '../../../../component';
 import {cleanContractForm} from '../../../../helper';
 import {useCodeTypes, useCommonDispatcher, useContractDispatcher} from '../../../../helper/hooks';
@@ -12,7 +12,6 @@ import {ErrorMessage} from '@hookform/error-message';
 import * as api from '../../../../apis';
 import {styles} from './style';
 import {useNavigation} from '@react-navigation/native';
-import {globalStyles} from '../../../../constants/styles';
 import {PAGE_SIZE} from '../../../../constants';
 import {FormDisabledContext} from '../../../../component/Form/Context';
 
@@ -31,7 +30,7 @@ interface BookingProps {
 
 const Booking: FC<BookingProps> = ({Controller, control, watch, getValues, action, handleSubmit, errors}) => {
   const bookingType = watch('bookingReq.bookingType');
-  const {disabled} = useContext(FormDisabledContext);
+  const disabledContext = useContext(FormDisabledContext);
   const bookingCanCancel = watch('bookingReq.bookingCanCancel');
   const [commonDispatcher] = useCommonDispatcher();
   const [contractDispatcher] = useContractDispatcher();
@@ -71,6 +70,7 @@ const Booking: FC<BookingProps> = ({Controller, control, watch, getValues, actio
       commonDispatcher.error(error);
     }
   };
+
   return (
     <>
       <SectionGroup style={styles.sectionGroup}>
@@ -81,11 +81,13 @@ const Booking: FC<BookingProps> = ({Controller, control, watch, getValues, actio
             rules={{required: '请选择售卖开始时间'}}
             name="bookingReq.saleBeginTime"
             render={({field: {value, onChange}}) => (
-              <Form.Item label="售卖开始时间" style={styles.composeItem} hiddenBorderBottom hiddenBorderTop>
+              <Form.Item
+                label="售卖开始时间"
+                errorElement={<ErrorMessage name={'bookingReq.saleBeginTime'} errors={errors} />}
+                style={styles.composeItem}
+                hiddenBorderBottom
+                hiddenBorderTop>
                 <DatePicker mode="datetime" value={value} onChange={onChange} />
-                <Text style={globalStyles.error}>
-                  <ErrorMessage name={'bookingReq.saleBeginTime'} errors={errors} />
-                </Text>
               </Form.Item>
             )}
           />
@@ -94,11 +96,8 @@ const Booking: FC<BookingProps> = ({Controller, control, watch, getValues, actio
             rules={{required: '请选择售卖结束时间'}}
             name="bookingReq.saleEndTime"
             render={({field: {value, onChange}}) => (
-              <Form.Item label="售卖结束时间" style={styles.composeItem} hiddenBorderBottom>
+              <Form.Item label="售卖结束时间" errorElement={<ErrorMessage name={'bookingReq.saleEndTime'} errors={errors} />} style={styles.composeItem} hiddenBorderBottom>
                 <DatePicker mode="datetime" value={value} onChange={onChange} />
-                <Text style={globalStyles.error}>
-                  <ErrorMessage name={'bookingReq.saleEndTime'} errors={errors} />
-                </Text>
               </Form.Item>
             )}
           />
@@ -218,7 +217,7 @@ const Booking: FC<BookingProps> = ({Controller, control, watch, getValues, actio
           )}
         />
       </SectionGroup>
-      {disabled ? null : (
+      {disabledContext?.disabled ? null : (
         <Button style={{margin: 10}} type="primary" onPress={onHandleSubmit}>
           立即发起签约
         </Button>

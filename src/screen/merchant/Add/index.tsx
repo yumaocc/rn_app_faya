@@ -221,7 +221,7 @@ const AddMerchant: React.FC = () => {
 
           <View style={styles.container}>
             {!!tabs?.length && <Tabs tabs={tabs} currentKey={currentKey} onChange={setCurrentKey} style={{backgroundColor: '#fff'}} />}
-            <FormDisabledContext.Provider value={{disabled: identity === MerchantCreateType.PUBLIC_SEA && action !== MerchantAction.ADD ? true : false}}>
+            <FormDisabledContext.Provider value={{disabled: identity === MerchantCreateType.PUBLIC_SEA && action !== MerchantAction.ADD && true}}>
               <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
                 <View style={{width: windowWidth}}>
                   <ScrollView>

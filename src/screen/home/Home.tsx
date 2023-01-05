@@ -32,7 +32,6 @@ const Home: React.FC = () => {
       <Header title="首页" />
       <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} contentContainerStyle={{padding: 16}}>
         {/* 今日收益 */}
-
         <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('TodayEarnings')}>
           <View style={styles.cardContainer}>
             <View style={styles.cardTitleContainer}>
@@ -104,9 +103,7 @@ const Home: React.FC = () => {
                 <UnitNumber style={{paddingTop: 10}} value={`${summary?.privateSeaNums || 0}`} unit={`/${summary?.privateSeaLimit || 0} 家`} />
               </TouchableOpacity>
             </View>
-
             <View style={[globalStyles.lineVertical, {marginHorizontal: 5, height: 29}]} />
-
             <View style={{flex: 1, paddingLeft: 10}}>
               <TouchableOpacity
                 activeOpacity={0.5}

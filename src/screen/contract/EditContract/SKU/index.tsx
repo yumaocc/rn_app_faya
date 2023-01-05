@@ -26,7 +26,7 @@ interface SKUProps {
 }
 
 const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action, errors}) => {
-  const {disabled} = useContext(FormDisabledContext);
+  const disabledContext = useContext(FormDisabledContext);
   const [moreMeals, setMoreMeals] = useState(true);
   const SPUCategories = useSelector((state: RootState) => {
     return formattingGoodsCategory(state.sku.categories);
@@ -49,7 +49,7 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action,
   }, [SPUCategories, action, setValue, spuCategoryIds]);
   //增加一个套餐
   const addSkuInfo = () => {
-    if (disabled) {
+    if (disabledContext?.disabled) {
       return;
     }
     append({
@@ -90,11 +90,8 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action,
           name="spuInfoReq.spuName"
           rules={{required: '请输入商品名称'}}
           render={({field: {value, onChange}}) => (
-            <Form.Item showAsterisk label="商品名称">
+            <Form.Item showAsterisk label="商品名称" errorElement={<ErrorMessage name={'spuInfoReq.spuName'} errors={errors} />}>
               <Input value={value} onChange={onChange} />
-              <Error top={-9}>
-                <ErrorMessage name={'spuInfoReq.spuName'} errors={errors} />
-              </Error>
             </Form.Item>
           )}
         />
@@ -103,11 +100,8 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action,
           name="spuInfoReq.spuCategoryIds"
           rules={{required: '请选择商品分类'}}
           render={({field: {value, onChange}}) => (
-            <Form.Item showAsterisk label="商品分类">
+            <Form.Item showAsterisk label="商品分类" errorElement={<ErrorMessage name={'spuInfoReq.spuCategoryIds'} errors={errors} />}>
               <Cascader value={value || []} onChange={onChange} options={SPUCategories} />
-              <Error>
-                <ErrorMessage name={'spuInfoReq.spuCategoryIds'} errors={errors} />
-              </Error>
             </Form.Item>
           )}
         />
@@ -164,7 +158,7 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action,
                         </TouchableOpacity>
                         <TouchableOpacity
                           onPress={() => {
-                            if (disabled) {
+                            if (disabledContext?.disabled) {
                               return;
                             }
                             delSkuInfo(index);
@@ -181,11 +175,8 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action,
                 rules={{required: '请输入套餐名称'}}
                 name={`skuInfoReq.skuInfo.${index}.skuName`}
                 render={({field: {value, onChange}}) => (
-                  <Form.Item showAsterisk label="套餐名称">
+                  <Form.Item showAsterisk label="套餐名称" errorElement={<ErrorMessage name={`skuInfoReq.skuInfo.${index}.skuName`} errors={errors} />}>
                     <Input value={value} onChange={onChange} />
-                    <Error top={-9}>
-                      <ErrorMessage name={`skuInfoReq.skuInfo.${index}.skuName`} errors={errors} />
-                    </Error>
                   </Form.Item>
                 )}
               />
@@ -194,11 +185,8 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action,
                 rules={{required: '请输入套餐结算价'}}
                 name={`skuInfoReq.skuInfo.${index}.skuSettlementPrice`}
                 render={({field: {value, onChange}}) => (
-                  <Form.Item showAsterisk label="套餐结算价">
+                  <Form.Item showAsterisk label="套餐结算价" errorElement={<ErrorMessage name={`skuInfoReq.skuInfo.${index}.skuSettlementPrice`} errors={errors} />}>
                     <Input value={value} type="number" onChange={onChange} />
-                    <Error top={-9} left={-95}>
-                      <ErrorMessage name={`skuInfoReq.skuInfo.${index}.skuSettlementPrice`} errors={errors} />
-                    </Error>
                   </Form.Item>
                 )}
               />
@@ -218,11 +206,8 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action,
                   }}
                   name={`skuInfoReq.skuInfo.${index}.skuStock`}
                   render={({field: {value, onChange}}) => (
-                    <Form.Item label="套餐库存">
+                    <Form.Item label="套餐库存" errorElement={<ErrorMessage name={`skuInfoReq.skuInfo.${index}.skuStock`} errors={errors} />}>
                       <Input type="number" value={value} onChange={onChange} />
-                      <Text style={globalStyles.error}>
-                        <ErrorMessage name={`skuInfoReq.skuInfo.${index}.skuStock`} errors={errors} />
-                      </Text>
                     </Form.Item>
                   )}
                 />
@@ -272,7 +257,7 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action,
           );
         })}
       </SectionGroup>
-      {disabled ? null : (
+      {disabledContext?.disabled ? null : (
         <Button style={{margin: 10}} type="primary" onPress={onNext}>
           下一步
         </Button>

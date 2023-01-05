@@ -17,7 +17,6 @@ import {cleanSPUForm, momentFromDateTime} from '../../../helper/util';
 import {RootState} from '../../../redux/reducers';
 import * as api from '../../../apis';
 import _ from 'lodash';
-import {FormDisabledContext} from '../../../component/Form/Context';
 
 const steps = [
   {title: '基本信息', key: 'base'},
@@ -206,41 +205,39 @@ const EditSPU: React.FC = () => {
 
         <Steps steps={steps} currentKey={currentKey} onChange={setCurrentKey} onBeforeChangeKey={handleChangeStep} />
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{flex: 1}} keyboardVerticalOffset={-bottom + 30}>
-          <FormDisabledContext.Provider value={{disabled: false}}>
-            <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
-              <View style={[{width: windowWidth, paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
-                <Base
-                  control={control}
-                  setValue={setValue}
-                  setError={setError}
-                  getValues={getValues}
-                  watch={watch}
-                  handleSubmit={handleSubmit}
-                  onNext={() => setCurrentKey('sku')}
-                  errors={errors}
-                />
-              </View>
-              <View style={[{width: windowWidth, paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
-                <SKU
-                  handleSubmit={handleSubmit}
-                  setError={setError}
-                  control={control}
-                  setValue={setValue}
-                  getValues={getValues}
-                  watch={watch}
-                  onNext={() => setCurrentKey('booking')}
-                  errors={errors}
-                />
-              </View>
-              <View style={[{width: windowWidth, paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
-                <Booking control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={() => setCurrentKey('detail')} errors={errors} />
-              </View>
-              <View style={[{width: windowWidth, paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
-                <ImageTextDetail loading={loading} control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={onHandleSubmit} error={errors} />
-                {/* <Image loading={loading} control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={onHandleSubmit} error={errors} /> */}
-              </View>
-            </ScrollView>
-          </FormDisabledContext.Provider>
+          <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
+            <View style={[{width: windowWidth, paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
+              <Base
+                control={control}
+                setValue={setValue}
+                setError={setError}
+                getValues={getValues}
+                watch={watch}
+                handleSubmit={handleSubmit}
+                onNext={() => setCurrentKey('sku')}
+                errors={errors}
+              />
+            </View>
+            <View style={[{width: windowWidth, paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
+              <SKU
+                handleSubmit={handleSubmit}
+                setError={setError}
+                control={control}
+                setValue={setValue}
+                getValues={getValues}
+                watch={watch}
+                onNext={() => setCurrentKey('booking')}
+                errors={errors}
+              />
+            </View>
+            <View style={[{width: windowWidth, paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
+              <Booking control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={() => setCurrentKey('detail')} errors={errors} />
+            </View>
+            <View style={[{width: windowWidth, paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
+              <ImageTextDetail loading={loading} control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={onHandleSubmit} error={errors} />
+              {/* <Image loading={loading} control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={onHandleSubmit} error={errors} /> */}
+            </View>
+          </ScrollView>
         </KeyboardAvoidingView>
         <Modal visible={isShowModal} cancelText="取消" showCancel onCancel={() => setIsShowModal(false)} onClose={() => setIsShowModal(false)} onOk={onOk} title="提示">
           <View style={{padding: globalStyleVariables.MODULE_SPACE}}>

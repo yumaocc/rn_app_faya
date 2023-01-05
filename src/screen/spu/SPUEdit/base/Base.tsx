@@ -12,7 +12,6 @@ import {BoolEnum, ContractList} from '../../../../models';
 import {RootState} from '../../../../redux/reducers';
 import {styles} from '../style';
 import {ErrorMessage} from '@hookform/error-message';
-import Error from '../../../../component/Error';
 import {Controller} from 'react-hook-form';
 import SelectShop from './SelectShop';
 import {TouchableOpacity} from 'react-native-gesture-handler';
@@ -62,25 +61,21 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
     merchantDispatcher.loadMerchantSearchList({});
   }, [merchantDispatcher]);
 
+  //加载商家拥有的合同列表
   useEffect(() => {
     if (bizUserId) {
       contractDispatcher.loadContractSearchList({id: bizUserId});
     }
   }, [bizUserId, contractDispatcher]);
-
+  //加载商家信息
   useEffect(() => {
     merchantDispatcher.loadCurrentMerchantPublic(bizUserId);
   }, [bizUserId, merchantDispatcher]);
 
-  //设置城市
+  //商家变化，要清空合同的值
   useEffect(() => {
-    if (sites?.length > 0 && currentMerchant?.locationWithCompanyId) {
-      if (currentMerchant?.locationWithCompanyId > 0) {
-        const res = getSitesIndex(sites, currentMerchant?.locationWithCompanyId);
-        setValue('areaInfo', res);
-      }
-    }
-  }, [sites, currentMerchant?.locationWithCompanyId, setValue]);
+    setValue('contractId', null);
+  }, [bizUserId, setValue]);
 
   //加载合同
   useEffect(() => {
@@ -99,6 +94,16 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
       setValue('spuName', currentContract.spuInfoReq.spuName);
     }
   }, [currentContract, setValue]);
+
+  //设置城市
+  useEffect(() => {
+    if (sites?.length > 0 && currentMerchant?.locationWithCompanyId) {
+      if (currentMerchant?.locationWithCompanyId > 0) {
+        const res = getSitesIndex(sites, currentMerchant?.locationWithCompanyId);
+        setValue('areaInfo', res);
+      }
+    }
+  }, [sites, currentMerchant?.locationWithCompanyId, setValue]);
 
   function onCheck() {
     const {bizUserId, contractId} = getValues();
@@ -163,11 +168,8 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
           name="bizUserId"
           rules={{required: '请选择商家'}}
           render={({field: {value, onChange}}) => (
-            <Form.Item label="选择商家">
+            <Form.Item label="选择商家" errorElement={<ErrorMessage name={'bizUserId'} errors={errors} />}>
               <Select onChange={onChange} value={value} options={merchantList?.map((e: {name: any; id: any}) => ({label: e.name, value: e.id}))} />
-              <Error left={-60}>
-                <ErrorMessage name={'bizUserId'} errors={errors} />
-              </Error>
             </Form.Item>
           )}
         />
@@ -176,7 +178,7 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
           name="areaInfo"
           render={({field}) => (
             <Form.Item label="商家城市">
-              <Cascader disabled={true} value={field.value} onChange={field.onChange} options={cityList || []} />
+              <Cascader textColor disabled={true} value={field.value} onChange={field.onChange} options={cityList || []} />
             </Form.Item>
           )}
         />
@@ -186,11 +188,8 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
           name="contractId"
           rules={{required: '请选择合同'}}
           render={({field: {value, onChange}}) => (
-            <Form.Item label="选择合同">
+            <Form.Item label="选择合同" errorElement={<ErrorMessage name={'contractId'} errors={errors} />}>
               <Select onChange={onChange} value={value} options={cleanContract(contractList) || []} placeholder="请选择" />
-              <Error left={-60}>
-                <ErrorMessage name={'contractId'} errors={errors} />
-              </Error>
             </Form.Item>
           )}
         />
@@ -222,11 +221,8 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
           name="spuName"
           rules={{required: '请输入商品名称'}}
           render={({field: {value, onChange}}) => (
-            <Form.Item showAsterisk label="商品名称">
+            <Form.Item showAsterisk label="商品名称" errorElement={<ErrorMessage name={'spuName'} errors={errors} />}>
               <Input placeholder="请输入" value={value} onChange={onChange} />
-              <Error top={-9}>
-                <ErrorMessage name={'spuName'} errors={errors} />
-              </Error>
             </Form.Item>
           )}
         />

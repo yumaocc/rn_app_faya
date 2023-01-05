@@ -1,16 +1,15 @@
 import {Button} from '@ant-design/react-native';
 import React, {FC, useContext, useEffect} from 'react';
 import {Control, FieldErrorsImpl, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
-import {StyleSheet, Text} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {useSelector} from 'react-redux';
 import {Form, FormTitle, Input, SectionGroup, Select, SelfText} from '../../../../component';
 import {useCommonDispatcher, useMerchantDispatcher} from '../../../../helper/hooks';
 import {FormControlC, ProtocolType, SettlementType} from '../../../../models';
 import {ErrorMessage} from '@hookform/error-message';
 import {RootState} from '../../../../redux/reducers';
-import {globalStyles} from '../../../../constants/styles';
 import {FormDisabledContext} from '../../../../component/Form/Context';
-import Error from '../../../../component/Error';
+
 interface BaseProps {
   onNext?: () => void;
   Controller: FormControlC;
@@ -23,7 +22,7 @@ interface BaseProps {
 const Base: FC<BaseProps> = ({Controller, control, watch, setValue, onNext, errors}) => {
   const [merchantDispatcher] = useMerchantDispatcher();
   const [commonDispatcher] = useCommonDispatcher();
-  const {disabled} = useContext(FormDisabledContext);
+  const disabledContext = useContext(FormDisabledContext);
   const bizUserId = watch('bizUserId');
   //商家列表
   const merchantList = useSelector((state: RootState) => {
@@ -64,15 +63,8 @@ const Base: FC<BaseProps> = ({Controller, control, watch, setValue, onNext, erro
           control={control}
           rules={{required: '请选择商家'}}
           render={({field: {value, onChange}}) => (
-            <Form.Item showAsterisk label="商家">
+            <Form.Item showAsterisk label="商家" errorElement={<ErrorMessage name={'bizUserId'} errors={errors} />}>
               <Select value={value} onChange={onChange} options={merchantList || []} />
-              <>
-                {errors?.bizUserId && (
-                  <Text style={globalStyles.error}>
-                    <ErrorMessage name={'bizUserId'} errors={errors} />
-                  </Text>
-                )}
-              </>
             </Form.Item>
           )}
         />
@@ -102,15 +94,8 @@ const Base: FC<BaseProps> = ({Controller, control, watch, setValue, onNext, erro
           control={control}
           rules={{required: '请输入合同名称'}}
           render={({field: {value, onChange}}) => (
-            <Form.Item showAsterisk label="合同名称">
+            <Form.Item showAsterisk label="合同名称" errorElement={<ErrorMessage name={'contractName'} errors={errors} />}>
               <Input value={value} onChange={onChange} />
-              <>
-                {errors?.contractName && (
-                  <Error top={-9}>
-                    <ErrorMessage name={'contractName'} errors={errors} />
-                  </Error>
-                )}
-              </>
             </Form.Item>
           )}
         />
@@ -138,7 +123,7 @@ const Base: FC<BaseProps> = ({Controller, control, watch, setValue, onNext, erro
           )}
         />
       </SectionGroup>
-      {disabled ? null : (
+      {disabledContext?.disabled ? null : (
         <Button style={{margin: 10}} type="primary" onPress={next}>
           下一步
         </Button>

@@ -17,7 +17,7 @@ interface SKUContentProps {
 }
 const SKUContent: FC<SKUContentProps> = ({next, control, title}) => {
   const [exampleIsShow, setExampleIsShow] = useState(true);
-  const {disabled} = useContext(FormDisabledContext);
+  const disabledContext = useContext(FormDisabledContext);
   const {fields, append} = useFieldArray({
     control,
     name: `skuInfoReq.skuInfo.${next}.skuDetails`,
@@ -45,18 +45,22 @@ const SKUContent: FC<SKUContentProps> = ({next, control, title}) => {
           </View>
           <View style={[globalStyles.containerLR, globalStyles.moduleMarginTop]}>
             <Text style={globalStyles.fontTertiary}>名称</Text>
-            <View style={[globalStyles.containerLR, {width: 120}]}>
-              <Text style={globalStyles.fontTertiary}>数量</Text>
-              <Text style={globalStyles.fontTertiary}>价格</Text>
+            <View style={[globalStyles.containerLR, {width: 160}]}>
+              <View style={{alignItems: 'center', width: 90}}>
+                <Text style={globalStyles.fontTertiary}>数量</Text>
+              </View>
+              <View style={{alignItems: 'center', width: 60}}>
+                <Text style={globalStyles.fontTertiary}>价格</Text>
+              </View>
             </View>
           </View>
           <View style={[globalStyles.containerLR, globalStyles.moduleMarginTop]}>
             <Text style={globalStyles.fontPrimary}>小酥肉</Text>
-            <View style={[globalStyles.containerLR, {width: 160}]}>
+            <View style={[globalStyles.containerLR, {width: 170}]}>
               <View style={globalStyles.dividingLine} />
-              <Text style={globalStyles.fontPrimary}>1</Text>
+              <Text style={[globalStyles.fontPrimary, globalStyles.inputWidth, {textAlign: 'center'}]}>1</Text>
               <View style={globalStyles.dividingLine} />
-              <Text style={globalStyles.fontPrimary}>99元</Text>
+              <Text style={[globalStyles.fontPrimary, globalStyles.inputWidth, {textAlign: 'center'}]}>99元</Text>
             </View>
           </View>
         </View>
@@ -64,13 +68,13 @@ const SKUContent: FC<SKUContentProps> = ({next, control, title}) => {
 
       {fields.map((item, index) => {
         return (
-          <View key={item.id} style={[globalStyles.containerLR, globalStyles.moduleMarginTop]}>
+          <View key={item.id} style={[globalStyles.containerLR, globalStyles.moduleMarginTop, {paddingRight: 10}]}>
             <Controller
               control={control}
               name={`skuInfoReq.skuInfo.${next}.skuDetails.${index}.name`}
               render={({field: {value, onChange}}) => (
                 <View style={{flex: 1}}>
-                  <Input type="text" allowFontScaling={true} value={value} onChange={onChange}>
+                  <Input type="text" style={globalStyles.fontSize12} allowFontScaling={true} value={value} onChange={onChange}>
                     <Icon name="diandian" />
                   </Input>
                 </View>
@@ -83,8 +87,8 @@ const SKUContent: FC<SKUContentProps> = ({next, control, title}) => {
                 render={({field: {value, onChange}}) => (
                   <>
                     <View style={globalStyles.dividingLine} />
-                    <View style={globalStyles.inputWidth}>
-                      <Input type="text" allowFontScaling={true} value={value} onChange={onChange} />
+                    <View style={[globalStyles.inputWidth]}>
+                      <Input type="text" style={globalStyles.fontSize12} allowFontScaling={true} value={value} onChange={onChange} />
                     </View>
                     <View style={globalStyles.dividingLine} />
                   </>
@@ -95,7 +99,7 @@ const SKUContent: FC<SKUContentProps> = ({next, control, title}) => {
                 name={`skuInfoReq.skuInfo.${next}.skuDetails.${index}.price`}
                 render={({field: {value, onChange}}) => (
                   <View style={globalStyles.inputWidth}>
-                    <Input type="text" allowFontScaling={true} value={value} onChange={onChange} />
+                    <Input type="text" style={globalStyles.fontSize12} allowFontScaling={true} value={value} onChange={onChange} />
                   </View>
                 )}
               />
@@ -103,7 +107,7 @@ const SKUContent: FC<SKUContentProps> = ({next, control, title}) => {
           </View>
         );
       })}
-      {disabled ? null : <PlusButton title="新建一条套餐内容" style={[{justifyContent: 'center'}, globalStyles.moduleMarginTop]} onPress={addSku} />}
+      {disabledContext?.disabled ? null : <PlusButton title="新建一条套餐内容" style={[{justifyContent: 'center'}, globalStyles.moduleMarginTop]} onPress={addSku} />}
     </View>
   );
 };

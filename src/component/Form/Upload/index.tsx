@@ -58,6 +58,9 @@ const Upload: React.FC<UploadProps> = props => {
     if (isLimited) {
       return;
     }
+    if (disabled) {
+      return;
+    }
     const restCount = maxCount - fileList.length;
     const results = await selectPhotos({selectionLimit: restCount});
     if (results.length === 0) {
@@ -110,8 +113,10 @@ const Upload: React.FC<UploadProps> = props => {
                 <TouchableOpacity
                   activeOpacity={0.5}
                   onPress={() => {
-                    setPreviewIndex(index);
-                    setShowPreview(true);
+                    if (!disabled) {
+                      setPreviewIndex(index);
+                      setShowPreview(true);
+                    }
                   }}>
                   <Image source={{uri}} style={styles.image} />
                 </TouchableOpacity>
@@ -126,7 +131,14 @@ const Upload: React.FC<UploadProps> = props => {
               )}
             </View>
             {disabled ? null : (
-              <TouchableOpacity style={styles.wrapperIcon} activeOpacity={0.5} onPress={() => handleClick(index)}>
+              <TouchableOpacity
+                style={styles.wrapperIcon}
+                activeOpacity={0.5}
+                onPress={() => {
+                  if (!disabled) {
+                    handleClick(index);
+                  }
+                }}>
                 <Icon name="del" color="red" />
               </TouchableOpacity>
             )}

@@ -168,7 +168,7 @@ export const globalStyles = StyleSheet.create({
     marginRight: globalStyleVariables.MODULE_SPACE,
   },
   inputWidth: {
-    width: 60,
+    width: 70,
   },
   //左右边距
   marginRightLeft: {

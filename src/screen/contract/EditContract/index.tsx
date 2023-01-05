@@ -3,7 +3,7 @@ import {View, ScrollView, useWindowDimensions, StyleSheet, KeyboardAvoidingView,
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 
 import {Steps, NavigationBar} from '../../../component';
-import {useCommonDispatcher, useParams, useRefCallback, useContractDispatcher} from '../../../helper/hooks';
+import {useParams, useRefCallback, useContractDispatcher} from '../../../helper/hooks';
 import {globalStyleVariables} from '../../../constants/styles';
 import {useForm, Controller} from 'react-hook-form';
 import Base from './Base';
@@ -15,7 +15,6 @@ import {RootState} from '../../../redux/reducers';
 import {COMPANY_NAME} from '../../../constants';
 
 import {generateContractFormPatch} from '../../../helper';
-import {FormDisabledContext} from '../../../component/Form/Context';
 
 const steps = [
   {title: '基础信息', key: 'base'},
@@ -51,7 +50,6 @@ const EditSPU: React.FC = () => {
   const [currentKey, setCurrentKey] = React.useState('base');
   const {bottom} = useSafeAreaInsets();
   const {width: windowWidth} = useWindowDimensions();
-  const [commonDispatcher] = useCommonDispatcher();
   const [ref, setRef, isReady] = useRefCallback<ScrollView>();
   const {
     control,
@@ -59,6 +57,7 @@ const EditSPU: React.FC = () => {
     setValue,
     watch,
     handleSubmit,
+    setError,
     formState: {errors},
   } = useForm<any>({
     defaultValues,
@@ -110,11 +109,10 @@ const EditSPU: React.FC = () => {
   function handleChangeStep(currentKey: string, nextKey: string) {
     if (nextKey !== 'base') {
       const {bizUserId} = getValues();
-      const valid = bizUserId;
-      if (!valid) {
-        commonDispatcher.info('请先选择商家和合同！');
+      if (!bizUserId) {
+        setError('bizUserId', {type: 'required', message: '请选择商家'});
+        return false;
       }
-      return valid;
     }
     return true;
   }
@@ -125,44 +123,42 @@ const EditSPU: React.FC = () => {
         <SafeAreaView style={{flex: 1, backgroundColor: '#f4f4f4'}} edges={['bottom']}>
           <NavigationBar title={'签结算合同'} />
           <Steps steps={steps} currentKey={currentKey} onChange={setCurrentKey} onBeforeChangeKey={handleChangeStep} />
-          <FormDisabledContext.Provider value={{disabled: false}}>
-            <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
-              <View style={[{width: windowWidth, padding: globalStyleVariables.MODULE_SPACE}]}>
-                <ScrollView>
-                  <Base errors={errors} watch={watch} setValue={setValue} getValues={getValues} control={control} Controller={Controller} onNext={() => setCurrentKey('sku')} />
-                </ScrollView>
-              </View>
-              <View style={{width: windowWidth}}>
-                <ScrollView>
-                  <SKU
-                    handleSubmit={handleSubmit}
-                    errors={errors}
-                    watch={watch}
-                    action={action}
-                    setValue={setValue}
-                    getValues={getValues}
-                    control={control}
-                    onNext={() => setCurrentKey('booking')}
-                  />
-                </ScrollView>
-              </View>
-              <View style={{width: windowWidth}}>
-                <ScrollView>
-                  <Booking
-                    action={action}
-                    watch={watch}
-                    setValue={setValue}
-                    getValues={getValues}
-                    control={control}
-                    Controller={Controller}
-                    handleSubmit={handleSubmit}
-                    errors={errors}
-                    onNext={() => setCurrentKey('detail')}
-                  />
-                </ScrollView>
-              </View>
-            </ScrollView>
-          </FormDisabledContext.Provider>
+          <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
+            <View style={[{width: windowWidth, padding: globalStyleVariables.MODULE_SPACE}]}>
+              <ScrollView>
+                <Base errors={errors} watch={watch} setValue={setValue} getValues={getValues} control={control} Controller={Controller} onNext={() => setCurrentKey('sku')} />
+              </ScrollView>
+            </View>
+            <View style={{width: windowWidth}}>
+              <ScrollView>
+                <SKU
+                  handleSubmit={handleSubmit}
+                  errors={errors}
+                  watch={watch}
+                  action={action}
+                  setValue={setValue}
+                  getValues={getValues}
+                  control={control}
+                  onNext={() => setCurrentKey('booking')}
+                />
+              </ScrollView>
+            </View>
+            <View style={{width: windowWidth}}>
+              <ScrollView>
+                <Booking
+                  action={action}
+                  watch={watch}
+                  setValue={setValue}
+                  getValues={getValues}
+                  control={control}
+                  Controller={Controller}
+                  handleSubmit={handleSubmit}
+                  errors={errors}
+                  onNext={() => setCurrentKey('detail')}
+                />
+              </ScrollView>
+            </View>
+          </ScrollView>
         </SafeAreaView>
       </KeyboardAvoidingView>
     </>

@@ -32,12 +32,9 @@ const ImageTextDetail: React.FC<ImageTextDetailProps> = ({onNext, control, error
           control={control}
           rules={{required: '请上传海报图'}}
           render={({field: {value, onChange}}) => (
-            <Form.Item label="海报图" vertical desc="1张图，建议尺寸1200*1600，文件大小10M以内，格式jpg/png">
+            <Form.Item label="海报图" vertical errorElement={<ErrorMessage name={'poster'} errors={error} />} desc="1张图，建议尺寸1200*1600，文件大小10M以内，格式jpg/png">
               <View style={{marginTop: 10}}>
                 <Upload maxCount={1} value={value} onChange={onChange} />
-                <Text style={globalStyles.error}>
-                  <ErrorMessage name={'poster'} errors={error} />
-                </Text>
               </View>
             </Form.Item>
           )}
@@ -47,12 +44,13 @@ const ImageTextDetail: React.FC<ImageTextDetailProps> = ({onNext, control, error
           control={control}
           rules={{required: '请上传详情banner'}}
           render={({field: {value, onChange}}) => (
-            <Form.Item label="详情Banner" vertical desc="2-18张图，尺寸4:3，建议尺寸1000*750，文件大小3M以内，格式jpg/png">
+            <Form.Item
+              label="详情Banner"
+              errorElement={<ErrorMessage name={'bannerPhotos'} errors={error} />}
+              vertical
+              desc="2-18张图，尺寸4:3，建议尺寸1000*750，文件大小3M以内，格式jpg/png">
               <View style={{marginTop: 10}}>
                 <Upload maxCount={18} value={value} onChange={onChange} />
-                <Text style={globalStyles.error}>
-                  <ErrorMessage name={'bannerPhotos'} errors={error} />
-                </Text>
               </View>
             </Form.Item>
           )}

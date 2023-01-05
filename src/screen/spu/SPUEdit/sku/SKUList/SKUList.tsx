@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {useSelector} from 'react-redux';
 import {Stepper, SwipeAction, Checkbox} from '@ant-design/react-native';
-import Error from '../../../../../component/Error';
 import {Form, FormTitle, Input, Modal, PlusButton, SectionGroup, SelfText} from '../../../../../component';
 import {globalStyles, globalStyleVariables} from '../../../../../constants/styles';
 import {convertNumber2Han, findItem, getBuyLimitStr, getDirectCommissionRange, getEarnCommissionRange} from '../../../../../helper';
@@ -174,6 +173,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
       </>
     );
   };
+
   return (
     <View>
       {fields.map((item, index) => {
@@ -197,11 +197,8 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
               control={control}
               rules={{required: '请输入套餐门市价'}}
               render={({field: {value, onChange}}) => (
-                <Form.Item label="套餐门市价（元）">
+                <Form.Item label="套餐门市价（元）" errorElement={<ErrorMessage name={`skuList.[${index}].originPrice`} errors={errors} />}>
                   <Input placeholder="请输入" type="number" value={value} onChange={onChange} />
-                  <Error top={-9} left={-95}>
-                    <ErrorMessage name={`skuList.[${index}].originPrice`} errors={errors} />
-                  </Error>
                 </Form.Item>
               )}
             />
@@ -227,11 +224,8 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                 },
               }}
               render={({field: {value, onChange}}) => (
-                <Form.Item label="套餐售价（元）">
+                <Form.Item label="套餐售价（元）" errorElement={<ErrorMessage name={`skuList.${index}.salePrice`} errors={errors} />}>
                   <Input placeholder="请输入" type="number" value={value} onChange={onChange} />
-                  <Error top={-9} left={-35}>
-                    <ErrorMessage name={`skuList.${index}.salePrice`} errors={errors} />
-                  </Error>
                 </Form.Item>
               )}
             />
@@ -272,11 +266,8 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                 },
               }}
               render={({field: {value, onChange}}) => (
-                <Form.Item label="直售佣金（元）">
+                <Form.Item label="直售佣金（元）" errorElement={<ErrorMessage name={`skuList.${index}.directSalesCommission`} errors={errors} />}>
                   <Input placeholder="请输入" type="number" value={value} onChange={onChange} />
-                  <Error top={-9} left={-35}>
-                    <ErrorMessage name={`skuList.${index}.directSalesCommission`} errors={errors} />
-                  </Error>
                 </Form.Item>
               )}
             />
@@ -317,11 +308,8 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                 },
               }}
               render={({field: {value, onChange}}) => (
-                <Form.Item label="躺赚佣金（元）">
+                <Form.Item label="躺赚佣金（元）" errorElement={<ErrorMessage name={`skuList.${index}.earnCommission`} errors={errors} />}>
                   <Input placeholder="请输入" type="number" value={value} onChange={onChange} />
-                  <Error top={-9} left={-35}>
-                    <ErrorMessage name={`skuList.${index}.earnCommission`} errors={errors} />
-                  </Error>
                 </Form.Item>
               )}
             />
@@ -346,11 +334,8 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                   },
                 }}
                 render={({field: {value, onChange}}) => (
-                  <Form.Item label="套餐库存">
+                  <Form.Item label="套餐库存" errorElement={<ErrorMessage name={`skuList.[${index}].skuStock`} errors={errors} />}>
                     <Input placeholder="请输入" type="number" value={value} onChange={onChange} />
-                    <Text style={globalStyles.error}>
-                      <ErrorMessage name={`skuList.[${index}].skuStock`} errors={errors} />
-                    </Text>
                   </Form.Item>
                 )}
               />
