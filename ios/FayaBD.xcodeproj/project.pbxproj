@@ -12,6 +12,8 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		1C77E64F29682270007D411F /* auncher_title.png in Resources */ = {isa = PBXBuildFile; fileRef = 1C77E64E29682270007D411F /* auncher_title.png */; };
+		1C77E65129682274007D411F /* launcher_logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 1C77E65029682274007D411F /* launcher_logo.png */; };
 		7699B88040F8A987B510C191 /* libPods-FayaBD-FayaBDTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-FayaBD-FayaBDTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		F4D2BB92288A93DE00F2966B /* antfill.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F4D2BB90288A93DE00F2966B /* antfill.ttf */; };
@@ -39,6 +41,8 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = FayaBD/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = FayaBD/main.m; sourceTree = "<group>"; };
 		19F6CBCC0A4E27FBF8BF4A61 /* libPods-FayaBD-FayaBDTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-FayaBD-FayaBDTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1C77E64E29682270007D411F /* auncher_title.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = auncher_title.png; sourceTree = "<group>"; };
+		1C77E65029682274007D411F /* launcher_logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = launcher_logo.png; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-FayaBD.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FayaBD.debug.xcconfig"; path = "Target Support Files/Pods-FayaBD/Pods-FayaBD.debug.xcconfig"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-FayaBD.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FayaBD.release.xcconfig"; path = "Target Support Files/Pods-FayaBD/Pods-FayaBD.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-FayaBD-FayaBDTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FayaBD-FayaBDTests.debug.xcconfig"; path = "Target Support Files/Pods-FayaBD-FayaBDTests/Pods-FayaBD-FayaBDTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -94,6 +98,8 @@
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
+				1C77E64E29682270007D411F /* auncher_title.png */,
+				1C77E65029682274007D411F /* launcher_logo.png */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
 			);
@@ -252,6 +258,8 @@
 				F4D2BB93288A93DE00F2966B /* antoutline.ttf in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				1C77E65129682274007D411F /* launcher_logo.png in Resources */,
+				1C77E64F29682270007D411F /* auncher_title.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
