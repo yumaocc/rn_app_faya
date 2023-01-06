@@ -21,6 +21,7 @@ const ContractList: FC<ContractListProps> = ({id}) => {
   const [commonDispatcher] = useCommonDispatcher();
   const [pageIndex, setPageIndex] = useState(1);
   const [contractList, setContractList] = useState<ContractType[]>([]);
+
   const fetchData = useCallback(
     async (pageIndex = 1) => {
       try {
@@ -57,9 +58,9 @@ const ContractList: FC<ContractListProps> = ({id}) => {
     setContractList(res);
   };
 
-  const renderItem = ({item}: {item: ContractType}) => {
+  const renderItem = ({item, index}: {item: ContractType; index: number}) => {
     return (
-      <View key={item.id} style={[styles.content]}>
+      <View key={item.id || index} style={[styles.content]}>
         <Text style={[globalStyles.fontPrimary]}>{item.name}</Text>
         <View style={[globalStyles.containerLR, globalStyles.moduleMarginTop]}>
           <Text style={globalStyles.fontTertiary}>签约时间：{item.createdTime}</Text>
@@ -68,6 +69,7 @@ const ContractList: FC<ContractListProps> = ({id}) => {
       </View>
     );
   };
+
   return (
     <>
       <SafeAreaView style={styles.wrapper}>

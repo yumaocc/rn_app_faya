@@ -45,8 +45,7 @@ const PrivateSeaList: React.FC = () => {
     if (!merchantList?.content?.length) {
       merchantDispatcher.loadPrivateMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.load});
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [merchantDispatcher, merchantList?.content?.length]);
 
   const handleChangeFilter = (value: Options) => {
     setValueType(value);
@@ -159,7 +158,9 @@ const styles = StyleSheet.create({
     paddingRight: globalStyleVariables.MODULE_SPACE,
   },
   createButton: {
-    margin: globalStyleVariables.MODULE_SPACE,
+    marginLeft: globalStyleVariables.MODULE_SPACE,
+    marginRight: globalStyleVariables.MODULE_SPACE,
+    marginTop: globalStyleVariables.MODULE_SPACE,
     borderRadius: 5,
     alignItems: 'center',
     justifyContent: 'center',

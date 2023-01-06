@@ -112,23 +112,23 @@ const Login: React.FC = () => {
             checked={radio}
             onChange={() => {
               setRadio(!radio);
-            }}>
-            <Text style={[globalStyles.fontTertiary, {lineHeight: 15}]}>
-              登录即表示您同意
-              <TouchableOpacity
-                activeOpacity={0.5}
-                onPress={() =>
-                  navigation.navigate({
-                    name: 'Browser',
-                    params: {
-                      url: 'https://faya-manually-file.faya.life/protocol/faya-user-bd.html',
-                    },
-                  })
-                }>
-                <Text style={globalStyles.primaryColor}> 《发芽联盟入驻协议》</Text>
-              </TouchableOpacity>
-            </Text>
-          </Radio>
+            }}
+          />
+          <Text style={[globalStyles.fontTertiary, {lineHeight: 15}]}>
+            登录即表示您同意
+            <TouchableOpacity
+              activeOpacity={0.5}
+              onPress={() =>
+                navigation.navigate({
+                  name: 'Browser',
+                  params: {
+                    url: 'https://faya-manually-file.faya.life/protocol/faya-user-bd.html',
+                  },
+                })
+              }>
+              <Text style={globalStyles.primaryColor}> 《发芽联盟入驻协议》</Text>
+            </TouchableOpacity>
+          </Text>
         </View>
       </View>
     </View>

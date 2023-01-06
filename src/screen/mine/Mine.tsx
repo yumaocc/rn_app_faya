@@ -10,11 +10,15 @@ import {RootState} from '../../redux/reducers';
 import Icon from '../../component/Form/Icon';
 import {FakeNavigation} from '../../models';
 import {SectionGroup, OperateItem} from '../../component';
-import {useUserDispatcher} from '../../helper/hooks';
+import {useUserDispatcher, useSummaryDispatcher, useContractDispatcher, useMerchantDispatcher} from '../../helper/hooks';
 
 const Mine: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.userInfo);
   const [userDispatcher] = useUserDispatcher();
+  const [summaryDispatcher] = useSummaryDispatcher();
+  const [contractDispatcher] = useContractDispatcher();
+  const [merchantDispatcher] = useMerchantDispatcher();
+
   const navigation = useNavigation() as FakeNavigation;
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}} edges={['top']}>
@@ -77,6 +81,9 @@ const Mine: React.FC = () => {
             style={globalStyles.marginRightLeft}
             onPress={() => {
               userDispatcher.logout();
+              summaryDispatcher.endEdit();
+              contractDispatcher.logout();
+              merchantDispatcher.logout();
             }}>
             退出登录
           </Button>

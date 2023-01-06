@@ -8,10 +8,12 @@ export interface ContractDispatcher {
   loadContractSearchList(payload: SearchParam): void;
   loadContractList(payload: SearchParam): void;
   endEdit(): void;
+  logout(): void;
 }
 export const getContractDispatcher = (dispatch: Dispatch): ContractDispatcher => ({
   loadCurrentContract: (payload: number) => dispatch(Actions.loadCurrentContract(payload)),
   loadContractSearchList: (payload: SearchParam) => dispatch(Actions.loadContractSearchList(payload)),
   loadContractList: (payload: SearchParam) => dispatch(Actions.loadContractList(payload)),
   endEdit: () => dispatch(Actions.endEdit()),
+  logout: () => dispatch(Actions.logout()),
 });

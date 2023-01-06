@@ -13,7 +13,6 @@ import {Button} from '@ant-design/react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../../redux/reducers';
 import {FormDisabledContext} from '../../../../component/Form/Context';
-import Error from '../../../../component/Error';
 interface SKUProps {
   onNext?: () => void;
   control: Control<any, any>;
@@ -123,11 +122,8 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action,
           rules={{required: '请输入商品总库存'}}
           name="skuInfoReq.spuStock"
           render={({field: {value, onChange}}) => (
-            <Form.Item showAsterisk label="商品总库存">
+            <Form.Item showAsterisk label="商品总库存" errorElement={<ErrorMessage name={'skuInfoReq.spuStock'} errors={errors} />}>
               <Input value={value} type="number" onChange={onChange} />
-              <Error top={-9} left={-96}>
-                <ErrorMessage name={'skuInfoReq.spuStock'} errors={errors} />
-              </Error>
             </Form.Item>
           )}
         />

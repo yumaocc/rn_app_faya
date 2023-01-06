@@ -44,6 +44,10 @@ export default (state = initialState, action: UserActions): UserState => {
       return produce(state, draft => {
         draft.loginState = LoginState.Error;
       });
+    case ActionType.LOGOUT_SUCCESS:
+      return produce(state, draft => {
+        draft.userInfo = undefined;
+      });
     case ActionType.RESET_LOGIN_STATE:
       return produce(state, draft => {
         draft.loginState = LoginState.None;

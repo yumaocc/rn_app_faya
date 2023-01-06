@@ -114,7 +114,7 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
     <>
       <ScrollView style={styles.container}>
         <SectionGroup style={styles.sectionGroupStyle}>
-          <FormTitle title="上架渠道" />
+          <FormTitle title="上架渠道" borderTop />
           <Form.Item label="请选择上线站点">
             <Controller
               control={control}
@@ -129,7 +129,7 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
           </Form.Item>
         </SectionGroup>
         <SectionGroup style={[{marginTop: 16}, styles.sectionGroupStyle]}>
-          <FormTitle title="预约设置" />
+          <FormTitle title="预约设置" borderTop />
           <Form.Item label="预约类型">
             <Text>{getBookingType(contractDetail?.bookingReq?.bookingType)}</Text>
           </Form.Item>
@@ -161,7 +161,7 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
         </SectionGroup>
 
         <SectionGroup style={styles.sectionGroupStyle}>
-          <FormTitle title="发码设置" />
+          <FormTitle title="发码设置" borderTop />
           <Form.Item label="发码方式">
             <Select textColor disabled value={contractDetail?.bookingReq?.codeType} options={codeTypes.map(item => ({label: item.name, value: item.codeType}))} />
           </Form.Item>

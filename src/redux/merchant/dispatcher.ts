@@ -13,6 +13,7 @@ export interface MerchantDispatcher {
   loadPrivateMerchantList(payload: SearchParam): void;
 
   exitMerchantPage(): void;
+  logout(): void;
 }
 
 export const getMerchantDispatcher = (dispatch: Dispatch): MerchantDispatcher => {
@@ -38,6 +39,9 @@ export const getMerchantDispatcher = (dispatch: Dispatch): MerchantDispatcher =>
     },
     loadPrivateMerchantList(payload: SearchParam) {
       dispatch(Actions.loadPrivateMerchantList(payload));
+    },
+    logout() {
+      dispatch(Actions.logout());
     },
   };
 };

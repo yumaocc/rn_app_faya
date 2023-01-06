@@ -162,7 +162,7 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
   return (
     <ScrollView style={styles.container}>
       <SectionGroup style={[{marginTop: 0}, styles.sectionGroupStyle]}>
-        <FormTitle title="商家信息" />
+        <FormTitle title="商家信息" borderTop />
         <Controller
           control={control}
           name="bizUserId"
@@ -215,7 +215,7 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
         ) : null}
       </SectionGroup>
       <SectionGroup style={styles.sectionGroupStyle}>
-        <FormTitle title="商品基础信息" />
+        <FormTitle title="商品基础信息" borderTop />
         <Controller
           control={control}
           name="spuName"
@@ -294,7 +294,7 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
         />
       </SectionGroup>
       <SectionGroup style={styles.sectionGroupStyle}>
-        <FormTitle title="上线时间" />
+        <FormTitle title="上线时间" borderTop />
         <Form.Item label="售卖时间" vertical desc={`合同时间：${currentContract?.bookingReq?.saleBeginTime || 'N/A'}-${currentContract?.bookingReq?.saleEndTime || 'N/A'}`}>
           <View style={styles.composeItemWrapper}>
             <Controller

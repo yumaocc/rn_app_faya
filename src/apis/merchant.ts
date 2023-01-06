@@ -60,7 +60,6 @@ export async function getMerchantDetail(merchantId: number): Promise<MerchantDet
 
 // 获取公海商家详情
 export async function getPublicMerchantDetail(merchantId: number): Promise<MerchantDetailF> {
-  console.log('公海id', merchantId);
   return await get<MerchantDetailF>(`/biz/user/details/for/public?id=${merchantId}`);
 }
 export async function returnPublic(id: number): Promise<boolean> {

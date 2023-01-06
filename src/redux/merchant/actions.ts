@@ -33,5 +33,6 @@ export const Actions = {
     createAction(ActionType.LOAD_MERCHANT_PRIVATE_LIST, payload),
   loadPrivateMerchantListSuccess: (payload: PagedData<MerchantF[]>): ActionWithPayload<ActionType.LOAD_MERCHANT_PRIVATE_LIST_SUCCESS, PagedData<MerchantF[]>> =>
     createAction(ActionType.LOAD_MERCHANT_PRIVATE_LIST_SUCCESS, payload),
+  logout: (): Action<ActionType.LOGOUT> => createAction(ActionType.LOGOUT),
 };
 export type MerchantActions = ActionsUnion<typeof Actions>;

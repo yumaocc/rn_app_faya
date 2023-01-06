@@ -17,7 +17,7 @@ export const Actions = {
   setUserInfo: (userInfo?: UserInfo): ActionWithPayload<ActionType.SET_USER_INFO, UserInfo> => createAction(ActionType.SET_USER_INFO, userInfo),
 
   logout: (): Action<ActionType.LOGOUT> => createAction(ActionType.LOGOUT),
-
+  logoutSuccess: (): Action<ActionType.LOGOUT_SUCCESS> => createAction(ActionType.LOGOUT_SUCCESS),
   certificate: (param: CertificateParam): ActionWithPayload<ActionType.USER_CERTIFICATE, CertificateParam> => createAction(ActionType.USER_CERTIFICATE, param),
 
   certificateSuccess: (): Action<ActionType.USER_CERTIFICATE_SUCCESS> => createAction(ActionType.USER_CERTIFICATE_SUCCESS),

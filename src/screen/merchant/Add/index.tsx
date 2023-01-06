@@ -124,7 +124,6 @@ const AddMerchant: React.FC = () => {
     try {
       const formData = getValues();
       const newFormData = formattingMerchantRequest(formData, identity) as MerchantForm;
-      console.log(newFormData);
       if (action === MerchantAction.EDIT) {
         await updateMerchant(newFormData);
         update();
@@ -219,8 +218,12 @@ const AddMerchant: React.FC = () => {
         <SafeAreaView style={styles.container} edges={['bottom']}>
           <NavigationBar title={getTitle(status)} headerRight={identity === MerchantCreateType.PRIVATE_SEA && action === MerchantAction.EDIT && header} />
 
-          <View style={styles.container}>
-            {!!tabs?.length && <Tabs tabs={tabs} currentKey={currentKey} onChange={setCurrentKey} style={{backgroundColor: '#fff'}} />}
+          <View style={[styles.container]}>
+            {!!tabs?.length ? (
+              <Tabs tabs={tabs} currentKey={currentKey} onChange={setCurrentKey} style={{backgroundColor: '#fff'}} />
+            ) : (
+              <View style={{backgroundColor: '#f4f4f4', height: 2}} />
+            )}
             <FormDisabledContext.Provider value={{disabled: identity === MerchantCreateType.PUBLIC_SEA && action !== MerchantAction.ADD && true}}>
               <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
                 <View style={{width: windowWidth}}>

@@ -42,8 +42,7 @@ const PublicSeaList: React.FC = () => {
     if (!merchantList?.content?.length) {
       merchantDispatcher.loadPublicMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.load});
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [merchantDispatcher, merchantList?.content?.length]);
 
   const handleChangeFilter = (value: Options) => {
     setValueType(value);
@@ -55,7 +54,7 @@ const PublicSeaList: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={[globalStyles.wrapper, styles.container]}>
+    <SafeAreaView style={[globalStyles.wrapper]}>
       <Loading active={loading} />
       <View style={[styles.header, globalStyles.containerLR]}>
         <Text style={(globalStyles.moduleMarginLeft, {flex: 1})}>
@@ -92,9 +91,9 @@ const PublicSeaList: React.FC = () => {
           </View>
         </View>
       </View>
-      <View style={{paddingHorizontal: globalStyleVariables.MODULE_SPACE}}>
+      <View>
         <PlusButton
-          style={[styles.createButton, {marginBottom: globalStyleVariables.MODULE_SPACE}]}
+          style={[styles.createButton]}
           title="新增公海商家"
           onPress={() => {
             navigation.navigate({
@@ -139,7 +138,6 @@ const PublicSeaList: React.FC = () => {
 export default PublicSeaList;
 
 const styles = StyleSheet.create({
-  container: {},
   header: {
     height: 45,
     backgroundColor: '#fff',
@@ -147,6 +145,8 @@ const styles = StyleSheet.create({
     paddingRight: globalStyleVariables.MODULE_SPACE,
   },
   createButton: {
+    marginLeft: globalStyleVariables.MODULE_SPACE,
+    marginRight: globalStyleVariables.MODULE_SPACE,
     marginTop: globalStyleVariables.MODULE_SPACE,
     borderRadius: 5,
     alignItems: 'center',

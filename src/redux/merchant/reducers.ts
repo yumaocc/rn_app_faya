@@ -65,6 +65,7 @@ export default (state = initialState, action: MerchantActions): MerchantState =>
         draft.currentMerchant = null;
         draft.merchantSearchList = [];
       });
+
     case ActionType.LOAD_MERCHANT_PUBLIC_LIST_SUCCESS:
       return produce(state, draft => {
         draft.merchantLoading = false;
@@ -78,6 +79,21 @@ export default (state = initialState, action: MerchantActions): MerchantState =>
     case ActionType.LOAD_MERCHANT_LOADING:
       return produce(state, draft => {
         draft.merchantLoading = true;
+      });
+    case ActionType.LOGOUT:
+      return produce(state, draft => {
+        draft.merchantPrivateList.content = [];
+        draft.merchantPublicList.content = [];
+        draft.merchantPrivateList.page = {
+          pageIndex: 1,
+          pageSize: 10,
+          pageTotal: 0,
+        };
+        draft.merchantPublicList.page = {
+          pageIndex: 1,
+          pageSize: 10,
+          pageTotal: 0,
+        };
       });
     default:
       return state;

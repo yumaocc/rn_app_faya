@@ -19,6 +19,7 @@ export const Actions = {
   loadCommissionHistory: (): Action<ActionType.LOAD_COMMISSION_HISTORY> => createAction(ActionType.LOAD_COMMISSION_HISTORY),
   loadCommissionHistorySuccess: (payload: CommissionHistory): ActionWithPayload<ActionType.LOAD_COMMISSION_HISTORY_SUCCESS, CommissionHistory> =>
     createAction(ActionType.LOAD_COMMISSION_HISTORY_SUCCESS, payload),
+  endEdit: (): Action<ActionType.END_EDIT> => createAction(ActionType.END_EDIT),
 };
 
 export type SummaryActions = ActionsUnion<typeof Actions>;

@@ -36,6 +36,7 @@ function* loginSuccess(action: ActionWithPayload<ActionType, UserInfo>): any {
 
 function* logout(): any {
   yield put(CommonActions.setToken(''));
+  yield put(Actions.logoutSuccess());
 }
 
 function* certificate(action: ActionWithPayload<ActionType, CertificateParam>): any {

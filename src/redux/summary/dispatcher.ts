@@ -10,6 +10,7 @@ export interface SummaryDispatcher {
   loadCommissionTop(dateTimeRange: DateTimeRange): void;
   loadSalesTop(dateTimeRange: DateTimeRange): void;
   loadCommissionHistory(): void;
+  endEdit(): void;
 }
 
 export const getSummaryDispatcher = (dispatch: Dispatch): SummaryDispatcher => ({
@@ -19,4 +20,5 @@ export const getSummaryDispatcher = (dispatch: Dispatch): SummaryDispatcher => (
   loadCommissionTop: (dateTimeRange: DateTimeRange) => dispatch(Actions.loadCommissionTop(dateTimeRange)),
   loadSalesTop: (dateTimeRange: DateTimeRange) => dispatch(Actions.loadSalesTop(dateTimeRange)),
   loadCommissionHistory: () => dispatch(Actions.loadCommissionHistory()),
+  endEdit: () => dispatch(Actions.endEdit()),
 });

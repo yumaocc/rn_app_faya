@@ -26,7 +26,7 @@ const ImageTextDetail: React.FC<ImageTextDetailProps> = ({onNext, control, error
   return (
     <ScrollView style={styles.container}>
       <SectionGroup style={[{marginTop: 0}, styles.sectionGroupStyle]}>
-        <FormTitle title="图片信息" />
+        <FormTitle title="图片信息" borderTop />
         <Controller
           name="poster"
           control={control}

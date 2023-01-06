@@ -56,6 +56,11 @@ export default (state = initialState, action: ContractActions): ContractState =>
       return produce(state, draft => {
         draft.contractLoading = true;
       });
+    case ActionType.LOGOUT: //这里比较特殊，首页也需要合同数据，所以不能在退出页面的清空数据，而且其他地方导致合同变化，我都会刷新数据，所以合同数据现在只退出的时候清空
+      return produce(state, draft => {
+        draft.contractList.content = [];
+        draft.contractList.page = {pageTotal: 0, pageIndex: 1, pageSize: 0};
+      });
     default:
       return state;
   }

@@ -77,7 +77,7 @@ const BuyNotice: React.FC<BuyNoticeProps> = ({setValue, control, getValues}) => 
     return (
       <>
         <SectionGroup style={styles.sectionGroupStyle}>
-          <FormTitle title="购买须知设置" />
+          <FormTitle title="购买须知设置" borderTop />
 
           <Form.Item label="预约须知">
             <PlusButton title="新建一条" onPress={() => openAddNotice('BOOKING')} />

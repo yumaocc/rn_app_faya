@@ -98,7 +98,7 @@ const Upload: React.FC<UploadProps> = props => {
   };
   const previewList = useMemo(() => {
     let list: {url: string}[] = [];
-    fileList?.forEach(item => list.push({url: item?.uri}));
+    fileList?.forEach(item => list.push({url: item?.uri ? item?.uri : item?.url}));
     return list;
   }, [fileList]);
 
@@ -107,7 +107,7 @@ const Upload: React.FC<UploadProps> = props => {
       {fileList.map((file, index) => {
         const uri = file.uri || file.url;
         return (
-          <View style={[globalStyles.containerLR, {position: 'relative'}]}>
+          <View key={file?.uid || index} style={[globalStyles.containerLR, {position: 'relative'}]}>
             <View style={styles.block} key={`${file.uid}-${index}`}>
               <View style={[globalStyles.containerLR, {flex: 1, width: 100}]}>
                 <TouchableOpacity

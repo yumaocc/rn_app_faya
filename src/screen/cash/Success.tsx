@@ -17,7 +17,7 @@ const Success: FC = () => {
         <View style={[{flex: 1}, globalStyles.containerCenter]}>
           <Icon name="FYLM_all_feedback_true" style={{marginBottom: globalStyleVariables.MODULE_SPACE}} color="#546DAD" size={100} />
           <Text style={[globalStyles.moduleMarginTop]}>提现成功,正在为您加速处理</Text>
-          <Button type="primary" style={{marginTop: globalStyleVariables.MODULE_SPACE}} onPress={() => navigation.navigate('Withdraw')}>
+          <Button type="primary" style={{marginTop: 169}} onPress={() => navigation.navigate('Withdraw')}>
             知道了
           </Button>
         </View>

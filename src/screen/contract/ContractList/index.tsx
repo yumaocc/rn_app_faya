@@ -36,7 +36,7 @@ const ContractList: FC = () => {
   );
 
   useEffect(() => {
-    if (!contractList) {
+    if (!contractList?.content?.length) {
       contractDispatcher.loadContractList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.load});
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -16,7 +16,6 @@ interface CertificationProps {
 
 const Certification: React.FC<CertificationProps> = ({Controller, control, watch, errors}) => {
   const [legalAuthType] = watch(['legalAuthType']);
-  console.log(errors);
   return (
     <>
       <View style={{paddingLeft: 10, paddingRight: 10, backgroundColor: '#fff'}}>

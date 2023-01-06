@@ -32,11 +32,11 @@ const Withdraw: FC = () => {
     return card.slice(card.length - 4, card.length);
   };
   const isReady = useMemo(() => {
-    if (Number(wallet?.balanceYuan) > 0 && money) {
+    if (Number(money) > 0) {
       return true;
     }
     return false;
-  }, [money, wallet?.balanceYuan]);
+  }, [money]);
   useEffect(() => {
     if (!wallet) {
       userDispatcher.getWallet();

@@ -69,7 +69,6 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
   //新增组合套餐
   async function onSubmitPackage() {
     const res = packListForm.getValues();
-    console.log(res);
     const skus: any = [];
     res.skus.forEach((item: any, index: number) => {
       if (item?._selected) {
@@ -179,7 +178,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
       {fields.map((item, index) => {
         return (
           <SectionGroup key={item.id} style={styles.sectionGroupStyle}>
-            <FormTitle title={`套餐${convertNumber2Han(index + 1)}设置`} />
+            <FormTitle title={`套餐${convertNumber2Han(index + 1)}设置`} borderTop />
             <Controller
               name={`skuList.${index}.skuName`}
               control={control}

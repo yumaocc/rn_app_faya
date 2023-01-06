@@ -22,6 +22,7 @@ const Home: React.FC = () => {
       userDispatcher.loadUserInfo();
     }
   }, [userDispatcher, userInfo]);
+
   if (userInfo?.status === UserState.UN_CERTIFIED) {
     navigation.navigate('Cert');
   }

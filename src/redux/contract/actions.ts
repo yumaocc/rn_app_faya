@@ -15,6 +15,7 @@ export const Actions = {
     createAction(ActionType.LOAD_CONTRACT_LIST_SUCCESS, payload),
   loadContractLoading: (): Action<ActionType.LOAD_CONTRACT_LOADING> => createAction(ActionType.LOAD_CONTRACT_LOADING),
   endEdit: (): Action<ActionType.END_EDIT> => createAction(ActionType.END_EDIT),
+  logout: (): Action<ActionType.LOGOUT> => createAction(ActionType.LOGOUT),
 };
 
 export type ContractActions = ActionsUnion<typeof Actions>;

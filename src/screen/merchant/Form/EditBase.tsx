@@ -87,7 +87,7 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, status, control, setValu
 
   return (
     <View style={{paddingLeft: 10, paddingRight: 10, paddingTop: 20, backgroundColor: '#fff'}}>
-      <FormTitle title="基本信息" />
+      <FormTitle title="基本信息" borderTop />
       <Controller
         control={control}
         name="avatar"
@@ -194,7 +194,7 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, status, control, setValu
               />
             }
           />
-          {fields.map((item, index) => {
+          {fields?.map((item, index) => {
             return (
               <View key={item.id} style={styles.shop}>
                 <SwipeAction
@@ -237,7 +237,7 @@ const EditBase: React.FC<EditBaseProps> = ({Controller, status, control, setValu
           })}
         </>
       ) : (
-        <SectionGroup style={[styles.sectionGroup, styles.tabs]}>
+        <SectionGroup key="edit" style={[styles.sectionGroup, styles.tabs]}>
           <Icon style={{color: globalStyleVariables.COLOR_PRIMARY}} name="lock" />
           <Text style={{color: globalStyleVariables.COLOR_PRIMARY}}>认领后可见</Text>
         </SectionGroup>

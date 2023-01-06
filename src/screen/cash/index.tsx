@@ -82,14 +82,7 @@ const Cash: FC = () => {
                 handleClick={() => navigation.navigate('EstimatedIncome')}
               />
               <CutOffRule />
-              <Title
-                title="历史总收益"
-                unit="元"
-                type={'money'}
-                value={commissionToday?.commissionHistory?.moneyYuan}
-                arrow
-                // handleClick={() => navigation.navigate('HistoricalEarnings')}
-              />
+              <Title title="历史总收益" unit="元" type={'money'} value={commissionToday?.commissionHistory?.moneyYuan} arrow />
               <CutOffRule />
             </View>
             <CommodityTop unit="元" title="商品提成排行" />

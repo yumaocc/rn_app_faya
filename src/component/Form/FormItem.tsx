@@ -4,7 +4,6 @@ import {globalStyles, globalStyleVariables} from '../../constants/styles';
 import {StylePropView} from '../../models';
 import {FormDisabledContext} from './Context';
 import {useFormInstance} from './hooks';
-import Icon from './Icon';
 
 export interface FormItemProps {
   children: React.ReactNode;
@@ -25,7 +24,7 @@ export interface FormItemProps {
 }
 
 const FormItem: React.FC<FormItemProps> = props => {
-  const {label, hiddenBorderBottom, hiddenBorderTop, valueKey, onChangeKey, showAsterisk, errorElement} = props;
+  const {label, hiddenBorderBottom, valueKey, onChangeKey, showAsterisk, errorElement} = props;
   const formInstance = useFormInstance();
   const formDisabled = useContext(FormDisabledContext);
   function childrenWithDisabled(): React.ReactElement {
@@ -74,7 +73,7 @@ const FormItem: React.FC<FormItemProps> = props => {
       <View
         style={[
           hiddenBorderBottom ? {} : globalStyles.borderBottom,
-          hiddenBorderTop ? {} : globalStyles.borderTop,
+          // hiddenBorderTop ? {} : globalStyles.borderTop,
           styles.container,
           {paddingBottom: errorElement ? 0 : 16},
           props.style,
@@ -94,20 +93,13 @@ const FormItem: React.FC<FormItemProps> = props => {
           </View>
         </View>
         <View style={styles.extra}>{renderChildren()}</View>
-        {<Text style={{color: globalStyleVariables.COLOR_ERROR}}>{errorElement}</Text>}
+        {errorElement && <Text style={[{color: 'red', marginBottom: 2}, globalStyles.fontSize12]}>{errorElement}</Text>}
       </View>
     );
   }
   if (props.horizontal) {
     return (
-      <View
-        style={[
-          hiddenBorderBottom ? {} : globalStyles.borderBottom,
-          hiddenBorderTop ? {} : globalStyles.borderTop,
-          styles.container,
-          props.style,
-          {flexDirection: 'row', justifyContent: 'space-between'},
-        ]}>
+      <View style={[hiddenBorderBottom ? {} : globalStyles.borderBottom, {flexDirection: 'row', justifyContent: 'space-between', paddingTop: 16, paddingBottom: 16}]}>
         <View style={[styles.item]}>
           <View style={[styles.labelLeft, {maxWidth: '100%'}]}>
             <View style={styles.labelWrapper}>
@@ -131,7 +123,7 @@ const FormItem: React.FC<FormItemProps> = props => {
     <View
       style={[
         hiddenBorderBottom ? {} : globalStyles.borderBottom,
-        hiddenBorderTop ? {} : globalStyles.borderTop,
+        // hiddenBorderTop ? {} : globalStyles.borderTop,
         styles.container,
         {paddingBottom: errorElement ? 0 : 16},
         props.style,
@@ -139,7 +131,11 @@ const FormItem: React.FC<FormItemProps> = props => {
       <View style={[styles.item]}>
         <View style={[styles.labelLeft, {maxWidth: '100%'}]}>
           <View style={styles.labelWrapper}>
-            {showAsterisk && <Icon name="xinhao" color="red" size={9} />}
+            {showAsterisk && (
+              <View>
+                <Text style={{color: 'red', marginTop: 5}}>*</Text>
+              </View>
+            )}
             <Text style={[globalStyles.fontPrimary, styles.label]}>{label}</Text>
           </View>
           {props.desc && (
@@ -153,8 +149,8 @@ const FormItem: React.FC<FormItemProps> = props => {
         <View style={styles.children}>{renderChildren()}</View>
       </View>
       {errorElement && (
-        <View style={{alignItems: 'flex-end', height: 16}}>
-          <Text style={{color: globalStyleVariables.COLOR_ERROR}}>{errorElement}</Text>
+        <View style={styles.error}>
+          <Text style={[{color: 'red'}, globalStyles.fontSize12]}>{errorElement}</Text>
         </View>
       )}
       {props.extra && <View style={styles.extra}>{props.extra}</View>}
@@ -176,7 +172,7 @@ export default FormItem;
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    paddingTop: 16,
+    paddingTop: 18,
   },
   item: {
     flexDirection: 'row',
@@ -211,5 +207,13 @@ const styles = StyleSheet.create({
   horizontal: {
     marginTop: 0,
     alignItems: 'flex-end',
+  },
+  error: {
+    height: 16,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginBottom: 2,
+    marginRight: 15,
   },
 });

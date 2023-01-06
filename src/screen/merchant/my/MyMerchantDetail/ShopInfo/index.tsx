@@ -1,10 +1,10 @@
 import React, {useEffect} from 'react';
 import {View, StyleSheet, ScrollView, useWindowDimensions, Text} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {Cascader, Form, FormTitle, SectionGroup, Select, SelfText} from '../../../../../component';
+import {Cascader, Form, FormTitle, Input, SectionGroup, Select, SelfText} from '../../../../../component';
 import {globalStyles, globalStyleVariables} from '../../../../../constants/styles';
 import {useMerchantDispatcher, useLoadCity} from '../../../../../helper/hooks';
-import {FormMerchant, MerchantFormEnum, MerchantType, BoolEnum, FakeNavigation} from '../../../../../models'; // FormMerchant
+import {FormMerchant, MerchantFormEnum, MerchantType, BoolEnum, FakeNavigation, MerchantAgentType} from '../../../../../models'; // FormMerchant
 import {useForm, Controller, useFieldArray} from 'react-hook-form';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../../../redux/reducers';
@@ -25,9 +25,10 @@ interface ShopInfoProps {
 const AddMerchant: React.FC<ShopInfoProps> = ({id, locationCompanyId}) => {
   const {cityList} = useLoadCity();
   const [sites] = useLoadAllSite();
-  const {control, setValue, getValues} = useForm<FormMerchant>({
+  const {control, setValue, watch, getValues} = useForm<FormMerchant>({
     mode: 'onBlur',
   });
+  const legalAuthType = watch('legalAuthType');
   const [merchantDispatcher] = useMerchantDispatcher();
   const navigation = useNavigation() as FakeNavigation;
   const {width: windowWidth} = useWindowDimensions();
@@ -51,7 +52,6 @@ const AddMerchant: React.FC<ShopInfoProps> = ({id, locationCompanyId}) => {
     if (sites?.length > 0 && cityList?.length) {
       if (locationCompanyId > 0) {
         const res = getSitesIndex(sites, locationCompanyId);
-        console.log(res);
         setValue('areaInfo', res as any);
       }
     }
@@ -208,22 +208,46 @@ const AddMerchant: React.FC<ShopInfoProps> = ({id, locationCompanyId}) => {
                       </Form.Item>
                     )}
                   />
+                  <Controller
+                    name="legalAuthType"
+                    control={control}
+                    defaultValue={MerchantAgentType.LEGAL}
+                    render={({field}) => (
+                      <Form.Item label="认证方式">
+                        <Select
+                          value={field.value}
+                          options={[
+                            {label: '法人', value: MerchantAgentType.LEGAL},
+                            {label: ' 经办人', value: MerchantAgentType.AGENT},
+                          ]}
+                          onChange={field.onChange}
+                        />
+                      </Form.Item>
+                    )}
+                  />
 
                   <Controller
                     name="legalPhone"
                     control={control}
-                    render={({field: {value}}) => (
-                      <Form.Item label="法人">
-                        <SelfText value={value} />
+                    rules={{
+                      validate: e => {
+                        if (e?.length < 11) {
+                          return '请输入正确的手机号';
+                        }
+                      },
+                    }}
+                    render={({field}) => (
+                      <Form.Item label={`${legalAuthType === MerchantAgentType.LEGAL ? '法人' : '经办人'}手机号`}>
+                        <Input value={field.value} onChange={field.onChange} />
                       </Form.Item>
                     )}
                   />
                   <Controller
                     name="legalName"
                     control={control}
-                    render={({field: {value}}) => (
-                      <Form.Item label={'法人'}>
-                        <SelfText value={value} />
+                    render={({field}) => (
+                      <Form.Item label={`${legalAuthType === MerchantAgentType.LEGAL ? '法人' : '经办人'}姓名`}>
+                        <Input value={field.value} onChange={field.onChange} />
                       </Form.Item>
                     )}
                   />
@@ -231,9 +255,17 @@ const AddMerchant: React.FC<ShopInfoProps> = ({id, locationCompanyId}) => {
                   <Controller
                     name="legalNumber"
                     control={control}
-                    render={({field: {value}}) => (
-                      <Form.Item label={'法人'}>
-                        <SelfText value={value} />
+                    rules={{
+                      validate: e => {
+                        if (e?.length < 18) {
+                          return '请输入正确的身份证号码';
+                        }
+                        return true;
+                      },
+                    }}
+                    render={({field}) => (
+                      <Form.Item label={`${legalAuthType === MerchantAgentType.LEGAL ? '法人' : '经办人'}身份证`}>
+                        <Input value={field.value} onChange={field.onChange} />
                       </Form.Item>
                     )}
                   />

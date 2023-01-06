@@ -88,7 +88,7 @@ const SKUContent: FC<SKUContentProps> = ({next, control, title}) => {
                   <>
                     <View style={globalStyles.dividingLine} />
                     <View style={[globalStyles.inputWidth]}>
-                      <Input type="text" style={globalStyles.fontSize12} allowFontScaling={true} value={value} onChange={onChange} />
+                      <Input type="number" style={globalStyles.fontSize12} allowFontScaling={true} value={value} onChange={onChange} />
                     </View>
                     <View style={globalStyles.dividingLine} />
                   </>
@@ -99,7 +99,7 @@ const SKUContent: FC<SKUContentProps> = ({next, control, title}) => {
                 name={`skuInfoReq.skuInfo.${next}.skuDetails.${index}.price`}
                 render={({field: {value, onChange}}) => (
                   <View style={globalStyles.inputWidth}>
-                    <Input type="text" style={globalStyles.fontSize12} allowFontScaling={true} value={value} onChange={onChange} />
+                    <Input type="number" style={globalStyles.fontSize12} allowFontScaling={true} value={value} onChange={onChange} />
                   </View>
                 )}
               />

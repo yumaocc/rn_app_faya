@@ -48,6 +48,15 @@ export default (state = initialState, action: SummaryActions): SummaryState => {
         const {payload} = action;
         draft.commissionHistory = payload;
       });
+    case ActionType.END_EDIT:
+      return produce(state, draft => {
+        draft.commissionHistory = undefined;
+        draft.commissionExpect = undefined;
+        draft.commissionToday = undefined;
+        draft.commissionTop = undefined;
+        draft.home = undefined;
+        draft.saleTop = undefined;
+      });
     default:
       return state;
   }
