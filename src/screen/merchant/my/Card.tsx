@@ -1,7 +1,6 @@
 import {useNavigation} from '@react-navigation/native';
 import React from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 // import {BadgeFlag} from '../../../component';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {BoolEnum, FakeNavigation, MyMerchantF, StylePropView} from '../../../models';

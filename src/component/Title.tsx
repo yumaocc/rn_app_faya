@@ -1,8 +1,7 @@
 // 带有眼镜的那种title组件
 import {Icon as AntdIcon} from '@ant-design/react-native';
 import React, {FC, useState} from 'react';
-import {View, StyleSheet, Text} from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {globalStyles} from '../constants/styles';
 import Icon from './Form/Icon';
 import UnitNumber from './UnitNumber';

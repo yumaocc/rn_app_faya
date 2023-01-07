@@ -1,7 +1,6 @@
 import {Button, Icon} from '@ant-design/react-native';
 import React, {useCallback, useEffect} from 'react';
-import {View, StyleSheet, Modal as RNModal, TouchableWithoutFeedback, BackHandler, useWindowDimensions, ScrollView, Text} from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {View, StyleSheet, Modal as RNModal, TouchableWithoutFeedback, BackHandler, useWindowDimensions, ScrollView, Text, TouchableOpacity} from 'react-native';
 import {globalStyles, globalStyleVariables} from '../constants/styles';
 import {StylePropView} from '../models';
 

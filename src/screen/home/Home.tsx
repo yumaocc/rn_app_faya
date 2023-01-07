@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {Text, View, ScrollView, StyleSheet} from 'react-native';
+import {Text, View, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
 import {Header} from '@react-navigation/elements';
 import {Icon} from '@ant-design/react-native';
 import {PlusButton, UnitNumber} from '../../component';
@@ -7,7 +7,6 @@ import {globalStyles, globalStyleVariables} from '../../constants/styles';
 import {useHomeSummary, useUserDispatcher} from '../../helper/hooks';
 import {useNavigation} from '@react-navigation/native';
 import {ContractAction, FakeNavigation, MerchantAction, MerchantCreateType, UserInfo, UserState} from '../../models';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/reducers';
 
@@ -160,7 +159,6 @@ export const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 15,
     fontWeight: '500',
-    lineHeight: 15,
   },
   cardIcon: {
     fontSize: 15,

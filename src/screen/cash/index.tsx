@@ -1,9 +1,8 @@
 // import {Icon as IconImg} from '@ant-design/react-native';
 import {useNavigation} from '@react-navigation/native';
 import React, {FC, useEffect} from 'react';
-import {StyleSheet, View, Text, ScrollView} from 'react-native';
+import {StyleSheet, View, Text, ScrollView, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useSelector} from 'react-redux';
 import {NavigationBar} from '../../component';
 import CutOffRule from '../../component/CutOffRule';

@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {FC} from 'react';
-import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {SafeAreaView, StyleSheet, Text, View, ScrollView, TouchableOpacity} from 'react-native';
 import {Icon, InputItem} from '@ant-design/react-native';
 import {PlusButton} from '../../../../../component';
 import * as api from '../../../../../apis';
@@ -8,7 +8,6 @@ import {globalStyles, globalStyleVariables} from '../../../../../constants/style
 import {MerchantBookingModelF} from '../../../../../models';
 import {Modal} from '../../../../../component';
 import {useCommonDispatcher, useMerchantBookingModel} from '../../../../../helper/hooks';
-import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 
 interface ModuleProps {
   id: number;

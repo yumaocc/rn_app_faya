@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {FC} from 'react';
-import {StyleSheet, Text, useWindowDimensions, View} from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
+import {StyleSheet, Text, useWindowDimensions, View, ScrollView} from 'react-native';
 import {NavigationBar, Tabs} from '../../../../component';
 import {globalStyles, globalStyleVariables} from '../../../../constants/styles';
 import {useParams, useRefCallback} from '../../../../helper/hooks';

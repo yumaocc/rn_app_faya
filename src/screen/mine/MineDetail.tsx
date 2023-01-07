@@ -1,6 +1,5 @@
 import React, {FC} from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
+import {View, Text, StyleSheet, Image, ScrollView} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useSelector} from 'react-redux';
 import {NavigationBar} from '../../component';

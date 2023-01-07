@@ -3,7 +3,7 @@ import {Button, Icon as AntdIcon} from '@ant-design/react-native';
 import Icon from '../../../../component/Form/Icon';
 import React, {useEffect, useMemo, useState} from 'react';
 import {Control, FieldErrorsImpl, UseFormGetValues, UseFormHandleSubmit, UseFormSetError, UseFormSetValue, UseFormWatch} from 'react-hook-form';
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import {useSelector} from 'react-redux';
 import {FormTitle, SectionGroup, Form, Input, Select, DatePicker, Footer, Cascader} from '../../../../component';
 import {globalStyles, globalStyleVariables} from '../../../../constants/styles';
@@ -14,7 +14,6 @@ import {styles} from '../style';
 import {ErrorMessage} from '@hookform/error-message';
 import {Controller} from 'react-hook-form';
 import SelectShop from './SelectShop';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 import {findItem, getSitesIndex, momentFromDateTime} from '../../../../helper/util';
 import {useLoadAllSite} from '../../../../helper/hooks/common';
 

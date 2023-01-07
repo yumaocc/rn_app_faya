@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {View, StyleSheet, ScrollView, useWindowDimensions, Text} from 'react-native';
+import {View, StyleSheet, ScrollView, useWindowDimensions, Text, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Cascader, Form, FormTitle, Input, SectionGroup, Select, SelfText} from '../../../../../component';
 import {globalStyles, globalStyleVariables} from '../../../../../constants/styles';
@@ -13,7 +13,6 @@ import {useRequest} from 'ahooks';
 import * as api from '../../../../../apis';
 import LinkButton from '../../../../../component/LinkButton';
 import {useNavigation} from '@react-navigation/native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useLoadAllSite} from '../../../../../helper/hooks/common';
 import {getSitesIndex} from '../../../../../helper/util';
 import {FormDisabledContext} from '../../../../../component/Form/Context';

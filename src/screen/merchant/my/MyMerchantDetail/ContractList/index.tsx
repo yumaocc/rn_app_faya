@@ -1,12 +1,11 @@
 import {useNavigation} from '@react-navigation/native';
 import React, {useCallback, useEffect, useState} from 'react';
 import {FC} from 'react';
-import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {SafeAreaView, StyleSheet, Text, View, FlatList} from 'react-native';
 import {PlusButton} from '../../../../../component';
 import * as api from '../../../../../apis';
 import {globalStyles, globalStyleVariables} from '../../../../../constants/styles';
 import {ContractList as ContractType, FakeNavigation} from '../../../../../models';
-import {FlatList} from 'react-native-gesture-handler';
 import {useCommonDispatcher} from '../../../../../helper/hooks';
 import Loading from '../../../../../component/Loading';
 
