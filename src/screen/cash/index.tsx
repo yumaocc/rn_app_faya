@@ -13,9 +13,7 @@ import {FakeNavigation} from '../../models';
 import {RootState} from '../../redux/reducers';
 import CommodityTop from './rank/CommodityTop';
 import SalesTop from './rank/SalesTop';
-// import {SvgUri} from 'react-native-svg';
 import Icon from '../../component/Form/Icon';
-// import {icons} from '../../assets/icon';
 
 const Cash: FC = () => {
   const navigation = useNavigation() as FakeNavigation;
