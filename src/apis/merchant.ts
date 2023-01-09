@@ -17,7 +17,6 @@ import {
 
 // 获取公海商家（分页）
 export async function getPublicSeaMerchants(params: SearchParam): Promise<PagedData<MerchantF[]>> {
-  console.log(params);
   return await getPaged<MerchantF[]>('/biz/user/broad/ocean/page', {params});
 }
 
