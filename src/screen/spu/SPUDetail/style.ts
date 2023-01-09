@@ -36,6 +36,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#f4f4f4',
     borderRadius: 5,
     padding: globalStyleVariables.MODULE_SPACE,
+    marginTop: globalStyleVariables.MODULE_SPACE,
   },
   composeItemWrapper: {
     paddingHorizontal: 10,

@@ -11,6 +11,7 @@ import {styles} from '../style';
 
 import SKUList from './SKUList/SKUList';
 import {isFloatNumber} from '../../../../helper/util';
+import {ErrorMessage} from '@hookform/error-message';
 
 interface SKUProps {
   onNext?: () => void;
@@ -31,7 +32,7 @@ const SKU: React.FC<SKUProps> = ({onNext, control, setValue, getValues, watch, e
   }
 
   return (
-    <ScrollView style={{flex: 1}}>
+    <ScrollView style={{flex: 1}} keyboardShouldPersistTaps="always">
       <SectionGroup style={[{marginTop: 0}, styles.sectionGroupStyle]}>
         <FormTitle title="套餐设置" />
         <Controller
@@ -46,7 +47,7 @@ const SKU: React.FC<SKUProps> = ({onNext, control, setValue, getValues, watch, e
             },
           }}
           render={({field: {value, onChange}}) => (
-            <Form.Item label="商品总库存" desc={`总库存${contractDetail?.skuInfoReq?.spuStock}份`}>
+            <Form.Item label="商品总库存" desc={`总库存${contractDetail?.skuInfoReq?.spuStock}份`} errorElement={<ErrorMessage errors={errors} name="stockAmount" />}>
               <Input type="number" placeholder="请输入商品库存" value={value} onChange={onChange} />
             </Form.Item>
           )}

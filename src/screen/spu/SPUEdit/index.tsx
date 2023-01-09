@@ -135,6 +135,7 @@ const EditSPU: React.FC = () => {
     const res = _.flatMap(value, e =>
       e?.message ? e : _.flatMap(e, item => (item?.message ? item : _.flatMap(item, element => (element?.message ? element : _.flatMap(element, e => e))))),
     );
+    console.log(res);
     commonDispatcher.info(res[0]?.message);
   };
 
@@ -241,7 +242,6 @@ const EditSPU: React.FC = () => {
             </View>
             <View style={[{width: windowWidth, paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
               <ImageTextDetail loading={loading} control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={onHandleSubmit} error={errors} />
-              {/* <Image loading={loading} control={control} setValue={setValue} getValues={getValues} watch={watch} onNext={onHandleSubmit} error={errors} /> */}
             </View>
           </ScrollView>
         </KeyboardAvoidingView>

@@ -24,7 +24,7 @@ const ImageTextDetail: React.FC<ImageTextDetailProps> = ({onNext, control, error
     onNext && onNext();
   }
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} keyboardShouldPersistTaps="always">
       <SectionGroup style={[{marginTop: 0}, styles.sectionGroupStyle]}>
         <FormTitle title="图片信息" borderTop />
         <Controller

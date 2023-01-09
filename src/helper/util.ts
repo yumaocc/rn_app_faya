@@ -270,6 +270,7 @@ export const getStatusColor = (status: number) => {
 };
 //判断一个数是否是小数
 export const isFloatNumber = (value: number) => {
+  console.log(value);
   if (Number(value) !== Math.round(value)) {
     return true;
   }

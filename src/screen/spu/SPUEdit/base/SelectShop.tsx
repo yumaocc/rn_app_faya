@@ -34,6 +34,7 @@ const SelectShop: React.FC<SelectShopProps> = ({shopList, open, setOpen, setValu
       setCurrentShopList(newShopList);
     }
   };
+
   useEffect(() => {
     if (open) {
       if (currentShopList?.length === shopList?.length) {

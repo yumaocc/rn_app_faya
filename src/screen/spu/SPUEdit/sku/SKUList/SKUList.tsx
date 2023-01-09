@@ -189,7 +189,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
               rules={{required: '请输入套餐门市价'}}
               render={({field: {value, onChange}}) => (
                 <Form.Item label="套餐门市价（元）" errorElement={<ErrorMessage name={`skuList.[${index}].originPrice`} errors={errors} />}>
-                  <Input placeholder="请输入" value={value} onChange={onChange} />
+                  <Input type="number" placeholder="请输入" value={value} onChange={onChange} />
                 </Form.Item>
               )}
             />
@@ -216,7 +216,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
               }}
               render={({field: {value, onChange}}) => (
                 <Form.Item label="套餐售价（元）" errorElement={<ErrorMessage name={`skuList.${index}.salePrice`} errors={errors} />}>
-                  <Input placeholder="请输入" value={value} onChange={onChange} />
+                  <Input placeholder="请输入" type="number" value={value} onChange={onChange} />
                 </Form.Item>
               )}
             />

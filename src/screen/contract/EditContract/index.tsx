@@ -123,14 +123,20 @@ const EditSPU: React.FC = () => {
         <SafeAreaView style={{flex: 1, backgroundColor: '#f4f4f4'}} edges={['bottom']}>
           <NavigationBar title={'签结算合同'} />
           <Steps steps={steps} currentKey={currentKey} onChange={setCurrentKey} onBeforeChangeKey={handleChangeStep} />
-          <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
+          <ScrollView
+            keyboardShouldPersistTaps="always"
+            style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}}
+            ref={setRef}
+            horizontal
+            snapToInterval={windowWidth}
+            scrollEnabled={false}>
             <View style={[{width: windowWidth, padding: globalStyleVariables.MODULE_SPACE}]}>
-              <ScrollView>
+              <ScrollView keyboardShouldPersistTaps="always">
                 <Base errors={errors} watch={watch} setValue={setValue} getValues={getValues} control={control} Controller={Controller} onNext={() => setCurrentKey('sku')} />
               </ScrollView>
             </View>
             <View style={{width: windowWidth}}>
-              <ScrollView>
+              <ScrollView keyboardShouldPersistTaps="always">
                 <SKU
                   handleSubmit={handleSubmit}
                   errors={errors}
@@ -144,7 +150,7 @@ const EditSPU: React.FC = () => {
               </ScrollView>
             </View>
             <View style={{width: windowWidth}}>
-              <ScrollView>
+              <ScrollView keyboardShouldPersistTaps="always">
                 <Booking
                   action={action}
                   watch={watch}

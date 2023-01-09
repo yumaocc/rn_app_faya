@@ -225,9 +225,15 @@ const AddMerchant: React.FC = () => {
               <View style={{backgroundColor: '#f4f4f4', height: 2}} />
             )}
             <FormDisabledContext.Provider value={{disabled: identity === MerchantCreateType.PUBLIC_SEA && action !== MerchantAction.ADD && true}}>
-              <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
+              <ScrollView
+                keyboardShouldPersistTaps="always"
+                style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}}
+                ref={setRef}
+                horizontal
+                snapToInterval={windowWidth}
+                scrollEnabled={false}>
                 <View style={{width: windowWidth}}>
-                  <ScrollView>
+                  <ScrollView keyboardShouldPersistTaps="always">
                     <EditBase
                       status={status}
                       getValues={getValues}
@@ -242,7 +248,7 @@ const AddMerchant: React.FC = () => {
                   </ScrollView>
                 </View>
                 <View style={{width: windowWidth}}>
-                  <ScrollView>
+                  <ScrollView keyboardShouldPersistTaps="always">
                     <Certification errors={errors} type={1} control={control} watch={watch} Controller={Controller} />
                   </ScrollView>
                 </View>

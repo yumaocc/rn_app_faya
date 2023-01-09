@@ -112,7 +112,7 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
 
   return (
     <>
-      <ScrollView style={styles.container}>
+      <ScrollView style={styles.container} keyboardShouldPersistTaps="always">
         <SectionGroup style={styles.sectionGroupStyle}>
           <FormTitle title="上架渠道" borderTop />
           <Form.Item label="请选择上线站点">
