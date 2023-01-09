@@ -1,10 +1,10 @@
 import {Button} from '@ant-design/react-native';
 import {useNavigation} from '@react-navigation/native';
 import React from 'react';
-import {View, StyleSheet, ScrollView, Linking, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, ScrollView, Linking, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {NavigationBar, OperateItem, SectionGroup} from '../../component';
-import {globalStyles} from '../../constants/styles';
+import {globalStyles, globalStyleVariables} from '../../constants/styles';
 import {PRIVACY_POLICY_URL, USER_AGREEMENT_URL} from '../../constants/url';
 import {useUserDispatcher, useSummaryDispatcher, useContractDispatcher, useMerchantDispatcher} from '../../helper/hooks';
 import {FakeNavigation} from '../../models';
@@ -35,6 +35,7 @@ const Settings: React.FC = () => {
           <TouchableOpacity activeOpacity={0.5} onPress={handleDeleteAccount}>
             <OperateItem title="注销账号" />
           </TouchableOpacity>
+          <Text style={[globalStyles.fontTertiary, {textAlign: 'center', marginVertical: 10}]}>当前版本：1.0.3(3)</Text>
           <SectionGroup>
             <Button
               type="warning"
