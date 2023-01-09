@@ -72,9 +72,9 @@ const Mine: React.FC = () => {
         {/* <SectionGroup>
           <OperateItem title="录入的商家" icon={<Icon name="shop" />} />
         </SectionGroup> */}
-        {/* <SectionGroup>
-          <OperateItem title="设置" icon={<Icon name="setting" />} />
-        </SectionGroup> */}
+        <SectionGroup>
+          <OperateItem title="设置" icon={<AntdIcon name="setting" />} />
+        </SectionGroup>
         <SectionGroup>
           <Button
             type="warning"

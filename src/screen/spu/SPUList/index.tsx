@@ -167,6 +167,7 @@ const styles = StyleSheet.create({
   spuContainer: {
     marginTop: globalStyleVariables.MODULE_SPACE,
     paddingHorizontal: globalStyleVariables.MODULE_SPACE,
+    paddingVertical: globalStyleVariables.MODULE_SPACE,
     backgroundColor: '#fff',
   },
   footer: {
