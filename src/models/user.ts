@@ -87,10 +87,10 @@ export interface Bank {
 }
 
 export enum BankCardStatus {
-  unverified = 0,
-  authenticated = 1,
-  authenticating = 3,
-  seriousFailure = 2,
+  unverified = 0, // 未认证
+  authenticated = 1, // 已认证
+  authenticating = 3, // 认证中
+  seriousFailure = 2, // 认证失败
 }
 
 //提现

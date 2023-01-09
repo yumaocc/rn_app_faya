@@ -8,5 +8,5 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "editor.formatOnSave": true,
   "editor.formatOnSaveMode": "file",
-  "editor.formatOnPaste": true
+  "editor.formatOnPaste": false
 }
