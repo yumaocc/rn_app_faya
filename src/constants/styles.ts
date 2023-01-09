@@ -10,6 +10,7 @@ export const globalStyleVariables = {
   TEXT_COLOR_TERTIARY: '#999',
   BORDER_COLOR: '#0000001A',
   MODULE_SPACE: 10,
+  MODULE_SPACE_SMALLER: 5,
   COLOR_PAGE_BACKGROUND: '#f4f4f4',
 };
 
@@ -33,6 +34,10 @@ export const globalStyles = StyleSheet.create({
   containerCenter: {
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  containerRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
   },
   flexCenter: {
     alignContent: 'center',

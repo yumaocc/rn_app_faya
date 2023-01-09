@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, TouchableWithoutFeedback, Image, FlatList} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Icon} from '@ant-design/react-native';
 
 import * as api from '../../../apis';
@@ -19,6 +19,7 @@ const SPUList: React.FC = () => {
   const [spuList, setSpuList] = useState<SPUF[]>([]);
   const navigation = useNavigation<FakeNavigation>();
   const [commonDispatcher] = useCommonDispatcher();
+  const {bottom} = useSafeAreaInsets();
 
   async function fetchData(index: number) {
     try {
@@ -68,25 +69,29 @@ const SPUList: React.FC = () => {
           }}>
           <View style={{flexDirection: 'row'}}>
             <View style={{paddingTop: 10}}>
-              <Image source={{uri: item.poster}} style={{width: 60, height: 80}} />
+              <Image source={{uri: item.poster}} style={{width: 60, height: 80, borderRadius: 5}} />
             </View>
             <View style={{flex: 1, marginLeft: 10}}>
               <View style={globalStyles.containerLR}>
-                <View style={{flexDirection: 'row'}}>
+                <View style={[globalStyles.containerRow, {flex: 1, marginRight: 5}]}>
                   <Icon name="shop" />
-                  <Text>{item.bizName}</Text>
+                  <Text numberOfLines={1} style={{flex: 1}}>
+                    {item.bizName}
+                  </Text>
                 </View>
                 <View style={[globalStyles.tagWrapper, {backgroundColor: getStatusColor(item?.status).bg}]}>
                   <Text style={[globalStyles.tag, {color: getStatusColor(item?.status).color}]}>·{item.statusStr}</Text>
                 </View>
               </View>
-              <Text style={globalStyles.fontPrimary} numberOfLines={1}>
+              <Text style={[globalStyles.fontPrimary, {marginTop: globalStyleVariables.MODULE_SPACE_SMALLER}]} numberOfLines={1}>
                 {item.spuName}
               </Text>
-              <Text style={{color: '#666666'}} numberOfLines={1}>
-                {item.categoryName}
-              </Text>
-              <Text>{`售卖时间:${cleanTime(item.saleBeginTime)}-${cleanTime(item.saleEndTime)}`}</Text>
+              {item.categoryName && (
+                <Text style={{color: '#666666'}} numberOfLines={1}>
+                  {item.categoryName}
+                </Text>
+              )}
+              <Text>{`售卖时间:${cleanTime(item.saleBeginTime)} - ${cleanTime(item.saleEndTime)}`}</Text>
               <Text>{`预约方式:${getBookingType(item.bookingType)}`}</Text>
               <View>
                 {showSKUList.map(sku => {
@@ -100,21 +105,6 @@ const SPUList: React.FC = () => {
                   );
                 })}
               </View>
-              <View>
-                <View style={styles.footer}>
-                  {/* <TouchableOpacity
-                    activeOpacity={0.5}
-                    onPress={() => {
-                    }}>
-                    <View style={styles.showSale}>
-                      <Text style={[globalStyles.fontPrimary, {color: globalStyleVariables.COLOR_PRIMARY}]}>查看销售详情</Text>
-                    </View>
-                  </TouchableOpacity> */}
-                  {/* <View style={styles.setting}>
-                    <Icon name="setting" color={globalStyleVariables.COLOR_PRIMARY} />
-                  </View> */}
-                </View>
-              </View>
             </View>
           </View>
         </TouchableWithoutFeedback>
@@ -123,34 +113,34 @@ const SPUList: React.FC = () => {
   }
 
   return (
-    <>
+    <View style={[styles.container]}>
       <NavigationBar title="商品列表" />
       <View style={{overflow: 'hidden', flex: 1}}>
-        <SafeAreaView style={styles.container} edges={['bottom']}>
-          <Loading active={loading} />
-          {!!spuList.length ? (
-            <FlatList
-              refreshing={loading}
-              onRefresh={onRefresh}
-              onEndReached={onEndReached}
-              numColumns={1}
-              renderItem={renderItem}
-              keyExtractor={item => 'spu' + item.id}
-              data={spuList}
-              ListFooterComponent={
-                <View style={[globalStyles.containerCenter, {flex: 1, marginTop: globalStyleVariables.MODULE_SPACE, marginBottom: globalStyleVariables.MODULE_SPACE}]}>
-                  <Text style={[globalStyles.fontTertiary, {textAlign: 'center'}]}>已经到底</Text>
-                </View>
-              }
-            />
-          ) : (
-            <View style={[{flex: 1, backgroundColor: '#fff'}, globalStyles.containerCenter]}>
-              <Text style={globalStyles.fontTertiary}>暂无商品</Text>
-            </View>
-          )}
-        </SafeAreaView>
+        {/* <SafeAreaView style={styles.container} edges={['bottom']}> */}
+        <Loading active={loading} />
+        {spuList.length ? (
+          <FlatList
+            style={[{flex: 1, backgroundColor: '#f4f4f4'}]}
+            refreshing={loading}
+            onRefresh={onRefresh}
+            onEndReached={onEndReached}
+            numColumns={1}
+            renderItem={renderItem}
+            keyExtractor={item => 'spu' + item.id}
+            data={spuList}
+            ListFooterComponent={
+              <View style={[globalStyles.containerCenter, {flex: 1, paddingVertical: globalStyleVariables.MODULE_SPACE, marginBottom: bottom}]}>
+                <Text style={[globalStyles.fontTertiary, {textAlign: 'center'}]}>已经到底</Text>
+              </View>
+            }
+          />
+        ) : (
+          <View style={[{flex: 1, backgroundColor: '#fff'}, globalStyles.containerCenter]}>
+            <Text style={globalStyles.fontTertiary}>暂无商品</Text>
+          </View>
+        )}
       </View>
-    </>
+    </View>
   );
 };
 export default SPUList;
@@ -158,6 +148,7 @@ export default SPUList;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'transparent',
     // marginTop: -80,
   },
   freshHeader: {
