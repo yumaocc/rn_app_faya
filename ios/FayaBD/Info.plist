@@ -22,6 +22,8 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -38,9 +40,9 @@
 		</dict>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>为了更好地为您提供服务，请允许我们访问您的位置信息</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>需要您的同意</string>
+	<string>为了保存图片至您的相册，请允许我们访问您的相册</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>antfill.ttf</string>
