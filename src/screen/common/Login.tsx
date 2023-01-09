@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import {InputItem, Button, Toast} from '@ant-design/react-native';
+import {InputItem, Button} from '@ant-design/react-native';
+
 import {useSelector} from 'react-redux';
 import {useCommonDispatcher, useUserDispatcher} from '../../helper/hooks';
 import {RootState} from '../../redux/reducers';
@@ -59,16 +60,22 @@ const Login: React.FC = () => {
     }
   }
 
-  function handleLogin() {
+  function check(): string {
     if (!phone) {
-      return Toast.info('请输入手机号');
+      return '请输入手机号';
     }
     if (!code) {
-      Toast.info('请输入验证码');
-      return;
+      return '请输入验证码';
     }
     if (!radio) {
-      return Toast.info('请同意用户协议');
+      return '请先阅读并同意用户协议';
+    }
+  }
+  function handleLogin() {
+    const error = check();
+    if (error) {
+      commonDispatcher.error(error);
+      return;
     }
     userDispatcher.login({phone, code});
   }
@@ -113,21 +120,23 @@ const Login: React.FC = () => {
             checked={radio}
             onChange={() => {
               setRadio(!radio);
-            }}
-          />
-          <Text style={[globalStyles.fontTertiary]}>登录即表示您同意</Text>
-          <TouchableOpacity
-            activeOpacity={0.5}
-            onPress={() =>
-              navigation.navigate({
-                name: 'Browser',
-                params: {
-                  url: 'https://faya-manually-file.faya.life/protocol/faya-user-bd.html',
-                },
-              })
-            }>
-            <Text style={globalStyles.primaryColor}> 《发芽联盟入驻协议》</Text>
-          </TouchableOpacity>
+            }}>
+            <Text>
+              <Text style={[globalStyles.fontTertiary]}>已阅读并同意</Text>
+              <TouchableOpacity
+                activeOpacity={0.5}
+                onPress={() =>
+                  navigation.navigate({
+                    name: 'Browser',
+                    params: {
+                      url: 'https://faya-manually-file.faya.life/protocol/faya-user-bd.html',
+                    },
+                  })
+                }>
+                <Text style={[globalStyles.fontTertiary, globalStyles.primaryColor]}> 《发芽联盟入驻协议》</Text>
+              </TouchableOpacity>
+            </Text>
+          </Radio>
         </View>
       </View>
     </View>

@@ -39,14 +39,11 @@ function* setToken(action: ActionWithPayload<ActionType, string>) {
 }
 function* handleError(action: ActionWithPayload<ActionType, ErrorType | string>) {
   try {
-    yield put(Actions.dismissMessage());
     const {payload} = action;
-    if (typeof payload === 'string') {
-      return;
-    }
-    if (payload?.code === 8000) {
+    if (typeof payload === 'object' && payload?.code === 8000) {
       yield put(Actions.setToken(''));
     }
+    yield dismissMessage();
   } catch (error) {}
 }
 

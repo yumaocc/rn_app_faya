@@ -8,6 +8,7 @@ const GlobalToast: React.FC = () => {
   const message = useSelector((state: RootState) => state.common.message);
   const messageType = useSelector((state: RootState) => state.common.messageType);
   useEffect(() => {
+    console.log('message', message, 'messageType', messageType);
     if (!message) {
       return;
     }
