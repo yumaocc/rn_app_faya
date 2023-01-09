@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
 import {InputItem, Button} from '@ant-design/react-native';
 
 import {useSelector} from 'react-redux';
@@ -83,62 +83,64 @@ const Login: React.FC = () => {
   return (
     <View style={styles.container}>
       <MyStatusBar />
-      <Text style={styles.title}>登录/注册</Text>
-      <View style={styles.form}>
-        <View style={styles.formItem}>
-          <InputItem clear last value={phone} labelNumber={2} type="text" onChange={setPhone} placeholder="请输入手机号">
-            <Text style={styles.phoneLabel}>+86</Text>
-          </InputItem>
-        </View>
+      <ScrollView keyboardDismissMode="on-drag" style={{flex: 1}}>
+        <Text style={styles.title}>登录/注册</Text>
+        <View style={styles.form}>
+          <View style={styles.formItem}>
+            <InputItem clear last value={phone} labelNumber={2} type="text" onChange={setPhone} placeholder="请输入手机号">
+              <Text style={styles.phoneLabel}>+86</Text>
+            </InputItem>
+          </View>
 
-        <Text style={styles.formExplain}>未注册的手机号验证通过后将自动注册</Text>
-        <View style={[styles.formItem, styles.formItemCode]}>
-          <InputItem
-            clear
-            last
-            value={code}
-            labelNumber={2}
-            type="number"
-            onChange={setCode}
-            extra={
-              verifyCodeSend ? (
-                <Text style={styles.phoneLabel}>重新发送({resendAfter})</Text>
-              ) : (
-                <Text style={styles.getCode} onPress={handleSendCode}>
-                  获取验证码
-                </Text>
-              )
-            }
-            placeholder="请输入验证码"
-          />
+          <Text style={styles.formExplain}>未注册的手机号验证通过后将自动注册</Text>
+          <View style={[styles.formItem, styles.formItemCode]}>
+            <InputItem
+              clear
+              last
+              value={code}
+              labelNumber={2}
+              type="number"
+              onChange={setCode}
+              extra={
+                verifyCodeSend ? (
+                  <Text style={styles.phoneLabel}>重新发送({resendAfter})</Text>
+                ) : (
+                  <Text style={styles.getCode} onPress={handleSendCode}>
+                    获取验证码
+                  </Text>
+                )
+              }
+              placeholder="请输入验证码"
+            />
+          </View>
+          <Button style={styles.login} type="primary" onPress={handleLogin} loading={loginState === LoginState.Loading}>
+            登录
+          </Button>
+          <View style={{flexDirection: 'row', alignItems: 'center', marginTop: globalStyleVariables.MODULE_SPACE}}>
+            <Radio
+              checked={radio}
+              onChange={() => {
+                setRadio(!radio);
+              }}>
+              <Text>
+                <Text style={[globalStyles.fontTertiary]}>已阅读并同意</Text>
+                <TouchableOpacity
+                  activeOpacity={0.5}
+                  onPress={() =>
+                    navigation.navigate({
+                      name: 'Browser',
+                      params: {
+                        url: 'https://faya-manually-file.faya.life/protocol/faya-user-bd.html',
+                      },
+                    })
+                  }>
+                  <Text style={[globalStyles.fontTertiary, globalStyles.primaryColor]}> 《发芽联盟入驻协议》</Text>
+                </TouchableOpacity>
+              </Text>
+            </Radio>
+          </View>
         </View>
-        <Button style={styles.login} type="primary" onPress={handleLogin} loading={loginState === LoginState.Loading}>
-          登录
-        </Button>
-        <View style={{flexDirection: 'row', alignItems: 'center', marginTop: globalStyleVariables.MODULE_SPACE}}>
-          <Radio
-            checked={radio}
-            onChange={() => {
-              setRadio(!radio);
-            }}>
-            <Text>
-              <Text style={[globalStyles.fontTertiary]}>已阅读并同意</Text>
-              <TouchableOpacity
-                activeOpacity={0.5}
-                onPress={() =>
-                  navigation.navigate({
-                    name: 'Browser',
-                    params: {
-                      url: 'https://faya-manually-file.faya.life/protocol/faya-user-bd.html',
-                    },
-                  })
-                }>
-                <Text style={[globalStyles.fontTertiary, globalStyles.primaryColor]}> 《发芽联盟入驻协议》</Text>
-              </TouchableOpacity>
-            </Text>
-          </Radio>
-        </View>
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -147,12 +149,13 @@ export default Login;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    paddingTop: 94,
+    // alignItems: 'center',
     backgroundColor: '#fff',
   },
   title: {
+    textAlign: 'center',
     fontSize: 20,
+    paddingTop: 94,
     fontWeight: 'bold',
   },
   form: {
