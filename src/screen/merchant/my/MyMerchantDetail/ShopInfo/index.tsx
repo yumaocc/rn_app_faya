@@ -311,20 +311,19 @@ const AddMerchant: React.FC<ShopInfoProps> = ({id, locationCompanyId}) => {
                         />
                       </View>
                     </TouchableOpacity>
-                    {index === 2 && (
+                    {index >= 2 && (
                       <View style={[globalStyles.borderTop]}>
-                        <TouchableOpacity
-                          activeOpacity={0.5}
-                          onPress={() =>
+                        <LinkButton
+                          title="查看更多"
+                          onPress={() => {
                             navigation.navigate({
                               name: 'ShopList',
                               params: {
                                 id: id,
                               },
-                            })
-                          }>
-                          <LinkButton title="查看更多" />
-                        </TouchableOpacity>
+                            });
+                          }}
+                        />
                       </View>
                     )}
                   </View>

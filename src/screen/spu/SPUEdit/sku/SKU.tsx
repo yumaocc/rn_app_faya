@@ -57,7 +57,7 @@ const SKU: React.FC<SKUProps> = ({onNext, control, setValue, getValues, watch, e
           <Switch checked={contractDetail?.skuInfoReq?.skuInfo.length > 1} disabled />
         </Form.Item>
 
-        <Form.Item label="套餐共享库存">
+        <Form.Item label="套餐单独设置库存">
           <Switch checked={contractDetail?.skuInfoReq?.openSkuStock === BoolEnum.TRUE} disabled />
         </Form.Item>
       </SectionGroup>

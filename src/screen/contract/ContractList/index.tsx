@@ -114,53 +114,51 @@ const ContractList: FC = () => {
   };
   return (
     <>
-      <View>
-        <Loading active={loading} />
-        <NavigationBar title="合同列表" headerRight={headerRight} />
+      <Loading active={loading} />
+      <NavigationBar title="合同列表" headerRight={headerRight} />
 
-        <View style={[globalStyles.lineHorizontal]} />
-        <View style={[styles.header]}>
-          <View>
-            <UnitNumber prefix="共" value={contractList?.page?.pageTotal} unit="份" />
-          </View>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <View style={{width: 100}}>
-              <Input
-                placeholder="搜索"
-                value={value}
-                extra={<Icon name="FYLM_all_search" color="#f4f4f4" />}
-                onChange={e => {
-                  setValue(e);
-                  run(e);
-                }}
-                textAlign="left"
-              />
-            </View>
+      <View style={[globalStyles.lineHorizontal]} />
+      <View style={[styles.header]}>
+        <View>
+          <UnitNumber prefix="共" value={contractList?.page?.pageTotal} unit="份" />
+        </View>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={{width: 100}}>
+            <Input
+              placeholder="搜索"
+              value={value}
+              extra={<Icon name="FYLM_all_search" color="#f4f4f4" />}
+              onChange={e => {
+                setValue(e);
+                run(e);
+              }}
+              textAlign="left"
+            />
           </View>
         </View>
-        <FlatList
-          data={contractList?.content}
-          renderItem={renderItem}
-          ListEmptyComponent={
-            <View style={[globalStyles.containerCenter, {flex: 1}]}>
-              <Text>暂无数据</Text>
-            </View>
-          }
-          ListFooterComponent={
-            <View style={[globalStyles.containerCenter, {flex: 1, marginTop: globalStyleVariables.MODULE_SPACE, marginBottom: globalStyleVariables.MODULE_SPACE}]}>
-              <Text style={[globalStyles.fontTertiary, {textAlign: 'center'}]}>已经到底</Text>
-            </View>
-          }
-          numColumns={1}
-          refreshing={false}
-          onRefresh={() => {
-            contractDispatcher.loadContractList({pageIndex: 1, pageSize: PAGE_SIZE, multiStore: valueType?.value, name: value, action: RequestAction.other});
-          }}
-          onEndReached={() => {
-            contractDispatcher.loadContractList({pageIndex: pageIndex + 1, pageSize: PAGE_SIZE, multiStore: valueType?.value, name: value, action: RequestAction.load});
-          }}
-        />
       </View>
+      <FlatList
+        data={contractList?.content}
+        renderItem={renderItem}
+        ListEmptyComponent={
+          <View style={[globalStyles.containerCenter, {flex: 1}]}>
+            <Text>暂无数据</Text>
+          </View>
+        }
+        ListFooterComponent={
+          <View style={[globalStyles.containerCenter, {flex: 1, marginTop: globalStyleVariables.MODULE_SPACE, marginBottom: globalStyleVariables.MODULE_SPACE}]}>
+            <Text style={[globalStyles.fontTertiary, {textAlign: 'center'}]}>已经到底</Text>
+          </View>
+        }
+        numColumns={1}
+        refreshing={false}
+        onRefresh={() => {
+          contractDispatcher.loadContractList({pageIndex: 1, pageSize: PAGE_SIZE, multiStore: valueType?.value, name: value, action: RequestAction.other});
+        }}
+        onEndReached={() => {
+          contractDispatcher.loadContractList({pageIndex: pageIndex + 1, pageSize: PAGE_SIZE, multiStore: valueType?.value, name: value, action: RequestAction.load});
+        }}
+      />
     </>
   );
 };
