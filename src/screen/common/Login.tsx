@@ -11,6 +11,7 @@ import {globalStyles, globalStyleVariables} from '../../constants/styles';
 import {useNavigation} from '@react-navigation/native';
 import Radio from '../../component/Form/Radio';
 import MyStatusBar from '../../component/MyStatusBar';
+import {PRIVACY_POLICY_URL, USER_AGREEMENT_URL} from '../../constants/url';
 
 const Login: React.FC = () => {
   const [radio, setRadio] = useState(false);
@@ -68,7 +69,7 @@ const Login: React.FC = () => {
       return '请输入验证码';
     }
     if (!radio) {
-      return '请先阅读并同意用户协议';
+      return '请先阅读并同意入驻协议和隐私政策';
     }
   }
   function handleLogin() {
@@ -122,19 +123,32 @@ const Login: React.FC = () => {
               onChange={() => {
                 setRadio(!radio);
               }}>
-              <Text>
-                <Text style={[globalStyles.fontTertiary]}>已阅读并同意</Text>
+              <Text style={[globalStyles.fontTertiary]}>
+                <Text>已阅读并同意</Text>
                 <TouchableOpacity
                   activeOpacity={0.5}
                   onPress={() =>
                     navigation.navigate({
                       name: 'Browser',
                       params: {
-                        url: 'https://faya-manually-file.faya.life/protocol/faya-user-bd.html',
+                        url: USER_AGREEMENT_URL,
                       },
                     })
                   }>
                   <Text style={[globalStyles.fontTertiary, globalStyles.primaryColor]}> 《发芽联盟入驻协议》</Text>
+                </TouchableOpacity>
+                <Text> 和 </Text>
+                <TouchableOpacity
+                  activeOpacity={0.5}
+                  onPress={() =>
+                    navigation.navigate({
+                      name: 'Browser',
+                      params: {
+                        url: PRIVACY_POLICY_URL,
+                      },
+                    })
+                  }>
+                  <Text style={[globalStyles.fontTertiary, globalStyles.primaryColor]}> 《发芽联盟隐私政策》</Text>
                 </TouchableOpacity>
               </Text>
             </Radio>

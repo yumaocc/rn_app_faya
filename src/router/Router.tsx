@@ -17,6 +17,7 @@ import MineDetail from '../screen/mine/MineDetail';
 // import {RootStackParamList, ValidRoute} from '../models';
 import Cert from '../screen/Cert';
 import Browser from '../component/Browser';
+import Settings from '../screen/common/Settings';
 const Navigator: React.FC = () => {
   const token = useSelector((state: RootState) => state.common.token);
   const isLogout = useSelector((state: RootState) => state.user.isLogout);
@@ -53,7 +54,14 @@ const Navigator: React.FC = () => {
               animationTypeForReplace: 'pop',
             }}
           />
-
+          <Stack.Screen
+            name="Settings"
+            component={Settings}
+            options={{
+              headerShown: false,
+              animationTypeForReplace: 'pop',
+            }}
+          />
           {RouterSPU}
           {RouterMerchant}
           {RouteContract}
@@ -69,15 +77,15 @@ const Navigator: React.FC = () => {
               animationTypeForReplace: isLogout ? 'pop' : 'push',
             }}
           />
-          <Stack.Screen
-            name="Browser"
-            component={Browser}
-            options={{
-              headerShown: false,
-            }}
-          />
         </>
       )}
+      <Stack.Screen
+        name="Browser"
+        component={Browser}
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack.Navigator>
   );
 };

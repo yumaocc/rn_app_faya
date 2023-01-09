@@ -56,6 +56,7 @@ export type RootStackParamList = {
   Cert: undefined;
   ViewContract: undefined;
   Browser: undefined;
+  Settings: undefined;
 };
 
 export type Props = NativeStackScreenProps<RootStackParamList>;

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Icon as AntdIcon, Button} from '@ant-design/react-native';
+import {Icon as AntdIcon} from '@ant-design/react-native';
 import {useNavigation} from '@react-navigation/native';
 import {View, Text, ScrollView, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -10,14 +10,9 @@ import {RootState} from '../../redux/reducers';
 import Icon from '../../component/Form/Icon';
 import {FakeNavigation} from '../../models';
 import {SectionGroup, OperateItem} from '../../component';
-import {useUserDispatcher, useSummaryDispatcher, useContractDispatcher, useMerchantDispatcher} from '../../helper/hooks';
 
 const Mine: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.userInfo);
-  const [userDispatcher] = useUserDispatcher();
-  const [summaryDispatcher] = useSummaryDispatcher();
-  const [contractDispatcher] = useContractDispatcher();
-  const [merchantDispatcher] = useMerchantDispatcher();
 
   const navigation = useNavigation() as FakeNavigation;
   return (
@@ -73,20 +68,9 @@ const Mine: React.FC = () => {
           <OperateItem title="录入的商家" icon={<Icon name="shop" />} />
         </SectionGroup> */}
         <SectionGroup>
-          <OperateItem title="设置" icon={<AntdIcon name="setting" />} />
-        </SectionGroup>
-        <SectionGroup>
-          <Button
-            type="warning"
-            style={globalStyles.marginRightLeft}
-            onPress={() => {
-              userDispatcher.logout();
-              summaryDispatcher.endEdit();
-              contractDispatcher.logout();
-              merchantDispatcher.logout();
-            }}>
-            退出登录
-          </Button>
+          <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Settings')}>
+            <OperateItem title="设置" icon={<AntdIcon name="setting" color="#333" />} />
+          </TouchableOpacity>
         </SectionGroup>
       </ScrollView>
     </SafeAreaView>
