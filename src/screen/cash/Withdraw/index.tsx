@@ -82,7 +82,7 @@ const Withdraw: FC = () => {
           </View>
           {walletInfo?.status === BankCardStatus.unverified && (
             <TouchableOpacity activeOpacity={0.5} style={[globalStyles.flexNormal, globalStyles.moduleMarginTop, {alignItems: 'center'}]}>
-              <Icon name="plus" color="#546DAD" />
+              <Icon name="plus" color="#546DAD" style={{marginRight: globalStyleVariables.MODULE_SPACE}} />
               <Text style={[globalStyles.fontPrimary, globalStyles.primaryColor]}>银行卡尚未认证，请前往pc认证</Text>
             </TouchableOpacity>
           )}

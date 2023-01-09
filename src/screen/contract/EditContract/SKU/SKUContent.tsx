@@ -21,6 +21,7 @@ const SKUContent: FC<SKUContentProps> = ({next, control, title}) => {
     control,
     name: `skuInfoReq.skuInfo.${next}.skuDetails`,
   });
+
   const addSku = () => {
     append({
       name: '',

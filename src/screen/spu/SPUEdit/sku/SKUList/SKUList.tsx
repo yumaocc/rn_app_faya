@@ -12,6 +12,7 @@ import {styles} from '../../style';
 import List from './List';
 import * as apis from '../../../../../apis';
 import {Control, UseFormGetValues, UseFormSetValue, UseFormWatch, Controller, useFieldArray, useForm, FieldErrorsImpl, UseFormSetError} from 'react-hook-form';
+import {isFloatNumber} from '../../../../../helper/util';
 
 interface SKUListProps {
   control?: Control<any, any>;
@@ -75,15 +76,6 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
         skus.push({contractSkuId: res.sku[index].contractSkuId, nums: item.nums});
       }
     });
-    // if (skus?.length === 0) {
-    //   packListForm.setError('packageList', {type: 'value', message: '请选择一个套餐'});
-    //   return;
-    // }
-    // const packageListNums = skus.reduce((pre: number, idx: any) => pre + idx.nums, 0);
-    // if (packageListNums < 2) {
-    //   packListForm.setError('packageNums', {type: 'value', message: '如果只选择一个套餐，套餐数量必须大于1'});
-    //   return;
-    // }
 
     const formData = {
       show: 1,
@@ -197,7 +189,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
               rules={{required: '请输入套餐门市价'}}
               render={({field: {value, onChange}}) => (
                 <Form.Item label="套餐门市价（元）" errorElement={<ErrorMessage name={`skuList.[${index}].originPrice`} errors={errors} />}>
-                  <Input placeholder="请输入" type="number" value={value} onChange={onChange} />
+                  <Input placeholder="请输入" value={value} onChange={onChange} />
                 </Form.Item>
               )}
             />
@@ -224,7 +216,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
               }}
               render={({field: {value, onChange}}) => (
                 <Form.Item label="套餐售价（元）" errorElement={<ErrorMessage name={`skuList.${index}.salePrice`} errors={errors} />}>
-                  <Input placeholder="请输入" type="number" value={value} onChange={onChange} />
+                  <Input placeholder="请输入" value={value} onChange={onChange} />
                 </Form.Item>
               )}
             />
@@ -235,6 +227,9 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                 required: '请输入',
                 validate: async value => {
                   try {
+                    if (isFloatNumber(value)) {
+                      return '请输入整数';
+                    }
                     const {skuList} = getValues();
                     const {earnCommission = 0, salePrice = 0} = skuList[index];
                     const settlementPrice = contractDetail?.skuInfoReq?.skuInfo[index]?.skuSettlementPrice;
@@ -277,6 +272,9 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                 required: '请输入',
                 validate: async value => {
                   try {
+                    if (isFloatNumber(value)) {
+                      return '请输入整数';
+                    }
                     const {skuList} = getValues();
                     const {directSalesCommission = 0, salePrice = 0} = skuList[index];
                     if (salePrice === 0) {
@@ -419,7 +417,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                   control={packListForm.control}
                   render={({field: {value, onChange}}) => (
                     <View style={[globalStyles.moduleMarginTop]}>
-                      <Checkbox style={{alignItems: 'flex-start'}} checked={value} onChange={e => onChange(e.target.checked)}>
+                      <Checkbox style={{alignItems: 'flex-start', borderColor: 'gray', flex: 1}} checked={value} onChange={e => onChange(e.target.checked)}>
                         <Controller
                           control={packListForm.control}
                           name={`sku.${index}.skuName`}
@@ -451,9 +449,7 @@ const SKUList: React.FC<SKUListProps> = ({control, setValue, getValues, errors, 
                                         return true;
                                       },
                                     }}
-                                    render={({field: {value, onChange}}) => (
-                                      <Stepper style={{marginLeft: 65}} value={value} onChange={onChange} styles={stepperStyle} step={1} min={1} />
-                                    )}
+                                    render={({field: {value, onChange}}) => <Stepper value={value} onChange={onChange} styles={stepperStyle} step={1} min={1} />}
                                   />
                                 </View>
                               )}

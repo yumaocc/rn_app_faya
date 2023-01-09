@@ -12,15 +12,20 @@ const GlobalToast: React.FC = () => {
       return;
     }
     const duration = ERROR_SHOW_TIME / 1000;
+    const body = {
+      content: message,
+      duration,
+      mask: false,
+    };
     switch (messageType) {
       case 'success':
-        Toast.success(message, duration);
+        Toast.success(body);
         break;
       case 'error':
-        Toast.fail(message || '哎呀，出错了~', duration);
+        Toast.fail(body);
         break;
       default:
-        Toast.info(message, duration);
+        Toast.info(body);
         break;
     }
   }, [message, messageType]);

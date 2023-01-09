@@ -4,7 +4,7 @@ import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import {Cascader, Form, FormTitle, Input, SectionGroup, Select, Switch} from '../../../../component';
 import {globalStyles, globalStyleVariables} from '../../../../constants/styles';
 import {useSPUCategories} from '../../../../helper/hooks';
-import {convertNumber2Han, formattingGoodsCategory} from '../../../../helper/util';
+import {convertNumber2Han, formattingGoodsCategory, isFloatNumber} from '../../../../helper/util';
 import {BuyLimitType, ContractAction, InvoiceType} from '../../../../models';
 import SKUContent from './SKUContent';
 import {ErrorMessage} from '@hookform/error-message';
@@ -119,7 +119,15 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action,
         <FormTitle title="套餐设置" />
         <Controller
           control={control}
-          rules={{required: '请输入商品总库存'}}
+          rules={{
+            required: '请输入商品总库存',
+            validate: value => {
+              if (isFloatNumber(value)) {
+                return '请输入整数';
+              }
+              return true;
+            },
+          }}
           name="skuInfoReq.spuStock"
           render={({field: {value, onChange}}) => (
             <Form.Item showAsterisk label="商品总库存" errorElement={<ErrorMessage name={'skuInfoReq.spuStock'} errors={errors} />}>
@@ -178,11 +186,19 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action,
               />
               <Controller
                 control={control}
-                rules={{required: '请输入套餐结算价'}}
+                rules={{
+                  required: '请输入套餐结算价',
+                  validate: value => {
+                    if (isFloatNumber(value)) {
+                      return '请输入整数';
+                    }
+                    return true;
+                  },
+                }}
                 name={`skuInfoReq.skuInfo.${index}.skuSettlementPrice`}
                 render={({field: {value, onChange}}) => (
                   <Form.Item showAsterisk label="套餐结算价" errorElement={<ErrorMessage name={`skuInfoReq.skuInfo.${index}.skuSettlementPrice`} errors={errors} />}>
-                    <Input value={value} type="number" onChange={onChange} />
+                    <Input textAlign="right" placeholder="请输入" last={true} type="number" value={value} onChange={onChange} />
                   </Form.Item>
                 )}
               />

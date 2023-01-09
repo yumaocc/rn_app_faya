@@ -190,11 +190,8 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
             control={bookingModel.control}
             rules={{required: '请选择型号'}}
             render={({field: {value, onChange}}) => (
-              <Form.Item label="选择预约型号" style={{borderTopWidth: 0}}>
+              <Form.Item label="选择预约型号" style={{borderTopWidth: 0}} errorElement={<ErrorMessage name={'modelId'} errors={bookingModel.formState.errors} />}>
                 <Select value={value} onChange={onChange} options={booking?.map(item => ({label: item.name, value: item.id}))} />
-                <Text style={[globalStyles.error, {marginTop: 5}]}>
-                  <ErrorMessage name={'modelId'} errors={bookingModel.formState.errors} />
-                </Text>
               </Form.Item>
             )}
           />
@@ -203,7 +200,7 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
             control={bookingModel.control}
             rules={{required: '请选择套餐'}}
             render={({field: {value, onChange}}) => (
-              <Form.Item label="可使用的套餐" vertical name="contractSkuIds">
+              <Form.Item label="可使用的套餐" vertical name="contractSkuIds" errorElement={<ErrorMessage name={'contractSkuIds'} errors={bookingModel.formState.errors} />}>
                 <Checkbox.Group
                   key="id"
                   value={value}
@@ -216,9 +213,6 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
                     }) || []
                   }
                 />
-                <Text style={[globalStyles.error, {marginTop: 5}]}>
-                  <ErrorMessage name={'contractSkuIds'} errors={bookingModel.formState.errors} />
-                </Text>
               </Form.Item>
             )}
           />

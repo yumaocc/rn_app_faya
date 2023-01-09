@@ -1,5 +1,5 @@
 import React from 'react';
-import {Badge, Icon as AntdIcon, Button} from '@ant-design/react-native';
+import {Icon as AntdIcon, Button} from '@ant-design/react-native';
 import {useNavigation} from '@react-navigation/native';
 import {View, Text, ScrollView, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -21,7 +21,7 @@ const Mine: React.FC = () => {
 
   const navigation = useNavigation() as FakeNavigation;
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}} edges={['top']}>
+    <SafeAreaView style={{flex: 1}} edges={['top']}>
       <ScrollView
         style={{
           flex: 1,
@@ -32,7 +32,7 @@ const Mine: React.FC = () => {
         <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('MineDetail')}>
           <View style={styles.profile}>
             <View style={styles.avatarWrapper}>
-              <Image source={{uri: user?.avatar || 'https://fakeimg.pl/100?text=USER'}} style={{height: 60, width: 60}} />
+              <Image source={user?.avatar ? {uri: user?.avatar} : require('../../assets/avatar.png')} style={{height: 60, width: 60}} />
             </View>
             <View style={[styles.nameWrapper]}>
               <Text style={[globalStyles.fontPrimary, styles.name]}>{user?.name}</Text>
@@ -59,13 +59,13 @@ const Mine: React.FC = () => {
             <OperateItem
               title="我的商品"
               icon={<Icon name="FYLM_mine_shangpin" />}
-              extra={
-                <Badge dot>
-                  <View style={[globalStyles.tagWrapper]}>
-                    <Text style={[globalStyles.fontTertiary, globalStyles.tag]}>{5}件商品即将下架</Text>
-                  </View>
-                </Badge>
-              }
+              // extra={
+              //   <Badge dot>
+              //     {/* <View style={[globalStyles.tagWrapper]}>
+              //       <Text style={[globalStyles.fontTertiary, globalStyles.tag]}>{5}件商品即将下架</Text>
+              //     </View> */}
+              //   </Badge>
+              // }
             />
           </TouchableOpacity>
         </SectionGroup>

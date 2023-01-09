@@ -1,4 +1,3 @@
-// import {Icon as IconImg} from '@ant-design/react-native';
 import {useNavigation} from '@react-navigation/native';
 import React, {FC, useEffect} from 'react';
 import {StyleSheet, View, Text, ScrollView, TouchableOpacity} from 'react-native';
@@ -37,7 +36,6 @@ const Cash: FC = () => {
       <SafeAreaView style={[globalStyles.wrapper]} edges={['bottom']}>
         <NavigationBar title="我的金库" />
         <ScrollView style={globalStyles.marginRightLeft}>
-          {/* <SvgUri uri={icons.success} height={100} width={100} fill="#00000" /> */}
           <View style={styles.wrapper}>
             <View style={styles.content}>
               {/* <Button onPress={() => navigation.navigate('IconTest')}>选择icon：：：测试按钮</Button> */}

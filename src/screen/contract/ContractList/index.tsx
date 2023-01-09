@@ -114,7 +114,7 @@ const ContractList: FC = () => {
   };
   return (
     <>
-      <View style={{flex: 1}}>
+      <View>
         <Loading active={loading} />
         <NavigationBar title="合同列表" headerRight={headerRight} />
 
@@ -142,7 +142,7 @@ const ContractList: FC = () => {
           data={contractList?.content}
           renderItem={renderItem}
           ListEmptyComponent={
-            <View style={[globalStyles.containerCenter, {width: '100%'}]}>
+            <View style={[globalStyles.containerCenter, {flex: 1}]}>
               <Text>暂无数据</Text>
             </View>
           }

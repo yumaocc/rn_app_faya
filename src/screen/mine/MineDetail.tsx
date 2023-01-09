@@ -36,7 +36,7 @@ const MineDetail: FC = () => {
           <View style={[globalStyles.containerLR, {padding: globalStyleVariables.MODULE_SPACE, backgroundColor: '#fff', height: 70}, globalStyles.borderTop]}>
             <Text style={globalStyles.fontPrimary}>头像</Text>
             <View style={styles.avatarWrapper}>
-              <Image source={{uri: user?.avatar || 'https://fakeimg.pl/100?text=USER'}} style={{height: 60, width: 60}} />
+              <Image source={user?.avatar ? {uri: user?.avatar} : require('../../assets/avatar.png')} style={{height: 60, width: 60}} />
             </View>
           </View>
           {user.status === UserState.CERTIFIED && (

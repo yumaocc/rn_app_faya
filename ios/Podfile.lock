@@ -303,6 +303,17 @@ PODS:
     - React-Core
   - react-native-slider (4.2.4):
     - React-Core
+  - react-native-update (8.1.0):
+    - React
+    - react-native-update/HDiffPatch (= 8.1.0)
+    - react-native-update/RCTPushy (= 8.1.0)
+    - SSZipArchive
+  - react-native-update/HDiffPatch (8.1.0):
+    - React
+    - SSZipArchive
+  - react-native-update/RCTPushy (8.1.0):
+    - React
+    - SSZipArchive
   - react-native-webview (11.26.0):
     - React-Core
   - React-perflogger (0.69.2)
@@ -383,6 +394,7 @@ PODS:
   - RNSVG (13.0.0):
     - React-Core
   - SocketRocket (0.6.0)
+  - SSZipArchive (2.4.3)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
@@ -438,6 +450,7 @@ DEPENDENCIES:
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - "react-native-segmented-control (from `../node_modules/@react-native-community/segmented-control`)"
   - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
+  - react-native-update (from `../node_modules/react-native-update`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
@@ -474,6 +487,7 @@ SPEC REPOS:
     - libevent
     - OpenSSL-Universal
     - SocketRocket
+    - SSZipArchive
     - YogaKit
 
 EXTERNAL SOURCES:
@@ -529,6 +543,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/segmented-control"
   react-native-slider:
     :path: "../node_modules/@react-native-community/slider"
+  react-native-update:
+    :path: "../node_modules/react-native-update"
   react-native-webview:
     :path: "../node_modules/react-native-webview"
   React-perflogger:
@@ -608,6 +624,7 @@ SPEC CHECKSUMS:
   react-native-safe-area-context: 6c12e3859b6f27b25de4fee8201cfb858432d8de
   react-native-segmented-control: 65df6cd0619b780b3843d574a72d4c7cec396097
   react-native-slider: cecabb58ecffad671d2ad3ccc58c7f4d2d029e95
+  react-native-update: 394b7f52ed3c0688d12084f3fb47d49504131be6
   react-native-webview: 994b9f8fbb504d6314dc40d83f94f27c6831b3bf
   React-perflogger: 281c34e42f13245c7a4d6932364d9182f8655e1a
   React-RCTActionSheet: 92f4292754a1b4a0e42bf9b1489206a06f878929
@@ -627,6 +644,7 @@ SPEC CHECKSUMS:
   RNScreens: 4a1af06327774490d97342c00aee0c2bafb497b7
   RNSVG: 42a0c731b11179ebbd27a3eeeafa7201ebb476ff
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
+  SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
   Yoga: 236056dd74cda4d9d76c20306fd8c20bb087614d
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 

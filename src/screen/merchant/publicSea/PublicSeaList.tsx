@@ -91,7 +91,7 @@ const PublicSeaList: React.FC = () => {
           </View>
         </View>
       </View>
-      <View>
+      <View style={{marginBottom: globalStyleVariables.MODULE_SPACE}}>
         <PlusButton
           style={[styles.createButton]}
           title="新增公海商家"
@@ -129,7 +129,7 @@ const PublicSeaList: React.FC = () => {
           <View style={[{width: 50, height: 50, borderRadius: 50, backgroundColor: '#f4f4f4', marginBottom: globalStyleVariables.MODULE_SPACE}, globalStyles.containerCenter]}>
             <AntdIcon name="shop" />
           </View>
-          <Text style={globalStyles.fontTertiary}>还没有商家哦，快去公海看看吧</Text>
+          <Text style={globalStyles.fontTertiary}>还没有商家哦</Text>
         </View>
       )}
     </SafeAreaView>

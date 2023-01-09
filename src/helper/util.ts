@@ -268,3 +268,10 @@ export const getStatusColor = (status: number) => {
       return {bg: 'rgba(0, 0, 0, 0.05)', color: '#333333'};
   }
 };
+//判断一个数是否是小数
+export const isFloatNumber = (value: number) => {
+  if (Number(value) !== Math.round(value)) {
+    return true;
+  }
+  return false;
+};

@@ -205,7 +205,13 @@ const EditSPU: React.FC = () => {
 
         <Steps steps={steps} currentKey={currentKey} onChange={setCurrentKey} onBeforeChangeKey={handleChangeStep} />
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{flex: 1}} keyboardVerticalOffset={-bottom + 30}>
-          <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
+          <ScrollView
+            keyboardShouldPersistTaps="always"
+            style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}}
+            ref={setRef}
+            horizontal
+            snapToInterval={windowWidth}
+            scrollEnabled={false}>
             <View style={[{width: windowWidth, paddingBottom: globalStyleVariables.MODULE_SPACE}]}>
               <Base
                 control={control}

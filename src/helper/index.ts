@@ -18,3 +18,4 @@ export {getInitContractForm, getInitContractSku, cleanContractForm, generateCont
 export {cleanSPUForm, convertSKUBuyNotice, generateSPUForm, getInitSPUForm, getDirectCommissionRange, getEarnCommissionRange} from './sku';
 export {cleanPrivateProperty, fuzzyMatch} from './common';
 export {getBookingType, getBuyLimitStr, getBuyNoticeTitle} from './dictionary';
+export {numberToString, stringToNumber} from './data';

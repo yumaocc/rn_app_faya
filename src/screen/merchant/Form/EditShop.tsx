@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {FC} from 'react';
 import {Text, View} from 'react-native';
 import {globalStyles} from '../../../constants/styles';
@@ -28,6 +28,12 @@ const EditShop: FC<EditShopProps> = ({open, setOpen, append, shopListForm, editS
     handleSubmit,
   } = shopListForm;
 
+  useEffect(() => {
+    if (open) {
+      shopListForm.reset();
+    }
+  }, [open, shopListForm]);
+
   const onOk = async (value: any) => {
     try {
       if (editShopIndex !== -1) {
@@ -45,7 +51,6 @@ const EditShop: FC<EditShopProps> = ({open, setOpen, append, shopListForm, editS
           ...value,
         });
       }
-      shopListForm.reset();
       setOpen(false);
     } catch (error) {
       commonDispatcher.error(error || '哎呀，出错了~');

@@ -41,6 +41,7 @@ const Booking: FC<BookingProps> = ({Controller, control, watch, getValues, actio
     try {
       const form = getValues();
       const formData = cleanContractForm(form);
+      console.log('合同数据', formData);
       if (action === ContractAction.EDIT) {
         await api.contract.editContract(formData);
       }

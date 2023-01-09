@@ -159,7 +159,7 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} keyboardShouldPersistTaps="always">
       <SectionGroup style={[{marginTop: 0}, styles.sectionGroupStyle]}>
         <FormTitle title="商家信息" borderTop />
         <Controller

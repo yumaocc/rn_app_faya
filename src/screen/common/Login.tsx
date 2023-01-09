@@ -9,6 +9,7 @@ import * as api from '../../apis';
 import {globalStyles, globalStyleVariables} from '../../constants/styles';
 import {useNavigation} from '@react-navigation/native';
 import Radio from '../../component/Form/Radio';
+import MyStatusBar from '../../component/MyStatusBar';
 
 const Login: React.FC = () => {
   const [radio, setRadio] = useState(false);
@@ -74,6 +75,7 @@ const Login: React.FC = () => {
 
   return (
     <View style={styles.container}>
+      <MyStatusBar />
       <Text style={styles.title}>登录/注册</Text>
       <View style={styles.form}>
         <View style={styles.formItem}>

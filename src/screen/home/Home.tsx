@@ -9,6 +9,7 @@ import {useNavigation} from '@react-navigation/native';
 import {ContractAction, FakeNavigation, MerchantAction, MerchantCreateType, UserInfo, UserState} from '../../models';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/reducers';
+import MyStatusBar from '../../component/MyStatusBar';
 
 const Home: React.FC = () => {
   const [summary, commissionToday, myContractNums] = useHomeSummary();
@@ -29,7 +30,9 @@ const Home: React.FC = () => {
   return (
     <>
       {/* headerLeft={() => <Icon name="bell" />} headerLeftContainerStyle={{paddingLeft: 16}} */}
+      <MyStatusBar />
       <Header title="首页" />
+
       <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} contentContainerStyle={{padding: 16}}>
         {/* 今日收益 */}
         <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('TodayEarnings')}>

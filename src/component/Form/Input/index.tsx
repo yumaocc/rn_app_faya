@@ -26,8 +26,9 @@ const Input: FC<InputProps> = props => {
           onChange('');
           return;
         }
-        const number = Number(value) as unknown as string;
-        onChange(number);
+        if (!isNaN(Number(value))) {
+          onChange(value);
+        }
       } else {
         onChange(value);
       }
