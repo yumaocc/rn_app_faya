@@ -55,6 +55,61 @@ const Withdraw: FC = () => {
       commonDispatcher.error(error || '哎呀，出错了');
     }
   };
+  const getBankCardStatus = (status: number) => {
+    switch (status) {
+      case BankCardStatus.unverified:
+        return (
+          <TouchableOpacity activeOpacity={0.5} style={[globalStyles.flexNormal, globalStyles.moduleMarginTop, {alignItems: 'center'}]}>
+            <Icon name="plus" color="#546DAD" style={{marginRight: globalStyleVariables.MODULE_SPACE}} />
+            <Text style={[globalStyles.fontPrimary, globalStyles.primaryColor]}>银行卡尚未认证，请前往pc认证</Text>
+          </TouchableOpacity>
+        );
+      case BankCardStatus.authenticated:
+        return (
+          <>
+            <View style={[globalStyles.containerLR, {marginBottom: globalStyleVariables.MODULE_SPACE}]}>
+              <Text style={globalStyles.fontPrimary}>
+                {walletInfo?.bankCompanyName}&nbsp;({slice(walletInfo?.bankCard)})
+              </Text>
+            </View>
+            <CutOffRule />
+            <View style={{marginTop: globalStyleVariables.MODULE_SPACE}}>
+              <Text>提现金额</Text>
+            </View>
+            <View style={[globalStyles.borderBottom, styles.inputWrapper]}>
+              <Text style={{fontSize: 40}}>￥</Text>
+              <View style={{flex: 1}}>
+                <Input type="number" textAlign="left" style={[{fontSize: 40}]} value={money} onChange={value => setMoney(value)} />
+              </View>
+            </View>
+            <View style={[globalStyles.flexNormal, {alignItems: 'center', marginTop: globalStyleVariables.MODULE_SPACE}]}>
+              <UnitNumber style={[globalStyles.fontPrimary]} value={`当前余额${wallet?.balanceYuan},`} unit={'元'} type={'元'} />
+              <LinkButton title="全部提现" onPress={() => setMoney(wallet?.balanceYuan)} />
+            </View>
+            <Button disabled={!isReady} type="primary" style={{marginTop: 122}} onPress={handleWithdraw}>
+              确定
+            </Button>
+          </>
+        );
+      case BankCardStatus.authenticating:
+        return (
+          <TouchableOpacity activeOpacity={0.5} style={[globalStyles.flexNormal, globalStyles.moduleMarginTop, {alignItems: 'center'}]}>
+            <Text style={[globalStyles.fontPrimary, globalStyles.primaryColor]}>认证中....</Text>
+          </TouchableOpacity>
+        );
+      case BankCardStatus.seriousFailure:
+        return (
+          <>
+            <View style={[globalStyles.moduleMarginTop]}>
+              <Text>认证失败，原因：{walletInfo?.reason}</Text>
+            </View>
+            <View style={globalStyles.moduleMarginTop}>
+              <Text>请前往pc认证</Text>
+            </View>
+          </>
+        );
+    }
+  };
   const headerRight = (
     <>
       <ModalDropdown
@@ -79,50 +134,8 @@ const Withdraw: FC = () => {
         <View style={styles.wrapper}>
           <View style={{marginBottom: 20}}>
             <Text>到账银行卡</Text>
+            {getBankCardStatus(wallet?.status)}
           </View>
-          {walletInfo?.status === BankCardStatus.unverified && (
-            <TouchableOpacity activeOpacity={0.5} style={[globalStyles.flexNormal, globalStyles.moduleMarginTop, {alignItems: 'center'}]}>
-              <Icon name="plus" color="#546DAD" style={{marginRight: globalStyleVariables.MODULE_SPACE}} />
-              <Text style={[globalStyles.fontPrimary, globalStyles.primaryColor]}>银行卡尚未认证，请前往pc认证</Text>
-            </TouchableOpacity>
-          )}
-
-          {walletInfo?.status === BankCardStatus.authenticated && (
-            <>
-              <View style={[globalStyles.containerLR, {marginBottom: globalStyleVariables.MODULE_SPACE}]}>
-                <Text style={globalStyles.fontPrimary}>
-                  {walletInfo?.bankCompanyName}&nbsp;({slice(walletInfo?.bankCard)})
-                </Text>
-              </View>
-              <CutOffRule />
-              <View style={{marginTop: globalStyleVariables.MODULE_SPACE}}>
-                <Text>提现金额</Text>
-              </View>
-              <View style={[globalStyles.borderBottom, styles.inputWrapper]}>
-                <Text style={{fontSize: 40}}>￥</Text>
-                <View style={{flex: 1}}>
-                  <Input type="number" textAlign="left" style={[{fontSize: 40}]} value={money} onChange={value => setMoney(value)} />
-                </View>
-              </View>
-              <View style={[globalStyles.flexNormal, {alignItems: 'center', marginTop: globalStyleVariables.MODULE_SPACE}]}>
-                <UnitNumber style={[globalStyles.fontPrimary]} value={`当前余额${wallet?.balanceYuan},`} unit={'元'} type={'元'} />
-                <LinkButton title="全部提现" onPress={() => setMoney(wallet?.balanceYuan)} />
-              </View>
-              <Button disabled={!isReady} type="primary" style={{marginTop: 122}} onPress={handleWithdraw}>
-                确定
-              </Button>
-            </>
-          )}
-          {walletInfo?.status !== BankCardStatus.unverified && BankCardStatus.authenticated && (
-            <>
-              <View style={[globalStyles.moduleMarginTop]}>
-                <Text>认证失败，原因：{walletInfo?.reason}</Text>
-              </View>
-              <View style={globalStyles.moduleMarginTop}>
-                <Text>请前往pc认证</Text>
-              </View>
-            </>
-          )}
         </View>
       </SafeAreaView>
     </>
