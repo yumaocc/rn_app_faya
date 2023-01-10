@@ -1,6 +1,7 @@
 import {ActionsUnion, createAction, Action, ActionWithPayload} from '../types';
 import {ActionType} from './types';
-import {MerchantCategory, FormMerchant, MerchantSimpleF, SearchParam, MerchantF, PagedData} from '../../models';
+import {MerchantCategory, FormMerchant, MerchantSimpleF, SearchParam, MerchantF} from '../../models';
+import {MerchantList} from '../../models/merchant';
 
 export const Actions = {
   loadMerchantLoading: (): Action<ActionType.LOAD_MERCHANT_LOADING> => createAction(ActionType.LOAD_MERCHANT_LOADING),
@@ -26,13 +27,16 @@ export const Actions = {
 
   loadPublicMerchantList: (payload: SearchParam): ActionWithPayload<ActionType.LOAD_MERCHANT_PUBLIC_LIST, SearchParam> =>
     createAction(ActionType.LOAD_MERCHANT_PUBLIC_LIST, payload),
-  loadPublicMerchantListSuccess: (payload: PagedData<MerchantF[]>): ActionWithPayload<ActionType.LOAD_MERCHANT_PUBLIC_LIST_SUCCESS, PagedData<MerchantF[]>> =>
+  loadPublicMerchantListSuccess: (payload: MerchantList<MerchantF[]>): ActionWithPayload<ActionType.LOAD_MERCHANT_PUBLIC_LIST_SUCCESS, MerchantList<MerchantF[]>> =>
     createAction(ActionType.LOAD_MERCHANT_PUBLIC_LIST_SUCCESS, payload),
+  changeLoadingStatePublic: (): Action<ActionType.CHANGE_MERCHANT_LOADING_STATE_PUBLIC> => createAction(ActionType.CHANGE_MERCHANT_LOADING_STATE_PUBLIC),
 
+  changeLoadingStatePrivate: (): Action<ActionType.CHANGE_MERCHANT_LOADING_STATE_PRIVATE> => createAction(ActionType.CHANGE_MERCHANT_LOADING_STATE_PRIVATE),
   loadPrivateMerchantList: (payload: SearchParam): ActionWithPayload<ActionType.LOAD_MERCHANT_PRIVATE_LIST, SearchParam> =>
     createAction(ActionType.LOAD_MERCHANT_PRIVATE_LIST, payload),
-  loadPrivateMerchantListSuccess: (payload: PagedData<MerchantF[]>): ActionWithPayload<ActionType.LOAD_MERCHANT_PRIVATE_LIST_SUCCESS, PagedData<MerchantF[]>> =>
+  loadPrivateMerchantLisSuccess: (payload: MerchantList<MerchantF[]>): ActionWithPayload<ActionType.LOAD_MERCHANT_PRIVATE_LIST_SUCCESS, MerchantList<MerchantF[]>> =>
     createAction(ActionType.LOAD_MERCHANT_PRIVATE_LIST_SUCCESS, payload),
+
   logout: (): Action<ActionType.LOGOUT> => createAction(ActionType.LOGOUT),
 };
 export type MerchantActions = ActionsUnion<typeof Actions>;

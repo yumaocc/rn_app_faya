@@ -74,6 +74,9 @@ export const globalStyles = StyleSheet.create({
     // 模块上间距
     marginTop: globalStyleVariables.MODULE_SPACE,
   },
+  marginBottom: {
+    marginTop: globalStyleVariables.MODULE_SPACE,
+  },
   moduleMarginLeft: {
     // 模块左间距
     marginLeft: globalStyleVariables.MODULE_SPACE,

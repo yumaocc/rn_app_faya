@@ -1,6 +1,6 @@
 // 商户相关类型
 
-import {BoolEnum, DateTimeString, BoolNumber} from './common';
+import {BoolEnum, DateTimeString, BoolNumber, LoadingState, PageParam} from './common';
 
 export enum ShopType {
   one = 1, //1是单店
@@ -140,4 +140,9 @@ export enum MerchantAction {
   ADD = 0, //新增
   EDIT = 1, //编辑
   VIEW = 2, // 查看
+}
+export interface MerchantList<T> {
+  status?: LoadingState;
+  content: T;
+  page: PageParam;
 }

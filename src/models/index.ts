@@ -1,6 +1,6 @@
 // F结尾代表是后端返回的数据结构
 export type {RouteItem, NavigationItem, RootStackParamList, Props, FakeNavigation, ValidRoute} from './route';
-export type {UserInfo, LoginParam, CertificateParam, WalletInfo, UserWithdrawalRecord, ChangeBankForm, Bank, WithdrawalFrom} from './user';
+export type {UserInfo, LoginParam, CertificateParam, WalletInfo, UserWithdrawalRecord, ChangeBankForm, Bank, WithdrawalFrom, HistoricalEarningsData} from './user';
 export type {
   ErrorType,
   CacheKeys,

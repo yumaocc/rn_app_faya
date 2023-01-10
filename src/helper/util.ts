@@ -1,6 +1,20 @@
 import moment, {Moment} from 'moment';
 import {DATE_TIME_FORMAT} from '../constants';
-import {Environment, DateTimeString, FormMerchant, MerchantForm, MerchantCreateType, UploadFile, SPUCategory, SPUCodeType, SKUBuyNoticeF, Notice, Contract, Site} from '../models';
+import {
+  Environment,
+  DateTimeString,
+  FormMerchant,
+  MerchantForm,
+  MerchantCreateType,
+  UploadFile,
+  SPUCategory,
+  SPUCodeType,
+  SKUBuyNoticeF,
+  Notice,
+  Contract,
+  Site,
+  Options,
+} from '../models';
 import {SPUStatus} from '../models/spu';
 
 // 用来模拟异步操作
@@ -275,4 +289,17 @@ export const isFloatNumber = (value: number) => {
     return true;
   }
   return false;
+};
+
+//获取一年的中的所有月份
+export const getAllMonth = (): Options[] => {
+  const year = moment().format('YYYY');
+  const options: Options[] = [];
+  for (let i = 1; i < 13; i++) {
+    options.push({
+      value: i,
+      label: `${year}年${i}月`,
+    });
+  }
+  return options;
 };

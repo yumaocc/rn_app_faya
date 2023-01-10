@@ -1,20 +1,22 @@
 import {useNavigation} from '@react-navigation/native';
 import {Icon as AntdIcon} from '@ant-design/react-native';
 import Icon from '../../../component/Form/Icon';
-import {useDebounceFn} from 'ahooks';
-import React, {useEffect, useState} from 'react';
+import {useDebounceFn, useMount, useUnmount} from 'ahooks';
+import React, {useState} from 'react';
 import {View, Text, StyleSheet, SafeAreaView, FlatList} from 'react-native';
 import ModalDropdown from 'react-native-modal-dropdown';
 
 import {Input, PlusButton} from '../../../component';
-import {PAGE_SIZE} from '../../../constants';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {useHomeSummary, useMerchantDispatcher} from '../../../helper/hooks';
-import {FakeNavigation, MerchantAction, MerchantCreateType, MerchantF, Options, PagedData, RequestAction} from '../../../models';
+import {FakeNavigation, MerchantAction, MerchantCreateType, MerchantF, Options} from '../../../models';
 import Card from './Card';
 import Loading from '../../../component/Loading';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/reducers';
+import {MerchantList} from '../../../models/merchant';
+import Empty from '../../../component/Empty';
+import ListFooter from '../../../component/ListFooter';
 
 const options = [
   {
@@ -30,7 +32,7 @@ const options = [
 const PrivateSeaList: React.FC = () => {
   const [valueType, setValueType] = useState<Options>(null);
   const [merchantDispatcher] = useMerchantDispatcher();
-  const merchantList = useSelector<RootState, PagedData<MerchantF[]>>(state => state.merchant.merchantPrivateList);
+  const merchantList = useSelector<RootState, MerchantList<MerchantF[]>>(state => state.merchant.merchantPrivateList);
   const pageIndex = useSelector<RootState, number>(state => state.merchant?.merchantPrivateList?.page?.pageIndex);
   const loading = useSelector<RootState, boolean>(state => state.merchant.merchantLoading);
   const [value, setValue] = useState('');
@@ -38,18 +40,20 @@ const PrivateSeaList: React.FC = () => {
   const navigation = useNavigation() as FakeNavigation;
 
   const {run} = useDebounceFn(async (name: string) => {
-    merchantDispatcher.loadPrivateMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, name: name, action: RequestAction.other});
+    merchantDispatcher.loadPrivateMerchantList({index: 0, name: name, replace: true});
   });
 
-  useEffect(() => {
-    if (!merchantList?.content?.length) {
-      merchantDispatcher.loadPrivateMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.load});
-    }
-  }, [merchantDispatcher, merchantList?.content?.length]);
+  useMount(() => {
+    merchantDispatcher.loadPrivateMerchantList({index: 0, replace: true});
+  });
+
+  useUnmount(() => {
+    merchantDispatcher.exitMerchantPage();
+  });
 
   const handleChangeFilter = (value: Options) => {
     setValueType(value);
-    merchantDispatcher.loadPrivateMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.other, multiStore: value.value});
+    merchantDispatcher.loadPrivateMerchantList({index: 0, multiStore: value.value, replace: true});
   };
 
   return (
@@ -107,31 +111,20 @@ const PrivateSeaList: React.FC = () => {
           }}
         />
       </View>
-      {!!merchantList?.content?.length ? (
-        <FlatList
-          refreshing={false}
-          onRefresh={async () => {
-            merchantDispatcher.loadPrivateMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, multiStore: valueType?.value, name: value, action: RequestAction.other});
-          }}
-          data={merchantList?.content}
-          renderItem={({item}) => <Card merchant={item} key={item.id} style={globalStyles.moduleMarginTop} />}
-          onEndReached={() =>
-            merchantDispatcher.loadPrivateMerchantList({pageIndex: pageIndex + 1, pageSize: PAGE_SIZE, multiStore: valueType?.value, name: value, action: RequestAction.load})
-          }
-          ListFooterComponent={
-            <View style={[globalStyles.containerCenter, {flex: 1, marginTop: globalStyleVariables.MODULE_SPACE, marginBottom: globalStyleVariables.MODULE_SPACE}]}>
-              <Text style={[globalStyles.fontTertiary, {textAlign: 'center'}]}>已经到底</Text>
-            </View>
-          }
-        />
-      ) : (
-        <View style={[{flex: 1, backgroundColor: '#fff'}, globalStyles.containerCenter]}>
-          <View style={[{width: 50, height: 50, borderRadius: 50, backgroundColor: '#f4f4f4', marginBottom: globalStyleVariables.MODULE_SPACE}, globalStyles.containerCenter]}>
-            <AntdIcon name="shop" />
-          </View>
-          <Text style={globalStyles.fontTertiary}>还没有商家哦，快去公海看看吧</Text>
-        </View>
-      )}
+
+      <FlatList
+        refreshing={false}
+        onRefresh={async () => {
+          merchantDispatcher.loadPrivateMerchantList({pageIndex: 0, multiStore: valueType?.value, name: value, replace: true, pull: true});
+        }}
+        data={merchantList?.content}
+        renderItem={({item}) => <Card merchant={item} key={item.id} style={globalStyles.marginBottom} />}
+        onEndReached={() => {
+          merchantDispatcher.loadPrivateMerchantList({index: pageIndex, multiStore: valueType?.value, name: value, replace: true, pull: true});
+        }}
+        ListEmptyComponent={<Empty text="还没有商家哦，快去公海看看吧" icon={'shop'} />}
+        // ListFooterComponent={!!merchantList?.content?.length && <ListFooter status={merchantList?.status} />}
+      />
     </SafeAreaView>
   );
 };

@@ -1,5 +1,18 @@
 import {post, get, getPaged} from './helper';
-import {Bank, CertificateParam, ChangeBankForm, LoginParam, PagedData, PageParam, SearchParam, UserInfo, UserWithdrawalRecord, WalletInfo, WithdrawalFrom} from '../models';
+import {
+  Bank,
+  CertificateParam,
+  ChangeBankForm,
+  HistoricalEarningsData,
+  LoginParam,
+  PagedData,
+  PageParam,
+  SearchParam,
+  UserInfo,
+  UserWithdrawalRecord,
+  WalletInfo,
+  WithdrawalFrom,
+} from '../models';
 
 export async function userLogin(params: LoginParam): Promise<UserInfo> {
   return await post<UserInfo, LoginParam>('/crm/user/login', {
@@ -45,6 +58,10 @@ export async function getSupportBankList(): Promise<Bank[]> {
 }
 
 //历史收益
-export async function getHistoricalIncome(params?: SearchParam) {
+export async function getHistoricalIncome(params?: SearchParam): Promise<HistoricalEarningsData> {
   return await get(`/sku/commission/history/with/month?beginTime=${params.beginTime}&endTime=${params.endTime}`);
+}
+//历史收益预览五个月
+export async function getHistoricalIncomeView(): Promise<HistoricalEarningsData> {
+  return await get('/sku/commission/history');
 }

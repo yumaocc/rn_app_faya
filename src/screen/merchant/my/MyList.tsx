@@ -1,17 +1,19 @@
 import {Icon as AntdIcon} from '@ant-design/react-native';
-import {useDebounceFn} from 'ahooks';
-import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, FlatList, SafeAreaView} from 'react-native';
+import {useDebounceFn, useMount} from 'ahooks';
+import React, {useState} from 'react';
+import {View, Text, StyleSheet, FlatList, SafeAreaView, RefreshControl} from 'react-native';
 import ModalDropdown from 'react-native-modal-dropdown';
 import * as api from '../../../apis';
 import {Input} from '../../../component';
-import {PAGE_SIZE} from '../../../constants';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {useCommonDispatcher} from '../../../helper/hooks';
-import {MyMerchantF, Options, RequestAction, SearchParam} from '../../../models';
+import {MyMerchantF, Options} from '../../../models';
 import Card from './Card';
-import Loading from '../../../component/Loading';
 import Icon from '../../../component/Form/Icon';
+import Empty from '../../../component/Empty';
+import {LoadingState, SearchForm} from '../../../models/common';
+import ListFooter from '../../../component/ListFooter';
+import Loading from '../../../component/Loading';
 
 const options = [
   {
@@ -25,45 +27,56 @@ const options = [
 ];
 const MyList: React.FC = () => {
   const [merchantList, setMerchantList] = useState<MyMerchantF[]>([]);
+  const [pageIndex, setPageIndex] = useState(1);
+  const [status, setStatus] = useState<LoadingState>('none');
+  const [len, setLen] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [valueType, setValueType] = useState<Options>(null);
   const [value, setValue] = useState('');
-  const [len, setLen] = useState(0);
-  const [pageIndex, setPageIndex] = useState(1);
-  const [loading, setLoading] = useState(false);
   const [commonDispatcher] = useCommonDispatcher();
 
-  useEffect(() => {
-    if (merchantList) {
-      getData({pageIndex: 1});
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const getData = async (params: SearchParam, action?: RequestAction) => {
+  const getData = async (params: SearchForm, replace?: boolean, isPullDown = false) => {
     try {
-      setLoading(true);
-      const res = await api.merchant.getMyMerchants({...params, pageSize: PAGE_SIZE});
-      if (action === RequestAction.other) {
+      const {index, ...param} = params;
+      setStatus('loading');
+      const pageIndex = replace ? 1 : index + 1;
+      const pageSize = 10;
+      if (isPullDown) {
+        setLoading(true);
+      }
+      const res = await api.merchant.getMyMerchants({...param, pageIndex, pageSize});
+      setStatus(res.content?.length < pageSize ? 'noMore' : 'none');
+
+      if (replace) {
         setMerchantList(res.content);
       } else {
-        setMerchantList(list => [...list, ...res.content]);
+        setMerchantList([...merchantList, ...res.content]);
       }
-      if (res?.content?.length) {
-        setPageIndex(pageIndex => pageIndex + 1);
-      }
+      setPageIndex(pageIndex);
       setLen(res.page.pageTotal);
     } catch (error) {
+      setStatus('none');
       commonDispatcher.error(error);
     }
     setLoading(false);
   };
 
-  const {run} = useDebounceFn(async (name: string) => getData({pageIndex: 1, name}, RequestAction.other));
+  useMount(() => {
+    getData({index: 0}, true, true);
+  });
+
+  const {run} = useDebounceFn(async (name: string) => getData({index: 1, name}, true, true));
 
   const handleChangeFilter = (value: Options) => {
     setValueType(value);
-    setPageIndex(1);
-    getData({pageIndex: 1, multiStore: value.value}, RequestAction.other);
+    getData({index: 0, multiStore: value.value}, true, true);
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await getData({index: 1}, true);
+    setRefreshing(false);
   };
 
   return (
@@ -98,7 +111,6 @@ const MyList: React.FC = () => {
               onChange={e => {
                 setValue(e);
                 run(e);
-                setPageIndex(1);
               }}
               textAlign="left"
             />
@@ -106,34 +118,28 @@ const MyList: React.FC = () => {
         </View>
       </View>
 
-      {!!merchantList?.length ? (
-        <FlatList
-          refreshing={false}
-          onRefresh={async () => {
-            await getData({pageIndex: pageIndex, multiStore: valueType?.value, name: value});
-          }}
-          data={merchantList}
-          renderItem={({item}) => <Card merchant={item} key={item.id} style={globalStyles.moduleMarginTop} />}
-          onEndReached={() => {
-            getData({pageIndex: pageIndex, multiStore: valueType?.value, name: value});
-          }}
-          ListFooterComponent={
-            <View style={[globalStyles.containerCenter, {flex: 1, marginTop: globalStyleVariables.MODULE_SPACE, marginBottom: globalStyleVariables.MODULE_SPACE}]}>
-              <Text style={[globalStyles.fontTertiary, {textAlign: 'center'}]}>已经到底</Text>
-            </View>
-          }
-        />
-      ) : (
-        <View style={[{flex: 1, backgroundColor: '#fff'}, globalStyles.containerCenter]}>
-          <View style={[{width: 50, height: 50, borderRadius: 50, backgroundColor: '#f4f4f4', marginBottom: globalStyleVariables.MODULE_SPACE}, globalStyles.containerCenter]}>
-            <AntdIcon name="shop" />
-          </View>
-          <Text style={globalStyles.fontTertiary}>还没有商家哦</Text>
-        </View>
-      )}
+      <FlatList
+        data={merchantList}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            colors={[globalStyleVariables.COLOR_PRIMARY]}
+            titleColor={globalStyleVariables.COLOR_PRIMARY}
+            tintColor={globalStyleVariables.COLOR_PRIMARY}
+          />
+        }
+        onEndReached={() => {
+          getData({index: pageIndex, multiStore: valueType?.value, name: value});
+        }}
+        renderItem={({item}) => <Card merchant={item} key={item.id} style={globalStyles.moduleMarginTop} />}
+        ListEmptyComponent={<Empty text="还没有商家哦" icon={'shop'} />}
+        ListFooterComponent={!!merchantList?.length && <ListFooter status={status} />}
+      />
     </SafeAreaView>
   );
 };
+
 export default MyList;
 
 const styles = StyleSheet.create({

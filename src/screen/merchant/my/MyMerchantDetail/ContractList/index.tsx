@@ -1,5 +1,5 @@
 import {useNavigation} from '@react-navigation/native';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {FC} from 'react';
 import {SafeAreaView, StyleSheet, Text, View, FlatList} from 'react-native';
 import {PlusButton} from '../../../../../component';
@@ -7,7 +7,10 @@ import * as api from '../../../../../apis';
 import {globalStyles, globalStyleVariables} from '../../../../../constants/styles';
 import {ContractList as ContractType, FakeNavigation} from '../../../../../models';
 import {useCommonDispatcher} from '../../../../../helper/hooks';
-import Loading from '../../../../../component/Loading';
+import ListFooter from '../../../../../component/ListFooter';
+import {LoadingState} from '../../../../../models/common';
+import Empty from '../../../../../component/Empty';
+import {useMount} from 'ahooks';
 
 interface ContractListProps {
   id: number;
@@ -20,41 +23,40 @@ const ContractList: FC<ContractListProps> = ({id}) => {
   const [commonDispatcher] = useCommonDispatcher();
   const [pageIndex, setPageIndex] = useState(1);
   const [contractList, setContractList] = useState<ContractType[]>([]);
+  const [status, setStatus] = useState<LoadingState>('none');
 
-  const fetchData = useCallback(
-    async (pageIndex = 1) => {
-      try {
-        setLoading(true);
-        const pageSize = 10;
-        const res = await api.contract.getContractList({pageIndex, pageSize, id});
-        if (res?.content?.length) {
-          setPageIndex(pageIndex + 1);
-        }
-        setLen(res.page.pageTotal);
-        setLoading(false);
-        return res.content;
-      } catch (error) {
-        commonDispatcher.error(error || '哎呀，~出错了');
+  const getData = async (index: number, replace?: boolean) => {
+    try {
+      setStatus('loading');
+      const pageIndex = replace ? 1 : index + 1;
+      const pageSize = 10;
+      const res = await api.contract.getContractList({pageIndex, pageSize, id});
+      setStatus(res.content?.length < pageSize ? 'noMore' : 'none');
+
+      if (replace) {
+        setContractList([...res.content]);
+      } else {
+        setContractList([...contractList, ...res.content]);
       }
-      setLoading(false);
-    },
-    [commonDispatcher, id],
-  );
+      setPageIndex(pageIndex);
+      setLen(res.page.pageTotal);
+    } catch (error) {
+      setStatus('none');
+      commonDispatcher.error(error);
+    }
+    setLoading(false);
+  };
 
-  useEffect(() => {
-    fetchData(1).then(res => {
-      setContractList(res);
-    });
-  }, [fetchData]);
+  useMount(() => {
+    getData(0);
+  });
 
   const onRefresh = async () => {
-    const res = await fetchData(pageIndex);
-    setContractList(contractList => [...contractList, ...res]);
+    getData(0, true);
   };
 
   const onEndReached = async () => {
-    const res = await fetchData(1);
-    setContractList(res);
+    getData(pageIndex);
   };
 
   const renderItem = ({item, index}: {item: ContractType; index: number}) => {
@@ -72,32 +74,21 @@ const ContractList: FC<ContractListProps> = ({id}) => {
   return (
     <>
       <SafeAreaView style={styles.wrapper}>
-        <Loading active={loading} />
         <View style={[globalStyles.containerLR, styles.box]}>
           <Text>共{len}份合同</Text>
           <PlusButton title="新增合同" onPress={() => navigation.navigate('AddContract')} />
         </View>
-        {!!contractList?.length ? (
-          <FlatList
-            refreshing={loading}
-            onRefresh={onRefresh}
-            onEndReached={onEndReached}
-            data={contractList || []}
-            ListEmptyComponent={<Text>暂无数据</Text>}
-            numColumns={1}
-            renderItem={renderItem}
-            keyExtractor={item => 'con' + item.id}
-            ListFooterComponent={
-              <View style={[globalStyles.containerCenter, {marginTop: globalStyleVariables.MODULE_SPACE}]}>
-                <Text style={globalStyles.fontTertiary}>已经到底了</Text>
-              </View>
-            }
-          />
-        ) : (
-          <View style={[globalStyles.containerCenter]}>
-            <Text style={globalStyles.fontTertiary}>暂无数据</Text>
-          </View>
-        )}
+        <FlatList
+          refreshing={loading}
+          onRefresh={onRefresh}
+          onEndReached={onEndReached}
+          data={contractList || []}
+          ListEmptyComponent={<Empty />}
+          numColumns={1}
+          renderItem={renderItem}
+          keyExtractor={item => 'con' + item.id}
+          ListFooterComponent={!!contractList?.length && <ListFooter status={status} />}
+        />
       </SafeAreaView>
     </>
   );

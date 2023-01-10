@@ -98,3 +98,9 @@ export interface WithdrawalFrom {
   money: string;
   type: string;
 }
+//历史收益订单
+export interface HistoricalEarningsData {
+  money: number;
+  moneyYuan: string;
+  list: {date: number; dateStr: string; money: number; moneyYuan: string}[];
+}

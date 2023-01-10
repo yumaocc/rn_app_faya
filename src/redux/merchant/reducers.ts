@@ -1,15 +1,16 @@
 import produce from 'immer';
 import {MerchantActions} from './actions';
 import {ActionType} from './types';
-import {MerchantCategory, FormMerchant, MerchantSimpleF, MerchantF, PagedData} from '../../models';
+import {MerchantCategory, FormMerchant, MerchantSimpleF, MerchantF} from '../../models';
+import {MerchantList} from '../../models/merchant';
 
 export interface MerchantState {
   merchantCategories: MerchantCategory[];
   loadingCurrentMerchant: boolean;
   currentMerchant?: FormMerchant;
   merchantSearchList: MerchantSimpleF[];
-  merchantPublicList?: PagedData<MerchantF[]>;
-  merchantPrivateList: PagedData<MerchantF[]>;
+  merchantPublicList?: MerchantList<MerchantF[]>;
+  merchantPrivateList?: MerchantList<MerchantF[]>;
   merchantLoading: boolean;
 }
 
@@ -20,19 +21,13 @@ export const initialState: MerchantState = {
   merchantSearchList: [],
   merchantPublicList: {
     content: [],
-    page: {
-      pageIndex: 1,
-      pageSize: 10,
-      pageTotal: 0,
-    },
+    status: 'none',
+    page: {},
   },
   merchantPrivateList: {
     content: [],
-    page: {
-      pageIndex: 1,
-      pageSize: 10,
-      pageTotal: 0,
-    },
+    status: 'none',
+    page: {},
   },
 };
 
@@ -71,28 +66,44 @@ export default (state = initialState, action: MerchantActions): MerchantState =>
         draft.merchantLoading = false;
         draft.merchantPublicList = action.payload;
       });
+    case ActionType.CHANGE_MERCHANT_LOADING_STATE_PUBLIC:
+      return produce(state, draft => {
+        draft.merchantPublicList.status = 'loading';
+      });
+
     case ActionType.LOAD_MERCHANT_PRIVATE_LIST_SUCCESS:
       return produce(state, draft => {
         draft.merchantLoading = false;
         draft.merchantPrivateList = action.payload;
       });
+    case ActionType.CHANGE_MERCHANT_LOADING_STATE_PRIVATE:
+      return produce(state, draft => {
+        draft.merchantPrivateList.status = 'loading';
+      });
+
     case ActionType.LOAD_MERCHANT_LOADING:
       return produce(state, draft => {
         draft.merchantLoading = true;
       });
     case ActionType.LOGOUT:
       return produce(state, draft => {
-        draft.merchantPrivateList.content = [];
-        draft.merchantPublicList.content = [];
-        draft.merchantPrivateList.page = {
-          pageIndex: 1,
-          pageSize: 10,
-          pageTotal: 0,
+        draft.merchantPublicList = {
+          content: [],
+          status: 'none',
+          page: {
+            pageIndex: 1,
+            pageSize: 10,
+            pageTotal: 0,
+          },
         };
-        draft.merchantPublicList.page = {
-          pageIndex: 1,
-          pageSize: 10,
-          pageTotal: 0,
+        draft.merchantPrivateList = {
+          content: [],
+          status: 'none',
+          page: {
+            pageIndex: 1,
+            pageSize: 10,
+            pageTotal: 0,
+          },
         };
       });
     default:

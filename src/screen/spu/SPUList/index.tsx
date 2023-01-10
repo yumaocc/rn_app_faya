@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {View, Text, StyleSheet, TouchableWithoutFeedback, Image, FlatList} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Icon} from '@ant-design/react-native';
@@ -11,47 +11,52 @@ import {getBookingType} from '../../../helper';
 import {useNavigation} from '@react-navigation/native';
 import {cleanTime, getStatusColor} from '../../../helper/util';
 import {useCommonDispatcher} from '../../../helper/hooks';
-import Loading from '../../../component/Loading';
+import {LoadingState} from '../../../models/common';
+import ListFooter from '../../../component/ListFooter';
+import Empty from '../../../component/Empty';
+import {useMount} from 'ahooks';
 
 const SPUList: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [pageIndex, setPageIndex] = useState<number>(1);
+  const [status, setStatus] = useState<LoadingState>('none');
   const [spuList, setSpuList] = useState<SPUF[]>([]);
   const navigation = useNavigation<FakeNavigation>();
   const [commonDispatcher] = useCommonDispatcher();
   const {bottom} = useSafeAreaInsets();
 
-  async function fetchData(index: number) {
+  async function fetchData(index: number, replace?: boolean) {
     try {
-      setLoading(true);
+      if (replace) {
+        setLoading(true);
+      }
+      setStatus('loading');
       const pageSize = 10;
       const res = await api.sku.getSPUList({pageIndex: index, pageSize});
+      setStatus(res.content?.length < pageSize ? 'noMore' : 'none');
       if (res?.content?.length) {
         setPageIndex(res.page.pageIndex + 1);
       }
-      setLoading(false);
-      return res;
+      if (replace) {
+        setSpuList(res.content);
+      } else {
+        setSpuList([...spuList, ...res.content]);
+      }
     } catch (error) {
       commonDispatcher.error(error || '哎呀，出错了~');
     }
     setLoading(false);
   }
-  useEffect(() => {
-    fetchData(1).then(res => {
-      setSpuList(res?.content);
-    });
+  useMount(() => {
+    fetchData(1, false);
+  });
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const onEndReached = async () => {
-    const res = await fetchData(pageIndex);
-    setSpuList([...spuList, ...res?.content]);
+  const onEndReached = () => {
+    fetchData(pageIndex, false);
   };
 
   const onRefresh = async () => {
-    const res = await fetchData(1);
-    setSpuList(res?.content);
+    fetchData(1, true);
   };
 
   function viewDetail(item: SPUF) {
@@ -116,29 +121,18 @@ const SPUList: React.FC = () => {
     <View style={[styles.container]}>
       <NavigationBar title="商品列表" />
       <View style={{overflow: 'hidden', flex: 1}}>
-        {/* <SafeAreaView style={styles.container} edges={['bottom']}> */}
-        <Loading active={loading} />
-        {spuList.length ? (
-          <FlatList
-            style={[{flex: 1, backgroundColor: '#f4f4f4'}]}
-            refreshing={loading}
-            onRefresh={onRefresh}
-            onEndReached={onEndReached}
-            numColumns={1}
-            renderItem={renderItem}
-            keyExtractor={item => 'spu' + item.id}
-            data={spuList}
-            ListFooterComponent={
-              <View style={[globalStyles.containerCenter, {flex: 1, paddingVertical: globalStyleVariables.MODULE_SPACE, marginBottom: bottom}]}>
-                <Text style={[globalStyles.fontTertiary, {textAlign: 'center'}]}>已经到底</Text>
-              </View>
-            }
-          />
-        ) : (
-          <View style={[{flex: 1, backgroundColor: '#fff'}, globalStyles.containerCenter]}>
-            <Text style={globalStyles.fontTertiary}>暂无商品</Text>
-          </View>
-        )}
+        <FlatList
+          style={[{flex: 1, backgroundColor: '#f4f4f4'}]}
+          refreshing={loading}
+          onRefresh={onRefresh}
+          onEndReached={onEndReached}
+          numColumns={1}
+          renderItem={renderItem}
+          ListEmptyComponent={<Empty />}
+          keyExtractor={item => 'spu' + item.id}
+          data={spuList}
+          ListFooterComponent={!!spuList?.length && <ListFooter status={status} marginVertical={bottom} />}
+        />
       </View>
     </View>
   );
@@ -149,11 +143,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'transparent',
-    // marginTop: -80,
   },
   freshHeader: {
     height: 80,
-    // justifyContent: 'flex-end',
   },
   spuContainer: {
     marginTop: globalStyleVariables.MODULE_SPACE,

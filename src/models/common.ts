@@ -11,6 +11,7 @@ export interface AppHeader {
   project?: 'FAYABD' | 'FAYAOA' | 'FAYABIZ' | 'FAYA' | string;
   token?: string;
 }
+export type LoadingState = 'none' | 'noMore' | 'loading';
 
 export class CustomError extends Error {
   constructor(message: string, public code: number = 1) {
