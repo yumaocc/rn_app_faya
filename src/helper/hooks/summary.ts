@@ -1,7 +1,6 @@
 import {useEffect} from 'react';
 import {useSelector} from 'react-redux';
-import {PAGE_SIZE} from '../../constants';
-import {Commission, HomeStatisticsF, RequestAction} from '../../models';
+import {Commission, HomeStatisticsF} from '../../models';
 import {RootState} from '../../redux/reducers';
 import {useForceUpdate} from './common';
 import {useSummaryDispatcher, useContractDispatcher} from './dispatcher';
@@ -16,7 +15,7 @@ export function useHomeSummary(): [HomeStatisticsF, Commission, number, () => vo
 
   useEffect(() => {
     if (!homeData) {
-      contractDispatcher.loadContractList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.load});
+      contractDispatcher.loadContractList({index: 0, replace: false});
       summaryDispatcher.loadCommissionToday();
       summaryDispatcher.loadHome();
     }

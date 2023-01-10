@@ -1,46 +1,42 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {TouchableOpacity, FlatList} from 'react-native';
 import {FC} from 'react';
-import {useDebounceFn} from 'ahooks';
+import {useDebounceFn, useMount} from 'ahooks';
 import {Icon as AntdIcon} from '@ant-design/react-native';
 import {Input, NavigationBar} from '../../../component';
 import {View, StyleSheet, Text} from 'react-native';
 import {UnitNumber} from '../../../component';
 import {globalStyleVariables, globalStyles} from '../../../constants/styles';
-import {FakeNavigation, ContractList as ContractListType, RequestAction, Options, ContractAction, ContractStatus, PagedData} from '../../../models';
+import {FakeNavigation, Options, ContractAction, ContractStatus, ContractList as ContractListType} from '../../../models';
 import {useNavigation} from '@react-navigation/native';
 import ModalDropdown from 'react-native-modal-dropdown';
-import {PAGE_SIZE} from '../../../constants';
 import {useContractDispatcher} from '../../../helper/hooks';
 import Icon from '../../../component/Form/Icon';
 import Loading from '../../../component/Loading';
-import {cleanTime} from '../../../helper/util';
+import {cleanTime, getLoadingStatusText} from '../../../helper/util';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/reducers';
+import {MerchantList} from '../../../models/merchant';
+import Empty from '../../../component/Empty';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const ContractList: FC = () => {
   const navigation = useNavigation() as FakeNavigation;
   const [contractDispatcher] = useContractDispatcher();
-
   const [valueType, setValueType] = useState<Options>(null);
-
-  const {contractList, loading, pageIndex} = useSelector<RootState, {contractList: PagedData<ContractListType[]>; loading: boolean; pageIndex: number}>(state => ({
-    contractList: state.contract?.contractList,
-    loading: state.contract.contractLoading,
-    pageIndex: state.contract?.contractList?.page?.pageIndex,
-  }));
+  const contractData = useSelector<RootState, MerchantList<ContractListType[]>>(state => state.contract.contractList);
+  const loading = useSelector<RootState, boolean>(state => state.contract.contractLoading);
   const [value, setValue] = useState('');
-  const {run} = useDebounceFn(
-    async (name: string) => contractDispatcher.loadContractList({pageIndex: 1, pageSize: PAGE_SIZE, multiStore: valueType?.value, name: name, action: RequestAction.other}),
-    {wait: 500},
-  );
+  const {bottom} = useSafeAreaInsets();
+  const {run} = useDebounceFn(async (name: string) => contractDispatcher.loadContractList({index: 0, name: name, replace: true, pull: false}), {
+    wait: 500,
+  });
 
-  useEffect(() => {
-    if (!contractList?.content?.length) {
-      contractDispatcher.loadContractList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.load});
+  useMount(() => {
+    if (!contractData?.content?.length) {
+      contractDispatcher.loadContractList({index: 0, replace: false, pull: true});
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  });
 
   function handleChangeFilter(e: Options) {
     navigation.navigate({
@@ -81,10 +77,10 @@ const ContractList: FC = () => {
     }
   };
 
-  const renderItem = ({item, index}: {item: ContractListType; index: number}) => {
+  const renderItem = ({item}: {item: ContractListType}) => {
     return (
       <TouchableOpacity
-        key={index}
+        key={item.id}
         activeOpacity={0.5}
         style={{backgroundColor: '#fff', paddingLeft: globalStyleVariables.MODULE_SPACE, paddingRight: globalStyleVariables.MODULE_SPACE}}
         onPress={() => {
@@ -120,7 +116,7 @@ const ContractList: FC = () => {
       <View style={[globalStyles.lineHorizontal]} />
       <View style={[styles.header]}>
         <View>
-          <UnitNumber prefix="共" value={contractList?.page?.pageTotal} unit="份" />
+          <UnitNumber prefix="共" value={contractData?.page?.pageTotal} unit="份" />
         </View>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <View style={{width: 100}}>
@@ -138,25 +134,18 @@ const ContractList: FC = () => {
         </View>
       </View>
       <FlatList
-        data={contractList?.content}
+        data={contractData?.content}
         renderItem={renderItem}
-        ListEmptyComponent={
-          <View style={[globalStyles.containerCenter, {flex: 1}]}>
-            <Text>暂无数据</Text>
-          </View>
-        }
-        ListFooterComponent={
-          <View style={[globalStyles.containerCenter, {flex: 1, marginTop: globalStyleVariables.MODULE_SPACE, marginBottom: globalStyleVariables.MODULE_SPACE}]}>
-            <Text style={[globalStyles.fontTertiary, {textAlign: 'center'}]}>已经到底</Text>
-          </View>
-        }
+        ListEmptyComponent={<Empty />}
+        ListFooterComponentStyle={[{height: bottom * 2}, globalStyles.containerCenter]}
+        ListFooterComponent={!!contractData?.content?.length && <Text style={[{textAlign: 'center'}, globalStyles.fontSize12]}>{getLoadingStatusText(contractData?.status)}</Text>}
         numColumns={1}
-        refreshing={false}
+        refreshing={loading}
         onRefresh={() => {
-          contractDispatcher.loadContractList({pageIndex: 1, pageSize: PAGE_SIZE, multiStore: valueType?.value, name: value, action: RequestAction.other});
+          contractDispatcher.loadContractList({index: 0, name: value, replace: true, pull: true});
         }}
         onEndReached={() => {
-          contractDispatcher.loadContractList({pageIndex: pageIndex + 1, pageSize: PAGE_SIZE, multiStore: valueType?.value, name: value, action: RequestAction.load});
+          contractDispatcher.loadContractList({index: contractData?.page?.pageIndex, name: value, replace: false, pull: true});
         }}
       />
     </>

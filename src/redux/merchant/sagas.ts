@@ -78,6 +78,7 @@ function* loadPublicMerchantList(action: ActionWithPayload<ActionType, SearchPar
     }
     yield put(Actions.changeLoadingStatePublic());
     const res: PagedData<MerchantF[]> = yield call(api.merchant.getPublicSeaMerchants, searchParam);
+    const status = res.content?.length < pageSize ? 'noMore' : 'none';
     if (!res?.content?.length) {
       const page: PageParam = yield select((state: RootState) => state.merchant.merchantPublicList.page);
       res.page = page;
@@ -89,7 +90,7 @@ function* loadPublicMerchantList(action: ActionWithPayload<ActionType, SearchPar
     const merchantList = {
       content: res.content,
       page: res.page,
-      status: res.content.length < pageSize ? 'noMore' : 'none',
+      status,
     } as MerchantList<MerchantF[]>;
     yield put(Actions.loadPublicMerchantListSuccess(merchantList));
   } catch (error) {
@@ -115,6 +116,7 @@ function* loadPrivateMerchantList(action: ActionWithPayload<ActionType, SearchPa
     }
     yield put(Actions.changeLoadingStatePrivate());
     const res: PagedData<MerchantF[]> = yield call(api.merchant.getPrivateSeaMerchants, searchParam);
+    const status = res.content?.length < pageSize ? 'noMore' : 'none';
     if (!res?.content?.length) {
       const page: PageParam = yield select((state: RootState) => state.merchant.merchantPrivateList.page);
       res.page = page;
@@ -123,10 +125,14 @@ function* loadPrivateMerchantList(action: ActionWithPayload<ActionType, SearchPa
       const merchant: MerchantF[] = yield select((state: RootState) => state.merchant?.merchantPrivateList?.content);
       res.content = [...merchant, ...res?.content];
     }
+
     const merchantList = {
       content: res.content,
-      page: res.page,
-      status: res.content.length < pageSize ? 'noMore' : 'none',
+      page: {
+        pageIndex,
+        ...res.page,
+      },
+      status,
     } as MerchantList<MerchantF[]>;
     yield put(Actions.loadPrivateMerchantLisSuccess(merchantList));
   } catch (error) {

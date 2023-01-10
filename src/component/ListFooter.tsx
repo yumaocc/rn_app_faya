@@ -1,34 +1,24 @@
 import React from 'react';
 import {FC} from 'react';
-import {View, Text} from 'react-native';
-import {globalStyles, globalStyleVariables} from '../constants/styles';
+import {Text} from 'react-native';
+import {globalStyles} from '../constants/styles';
 import {LoadingState} from '../models/common';
 
 interface ListFooterProps {
   status?: LoadingState;
-  marginVertical?: number;
 }
 const ListFooter: FC<ListFooterProps> = props => {
-  const {status, marginVertical} = props;
-  console.log(status);
-  switch (status) {
-    case 'loading':
-      return (
-        <View style={[globalStyles.containerCenter, {marginVertical: marginVertical}]}>
-          <Text style={globalStyles.fontTertiary}>加载中...</Text>
-        </View>
-      );
-    case 'noMore':
-      return (
-        <View style={[globalStyles.containerCenter, {marginVertical: marginVertical}]}>
-          <Text style={globalStyles.fontTertiary}>已经到底了哦</Text>
-        </View>
-      );
-    default:
-      return <></>;
-  }
+  const {status} = props;
+  const getStatusText = () => {
+    switch (status) {
+      case 'loading':
+        return ' 加载中...';
+      case 'noMore':
+        return '已经到底了哦';
+      default:
+        return '1';
+    }
+  };
+  return <Text style={[globalStyles.fontTertiary, {textAlign: 'center'}]}>{getStatusText()}</Text>;
 };
 export default ListFooter;
-ListFooter.defaultProps = {
-  marginVertical: globalStyleVariables.MODULE_SPACE,
-};

@@ -15,6 +15,7 @@ import {
   Site,
   Options,
 } from '../models';
+import {LoadingState} from '../models/common';
 import {SPUStatus} from '../models/spu';
 
 // 用来模拟异步操作
@@ -302,4 +303,16 @@ export const getAllMonth = (): Options[] => {
     });
   }
   return options;
+};
+//获取loading状态的函数，用于上拉加载
+export const getLoadingStatusText = (status: LoadingState) => {
+  console.log('loading', status);
+  switch (status) {
+    case 'loading':
+      return ' 加载中...';
+    case 'noMore':
+      return '已经到底了哦';
+    default:
+      return '';
+  }
 };

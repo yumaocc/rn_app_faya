@@ -1,18 +1,16 @@
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, TouchableWithoutFeedback, Image, FlatList} from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Icon} from '@ant-design/react-native';
-
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import * as api from '../../../apis';
 import {NavigationBar} from '../../../component';
 import {FakeNavigation, SPUF} from '../../../models';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {getBookingType} from '../../../helper';
 import {useNavigation} from '@react-navigation/native';
-import {cleanTime, getStatusColor} from '../../../helper/util';
+import {cleanTime, getLoadingStatusText, getStatusColor} from '../../../helper/util';
 import {useCommonDispatcher} from '../../../helper/hooks';
 import {LoadingState} from '../../../models/common';
-import ListFooter from '../../../component/ListFooter';
 import Empty from '../../../component/Empty';
 import {useMount} from 'ahooks';
 
@@ -24,7 +22,6 @@ const SPUList: React.FC = () => {
   const navigation = useNavigation<FakeNavigation>();
   const [commonDispatcher] = useCommonDispatcher();
   const {bottom} = useSafeAreaInsets();
-
   async function fetchData(index: number, replace?: boolean) {
     try {
       if (replace) {
@@ -32,11 +29,10 @@ const SPUList: React.FC = () => {
       }
       setStatus('loading');
       const pageSize = 10;
-      const res = await api.sku.getSPUList({pageIndex: index, pageSize});
+      const pageIndex = replace ? 1 : index + 1;
+      const res = await api.sku.getSPUList({pageIndex, pageSize});
       setStatus(res.content?.length < pageSize ? 'noMore' : 'none');
-      if (res?.content?.length) {
-        setPageIndex(res.page.pageIndex + 1);
-      }
+      setPageIndex(pageIndex);
       if (replace) {
         setSpuList(res.content);
       } else {
@@ -128,10 +124,11 @@ const SPUList: React.FC = () => {
           onEndReached={onEndReached}
           numColumns={1}
           renderItem={renderItem}
-          ListEmptyComponent={<Empty />}
+          ListEmptyComponent={!loading && <Empty />}
           keyExtractor={item => 'spu' + item.id}
           data={spuList}
-          ListFooterComponent={!!spuList?.length && <ListFooter status={status} marginVertical={bottom} />}
+          ListFooterComponentStyle={[{height: bottom * 2}, globalStyles.containerCenter]}
+          ListFooterComponent={!!spuList?.length && <Text style={[{textAlign: 'center'}, globalStyles.fontTertiary]}>{getLoadingStatusText(status)}</Text>}
         />
       </View>
     </View>

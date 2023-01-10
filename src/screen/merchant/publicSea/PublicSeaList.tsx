@@ -8,10 +8,10 @@ import {useSelector} from 'react-redux';
 import {Input, PlusButton} from '../../../component';
 import Empty from '../../../component/Empty';
 import Icon from '../../../component/Form/Icon';
-import ListFooter from '../../../component/ListFooter';
 import Loading from '../../../component/Loading';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {useMerchantDispatcher} from '../../../helper/hooks';
+import {getLoadingStatusText} from '../../../helper/util';
 import {FakeNavigation, MerchantCreateType, MerchantAction, Options, MerchantF} from '../../../models';
 import {MerchantList} from '../../../models/merchant';
 import {RootState} from '../../../redux/reducers';
@@ -36,7 +36,7 @@ const PublicSeaList: React.FC = () => {
   const pageIndex = useSelector<RootState, number>(state => state.merchant?.merchantPublicList?.page?.pageIndex);
   const loading = useSelector<RootState, boolean>(state => state.merchant.merchantLoading);
   const navigation = useNavigation() as FakeNavigation;
-
+  console.log('公海列表', merchantList);
   const {run} = useDebounceFn(async (name: string) => {
     merchantDispatcher.loadPublicMerchantList({index: 0, name: name, replace: true});
   });
@@ -123,12 +123,14 @@ const PublicSeaList: React.FC = () => {
         onEndReached={() => {
           merchantDispatcher.loadPublicMerchantList({index: pageIndex, multiStore: valueType?.value, name: value, replace: false, pull: true});
         }}
+        ListFooterComponentStyle={[{height: 40}, globalStyles.containerCenter]}
         data={merchantList?.content}
         onEndReachedThreshold={0.3}
         renderItem={({item}) => <Card update={update} merchant={item} key={item.id} style={globalStyles.marginBottom} />}
-        ListEmptyComponent={<Empty text="还没有商家哦" icon={'shop'} />}
-        ListFooterComponent={!!merchantList?.content?.length && <Text>加载中....</Text>}
-        // <ListFooter status={merchantList?.status} />
+        ListEmptyComponent={!loading && <Empty text="还没有商家哦" icon={'shop'} />}
+        ListFooterComponent={
+          !!merchantList?.content?.length && <Text style={[{textAlign: 'center'}, globalStyles.fontTertiary]}>{getLoadingStatusText(merchantList?.status)}</Text>
+        }
       />
     </SafeAreaView>
   );

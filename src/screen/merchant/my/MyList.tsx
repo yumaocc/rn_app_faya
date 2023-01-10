@@ -12,8 +12,8 @@ import Card from './Card';
 import Icon from '../../../component/Form/Icon';
 import Empty from '../../../component/Empty';
 import {LoadingState, SearchForm} from '../../../models/common';
-import ListFooter from '../../../component/ListFooter';
 import Loading from '../../../component/Loading';
+import {getLoadingStatusText} from '../../../helper/util';
 
 const options = [
   {
@@ -56,7 +56,6 @@ const MyList: React.FC = () => {
       setPageIndex(pageIndex);
       setLen(res.page.pageTotal);
     } catch (error) {
-      setStatus('none');
       commonDispatcher.error(error);
     }
     setLoading(false);
@@ -132,9 +131,11 @@ const MyList: React.FC = () => {
         onEndReached={() => {
           getData({index: pageIndex, multiStore: valueType?.value, name: value});
         }}
+        onEndReachedThreshold={0.5}
+        ListFooterComponentStyle={[{height: 40}, globalStyles.containerCenter]}
         renderItem={({item}) => <Card merchant={item} key={item.id} style={globalStyles.moduleMarginTop} />}
-        ListEmptyComponent={<Empty text="还没有商家哦" icon={'shop'} />}
-        ListFooterComponent={!!merchantList?.length && <ListFooter status={status} />}
+        ListEmptyComponent={!loading && <Empty text="还没有商家哦" icon={'shop'} />}
+        ListFooterComponent={<Text style={[{textAlign: 'center'}, globalStyles.fontTertiary]}>{getLoadingStatusText(status)}</Text>}
       />
     </SafeAreaView>
   );

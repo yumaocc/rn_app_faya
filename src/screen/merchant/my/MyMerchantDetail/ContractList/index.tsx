@@ -7,10 +7,10 @@ import * as api from '../../../../../apis';
 import {globalStyles, globalStyleVariables} from '../../../../../constants/styles';
 import {ContractList as ContractType, FakeNavigation} from '../../../../../models';
 import {useCommonDispatcher} from '../../../../../helper/hooks';
-import ListFooter from '../../../../../component/ListFooter';
 import {LoadingState} from '../../../../../models/common';
 import Empty from '../../../../../component/Empty';
 import {useMount} from 'ahooks';
+import {getLoadingStatusText} from '../../../../../helper/util';
 
 interface ContractListProps {
   id: number;
@@ -83,11 +83,12 @@ const ContractList: FC<ContractListProps> = ({id}) => {
           onRefresh={onRefresh}
           onEndReached={onEndReached}
           data={contractList || []}
-          ListEmptyComponent={<Empty />}
+          ListEmptyComponent={!loading && <Empty />}
           numColumns={1}
           renderItem={renderItem}
           keyExtractor={item => 'con' + item.id}
-          ListFooterComponent={!!contractList?.length && <ListFooter status={status} />}
+          ListFooterComponentStyle={[{height: 40}, globalStyles.containerCenter]}
+          ListFooterComponent={!!contractList?.length && <Text style={[{textAlign: 'center'}, globalStyles.fontTertiary]}>{getLoadingStatusText(status)}</Text>}
         />
       </SafeAreaView>
     </>

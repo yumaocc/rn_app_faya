@@ -16,7 +16,7 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/reducers';
 import {MerchantList} from '../../../models/merchant';
 import Empty from '../../../component/Empty';
-import ListFooter from '../../../component/ListFooter';
+import {getLoadingStatusText} from '../../../helper/util';
 
 const options = [
   {
@@ -120,10 +120,13 @@ const PrivateSeaList: React.FC = () => {
         data={merchantList?.content}
         renderItem={({item}) => <Card merchant={item} key={item.id} style={globalStyles.marginBottom} />}
         onEndReached={() => {
-          merchantDispatcher.loadPrivateMerchantList({index: pageIndex, multiStore: valueType?.value, name: value, replace: true, pull: true});
+          merchantDispatcher.loadPrivateMerchantList({index: pageIndex, multiStore: valueType?.value, name: value, replace: false, pull: true});
         }}
-        ListEmptyComponent={<Empty text="还没有商家哦，快去公海看看吧" icon={'shop'} />}
-        // ListFooterComponent={!!merchantList?.content?.length && <ListFooter status={merchantList?.status} />}
+        ListEmptyComponent={!loading && <Empty text="还没有商家哦，快去公海看看吧" icon={'shop'} />}
+        ListFooterComponentStyle={[{height: 40}, globalStyles.containerCenter]}
+        ListFooterComponent={
+          !!merchantList?.content?.length && <Text style={[{textAlign: 'center'}, globalStyles.fontTertiary]}>{getLoadingStatusText(merchantList?.status)}</Text>
+        }
       />
     </SafeAreaView>
   );

@@ -6,8 +6,9 @@ import {ActionWithPayload} from '../types';
 import {Actions} from './actions';
 import {ActionType} from './types';
 import * as api from '../../apis';
-import {Contract, ContractList, PagedData, PageParam, RequestAction, SearchForm, SearchParam} from '../../models';
+import {Contract, ContractList, PagedData, SearchForm, SearchParam} from '../../models';
 import {RootState} from '../reducers';
+import {MerchantList} from '../../models/merchant';
 
 function* loadCurrentContract(action: ActionWithPayload<ActionType.LOAD_CURRENT_CONTRACT, number>): any {
   const contractId = action.payload;
@@ -33,23 +34,68 @@ function* loadContractSearchList(action: ActionWithPayload<ActionType, SearchFor
 
 //合同列表
 function* loadContractList(action: ActionWithPayload<ActionType, SearchParam>) {
+  // const params = action.payload;
+  // try {
+  //   const {replace, index, pull, ...param} = params;
+  //   const pageSize = 10;
+  //   const pageIndex = replace ? 1 : index + 1;
+  //   const searchParam = {
+  //     pageSize,
+  //     pageIndex,
+  //     ...param,
+  //   };
+  //   if (!pull) {
+  //     yield put(Actions.loadContractLoading());
+  //   }
+  //   yield put(Actions.changeLoadingState());
+  //   const res: PagedData<ContractList[]> = yield call(api.contract.getMyContractList, searchParam);
+  //   const status = res.content?.length < pageSize ? 'noMore' : 'none';
+  //   if (!res?.content?.length) {
+  //     const page: PageParam = yield select((state: RootState) => state.merchant.merchantPublicList.page);
+  //     res.page = page;
+  //   }
+  //   if (!replace) {
+  //     const merchant: ContractList[] = yield select((state: RootState) => state.merchant?.merchantPublicList?.content);
+  //     res.content = [...merchant, ...res?.content];
+  //   }
+  //   const merchantList = {
+  //     content: res.content,
+  //     page: res.page,
+  //     status,
+  //   } as MerchantList<ContractList[]>;
+  //   console.log('数据', merchantList);
+  //   yield put(Actions.loadContractListSuccess(merchantList));
+  // } catch (error) {
+  //   yield put(CommonActions.error(error));
+  // }
   const params = action.payload;
   try {
-    const {action, ...param} = params;
-    yield put(Actions.loadContractLoading());
-    const res: PagedData<ContractList[]> = yield call(api.contract.getMyContractList, param);
-    //根据是否有数据返回来判断是不是最后一页，方式pageIndex一直增加
-    if (!res?.content?.length) {
-      const page: PageParam = yield select((state: RootState) => state.contract.contractList.page);
-      res.page = page;
+    const {replace, index, pull, ...param} = params;
+    const pageSize = 10;
+    const pageIndex = replace ? 1 : index + 1;
+    const searchParam = {
+      pageSize,
+      pageIndex,
+      ...param,
+    };
+    if (!pull) {
+      yield put(Actions.loadContractLoading());
     }
+    yield put(Actions.changeLoadingState());
+    console.log(searchParam);
 
-    if (action === RequestAction.load) {
-      const merchant: ContractList[] = yield select((state: RootState) => state?.contract?.contractList?.content);
+    const res: PagedData<ContractList[]> = yield call(api.contract.getMyContractList, searchParam);
+    const status = res.content?.length < pageSize ? 'noMore' : 'none';
+    if (!replace) {
+      const merchant: ContractList[] = yield select((state: RootState) => state.contract.contractList.content);
       res.content = [...merchant, ...res?.content];
     }
-
-    yield put(Actions.loadContractListSuccess(res));
+    const merchantList = {
+      content: res.content,
+      page: res.page,
+      status,
+    } as MerchantList<ContractList[]>;
+    yield put(Actions.loadContractListSuccess(merchantList));
   } catch (error) {
     yield put(CommonActions.error(error));
   }
