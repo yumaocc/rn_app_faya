@@ -109,7 +109,7 @@ const Withdraw: FC = () => {
               <Text>认证失败，原因：{walletInfo?.reason}</Text>
             </View>
             <View style={globalStyles.moduleMarginTop}>
-              <Text onPress={hanldeAuth}>再次认证</Text>
+              <Text onPress={handleAuth}>再次认证</Text>
             </View>
           </>
         );
