@@ -16,6 +16,7 @@ import {useForm} from 'react-hook-form';
 import BookingNotice from './BuyNotice';
 import {ErrorMessage} from '@hookform/error-message';
 import SelectSiteModal from './SelectSiteModal';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 interface BookingProps {
   onNext?: () => void;
@@ -32,6 +33,7 @@ interface ModelListProps {
 const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getValues}) => {
   const [showBinding, setShowBinding] = useState(false); // 显示预约型号
   const locationIds = watch('locationIds');
+  const {bottom} = useSafeAreaInsets();
   const [siteModalIsShow, setSiteModalIsShow] = useState(false);
   const bookingModel = useForm();
   const contractDetail = useSelector((state: RootState) => state.contract.currentContract);
@@ -117,6 +119,7 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
           <FormTitle title="上架渠道" borderTop />
           <Form.Item label="请选择上线站点">
             <Controller
+              defaultValue={[]}
               control={control}
               name="locationIds"
               render={({field: {value}}) => (
@@ -169,7 +172,7 @@ const Booking: React.FC<BookingProps> = ({onNext, setValue, watch, control, getV
 
         <BookingNotice setValue={setValue} control={control} watch={watch} getValues={getValues} />
         <Footer />
-        <View style={styles.button}>
+        <View style={[styles.button, {marginBottom: bottom}]}>
           <Button type="primary" onPress={onCheck}>
             下一步
           </Button>

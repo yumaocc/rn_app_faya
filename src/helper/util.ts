@@ -110,12 +110,15 @@ export function formattingMerchantRequest(data: FormMerchant, type: MerchantCrea
   const {avatar, businessLicense, areaInfo} = data;
   let avatarUrl = null;
   let businessLicenseUrl = null;
+
   if (avatar?.length) {
-    avatarUrl = avatar[0].url;
+    avatarUrl = avatar[0]?.url;
   }
+
   if (businessLicense?.length) {
-    businessLicenseUrl = businessLicense[0].url;
+    businessLicenseUrl = businessLicense[0]?.url;
   }
+
   const newData: MerchantForm = {...data, avatar: avatarUrl, businessLicense: businessLicenseUrl, type, locationWithCompanyId: areaInfo[2]};
   return newData;
 }
@@ -165,6 +168,7 @@ export function formattingGoodsCategory(list: SPUCategory[]) {
     };
   });
 }
+
 //格式化发码方式数据
 export function formattingCodeType(data: SPUCodeType[]) {
   return data.map(item => {
@@ -183,7 +187,7 @@ export function cleanSPUForm(formData: any, contractDetail: Contract) {
   form.saleEndTime = formatMoment(formData?.saleEndTime) || null;
   form.showBeginTime = formatMoment(formData?.showBeginTime);
   form.poster = formData?.poster?.length ? formData?.poster[0]?.url : null;
-  delete form.spuStock;
+  delete form?.spuStock;
   form.skuList.forEach((_: any, index: number) => {
     delete _.skuSettlementPrice;
     form.skuList[index].list = contractDetail.skuInfoReq.skuInfo[index].skuDetails;
@@ -285,7 +289,6 @@ export const getStatusColor = (status: number) => {
 };
 //判断一个数是否是小数
 export const isFloatNumber = (value: number) => {
-  console.log(value);
   if (Number(value) !== Math.round(value)) {
     return true;
   }
@@ -306,7 +309,6 @@ export const getAllMonth = (): Options[] => {
 };
 //获取loading状态的函数，用于上拉加载
 export const getLoadingStatusText = (status: LoadingState) => {
-  console.log('loading', status);
   switch (status) {
     case 'loading':
       return ' 加载中...';

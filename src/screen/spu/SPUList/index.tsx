@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, TouchableWithoutFeedback, Image, FlatList} from 'react-native';
+import {View, Text, StyleSheet, TouchableWithoutFeedback, Image, FlatList, Platform} from 'react-native';
 import {Icon} from '@ant-design/react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import * as api from '../../../apis';
@@ -13,6 +13,7 @@ import {useCommonDispatcher} from '../../../helper/hooks';
 import {LoadingState} from '../../../models/common';
 import Empty from '../../../component/Empty';
 import {useMount} from 'ahooks';
+import Loading from '../../../component/Loading';
 
 const SPUList: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -44,7 +45,7 @@ const SPUList: React.FC = () => {
     setLoading(false);
   }
   useMount(() => {
-    fetchData(1, false);
+    fetchData(0, false);
   });
 
   const onEndReached = () => {
@@ -115,6 +116,7 @@ const SPUList: React.FC = () => {
 
   return (
     <View style={[styles.container]}>
+      <Loading active={loading} />
       <NavigationBar title="商品列表" />
       <View style={{overflow: 'hidden', flex: 1}}>
         <FlatList
@@ -127,7 +129,7 @@ const SPUList: React.FC = () => {
           ListEmptyComponent={!loading && <Empty />}
           keyExtractor={item => 'spu' + item.id}
           data={spuList}
-          ListFooterComponentStyle={[{height: bottom * 2}, globalStyles.containerCenter]}
+          ListFooterComponentStyle={[{height: Platform.OS === 'ios' ? bottom * 2 : 40}, globalStyles.containerCenter]}
           ListFooterComponent={!!spuList?.length && <Text style={[{textAlign: 'center'}, globalStyles.fontTertiary]}>{getLoadingStatusText(status)}</Text>}
         />
       </View>

@@ -6,7 +6,7 @@ import {ActionWithPayload} from '../types';
 import {Actions} from './actions';
 import {ActionType} from './types';
 import {merchant} from '../../apis';
-import {MerchantF, MerchantSimpleF, PagedData, PageParam, SearchParam} from '../../models';
+import {MerchantF, MerchantSimpleF, PagedData, SearchParam} from '../../models';
 import {formattingMerchantEdit} from '../../helper';
 import {RootState} from '../reducers';
 import {MerchantList} from '../../models/merchant';
@@ -79,17 +79,17 @@ function* loadPublicMerchantList(action: ActionWithPayload<ActionType, SearchPar
     yield put(Actions.changeLoadingStatePublic());
     const res: PagedData<MerchantF[]> = yield call(api.merchant.getPublicSeaMerchants, searchParam);
     const status = res.content?.length < pageSize ? 'noMore' : 'none';
-    if (!res?.content?.length) {
-      const page: PageParam = yield select((state: RootState) => state.merchant.merchantPublicList.page);
-      res.page = page;
-    }
+
     if (!replace) {
       const merchant: MerchantF[] = yield select((state: RootState) => state.merchant?.merchantPublicList?.content);
       res.content = [...merchant, ...res?.content];
     }
     const merchantList = {
       content: res.content,
-      page: res.page,
+      page: {
+        ...res.page,
+        pageIndex,
+      },
       status,
     } as MerchantList<MerchantF[]>;
     yield put(Actions.loadPublicMerchantListSuccess(merchantList));
@@ -117,10 +117,7 @@ function* loadPrivateMerchantList(action: ActionWithPayload<ActionType, SearchPa
     yield put(Actions.changeLoadingStatePrivate());
     const res: PagedData<MerchantF[]> = yield call(api.merchant.getPrivateSeaMerchants, searchParam);
     const status = res.content?.length < pageSize ? 'noMore' : 'none';
-    if (!res?.content?.length) {
-      const page: PageParam = yield select((state: RootState) => state.merchant.merchantPrivateList.page);
-      res.page = page;
-    }
+
     if (!replace) {
       const merchant: MerchantF[] = yield select((state: RootState) => state.merchant?.merchantPrivateList?.content);
       res.content = [...merchant, ...res?.content];
@@ -129,8 +126,8 @@ function* loadPrivateMerchantList(action: ActionWithPayload<ActionType, SearchPa
     const merchantList = {
       content: res.content,
       page: {
-        pageIndex,
         ...res.page,
+        pageIndex,
       },
       status,
     } as MerchantList<MerchantF[]>;

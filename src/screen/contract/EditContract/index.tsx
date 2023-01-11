@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {View, ScrollView, useWindowDimensions, StyleSheet, KeyboardAvoidingView, Platform} from 'react-native';
-import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 import {Steps, NavigationBar} from '../../../component';
 import {useParams, useRefCallback, useContractDispatcher} from '../../../helper/hooks';
@@ -120,52 +120,50 @@ const EditSPU: React.FC = () => {
   return (
     <>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{flex: 1}} keyboardVerticalOffset={-bottom + 30}>
-        <SafeAreaView style={{flex: 1, backgroundColor: '#f4f4f4'}} edges={['bottom']}>
-          <NavigationBar title={'签结算合同'} />
-          <Steps steps={steps} currentKey={currentKey} onChange={setCurrentKey} onBeforeChangeKey={handleChangeStep} />
-          <ScrollView
-            keyboardShouldPersistTaps="always"
-            style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}}
-            ref={setRef}
-            horizontal
-            snapToInterval={windowWidth}
-            scrollEnabled={false}>
-            <View style={[{width: windowWidth, padding: globalStyleVariables.MODULE_SPACE}]}>
-              <ScrollView keyboardShouldPersistTaps="always">
-                <Base errors={errors} watch={watch} setValue={setValue} getValues={getValues} control={control} Controller={Controller} onNext={() => setCurrentKey('sku')} />
-              </ScrollView>
-            </View>
-            <View style={{width: windowWidth}}>
-              <ScrollView keyboardShouldPersistTaps="always">
-                <SKU
-                  handleSubmit={handleSubmit}
-                  errors={errors}
-                  watch={watch}
-                  action={action}
-                  setValue={setValue}
-                  getValues={getValues}
-                  control={control}
-                  onNext={() => setCurrentKey('booking')}
-                />
-              </ScrollView>
-            </View>
-            <View style={{width: windowWidth}}>
-              <ScrollView keyboardShouldPersistTaps="always">
-                <Booking
-                  action={action}
-                  watch={watch}
-                  setValue={setValue}
-                  getValues={getValues}
-                  control={control}
-                  Controller={Controller}
-                  handleSubmit={handleSubmit}
-                  errors={errors}
-                  onNext={() => setCurrentKey('detail')}
-                />
-              </ScrollView>
-            </View>
-          </ScrollView>
-        </SafeAreaView>
+        <NavigationBar title={'签结算合同'} />
+        <Steps steps={steps} currentKey={currentKey} onChange={setCurrentKey} onBeforeChangeKey={handleChangeStep} />
+        <ScrollView
+          keyboardShouldPersistTaps="always"
+          style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}}
+          ref={setRef}
+          horizontal
+          snapToInterval={windowWidth}
+          scrollEnabled={false}>
+          <View style={[{width: windowWidth, padding: globalStyleVariables.MODULE_SPACE}]}>
+            <ScrollView keyboardShouldPersistTaps="always">
+              <Base errors={errors} watch={watch} setValue={setValue} getValues={getValues} control={control} Controller={Controller} onNext={() => setCurrentKey('sku')} />
+            </ScrollView>
+          </View>
+          <View style={{width: windowWidth}}>
+            <ScrollView keyboardShouldPersistTaps="always">
+              <SKU
+                handleSubmit={handleSubmit}
+                errors={errors}
+                watch={watch}
+                action={action}
+                setValue={setValue}
+                getValues={getValues}
+                control={control}
+                onNext={() => setCurrentKey('booking')}
+              />
+            </ScrollView>
+          </View>
+          <View style={{width: windowWidth}}>
+            <ScrollView keyboardShouldPersistTaps="always">
+              <Booking
+                action={action}
+                watch={watch}
+                setValue={setValue}
+                getValues={getValues}
+                control={control}
+                Controller={Controller}
+                handleSubmit={handleSubmit}
+                errors={errors}
+                onNext={() => setCurrentKey('detail')}
+              />
+            </ScrollView>
+          </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </>
   );

@@ -6,7 +6,7 @@ import {PlusButton, UnitNumber} from '../../component';
 import {globalStyles, globalStyleVariables} from '../../constants/styles';
 import {useHomeSummary, useUserDispatcher} from '../../helper/hooks';
 import {useNavigation} from '@react-navigation/native';
-import {ContractAction, FakeNavigation, MerchantAction, MerchantCreateType, UserInfo, UserState} from '../../models';
+import {ContractAction, FakeNavigation, MerchantAction, MerchantCreateType, UserInfo} from '../../models';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/reducers';
 import MyStatusBar from '../../component/MyStatusBar';
@@ -22,10 +22,6 @@ const Home: React.FC = () => {
       userDispatcher.loadUserInfo();
     }
   }, [userDispatcher, userInfo]);
-
-  if (userInfo?.status === UserState.UN_CERTIFIED) {
-    navigation.navigate('Cert');
-  }
 
   return (
     <>

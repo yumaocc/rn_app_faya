@@ -13,6 +13,7 @@ import {Button} from '@ant-design/react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../../redux/reducers';
 import {FormDisabledContext} from '../../../../component/Form/Context';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 interface SKUProps {
   onNext?: () => void;
   control: Control<any, any>;
@@ -27,6 +28,7 @@ interface SKUProps {
 const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action, errors}) => {
   const disabledContext = useContext(FormDisabledContext);
   const [moreMeals, setMoreMeals] = useState(true);
+  const {bottom} = useSafeAreaInsets();
   const SPUCategories = useSelector((state: RootState) => {
     return formattingGoodsCategory(state.sku.categories);
   });
@@ -253,6 +255,7 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action,
                       {buyLimitTypeIsShow(index) && (
                         <View style={[{width: 100}, globalStyles.moduleMarginLeft]}>
                           <Controller
+                            defaultValue={null}
                             control={control}
                             name={`skuInfoReq.skuInfo.${index}.buyLimitNum`}
                             render={({field: {value, onChange}}) => <Input style={{width: 30}} value={value} onChange={onChange} extra="份" />}
@@ -270,9 +273,11 @@ const SKU: FC<SKUProps> = ({control, watch, onNext, getValues, setValue, action,
         })}
       </SectionGroup>
       {disabledContext?.disabled ? null : (
-        <Button style={{margin: 10}} type="primary" onPress={onNext}>
-          下一步
-        </Button>
+        <View style={{marginBottom: bottom}}>
+          <Button style={{margin: 10}} type="primary" onPress={onNext}>
+            下一步
+          </Button>
+        </View>
       )}
     </View>
   );

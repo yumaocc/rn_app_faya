@@ -96,7 +96,7 @@ const PrivateSeaList: React.FC = () => {
         </View>
       </View>
 
-      <View style={{marginBottom: globalStyleVariables.MODULE_SPACE}}>
+      <View>
         <PlusButton
           style={styles.createButton}
           title="新增私海商家"
@@ -114,11 +114,11 @@ const PrivateSeaList: React.FC = () => {
 
       <FlatList
         refreshing={false}
-        onRefresh={async () => {
-          merchantDispatcher.loadPrivateMerchantList({pageIndex: 0, multiStore: valueType?.value, name: value, replace: true, pull: true});
-        }}
         data={merchantList?.content}
         renderItem={({item}) => <Card merchant={item} key={item.id} style={globalStyles.marginBottom} />}
+        onRefresh={async () => {
+          merchantDispatcher.loadPrivateMerchantList({pageIndex: 0, replace: true, pull: true});
+        }}
         onEndReached={() => {
           merchantDispatcher.loadPrivateMerchantList({index: pageIndex, multiStore: valueType?.value, name: value, replace: false, pull: true});
         }}

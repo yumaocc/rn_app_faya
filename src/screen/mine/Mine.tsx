@@ -1,20 +1,36 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Icon as AntdIcon} from '@ant-design/react-native';
 import {useNavigation} from '@react-navigation/native';
 import {View, Text, ScrollView, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useSelector} from 'react-redux';
 import {globalStyles, globalStyleVariables} from '../../constants/styles';
-import {UserState} from '../../models';
+import {UserInfo, UserState} from '../../models';
 import {RootState} from '../../redux/reducers';
 import Icon from '../../component/Form/Icon';
 import {FakeNavigation} from '../../models';
 import {SectionGroup, OperateItem} from '../../component';
+import {useUserDispatcher} from '../../helper/hooks';
 
 const Mine: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.userInfo);
-
+  const [userDispatcher] = useUserDispatcher();
   const navigation = useNavigation() as FakeNavigation;
+  const userInfo = useSelector<RootState, UserInfo>(state => state.user.userInfo);
+
+  useEffect(() => {
+    if (!userInfo) {
+      userDispatcher.loadUserInfo();
+    }
+  }, [userDispatcher, userInfo]);
+
+  const handleClick = () => {
+    if (userInfo?.status === UserState.UN_CERTIFIED) {
+      navigation.navigate('Cert');
+      return;
+    }
+    navigation.navigate('MineDetail');
+  };
   return (
     <SafeAreaView style={{flex: 1}} edges={['top']}>
       <ScrollView
@@ -24,13 +40,13 @@ const Mine: React.FC = () => {
         }}>
         <View style={{height: 50, backgroundColor: '#fff'}} />
 
-        <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('MineDetail')}>
+        <TouchableOpacity activeOpacity={0.5} onPress={handleClick}>
           <View style={styles.profile}>
             <View style={styles.avatarWrapper}>
               <Image source={user?.avatar ? {uri: user?.avatar} : require('../../assets/avatar.png')} style={{height: 60, width: 60}} />
             </View>
             <View style={[styles.nameWrapper]}>
-              <Text style={[globalStyles.fontPrimary, styles.name]}>{user?.name}</Text>
+              <Text style={[globalStyles.fontPrimary, styles.name]}>{user?.name || '未认证'}</Text>
               {user.status === UserState.CERTIFIED && (
                 <View style={[globalStyles.tagWrapper, styles.certWrapper]}>
                   <AntdIcon name="safety" color="#4AB87D" size={15} />
@@ -41,11 +57,13 @@ const Mine: React.FC = () => {
             <AntdIcon name="right" style={globalStyles.iconRight} />
           </View>
         </TouchableOpacity>
-        <SectionGroup>
-          <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Cash')}>
-            <OperateItem title="我的金库" icon={<Icon name="FYLM_mine_jinku" />} />
-          </TouchableOpacity>
-        </SectionGroup>
+        {user.status === UserState.CERTIFIED && (
+          <SectionGroup>
+            <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Cash')}>
+              <OperateItem title="我的金库" icon={<Icon name="FYLM_mine_jinku" />} />
+            </TouchableOpacity>
+          </SectionGroup>
+        )}
         <SectionGroup>
           <TouchableOpacity onPress={() => navigation.navigate('ContractList')}>
             <OperateItem title="合同管理" icon={<Icon name="FYLM_mine_hetong" />} />

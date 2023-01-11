@@ -7,7 +7,7 @@ import {createMerchant, updateMerchant} from '../../../apis/merchant';
 import {Modal, NavigationBar, Tabs} from '../../../component';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {useParams, useRefCallback, useCommonDispatcher, useMerchantDispatcher, useSummaryDispatcher} from '../../../helper/hooks';
-import {MerchantCreateType, MerchantAction, FormMerchant, MerchantFormEnum, MerchantForm, RequestAction} from '../../../models'; // FormMerchant
+import {MerchantCreateType, MerchantAction, FormMerchant, MerchantFormEnum, MerchantForm} from '../../../models'; // FormMerchant
 import EditBase from '../Form/EditBase';
 import {useForm, Controller} from 'react-hook-form';
 import Certification from '../Form/Certification';
@@ -16,7 +16,6 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/reducers';
 import Loading from '../../../component/Loading';
 import * as api from '../../../apis';
-import {PAGE_SIZE} from '../../../constants';
 import ModalDropdown from 'react-native-modal-dropdown';
 import Icon from '../../../component/Form/Icon';
 import {FormDisabledContext} from '../../../component/Form/Context';
@@ -114,8 +113,8 @@ const AddMerchant: React.FC = () => {
 
   //刷新公私海数据
   const update = () => {
-    merchantDispatcher.loadPrivateMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.other});
-    merchantDispatcher.loadPublicMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.other});
+    merchantDispatcher.loadPrivateMerchantList({index: 1, replace: true});
+    merchantDispatcher.loadPublicMerchantList({index: 1, replace: true});
     summaryDispatcher.loadHome();
   };
 

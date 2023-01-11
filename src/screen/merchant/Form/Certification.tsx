@@ -77,7 +77,7 @@ const Certification: React.FC<CertificationProps> = ({Controller, control, watch
           }}
           render={({field}) => (
             <Form.Item label={`${legalAuthType === MerchantAgentType.LEGAL ? '法人' : '经办人'}手机号`} errorElement={<ErrorMessage name={'legalPhone'} errors={errors} />}>
-              <Input value={field.value} onChange={field.onChange} />
+              <Input type="number" value={field.value} onChange={field.onChange} />
             </Form.Item>
           )}
         />

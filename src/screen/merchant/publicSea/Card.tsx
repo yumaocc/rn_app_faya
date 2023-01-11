@@ -38,7 +38,7 @@ const Card: React.FC<CardProps> = props => {
   };
 
   return (
-    <View style={globalStyles.marginRightLeft}>
+    <View style={[globalStyles.marginRightLeft]}>
       <Loading active={loading} />
       <TouchableOpacity
         activeOpacity={0.5}
@@ -119,7 +119,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     position: 'relative',
     overflow: 'hidden',
-    marginTop: globalStyleVariables.MODULE_SPACE,
   },
   header: {
     flexDirection: 'row',

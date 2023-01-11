@@ -1,7 +1,7 @@
 import {Button} from '@ant-design/react-native';
 import React, {FC, useContext, useEffect} from 'react';
 import {Control, FieldErrorsImpl, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import {Form, FormTitle, Input, SectionGroup, Select, SelfText} from '../../../../component';
 import {useCommonDispatcher, useMerchantDispatcher} from '../../../../helper/hooks';
@@ -9,6 +9,7 @@ import {FormControlC, ProtocolType, SettlementType} from '../../../../models';
 import {ErrorMessage} from '@hookform/error-message';
 import {RootState} from '../../../../redux/reducers';
 import {FormDisabledContext} from '../../../../component/Form/Context';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 interface BaseProps {
   onNext?: () => void;
@@ -22,6 +23,7 @@ interface BaseProps {
 const Base: FC<BaseProps> = ({Controller, control, watch, setValue, onNext, errors}) => {
   const [merchantDispatcher] = useMerchantDispatcher();
   const [commonDispatcher] = useCommonDispatcher();
+  const {bottom} = useSafeAreaInsets();
   const disabledContext = useContext(FormDisabledContext);
   const bizUserId = watch('bizUserId');
   //商家列表
@@ -124,9 +126,11 @@ const Base: FC<BaseProps> = ({Controller, control, watch, setValue, onNext, erro
         />
       </SectionGroup>
       {disabledContext?.disabled ? null : (
-        <Button style={{margin: 10}} type="primary" onPress={next}>
-          下一步
-        </Button>
+        <View style={{marginBottom: bottom}}>
+          <Button style={{margin: 10}} type="primary" onPress={next}>
+            下一步
+          </Button>
+        </View>
       )}
     </>
   );

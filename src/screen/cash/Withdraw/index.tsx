@@ -1,6 +1,6 @@
 import {Button, Icon} from '@ant-design/react-native';
 import React, {FC, useEffect, useMemo, useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, Text, Linking, TouchableOpacity, View} from 'react-native';
 import {Input, NavigationBar, UnitNumber} from '../../../component';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import ModalDropdown from 'react-native-modal-dropdown';
@@ -55,13 +55,18 @@ const Withdraw: FC = () => {
       commonDispatcher.error(error || '哎呀，出错了');
     }
   };
+
+  const handleAuth = () => {
+    Linking.openURL('https://bd.faya.life/');
+  };
+
   const getBankCardStatus = (status: number) => {
     switch (status) {
       case BankCardStatus.unverified:
         return (
-          <TouchableOpacity activeOpacity={0.5} style={[globalStyles.flexNormal, globalStyles.moduleMarginTop, {alignItems: 'center'}]}>
+          <TouchableOpacity onPress={handleAuth} activeOpacity={0.5} style={[globalStyles.flexNormal, globalStyles.moduleMarginTop, {alignItems: 'center'}]}>
             <Icon name="plus" color="#546DAD" style={{marginRight: globalStyleVariables.MODULE_SPACE}} />
-            <Text style={[globalStyles.fontPrimary, globalStyles.primaryColor]}>银行卡尚未认证，请前往pc认证</Text>
+            <Text style={[globalStyles.fontPrimary, globalStyles.primaryColor]}>银行卡尚未认证，去认证</Text>
           </TouchableOpacity>
         );
       case BankCardStatus.authenticated:
@@ -104,7 +109,7 @@ const Withdraw: FC = () => {
               <Text>认证失败，原因：{walletInfo?.reason}</Text>
             </View>
             <View style={globalStyles.moduleMarginTop}>
-              <Text>请前往pc认证</Text>
+              <Text onPress={hanldeAuth}>再次认证</Text>
             </View>
           </>
         );

@@ -5,6 +5,7 @@ import * as apis from '../../apis';
 import {useCommonDispatcher, useUserDispatcher} from '../../helper/hooks';
 import {useNavigation} from '@react-navigation/native';
 import {FakeNavigation} from '../../models';
+import {NavigationBar} from '../../component';
 
 const Cert: FC = () => {
   const [idCard, setIdCard] = useState<string>();
@@ -31,32 +32,35 @@ const Cert: FC = () => {
     setLoading(false);
   };
   return (
-    <View style={styles.container}>
-      <View style={{alignItems: 'center'}}>
-        <Text style={styles.title}>为了您更好的使用体验</Text>
-        <Text style={styles.title}>请先进行认证</Text>
+    <>
+      <NavigationBar title="用户认证" />
+      <View style={styles.container}>
+        <View style={{alignItems: 'center'}}>
+          <Text style={styles.title}>为了您更好的使用体验</Text>
+          <Text style={styles.title}>请先进行认证</Text>
+        </View>
+        <View style={styles.form}>
+          <View style={styles.formItem}>
+            <InputItem clear last value={name} labelNumber={2} type="text" onChange={setName} placeholder="姓名">
+              <Icon name="user" />
+            </InputItem>
+          </View>
+          <View style={[styles.formItem, styles.formItemCode]}>
+            <InputItem clear last value={telephone} labelNumber={2} type="text" onChange={setTelephone} placeholder="手机号码">
+              <Icon name="phone" />
+            </InputItem>
+          </View>
+          <View style={[styles.formItem, styles.formItemCode]}>
+            <InputItem clear last value={idCard} labelNumber={2} type="text" onChange={setIdCard} placeholder="身份证号码">
+              <Icon name="idcard" />
+            </InputItem>
+          </View>
+          <Button style={styles.login} disabled={name && idCard && telephone ? false : true} type="primary" onPress={handleClick} loading={loading}>
+            提交认证
+          </Button>
+        </View>
       </View>
-      <View style={styles.form}>
-        <View style={styles.formItem}>
-          <InputItem clear last value={name} labelNumber={2} type="text" onChange={setName} placeholder="姓名">
-            <Icon name="user" />
-          </InputItem>
-        </View>
-        <View style={[styles.formItem, styles.formItemCode]}>
-          <InputItem clear last value={telephone} labelNumber={2} type="text" onChange={setTelephone} placeholder="手机号码">
-            <Icon name="phone" />
-          </InputItem>
-        </View>
-        <View style={[styles.formItem, styles.formItemCode]}>
-          <InputItem clear last value={idCard} labelNumber={2} type="text" onChange={setIdCard} placeholder="身份证号码">
-            <Icon name="idcard" />
-          </InputItem>
-        </View>
-        <Button style={styles.login} disabled={name && idCard && telephone ? false : true} type="primary" onPress={handleClick} loading={loading}>
-          提交认证
-        </Button>
-      </View>
-    </View>
+    </>
   );
 };
 

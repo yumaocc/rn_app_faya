@@ -36,7 +36,6 @@ const PublicSeaList: React.FC = () => {
   const pageIndex = useSelector<RootState, number>(state => state.merchant?.merchantPublicList?.page?.pageIndex);
   const loading = useSelector<RootState, boolean>(state => state.merchant.merchantLoading);
   const navigation = useNavigation() as FakeNavigation;
-  console.log('公海列表', merchantList);
   const {run} = useDebounceFn(async (name: string) => {
     merchantDispatcher.loadPublicMerchantList({index: 0, name: name, replace: true});
   });
@@ -57,7 +56,7 @@ const PublicSeaList: React.FC = () => {
   };
 
   const update = () => {
-    merchantDispatcher.loadPublicMerchantList({index: 0, multiStore: valueType?.value, name: value, replace: true});
+    merchantDispatcher.loadPublicMerchantList({index: 0, replace: true});
     merchantDispatcher.loadPrivateMerchantList({index: 0, replace: true});
   };
 
@@ -99,7 +98,7 @@ const PublicSeaList: React.FC = () => {
           </View>
         </View>
       </View>
-      <View style={{marginBottom: globalStyleVariables.MODULE_SPACE}}>
+      <View>
         <PlusButton
           style={[styles.createButton]}
           title="新增公海商家"
@@ -118,7 +117,7 @@ const PublicSeaList: React.FC = () => {
       <FlatList
         refreshing={false}
         onRefresh={() => {
-          merchantDispatcher.loadPublicMerchantList({index: 1, multiStore: valueType?.value, name: value, replace: true, pull: true});
+          merchantDispatcher.loadPublicMerchantList({index: 0, multiStore: valueType?.value, name: value, replace: true, pull: true});
         }}
         onEndReached={() => {
           merchantDispatcher.loadPublicMerchantList({index: pageIndex, multiStore: valueType?.value, name: value, replace: false, pull: true});

@@ -12,6 +12,7 @@ import {styles} from '../style';
 import SKUList from './SKUList/SKUList';
 import {isFloatNumber} from '../../../../helper/util';
 import {ErrorMessage} from '@hookform/error-message';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 interface SKUProps {
   onNext?: () => void;
@@ -26,7 +27,7 @@ interface SKUProps {
 
 const SKU: React.FC<SKUProps> = ({onNext, control, setValue, getValues, watch, errors, setError}) => {
   const contractDetail = useSelector((state: RootState) => state.contract.currentContract);
-
+  const {bottom} = useSafeAreaInsets();
   function onCheck() {
     onNext && onNext();
   }
@@ -66,7 +67,7 @@ const SKU: React.FC<SKUProps> = ({onNext, control, setValue, getValues, watch, e
       <SKUList errors={errors} control={control} setValue={setValue} getValues={getValues} watch={watch} setError={setError} />
 
       <Footer />
-      <View style={styles.button}>
+      <View style={[styles.button, {marginBottom: bottom}]}>
         <Button type="primary" onPress={onCheck}>
           下一步
         </Button>

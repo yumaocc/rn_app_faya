@@ -80,7 +80,7 @@ const Modal: React.FC<ModalProps> = props => {
               <Text style={[globalStyles.fontPrimary, styles.titleText]}>{props.title}</Text>
             </View>
             <View style={styles.close}>
-              <TouchableOpacity onPress={handleClose} activeOpacity={0.5}>
+              <TouchableOpacity onPress={handleClose} activeOpacity={0.5} style={[{width: 50, height: 50, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}]}>
                 <View style={styles.closeIconWrapper}>
                   <Icon name="close" style={styles.closeIcon} />
                 </View>

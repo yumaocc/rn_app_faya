@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
-import {View, Text} from 'react-native';
+import {View, Text, ActivityIndicator} from 'react-native';
+import {globalStyles} from '../../constants/styles';
 import {useCommonDispatcher} from '../../helper/hooks';
 
 const Loading: React.FC = () => {
@@ -10,8 +11,9 @@ const Loading: React.FC = () => {
   }, [commonDispatcher]);
 
   return (
-    <View style={{paddingTop: 300, alignItems: 'center'}}>
-      <Text style={{textAlign: 'center'}}>faya is loading...</Text>
+    <View style={[{paddingTop: 300, alignItems: 'center'}, globalStyles.containerCenter]}>
+      <ActivityIndicator animating={true} />
+      <Text style={{marginTop: 10}}> 加载中...</Text>
     </View>
   );
 };

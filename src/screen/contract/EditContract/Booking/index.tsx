@@ -7,13 +7,13 @@ import {DatePicker, Form, FormTitle, Input, SectionGroup, Select} from '../../..
 import {cleanContractForm} from '../../../../helper';
 import {useCodeTypes, useCommonDispatcher, useContractDispatcher} from '../../../../helper/hooks';
 import {formattingCodeType} from '../../../../helper/util';
-import {BookingType, BoolEnum, ContractAction, FormControlC, RequestAction} from '../../../../models';
+import {BookingType, BoolEnum, ContractAction, FormControlC} from '../../../../models';
 import {ErrorMessage} from '@hookform/error-message';
 import * as api from '../../../../apis';
 import {styles} from './style';
 import {useNavigation} from '@react-navigation/native';
-import {PAGE_SIZE} from '../../../../constants';
 import {FormDisabledContext} from '../../../../component/Form/Context';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 interface BookingProps {
   onNext?: () => void;
@@ -30,6 +30,7 @@ interface BookingProps {
 
 const Booking: FC<BookingProps> = ({Controller, control, watch, getValues, action, handleSubmit, errors}) => {
   const bookingType = watch('bookingReq.bookingType');
+  const {bottom} = useSafeAreaInsets();
   const disabledContext = useContext(FormDisabledContext);
   const bookingCanCancel = watch('bookingReq.bookingCanCancel');
   const [commonDispatcher] = useCommonDispatcher();
@@ -41,14 +42,13 @@ const Booking: FC<BookingProps> = ({Controller, control, watch, getValues, actio
     try {
       const form = getValues();
       const formData = cleanContractForm(form);
-      console.log('合同数据', formData);
       if (action === ContractAction.EDIT) {
         await api.contract.editContract(formData);
       }
       if (action === ContractAction.ADD) {
         await api.contract.createContract(formData);
       }
-      contractDispatcher.loadContractList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.other});
+      contractDispatcher.loadContractList({index: 1, replace: true});
       commonDispatcher.success(action === ContractAction.ADD ? '新增成功' : '保存成功');
       navigation.canGoBack() && navigation.goBack();
     } catch (error) {
@@ -84,6 +84,7 @@ const Booking: FC<BookingProps> = ({Controller, control, watch, getValues, actio
             render={({field: {value, onChange}}) => (
               <Form.Item
                 label="售卖开始时间"
+                showAsterisk
                 errorElement={<ErrorMessage name={'bookingReq.saleBeginTime'} errors={errors} />}
                 style={styles.composeItem}
                 hiddenBorderBottom
@@ -97,7 +98,12 @@ const Booking: FC<BookingProps> = ({Controller, control, watch, getValues, actio
             rules={{required: '请选择售卖结束时间'}}
             name="bookingReq.saleEndTime"
             render={({field: {value, onChange}}) => (
-              <Form.Item label="售卖结束时间" errorElement={<ErrorMessage name={'bookingReq.saleEndTime'} errors={errors} />} style={styles.composeItem} hiddenBorderBottom>
+              <Form.Item
+                showAsterisk
+                label="售卖结束时间"
+                errorElement={<ErrorMessage name={'bookingReq.saleEndTime'} errors={errors} />}
+                style={styles.composeItem}
+                hiddenBorderBottom>
                 <DatePicker mode="datetime" value={value} onChange={onChange} />
               </Form.Item>
             )}
@@ -219,9 +225,11 @@ const Booking: FC<BookingProps> = ({Controller, control, watch, getValues, actio
         />
       </SectionGroup>
       {disabledContext?.disabled ? null : (
-        <Button style={{margin: 10}} type="primary" onPress={onHandleSubmit}>
-          立即发起签约
-        </Button>
+        <View style={{marginBottom: bottom}}>
+          <Button style={{margin: 10}} type="primary" onPress={onHandleSubmit}>
+            立即发起签约
+          </Button>
+        </View>
       )}
     </>
   );

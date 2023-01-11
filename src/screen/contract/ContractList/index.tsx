@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {TouchableOpacity, FlatList} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {TouchableOpacity, FlatList, Platform} from 'react-native';
 import {FC} from 'react';
 import {useDebounceFn, useMount} from 'ahooks';
 import {Icon as AntdIcon} from '@ant-design/react-native';
@@ -7,10 +7,10 @@ import {Input, NavigationBar} from '../../../component';
 import {View, StyleSheet, Text} from 'react-native';
 import {UnitNumber} from '../../../component';
 import {globalStyleVariables, globalStyles} from '../../../constants/styles';
-import {FakeNavigation, Options, ContractAction, ContractStatus, ContractList as ContractListType} from '../../../models';
+import {FakeNavigation, Options, ContractAction, ContractStatus, ContractList as ContractListType, UserInfo, UserState} from '../../../models';
 import {useNavigation} from '@react-navigation/native';
 import ModalDropdown from 'react-native-modal-dropdown';
-import {useContractDispatcher} from '../../../helper/hooks';
+import {useContractDispatcher, useUserDispatcher} from '../../../helper/hooks';
 import Icon from '../../../component/Form/Icon';
 import Loading from '../../../component/Loading';
 import {cleanTime, getLoadingStatusText} from '../../../helper/util';
@@ -19,18 +19,27 @@ import {RootState} from '../../../redux/reducers';
 import {MerchantList} from '../../../models/merchant';
 import Empty from '../../../component/Empty';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import UnverifiedModal from '../../../component/UnverifiedModal';
 
 const ContractList: FC = () => {
   const navigation = useNavigation() as FakeNavigation;
-  const [contractDispatcher] = useContractDispatcher();
   const [valueType, setValueType] = useState<Options>(null);
-  const contractData = useSelector<RootState, MerchantList<ContractListType[]>>(state => state.contract.contractList);
-  const loading = useSelector<RootState, boolean>(state => state.contract.contractLoading);
+  const [isShowModal, setIsShowModal] = useState(false);
   const [value, setValue] = useState('');
   const {bottom} = useSafeAreaInsets();
+  const [contractDispatcher] = useContractDispatcher();
+  const contractData = useSelector<RootState, MerchantList<ContractListType[]>>(state => state.contract.contractList);
+  const loading = useSelector<RootState, boolean>(state => state.contract.contractLoading);
   const {run} = useDebounceFn(async (name: string) => contractDispatcher.loadContractList({index: 0, name: name, replace: true, pull: false}), {
     wait: 500,
   });
+  const userInfo = useSelector<RootState, UserInfo>(state => state.user.userInfo);
+  const [userDispatcher] = useUserDispatcher();
+  useEffect(() => {
+    if (!userInfo) {
+      userDispatcher.loadUserInfo();
+    }
+  }, [userDispatcher, userInfo]);
 
   useMount(() => {
     if (!contractData?.content?.length) {
@@ -39,13 +48,12 @@ const ContractList: FC = () => {
   });
 
   function handleChangeFilter(e: Options) {
-    navigation.navigate({
-      name: 'AddContract',
-      params: {
-        action: ContractAction.ADD,
-      },
-    });
     setValueType(e);
+    if (userInfo?.status === UserState.UN_CERTIFIED) {
+      setIsShowModal(true);
+      return;
+    }
+    navigation.navigate('AddContract');
   }
 
   const headerRight = (
@@ -133,11 +141,12 @@ const ContractList: FC = () => {
           </View>
         </View>
       </View>
+
       <FlatList
         data={contractData?.content}
         renderItem={renderItem}
         ListEmptyComponent={<Empty />}
-        ListFooterComponentStyle={[{height: bottom * 2}, globalStyles.containerCenter]}
+        ListFooterComponentStyle={[{height: Platform.OS === 'ios' ? bottom * 2 : 40}, globalStyles.containerCenter]}
         ListFooterComponent={!!contractData?.content?.length && <Text style={[{textAlign: 'center'}, globalStyles.fontSize12]}>{getLoadingStatusText(contractData?.status)}</Text>}
         numColumns={1}
         refreshing={loading}
@@ -148,6 +157,7 @@ const ContractList: FC = () => {
           contractDispatcher.loadContractList({index: contractData?.page?.pageIndex, name: value, replace: false, pull: true});
         }}
       />
+      <UnverifiedModal open={isShowModal} changeOpen={value => setIsShowModal(value)} />
     </>
   );
 };

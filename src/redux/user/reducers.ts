@@ -47,6 +47,7 @@ export default (state = initialState, action: UserActions): UserState => {
     case ActionType.LOGOUT_SUCCESS:
       return produce(state, draft => {
         draft.userInfo = undefined;
+        draft.wallet = undefined;
       });
     case ActionType.RESET_LOGIN_STATE:
       return produce(state, draft => {
@@ -60,6 +61,7 @@ export default (state = initialState, action: UserActions): UserState => {
     case ActionType.LOGOUT:
       return produce(state, draft => {
         draft.userInfo = undefined;
+        draft.wallet = undefined;
         draft.isLogout = true;
       });
     case ActionType.USER_CERTIFICATE_SUCCESS:

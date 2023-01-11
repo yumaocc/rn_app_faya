@@ -14,7 +14,7 @@ const MineDetail: FC = () => {
   useUserDispatcher();
   const idCardNoStr = (idNo: string) => {
     let newIdN0 = '';
-    for (let i = 0; i < idNo.length; i++) {
+    for (let i = 0; i < idNo?.length; i++) {
       const element = idNo[i];
       if (i === 0) {
         newIdN0 += element;
@@ -39,7 +39,7 @@ const MineDetail: FC = () => {
               <Image source={user?.avatar ? {uri: user?.avatar} : require('../../assets/avatar.png')} style={{height: 60, width: 60}} />
             </View>
           </View>
-          {user.status === UserState.CERTIFIED && (
+          {user?.status === UserState.CERTIFIED && (
             <View style={[globalStyles.containerCenter, globalStyles.moduleMarginTop, {padding: 20, backgroundColor: '#fff'}]}>
               <View style={[globalStyles.containerCenter, globalStyles.moduleMarginTop, globalStyles.borderBottom]}>
                 <Icon name="FYLM_all_feedback_true" color="#546DAD" size={100} />
@@ -47,12 +47,15 @@ const MineDetail: FC = () => {
               </View>
             </View>
           )}
-          <View style={[globalStyles.containerCenter, {paddingLeft: 60, paddingRight: 60, backgroundColor: '#fff'}]}>
-            <View style={[{width: '100%', height: 120}, globalStyles.borderTop, globalStyles.containerCenter]}>
-              <Text style={[globalStyles.fontTertiary]}>真实姓名： {user.name}</Text>
-              <Text style={[globalStyles.fontTertiary, globalStyles.moduleMarginTop]}>身份证号 {idCardNoStr(user.idCard)}</Text>
+          {user?.idCard && (
+            <View style={[globalStyles.containerCenter, {paddingLeft: 60, paddingRight: 60, backgroundColor: '#fff'}]}>
+              <View style={[{width: '100%', height: 120}, globalStyles.borderTop, globalStyles.containerCenter]}>
+                <Text style={[globalStyles.fontTertiary]}>真实姓名： {user?.name}</Text>
+                <Text style={[globalStyles.fontTertiary, globalStyles.moduleMarginTop]}>身份证号 {idCardNoStr(user?.idCard)}</Text>
+              </View>
             </View>
-          </View>
+          )}
+
           <View style={[globalStyles.containerCenter, {paddingLeft: 60, paddingRight: 60, backgroundColor: '#fff'}]}>
             <View style={[{width: '100%', height: 120}, globalStyles.borderTop, globalStyles.containerCenter]}>
               <Text style={[globalStyles.fontTertiary, globalStyles.moduleMarginTop, {marginBottom: globalStyleVariables.MODULE_SPACE}]}>实名信息认证后不可修改</Text>

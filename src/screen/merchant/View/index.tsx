@@ -6,7 +6,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {Cascader, Form, FormTitle, Input, NavigationBar, SectionGroup, Select, SelfText} from '../../../component';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {useParams, useCommonDispatcher, useMerchantDispatcher, useLoadCity} from '../../../helper/hooks';
-import {MerchantCreateType, MerchantAction, FormMerchant, MerchantFormEnum, MerchantType, BoolEnum, RequestAction} from '../../../models'; // FormMerchant
+import {MerchantCreateType, MerchantAction, FormMerchant, MerchantFormEnum, MerchantType, BoolEnum} from '../../../models'; // FormMerchant
 import {useForm, Controller, useFieldArray} from 'react-hook-form';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/reducers';
@@ -16,7 +16,6 @@ import {useRequest} from 'ahooks';
 import * as api from '../../../apis';
 import {ContractAction} from '../../../models';
 import ModalDropdown from 'react-native-modal-dropdown';
-import {PAGE_SIZE} from '../../../constants';
 import {FormDisabledContext} from '../../../component/Form/Context';
 import {useLoadAllSite} from '../../../helper/hooks/common';
 import {getSitesIndex} from '../../../helper/util';
@@ -86,8 +85,8 @@ const AddMerchant: React.FC = () => {
     try {
       await api.merchant.returnPublic(merchantDetail.id);
       setLoading(false);
-      merchantDispatcher.loadPrivateMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.other});
-      merchantDispatcher.loadPublicMerchantList({pageIndex: 1, pageSize: PAGE_SIZE, action: RequestAction.other});
+      merchantDispatcher.loadPrivateMerchantList({index: 1, replace: true});
+      merchantDispatcher.loadPublicMerchantList({index: 1, replace: true});
       commonDispatcher.success('归还成功');
       navigation.goBack();
     } catch (error) {

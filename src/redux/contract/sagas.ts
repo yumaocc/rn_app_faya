@@ -82,7 +82,6 @@ function* loadContractList(action: ActionWithPayload<ActionType, SearchParam>) {
       yield put(Actions.loadContractLoading());
     }
     yield put(Actions.changeLoadingState());
-    console.log(searchParam);
 
     const res: PagedData<ContractList[]> = yield call(api.contract.getMyContractList, searchParam);
     const status = res.content?.length < pageSize ? 'noMore' : 'none';

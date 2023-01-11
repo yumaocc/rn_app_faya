@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
+import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import {InputItem, Button} from '@ant-design/react-native';
 
 import {useSelector} from 'react-redux';
@@ -84,7 +84,7 @@ const Login: React.FC = () => {
   return (
     <View style={styles.container}>
       <MyStatusBar />
-      <ScrollView keyboardDismissMode="on-drag" style={{flex: 1}}>
+      <ScrollView keyboardDismissMode="on-drag" style={{flex: 1}} keyboardShouldPersistTaps="always">
         <Text style={styles.title}>登录/注册</Text>
         <View style={styles.form}>
           <View style={styles.formItem}>
@@ -123,10 +123,10 @@ const Login: React.FC = () => {
               onChange={() => {
                 setRadio(!radio);
               }}>
-              <Text style={[globalStyles.fontTertiary]}>
+              <Text style={[globalStyles.fontTertiary, globalStyles.containerCenter]}>
                 <Text>已阅读并同意</Text>
-                <TouchableOpacity
-                  activeOpacity={0.5}
+
+                <Text
                   onPress={() =>
                     navigation.navigate({
                       name: 'Browser',
@@ -134,12 +134,12 @@ const Login: React.FC = () => {
                         url: USER_AGREEMENT_URL,
                       },
                     })
-                  }>
-                  <Text style={[globalStyles.fontTertiary, globalStyles.primaryColor]}> 《发芽联盟入驻协议》</Text>
-                </TouchableOpacity>
+                  }
+                  style={[globalStyles.fontTertiary, globalStyles.primaryColor]}>
+                  《发芽联盟入驻协议》
+                </Text>
                 <Text> 和 </Text>
-                <TouchableOpacity
-                  activeOpacity={0.5}
+                <Text
                   onPress={() =>
                     navigation.navigate({
                       name: 'Browser',
@@ -147,9 +147,11 @@ const Login: React.FC = () => {
                         url: PRIVACY_POLICY_URL,
                       },
                     })
-                  }>
-                  <Text style={[globalStyles.fontTertiary, globalStyles.primaryColor]}> 《发芽联盟隐私政策》</Text>
-                </TouchableOpacity>
+                  }
+                  style={[globalStyles.fontTertiary, globalStyles.primaryColor]}>
+                  {' '}
+                  《发芽联盟隐私政策》
+                </Text>
               </Text>
             </Radio>
           </View>

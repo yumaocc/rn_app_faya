@@ -16,6 +16,7 @@ import {Controller} from 'react-hook-form';
 import SelectShop from './SelectShop';
 import {findItem, getSitesIndex, momentFromDateTime} from '../../../../helper/util';
 import {useLoadAllSite} from '../../../../helper/hooks/common';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 interface BaseProps {
   onNext?: () => void;
@@ -37,7 +38,7 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
   const canUseShopIds = watch('canUseShopIds');
   const {cityList} = useLoadCity();
   const [sites] = useLoadAllSite();
-
+  const {bottom} = useSafeAreaInsets();
   const currentMerchant = useSelector((state: RootState) => state.merchant.currentMerchant);
   const merchantList = useSelector((state: RootState) => state.merchant.merchantSearchList);
   const currentContract = useSelector((state: RootState) => state.contract.currentContract);
@@ -330,13 +331,14 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
           )}
         />
       </SectionGroup>
+      <SelectShop getValues={getValues} shopList={canUseShopList} setValue={setValue} open={showUseShop} setOpen={(value: boolean) => setShowUseShop(value)} />
+
       <Footer />
-      <View style={styles.button}>
+      <View style={[styles.button, {marginBottom: bottom}]}>
         <Button type="primary" onPress={onCheck}>
           下一步
         </Button>
       </View>
-      <SelectShop getValues={getValues} shopList={canUseShopList} setValue={setValue} open={showUseShop} setOpen={(value: boolean) => setShowUseShop(value)} />
     </ScrollView>
   );
 };

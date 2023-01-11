@@ -119,23 +119,15 @@ const MyList: React.FC = () => {
 
       <FlatList
         data={merchantList}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            colors={[globalStyleVariables.COLOR_PRIMARY]}
-            titleColor={globalStyleVariables.COLOR_PRIMARY}
-            tintColor={globalStyleVariables.COLOR_PRIMARY}
-          />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         onEndReached={() => {
           getData({index: pageIndex, multiStore: valueType?.value, name: value});
         }}
         onEndReachedThreshold={0.5}
         ListFooterComponentStyle={[{height: 40}, globalStyles.containerCenter]}
-        renderItem={({item}) => <Card merchant={item} key={item.id} style={globalStyles.moduleMarginTop} />}
+        renderItem={({item}) => <Card merchant={item} key={item.id} style={globalStyles.marginBottom} />}
         ListEmptyComponent={!loading && <Empty text="还没有商家哦" icon={'shop'} />}
-        ListFooterComponent={<Text style={[{textAlign: 'center'}, globalStyles.fontTertiary]}>{getLoadingStatusText(status)}</Text>}
+        ListFooterComponent={!!merchantList?.length && <Text style={[{textAlign: 'center'}, globalStyles.fontTertiary]}>{getLoadingStatusText(status)}</Text>}
       />
     </SafeAreaView>
   );
