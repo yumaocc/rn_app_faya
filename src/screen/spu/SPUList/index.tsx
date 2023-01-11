@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, TouchableWithoutFeedback, Image, FlatList, Platform} from 'react-native';
+import {View, Text, StyleSheet, TouchableWithoutFeedback, Image, FlatList} from 'react-native';
 import {Icon} from '@ant-design/react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import * as api from '../../../apis';
@@ -129,8 +129,16 @@ const SPUList: React.FC = () => {
           ListEmptyComponent={!loading && <Empty />}
           keyExtractor={item => 'spu' + item.id}
           data={spuList}
-          ListFooterComponentStyle={[{height: Platform.OS === 'ios' ? bottom * 2 : 40}, globalStyles.containerCenter]}
-          ListFooterComponent={!!spuList?.length && <Text style={[{textAlign: 'center'}, globalStyles.fontTertiary]}>{getLoadingStatusText(status)}</Text>}
+          // ListFooterComponentStyle={[{height: Platform.OS === 'ios' ? bottom * 2 : 40}, globalStyles.containerCenter]}
+          ListFooterComponent={
+            !!spuList?.length && (
+              <View style={{paddingBottom: bottom}}>
+                <View style={[{paddingVertical: 15}]}>
+                  <Text style={[{textAlign: 'center'}, globalStyles.fontTertiary]}>{getLoadingStatusText(status)}</Text>
+                </View>
+              </View>
+            )
+          }
         />
       </View>
     </View>
