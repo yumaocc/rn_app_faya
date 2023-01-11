@@ -149,7 +149,6 @@ const Login: React.FC = () => {
                     })
                   }
                   style={[globalStyles.fontTertiary, globalStyles.primaryColor]}>
-                  {' '}
                   《发芽联盟隐私政策》
                 </Text>
               </Text>
