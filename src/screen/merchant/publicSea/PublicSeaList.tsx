@@ -1,9 +1,8 @@
-import {Icon as AntdIcon} from '@ant-design/react-native';
+import {Icon as AntdIcon, Popover} from '@ant-design/react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useMount, useUnmount} from 'ahooks';
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, FlatList, SafeAreaView} from 'react-native';
-import ModalDropdown from 'react-native-modal-dropdown';
 import {useSelector} from 'react-redux';
 import {PlusButton} from '../../../component';
 import Empty from '../../../component/Empty';
@@ -13,8 +12,7 @@ import Loading from '../../../component/Loading';
 import UnverifiedModal from '../../../component/UnverifiedModal';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {useMerchantDispatcher, useUserAuthInfo} from '../../../helper/hooks';
-import {getLoadingStatusText} from '../../../helper/util';
-import {FakeNavigation, MerchantCreateType, MerchantAction, Options, MerchantF} from '../../../models';
+import {FakeNavigation, MerchantCreateType, MerchantAction, Options, MerchantF, ListLoadingType} from '../../../models';
 import {MerchantList} from '../../../models/merchant';
 import {RootState} from '../../../redux/reducers';
 import Card from './Card';
@@ -37,7 +35,7 @@ const PublicSeaList: React.FC = () => {
   const [inputVal] = useState('');
   const merchantList = useSelector<RootState, MerchantList<MerchantF[]>>(state => state.merchant.merchantPublicList);
   const pageIndex = useSelector<RootState, number>(state => state.merchant?.merchantPublicList?.page?.pageIndex);
-  const loading = useSelector<RootState, boolean>(state => state.merchant.merchantLoading);
+  const {pullDownLoading, pullUpLoading, searchLoading} = useSelector<RootState, ListLoadingType>(state => state.merchant.merchantPublicLoading);
   const navigation = useNavigation() as FakeNavigation;
   // const {run} = useDebounceFn(async (name: string) => {
   //   merchantDispatcher.loadPublicMerchantList({index: 0, name: name, replace: true});
@@ -45,7 +43,15 @@ const PublicSeaList: React.FC = () => {
 
   useMount(() => {
     if (merchantList) {
-      merchantDispatcher.loadPublicMerchantList({index: 0, replace: true});
+      merchantDispatcher.loadPublicMerchantList({
+        index: 0,
+        replace: true,
+        loading: {
+          pullDownLoading: false,
+          pullUpLoading: false,
+          searchLoading: true,
+        },
+      });
     }
   });
 
@@ -63,37 +69,92 @@ const PublicSeaList: React.FC = () => {
 
   const onChangeFilter = (value: Options) => {
     setFilterVal(value);
-    merchantDispatcher.loadPublicMerchantList({index: 0, replace: true, multiStore: value.value});
+    merchantDispatcher.loadPublicMerchantList({
+      index: 0,
+      replace: true,
+      multiStore: value.value,
+      loading: {
+        pullDownLoading: false,
+        pullUpLoading: false,
+        searchLoading: true,
+      },
+    });
   };
 
   const updateMerchantList = () => {
-    merchantDispatcher.loadPublicMerchantList({index: 0, replace: true});
-    merchantDispatcher.loadPrivateMerchantList({index: 0, replace: true});
+    merchantDispatcher.loadPublicMerchantList({
+      index: 0,
+      replace: true,
+      loading: {
+        pullDownLoading: false,
+        pullUpLoading: false,
+        searchLoading: true,
+      },
+    });
+    merchantDispatcher.loadPrivateMerchantList({
+      index: 0,
+      replace: true,
+      loading: {
+        pullDownLoading: false,
+        pullUpLoading: false,
+        searchLoading: true,
+      },
+    });
+  };
+  const pullUp = () => {
+    merchantDispatcher.loadPublicMerchantList({
+      index: 0,
+      replace: true,
+      loading: {
+        pullDownLoading: false,
+        pullUpLoading: true,
+        searchLoading: false,
+      },
+    });
+  };
+
+  const pullDown = () => {
+    merchantDispatcher.loadPublicMerchantList({
+      index: pageIndex,
+      multiStore: filterVal?.value,
+      name: inputVal,
+      replace: false,
+      loading: {
+        pullDownLoading: true,
+        pullUpLoading: false,
+        searchLoading: false,
+      },
+    });
   };
 
   return (
     <SafeAreaView style={[globalStyles.wrapper]}>
-      <Loading active={loading} />
+      <Loading active={searchLoading} />
       <View style={[styles.header, globalStyles.containerLR]}>
         <Text style={(globalStyles.moduleMarginLeft, {flex: 1})}>
           <Text style={globalStyles.fontPrimary}>共{merchantList?.page?.pageTotal || 0}家</Text>
         </Text>
 
         <View style={[{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}]}>
-          <ModalDropdown
-            dropdownStyle={[globalStyles.dropDownItem, {height: 80, width: 100}]}
-            renderRow={item => (
-              <View style={[globalStyles.dropDownText]}>
-                <Text>{item.label}</Text>
-              </View>
-            )}
-            options={options}
-            onSelect={(item, text) => onChangeFilter(text as Options)}>
-            <View style={{flexDirection: 'row'}}>
-              {filterVal?.label ? <Text>{filterVal.label}</Text> : <Text>筛选</Text>}
+          <Popover
+            overlay={
+              <>
+                {options.map(item => (
+                  <Popover.Item style={[{width: 80}]} key={item.label} value={item.value}>
+                    <Text style={{textAlign: 'center'}}>{item.label}</Text>
+                  </Popover.Item>
+                ))}
+              </>
+            }
+            triggerStyle={{paddingVertical: 6}}
+            onSelect={node => {
+              onChangeFilter(node);
+            }}>
+            <View style={[{flexDirection: 'row'}]}>
+              <Text>{filterVal?.label ? filterVal?.label : '筛选'}</Text>
               <AntdIcon name="caret-down" color="#030303" style={[{marginLeft: 7}, globalStyles.fontPrimary]} />
             </View>
-          </ModalDropdown>
+          </Popover>
           <View style={globalStyles.dividingLine} />
           <Icon name="FYLM_all_search" color="#999999" />
           {/* <View style={globalStyles.dividingLine} /> */}
@@ -130,20 +191,16 @@ const PublicSeaList: React.FC = () => {
         />
       </View>
       <FlatList
-        refreshing={loading}
-        onRefresh={() => {
-          merchantDispatcher.loadPublicMerchantList({index: 0, replace: true, pull: true});
-        }}
-        onEndReached={() => {
-          merchantDispatcher.loadPublicMerchantList({index: pageIndex, multiStore: filterVal?.value, name: inputVal, replace: false, pull: true});
-        }}
+        refreshing={pullUpLoading}
+        onRefresh={pullUp}
+        onEndReached={pullDown}
         ListFooterComponentStyle={[{height: 40}, globalStyles.containerCenter]}
         data={merchantList?.content}
         onEndReachedThreshold={0.3}
         renderItem={({item}) => <Card onUpdate={updateMerchantList} merchant={item} key={item.id} style={globalStyles.marginBottom} />}
-        ListEmptyComponent={!loading && <Empty text="还没有商家哦" icon={'shop'} />}
+        ListEmptyComponent={!searchLoading && <Empty text="还没有商家哦" icon={'shop'} />}
         ListFooterComponent={
-          !!merchantList?.content?.length && <Text style={[{textAlign: 'center'}, globalStyles.fontTertiary]}>{getLoadingStatusText(merchantList?.status)}</Text>
+          !!merchantList?.content?.length && <Text style={[{textAlign: 'center'}, globalStyles.fontTertiary]}>{pullDownLoading ? '加载中...' : '没有更多了哦'}</Text>
         }
       />
       <UnverifiedModal open={isShowAuthModal} onChangeOpen={onChangeAuthModal} />

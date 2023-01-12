@@ -1,8 +1,7 @@
-import {Icon as AntdIcon} from '@ant-design/react-native';
+import {Icon as AntdIcon, Popover} from '@ant-design/react-native';
 import {useMount} from 'ahooks';
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, FlatList, SafeAreaView, RefreshControl} from 'react-native';
-import ModalDropdown from 'react-native-modal-dropdown';
 import * as api from '../../../apis';
 // import {Input} from '../../../component';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
@@ -30,18 +29,16 @@ const MyList: React.FC = () => {
   const [merchantList, setMerchantList] = useState<MyMerchantF[]>([]);
   const [pageIndex, setPageIndex] = useState(1);
   const [footerLoading, setFooterLoading] = useState(false);
-  // const [status, setStatus] = useState<LoadingState>('none');
   const [len, setLen] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [valueType, setValueType] = useState<Options>(null);
+  const [filterVal, setFilterVal] = useState<Options>(null);
   const [value] = useState('');
   const [commonDispatcher] = useCommonDispatcher();
 
   const getData = async (params: SearchForm, replace?: boolean, isPullDown = false) => {
     try {
       const {index, ...param} = params;
-      // setStatus('loading');
       setFooterLoading(true);
       const pageIndex = replace ? 1 : index + 1;
       const pageSize = 10;
@@ -49,7 +46,6 @@ const MyList: React.FC = () => {
         setLoading(true);
       }
       const res = await api.merchant.getMyMerchants({...param, pageIndex, pageSize});
-      // setStatus(res.content?.length < pageSize ? 'noMore' : 'none');
       setFooterLoading(false);
       if (replace) {
         setMerchantList(res.content);
@@ -70,8 +66,8 @@ const MyList: React.FC = () => {
 
   // const {run} = useDebounceFn(async (name: string) => getData({index: 1, name}, true, true));
 
-  const handleChangeFilter = (value: Options) => {
-    setValueType(value);
+  const onChangeFilter = (value: Options) => {
+    setFilterVal(value);
     getData({index: 0, multiStore: value.value}, true, true);
   };
 
@@ -90,20 +86,25 @@ const MyList: React.FC = () => {
         </Text>
 
         <View style={[{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}]}>
-          <ModalDropdown
-            dropdownStyle={[globalStyles.dropDownItem, {height: 80, width: 100}]}
-            renderRow={item => (
-              <View style={[globalStyles.dropDownText]}>
-                <Text>{item.label}</Text>
-              </View>
-            )}
-            options={options}
-            onSelect={(item, text) => handleChangeFilter(text as Options)}>
-            <View style={{flexDirection: 'row'}}>
-              {valueType?.label ? <Text>{valueType.label}</Text> : <Text>筛选</Text>}
+          <Popover
+            overlay={
+              <>
+                {options.map(item => (
+                  <Popover.Item style={[{width: 80}]} key={item.label} value={item.value}>
+                    <Text style={{textAlign: 'center'}}>{item.label}</Text>
+                  </Popover.Item>
+                ))}
+              </>
+            }
+            triggerStyle={{paddingVertical: 6}}
+            onSelect={node => {
+              onChangeFilter(node);
+            }}>
+            <View style={[{flexDirection: 'row'}]}>
+              <Text>{filterVal?.label ? filterVal?.label : '筛选'}</Text>
               <AntdIcon name="caret-down" color="#030303" style={[{marginLeft: 7}, globalStyles.fontPrimary]} />
             </View>
-          </ModalDropdown>
+          </Popover>
           <View style={globalStyles.dividingLine} />
           <Icon name="FYLM_all_search" color="#999999" />
           {/* <View style={globalStyles.dividingLine} />
@@ -126,7 +127,7 @@ const MyList: React.FC = () => {
         data={merchantList || []}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         onEndReached={() => {
-          getData({index: pageIndex, multiStore: valueType?.value, name: value});
+          getData({index: pageIndex, multiStore: filterVal?.value, name: value});
         }}
         onEndReachedThreshold={0.5}
         ListFooterComponentStyle={[{height: 40}, globalStyles.containerCenter]}

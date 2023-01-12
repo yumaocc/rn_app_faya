@@ -143,3 +143,9 @@ export interface LocationTreeF {
   name: string;
   children: LocationTreeF[];
 }
+//列表使用的loading类型
+export interface ListLoadingType {
+  pullUpLoading?: boolean;
+  pullDownLoading?: boolean;
+  searchLoading?: boolean;
+}

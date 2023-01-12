@@ -65,20 +65,18 @@ function* loadMerchantSearchList(action: ActionWithPayload<ActionType, SearchPar
 function* loadPublicMerchantList(action: ActionWithPayload<ActionType, SearchParam>) {
   const params = action.payload;
   try {
-    const {replace, index, pull, ...param} = params;
+    const {replace, index, loading, ...param} = params;
     const pageSize = 10;
     const pageIndex = replace ? 1 : index + 1;
+
     const searchParam = {
       pageSize,
       pageIndex,
       ...param,
     };
-    if (!pull) {
-      yield put(Actions.loadMerchantLoading());
-    }
-    yield put(Actions.changeLoadingStatePublic());
+
+    yield put(Actions.changeMerchantPublicLoading(loading));
     const res: PagedData<MerchantF[]> = yield call(api.merchant.getPublicSeaMerchants, searchParam);
-    const status = res.content?.length < pageSize ? 'noMore' : 'none';
 
     if (!replace) {
       const merchant: MerchantF[] = yield select((state: RootState) => state.merchant?.merchantPublicList?.content);
@@ -89,7 +87,6 @@ function* loadPublicMerchantList(action: ActionWithPayload<ActionType, SearchPar
       page: {
         ...res.page,
       },
-      status,
     } as MerchantList<MerchantF[]>;
     yield put(Actions.loadPublicMerchantListSuccess(merchantList));
   } catch (error) {
@@ -102,32 +99,27 @@ function* loadPrivateMerchantList(action: ActionWithPayload<ActionType, SearchPa
   const params = action.payload;
 
   try {
-    const {replace, index, pull, ...param} = params;
+    const {replace, index, loading, ...param} = params;
     const pageSize = 10;
     const pageIndex = replace ? 1 : index + 1;
     const searchParam = {
+      ...param,
       pageSize,
       pageIndex,
-      ...param,
     };
-    if (!pull) {
-      yield put(Actions.loadMerchantLoading());
-    }
-    yield put(Actions.changeLoadingStatePrivate());
+    console.log('请求体', params);
+    yield put(Actions.changeMerchantPrivateLoading(loading));
     const res: PagedData<MerchantF[]> = yield call(api.merchant.getPrivateSeaMerchants, searchParam);
-    const status = res.content?.length < pageSize ? 'noMore' : 'none';
 
     if (!replace) {
       const merchant: MerchantF[] = yield select((state: RootState) => state.merchant?.merchantPrivateList?.content);
       res.content = [...merchant, ...res?.content];
     }
-
     const merchantList = {
       content: res.content,
       page: {
         ...res.page,
       },
-      status,
     } as MerchantList<MerchantF[]>;
     yield put(Actions.loadPrivateMerchantLisSuccess(merchantList));
   } catch (error) {

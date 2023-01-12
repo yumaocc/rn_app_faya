@@ -2,7 +2,6 @@ import React, {useEffect} from 'react';
 import {Icon as AntdIcon} from '@ant-design/react-native';
 import {useNavigation} from '@react-navigation/native';
 import {View, Text, ScrollView, StyleSheet, Image, TouchableOpacity} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import {useSelector} from 'react-redux';
 import {globalStyles, globalStyleVariables} from '../../constants/styles';
 import {UserInfo, UserState} from '../../models';
@@ -33,7 +32,7 @@ const Mine: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}} edges={['top']}>
+    <>
       <ScrollView
         style={{
           flex: 1,
@@ -92,7 +91,7 @@ const Mine: React.FC = () => {
           </TouchableOpacity>
         </SectionGroup>
       </ScrollView>
-    </SafeAreaView>
+    </>
   );
 };
 export default Mine;

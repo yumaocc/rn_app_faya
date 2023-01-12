@@ -112,9 +112,25 @@ const AddMerchant: React.FC = () => {
   }, [merchantDetail, setValue]);
 
   //刷新公私海数据
-  const update = () => {
-    merchantDispatcher.loadPrivateMerchantList({index: 1, replace: true});
-    merchantDispatcher.loadPublicMerchantList({index: 1, replace: true});
+  const updateMerchantList = () => {
+    merchantDispatcher.loadPublicMerchantList({
+      index: 0,
+      replace: true,
+      loading: {
+        pullDownLoading: false,
+        pullUpLoading: false,
+        searchLoading: true,
+      },
+    });
+    merchantDispatcher.loadPrivateMerchantList({
+      index: 0,
+      replace: true,
+      loading: {
+        pullDownLoading: false,
+        pullUpLoading: false,
+        searchLoading: true,
+      },
+    });
     summaryDispatcher.loadHome();
   };
 
@@ -125,7 +141,7 @@ const AddMerchant: React.FC = () => {
       const newFormData = formattingMerchantRequest(formData, identity) as MerchantForm;
       if (action === MerchantAction.EDIT) {
         await updateMerchant(newFormData);
-        update();
+        updateMerchantList();
         commonDispatcher.success('修改成功');
         navigation.canGoBack() && navigation.goBack();
         return;
@@ -133,7 +149,7 @@ const AddMerchant: React.FC = () => {
       if (action === MerchantAction.ADD) {
         await createMerchant(newFormData);
       }
-      update();
+      updateMerchantList();
       setIsShowModal(true);
     } catch (error) {
       commonDispatcher.error(error || '添加失败');
@@ -145,7 +161,7 @@ const AddMerchant: React.FC = () => {
     try {
       await api.merchant.drawMerchant(id);
       commonDispatcher.success('添加成功');
-      update();
+      updateMerchantList();
       navigation.goBack();
     } catch (error) {
       commonDispatcher.error((error as string) || '添加失败');
@@ -159,7 +175,7 @@ const AddMerchant: React.FC = () => {
       await api.merchant.inviteAuth(id);
       navigation.goBack();
       commonDispatcher.success('已发送邀请');
-      update();
+      updateMerchantList();
     } catch (error) {
       commonDispatcher.error((error as string) || '邀请失败');
     }
@@ -187,7 +203,7 @@ const AddMerchant: React.FC = () => {
     try {
       await api.merchant.returnPublic(merchantDetail.id);
       setLoading(false);
-      update();
+      updateMerchantList();
       commonDispatcher.success('归还成功');
       navigation.goBack();
     } catch (error) {

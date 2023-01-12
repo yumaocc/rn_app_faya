@@ -1,22 +1,20 @@
 import {useNavigation} from '@react-navigation/native';
-import {Icon as AntdIcon} from '@ant-design/react-native';
+import {Icon as AntdIcon, Popover} from '@ant-design/react-native';
 // import Icon from '../../../component/Form/Icon';
 import {useMount, useUnmount} from 'ahooks';
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, SafeAreaView, FlatList} from 'react-native';
-import ModalDropdown from 'react-native-modal-dropdown';
 
 import {PlusButton} from '../../../component';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {useHomeSummary, useMerchantDispatcher, useUserAuthInfo} from '../../../helper/hooks';
-import {FakeNavigation, MerchantAction, MerchantCreateType, MerchantF, Options} from '../../../models';
+import {FakeNavigation, ListLoadingType, MerchantAction, MerchantCreateType, MerchantF, Options} from '../../../models';
 import Card from './Card';
 import Loading from '../../../component/Loading';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/reducers';
 import {MerchantList} from '../../../models/merchant';
 import Empty from '../../../component/Empty';
-import {getLoadingStatusText} from '../../../helper/util';
 import UnverifiedModal from '../../../component/UnverifiedModal';
 import Icon from '../../../component/Form/Icon';
 
@@ -41,7 +39,7 @@ const PrivateSeaList: React.FC = () => {
 
   const merchantList = useSelector<RootState, MerchantList<MerchantF[]>>(state => state.merchant.merchantPrivateList);
   const pageIndex = useSelector<RootState, number>(state => state.merchant?.merchantPrivateList?.page?.pageIndex);
-  const loading = useSelector<RootState, boolean>(state => state.merchant.merchantLoading);
+  const {pullDownLoading, pullUpLoading, searchLoading} = useSelector<RootState, ListLoadingType>(state => state.merchant.merchantPrivateLoading);
 
   const {isShowAuthModal, onChangeAuthModal, userAuth} = useUserAuthInfo();
 
@@ -50,16 +48,33 @@ const PrivateSeaList: React.FC = () => {
   // });
 
   useMount(() => {
-    merchantDispatcher.loadPrivateMerchantList({index: 0, replace: true});
+    merchantDispatcher.loadPrivateMerchantList({
+      index: 0,
+      replace: true,
+      loading: {
+        pullDownLoading: false,
+        pullUpLoading: false,
+        searchLoading: true,
+      },
+    });
   });
 
   useUnmount(() => {
     merchantDispatcher.exitMerchantPage();
   });
 
-  const handleChangeFilter = (value: Options) => {
+  const onChangeFilter = (value: Options) => {
     setFilterVal(value);
-    merchantDispatcher.loadPrivateMerchantList({index: 0, multiStore: value.value, replace: true});
+    merchantDispatcher.loadPrivateMerchantList({
+      index: 0,
+      multiStore: value.value,
+      replace: true,
+      loading: {
+        pullDownLoading: false,
+        pullUpLoading: false,
+        searchLoading: true,
+      },
+    });
   };
 
   const checkUserAuth = (callback: () => void) => {
@@ -70,9 +85,35 @@ const PrivateSeaList: React.FC = () => {
     callback();
   };
 
+  const pullUp = () => {
+    merchantDispatcher.loadPrivateMerchantList({
+      index: 0,
+      replace: true,
+      loading: {
+        pullDownLoading: false,
+        pullUpLoading: true,
+        searchLoading: false,
+      },
+    });
+  };
+
+  const pullDown = () => {
+    merchantDispatcher.loadPrivateMerchantList({
+      index: pageIndex,
+      multiStore: filterVal?.value,
+      name: inputVal,
+      replace: false,
+      loading: {
+        pullDownLoading: true,
+        pullUpLoading: false,
+        searchLoading: false,
+      },
+    });
+  };
+
   return (
     <SafeAreaView style={[globalStyles.wrapper, styles.container]}>
-      <Loading active={loading} />
+      <Loading active={searchLoading} />
       <View style={[styles.header]}>
         <Text style={(globalStyles.moduleMarginLeft, {flex: 1})}>
           我的私海&nbsp;
@@ -80,20 +121,25 @@ const PrivateSeaList: React.FC = () => {
         </Text>
 
         <View style={[{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}]}>
-          <ModalDropdown
-            dropdownStyle={[globalStyles.dropDownItem, {height: 80}]}
-            renderRow={item => (
-              <View style={[globalStyles.dropDownText]}>
-                <Text>{item.label}</Text>
-              </View>
-            )}
-            options={options}
-            onSelect={(item, text) => handleChangeFilter(text as Options)}>
-            <View style={{flexDirection: 'row'}}>
-              {filterVal?.label ? <Text>{filterVal.label}</Text> : <Text>筛选</Text>}
+          <Popover
+            overlay={
+              <>
+                {options.map(item => (
+                  <Popover.Item style={[{width: 80}]} key={item.label} value={item.value}>
+                    <Text style={{textAlign: 'center'}}>{item.label}</Text>
+                  </Popover.Item>
+                ))}
+              </>
+            }
+            triggerStyle={{paddingVertical: 6}}
+            onSelect={node => {
+              onChangeFilter(node);
+            }}>
+            <View style={[{flexDirection: 'row'}]}>
+              <Text>{filterVal ? filterVal?.label : '筛选'}</Text>
               <AntdIcon name="caret-down" color="#030303" style={[{marginLeft: 7}, globalStyles.fontPrimary]} />
             </View>
-          </ModalDropdown>
+          </Popover>
           <View style={styles.dividingLine} />
           <Icon name="FYLM_all_search" color="#999999" />
           {/* <View style={{width: 100}}>
@@ -130,19 +176,15 @@ const PrivateSeaList: React.FC = () => {
       </View>
 
       <FlatList
-        refreshing={loading}
+        refreshing={pullUpLoading}
         data={merchantList?.content}
         renderItem={({item}) => <Card merchant={item} key={item.id} style={globalStyles.marginBottom} />}
-        onRefresh={async () => {
-          merchantDispatcher.loadPrivateMerchantList({pageIndex: 0, replace: true, pull: true});
-        }}
-        onEndReached={() => {
-          merchantDispatcher.loadPrivateMerchantList({index: pageIndex, multiStore: filterVal?.value, name: inputVal, replace: false, pull: true});
-        }}
-        ListEmptyComponent={!loading && <Empty text="还没有商家哦，快去公海看看吧" icon={'shop'} />}
+        onRefresh={pullUp}
+        onEndReached={pullDown}
+        ListEmptyComponent={!searchLoading && <Empty text="还没有商家哦，快去公海看看吧" icon={'shop'} />}
         ListFooterComponentStyle={[{height: 40}, globalStyles.containerCenter]}
         ListFooterComponent={
-          !!merchantList?.content?.length && <Text style={[{textAlign: 'center'}, globalStyles.fontTertiary]}>{getLoadingStatusText(merchantList?.status)}</Text>
+          !!merchantList?.content?.length && <Text style={[{textAlign: 'center'}, globalStyles.fontTertiary]}>{pullDownLoading ? '加载中...' : '没有更多了哦'}</Text>
         }
       />
 

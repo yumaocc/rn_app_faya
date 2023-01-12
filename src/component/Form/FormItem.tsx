@@ -75,7 +75,7 @@ const FormItem: React.FC<FormItemProps> = props => {
           hiddenBorderBottom ? {} : globalStyles.borderBottom,
           // hiddenBorderTop ? {} : globalStyles.borderTop,
           styles.container,
-          {paddingBottom: errorElement ? 0 : 16},
+          {paddingBottom: errorElement ? 0 : 10},
           props.style,
         ]}>
         <View style={[styles.item]}>
@@ -125,7 +125,7 @@ const FormItem: React.FC<FormItemProps> = props => {
         hiddenBorderBottom ? {} : globalStyles.borderBottom,
         // hiddenBorderTop ? {} : globalStyles.borderTop,
         styles.container,
-        {paddingBottom: errorElement ? 0 : 16},
+        {paddingBottom: errorElement ? 0 : 14},
         props.style,
       ]}>
       <View style={[styles.item]}>
@@ -153,6 +153,7 @@ const FormItem: React.FC<FormItemProps> = props => {
           <Text style={[{color: 'red'}, globalStyles.fontSize12]}>{errorElement}</Text>
         </View>
       )}
+
       {props.extra && <View style={styles.extra}>{props.extra}</View>}
     </View>
   );
@@ -172,7 +173,7 @@ export default FormItem;
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    paddingTop: 18,
+    paddingTop: 14,
   },
   item: {
     flexDirection: 'row',
@@ -197,7 +198,7 @@ const styles = StyleSheet.create({
   },
   children: {
     flex: 1,
-    height: 32,
+    height: 20,
     justifyContent: 'center',
     alignItems: 'flex-end',
   },
@@ -209,7 +210,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   error: {
-    height: 16,
+    height: 14,
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',

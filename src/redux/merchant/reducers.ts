@@ -1,7 +1,7 @@
 import produce from 'immer';
 import {MerchantActions} from './actions';
 import {ActionType} from './types';
-import {MerchantCategory, FormMerchant, MerchantSimpleF, MerchantF} from '../../models';
+import {MerchantCategory, FormMerchant, MerchantSimpleF, MerchantF, ListLoadingType} from '../../models';
 import {MerchantList} from '../../models/merchant';
 
 export interface MerchantState {
@@ -12,6 +12,8 @@ export interface MerchantState {
   merchantPublicList?: MerchantList<MerchantF[]>;
   merchantPrivateList?: MerchantList<MerchantF[]>;
   merchantLoading: boolean;
+  merchantPublicLoading?: ListLoadingType;
+  merchantPrivateLoading?: ListLoadingType;
 }
 
 export const initialState: MerchantState = {
@@ -23,6 +25,16 @@ export const initialState: MerchantState = {
     content: [],
     status: 'none',
     page: {},
+  },
+  merchantPublicLoading: {
+    pullDownLoading: false,
+    pullUpLoading: false,
+    searchLoading: false,
+  },
+  merchantPrivateLoading: {
+    pullDownLoading: false,
+    pullUpLoading: false,
+    searchLoading: false,
   },
   merchantPrivateList: {
     content: [],
@@ -63,8 +75,16 @@ export default (state = initialState, action: MerchantActions): MerchantState =>
 
     case ActionType.LOAD_MERCHANT_PUBLIC_LIST_SUCCESS:
       return produce(state, draft => {
-        draft.merchantLoading = false;
+        draft.merchantPublicLoading = {
+          pullDownLoading: false,
+          pullUpLoading: false,
+          searchLoading: false,
+        };
         draft.merchantPublicList = action.payload;
+      });
+    case ActionType.MERCHANT_PUBLIC_LOADING:
+      return produce(state, draft => {
+        draft.merchantPublicLoading = action.payload;
       });
     case ActionType.CHANGE_MERCHANT_LOADING_STATE_PUBLIC:
       return produce(state, draft => {
@@ -73,8 +93,16 @@ export default (state = initialState, action: MerchantActions): MerchantState =>
 
     case ActionType.LOAD_MERCHANT_PRIVATE_LIST_SUCCESS:
       return produce(state, draft => {
-        draft.merchantLoading = false;
+        draft.merchantPrivateLoading = {
+          pullDownLoading: false,
+          pullUpLoading: false,
+          searchLoading: false,
+        };
         draft.merchantPrivateList = action.payload;
+      });
+    case ActionType.MERCHANT_PRIVATE_LOADING:
+      return produce(state, draft => {
+        draft.merchantPrivateLoading = action.payload;
       });
     case ActionType.CHANGE_MERCHANT_LOADING_STATE_PRIVATE:
       return produce(state, draft => {

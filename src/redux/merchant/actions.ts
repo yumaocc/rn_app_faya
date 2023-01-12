@@ -1,6 +1,6 @@
 import {ActionsUnion, createAction, Action, ActionWithPayload} from '../types';
 import {ActionType} from './types';
-import {MerchantCategory, FormMerchant, MerchantSimpleF, SearchParam, MerchantF} from '../../models';
+import {MerchantCategory, FormMerchant, MerchantSimpleF, SearchParam, MerchantF, ListLoadingType} from '../../models';
 import {MerchantList} from '../../models/merchant';
 
 export const Actions = {
@@ -36,6 +36,12 @@ export const Actions = {
     createAction(ActionType.LOAD_MERCHANT_PRIVATE_LIST, payload),
   loadPrivateMerchantLisSuccess: (payload: MerchantList<MerchantF[]>): ActionWithPayload<ActionType.LOAD_MERCHANT_PRIVATE_LIST_SUCCESS, MerchantList<MerchantF[]>> =>
     createAction(ActionType.LOAD_MERCHANT_PRIVATE_LIST_SUCCESS, payload),
+
+  //公私海loading
+  changeMerchantPublicLoading: (payload: ListLoadingType): ActionWithPayload<ActionType.MERCHANT_PUBLIC_LOADING, ListLoadingType> =>
+    createAction(ActionType.MERCHANT_PUBLIC_LOADING, payload),
+  changeMerchantPrivateLoading: (payload: ListLoadingType): ActionWithPayload<ActionType.MERCHANT_PRIVATE_LOADING, ListLoadingType> =>
+    createAction(ActionType.MERCHANT_PRIVATE_LOADING, payload),
 
   logout: (): Action<ActionType.LOGOUT> => createAction(ActionType.LOGOUT),
 };

@@ -12,7 +12,7 @@ import {useNavigation} from '@react-navigation/native';
 import {useContractDispatcher, useUserAuthInfo, useUserDispatcher} from '../../../helper/hooks';
 // import Icon from '../../../component/Form/Icon';
 import Loading from '../../../component/Loading';
-import {cleanTime, getLoadingStatusText} from '../../../helper/util';
+import {cleanTime} from '../../../helper/util';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/reducers';
 import {MerchantList} from '../../../models/merchant';
@@ -91,7 +91,7 @@ const ContractList: FC = () => {
       <TouchableOpacity
         key={item.id}
         activeOpacity={0.5}
-        style={{backgroundColor: '#fff', paddingLeft: globalStyleVariables.MODULE_SPACE, paddingRight: globalStyleVariables.MODULE_SPACE}}
+        style={[styles.item, globalStyles.borderBottom]}
         onPress={() => {
           navigation.navigate({
             name: 'ViewContract',
@@ -143,21 +143,23 @@ const ContractList: FC = () => {
         </View> */}
       </View>
 
-      <FlatList
-        data={contractData?.content}
-        renderItem={renderItem}
-        ListEmptyComponent={<Empty />}
-        ListFooterComponentStyle={[{height: Platform.OS === 'ios' ? bottom * 2 : 40}, globalStyles.containerCenter]}
-        ListFooterComponent={!!contractData?.content?.length && <Text style={[{textAlign: 'center'}, globalStyles.fontSize12]}>{getLoadingStatusText(contractData?.status)}</Text>}
-        numColumns={1}
-        refreshing={loading}
-        onRefresh={() => {
-          contractDispatcher.loadContractList({index: 0, name: value, replace: true, pull: true});
-        }}
-        onEndReached={() => {
-          contractDispatcher.loadContractList({index: contractData?.page?.pageIndex, name: value, replace: false, pull: true});
-        }}
-      />
+      <View style={{flex: 1, backgroundColor: '#fff', paddingHorizontal: globalStyleVariables.MODULE_SPACE}}>
+        <FlatList
+          data={contractData?.content}
+          renderItem={renderItem}
+          ListEmptyComponent={<Empty />}
+          ListFooterComponentStyle={[{height: Platform.OS === 'ios' ? bottom * 2 : 40}, globalStyles.containerCenter]}
+          ListFooterComponent={!!contractData?.content?.length && <Text style={[{textAlign: 'center'}, globalStyles.fontSize12]}>{loading ? '加载中...' : '没有更多了哦'}</Text>}
+          numColumns={1}
+          refreshing={loading}
+          onRefresh={() => {
+            contractDispatcher.loadContractList({index: 0, name: value, replace: true, pull: true});
+          }}
+          onEndReached={() => {
+            contractDispatcher.loadContractList({index: contractData?.page?.pageIndex, name: value, replace: false, pull: true});
+          }}
+        />
+      </View>
       <UnverifiedModal open={isShowAuthModal} onChangeOpen={onChangeAuthModal} />
     </>
   );
@@ -205,7 +207,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingLeft: globalStyleVariables.MODULE_SPACE,
     paddingRight: globalStyleVariables.MODULE_SPACE,
-    marginBottom: globalStyleVariables.MODULE_SPACE,
+    // marginBottom: globalStyleVariables.MODULE_SPACE,
+  },
+  item: {
+    paddingVertical: globalStyleVariables.MODULE_SPACE,
   },
 });
 
