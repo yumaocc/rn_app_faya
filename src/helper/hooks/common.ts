@@ -4,9 +4,11 @@ import {Animated, Easing} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {getEnv} from '../../helper';
 import {Site} from '../../models';
+import {City} from '../../models/common';
 import {FakeRoute} from '../../models/route';
 import {getCommonDispatcher} from '../../redux/common/dispatcher';
 import {RootState} from '../../redux/reducers';
+import {useCommonDispatcher} from './dispatcher';
 
 // 用于检测是否已卸载
 export function useUnmountRef() {
@@ -121,4 +123,15 @@ export function useInfinityRotate() {
     Animated.loop(animate).start();
   }, [rotateAnim]);
   return rotateAnim;
+}
+
+export function useLoadCity(): [City[]] {
+  const cityList = useSelector<RootState, City[]>(state => state.common?.city);
+  const [commonDispatcher] = useCommonDispatcher();
+  useEffect(() => {
+    if (!cityList) {
+      commonDispatcher.loadCity();
+    }
+  }, [cityList, commonDispatcher]);
+  return [cityList];
 }

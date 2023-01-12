@@ -85,10 +85,10 @@ const Cash: FC = () => {
                 arrow
                 handleClick={() => navigation.navigate('HistoricalEarnings')}
               />
-              <CutOffRule />
+              {/* <CutOffRule /> */}
             </View>
-            <CommodityTop unit="元" title="商品提成排行" />
-            <SalesTop unit="单" title="商品销量排行" />
+            {/* <CommodityTop unit="元" title="商品提成排行" />
+            <SalesTop unit="单" title="商品销量排行" /> */}
           </View>
         </ScrollView>
       </SafeAreaView>

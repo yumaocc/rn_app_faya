@@ -88,7 +88,6 @@ function* loadPublicMerchantList(action: ActionWithPayload<ActionType, SearchPar
       content: res.content,
       page: {
         ...res.page,
-        pageIndex,
       },
       status,
     } as MerchantList<MerchantF[]>;
@@ -127,7 +126,6 @@ function* loadPrivateMerchantList(action: ActionWithPayload<ActionType, SearchPa
       content: res.content,
       page: {
         ...res.page,
-        pageIndex,
       },
       status,
     } as MerchantList<MerchantF[]>;

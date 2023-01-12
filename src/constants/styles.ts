@@ -158,6 +158,7 @@ export const globalStyles = StyleSheet.create({
   },
   tagWrapperGreen: {
     padding: 5,
+    borderRadius: 3,
     backgroundColor: 'rgba(74, 184, 125, 0.2)',
   },
   tagGreen: {

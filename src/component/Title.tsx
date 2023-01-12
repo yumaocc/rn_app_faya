@@ -2,6 +2,7 @@
 import {Icon as AntdIcon} from '@ant-design/react-native';
 import React, {FC, useState} from 'react';
 import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {hitSlop} from '../constants';
 import {globalStyles} from '../constants/styles';
 import Icon from './Form/Icon';
 import UnitNumber from './UnitNumber';
@@ -25,8 +26,8 @@ const Title: FC<TitleProps> = ({title, value, arrow, unit, handleClick, type}) =
         <View style={styles.content}>
           <View style={styles.left}>
             <Text style={{fontSize: 15}}>{title}</Text>
-            <TouchableOpacity onPress={clickEye}>
-              <Icon name={eyeIsShow ? 'closeEye' : 'eye'} size={20} style={globalStyles.moduleMarginLeft} />
+            <TouchableOpacity onPress={clickEye} hitSlop={hitSlop}>
+              <Icon name={eyeIsShow ? 'closeEye' : 'eye'} color="#999999" size={16} style={globalStyles.moduleMarginLeft} />
             </TouchableOpacity>
           </View>
           <View>{arrow && <AntdIcon name="right" />}</View>

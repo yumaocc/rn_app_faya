@@ -1,15 +1,16 @@
 import React, {FC} from 'react';
-import {View, Text, StyleSheet, Image, ScrollView} from 'react-native';
+import {View, Text, StyleSheet, Image, ScrollView, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useSelector} from 'react-redux';
 import {NavigationBar} from '../../component';
 import Icon from '../../component/Form/Icon';
 import {globalStyles, globalStyleVariables} from '../../constants/styles';
-import {useUserDispatcher} from '../../helper/hooks';
+import {useCommonDispatcher, useUserDispatcher} from '../../helper/hooks';
 import {UserState} from '../../models';
 import {RootState} from '../../redux/reducers';
 
 const MineDetail: FC = () => {
+  const [commonDispatcher] = useCommonDispatcher();
   const user = useSelector((state: RootState) => state.user.userInfo);
   useUserDispatcher();
   const idCardNoStr = (idNo: string) => {
@@ -29,10 +30,12 @@ const MineDetail: FC = () => {
       <SafeAreaView style={{flex: 1, backgroundColor: '#f4f4f4'}} edges={['bottom']}>
         <NavigationBar title="个人资料" />
         <ScrollView>
-          <View style={[globalStyles.containerLR, {padding: globalStyleVariables.MODULE_SPACE, height: 70, backgroundColor: '#fff'}, globalStyles.borderTop]}>
-            <Text style={globalStyles.fontPrimary}>姓名</Text>
-            <Text style={globalStyles.fontPrimary}>{user?.name}</Text>
-          </View>
+          <TouchableOpacity activeOpacity={0.5} onPress={() => commonDispatcher.info('认证后信息不可修改')}>
+            <View style={[globalStyles.containerLR, {padding: globalStyleVariables.MODULE_SPACE, height: 70, backgroundColor: '#fff'}, globalStyles.borderTop]}>
+              <Text style={globalStyles.fontPrimary}>姓名</Text>
+              <Text style={globalStyles.fontPrimary}>{user?.name}</Text>
+            </View>
+          </TouchableOpacity>
           <View style={[globalStyles.containerLR, {padding: globalStyleVariables.MODULE_SPACE, backgroundColor: '#fff', height: 70}, globalStyles.borderTop]}>
             <Text style={globalStyles.fontPrimary}>头像</Text>
             <View style={styles.avatarWrapper}>
@@ -41,7 +44,7 @@ const MineDetail: FC = () => {
           </View>
           {user?.status === UserState.CERTIFIED && (
             <View style={[globalStyles.containerCenter, globalStyles.moduleMarginTop, {padding: 20, backgroundColor: '#fff'}]}>
-              <View style={[globalStyles.containerCenter, globalStyles.moduleMarginTop, globalStyles.borderBottom]}>
+              <View style={[globalStyles.containerCenter, globalStyles.moduleMarginTop]}>
                 <Icon name="FYLM_all_feedback_true" color="#546DAD" size={100} />
                 <Text style={[globalStyles.fontPrimary, globalStyles.moduleMarginTop]}>实名认证已完成</Text>
               </View>

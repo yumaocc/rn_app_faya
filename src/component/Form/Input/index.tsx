@@ -11,6 +11,7 @@ interface InputProps extends InputItemProps {
 const Input: FC<InputProps> = props => {
   const {value, type = 'text', onChange, styles = {}, clear = true, textAlign = 'right', last = true, placeholder = '请输入', labelNumber = 2, disabled, ...restProps} = props;
   const shouldWrap = useMemo(() => type === 'number', [type]);
+
   const wrappedValue = useMemo(() => {
     if (shouldWrap) {
       return isNil(value) ? '' : String(value);
@@ -51,6 +52,7 @@ const Input: FC<InputProps> = props => {
       onChange={wrappedOnChange}
       styles={{
         container: {height: 40, margin: 0},
+        input: {color: globalStyleVariables.TEXT_COLOR_PRIMARY, fontSize: 15, fontWeight: '500'},
         inputDisabled: {backgroundColor: '#fff', color: '#000'},
         ...styles,
       }}

@@ -15,8 +15,9 @@ import {
   Site,
   Options,
 } from '../models';
-import {LoadingState} from '../models/common';
+import {City, LoadingState} from '../models/common';
 import {SPUStatus} from '../models/spu';
+import {formattingCity} from './hooks/merchant';
 
 // 用来模拟异步操作
 export async function wait(ms: number) {
@@ -318,3 +319,26 @@ export const getLoadingStatusText = (status: LoadingState) => {
       return '';
   }
 };
+
+//格式化城市三级分类数据
+export function cleanCity(res: Site[]) {
+  const data: City[] = res.map(item => {
+    let children;
+    if (Array.isArray(item.children)) {
+      children = item.children.map(e => {
+        let children;
+        if (Array.isArray(e.children)) {
+          children = e.children.map(element => {
+            return formattingCity(element, 0);
+          });
+        }
+        return {
+          ...formattingCity(e, 1),
+          children,
+        };
+      });
+    }
+    return {...formattingCity(item), value: `2_${item.id}`, children};
+  });
+  return data;
+}

@@ -7,10 +7,10 @@ import {NavigationBar} from '../../../component';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {CommissionDetail, Picker, SearchParam} from '../../../models';
 import {useCommonDispatcher, useSummaryDispatcher} from '../../../helper/hooks';
-import {date} from '../../../constants';
+// import {date} from '../../../constants';
 import Title from '../../../component/Title';
-import ModalDropdown from 'react-native-modal-dropdown';
-import {Moment} from 'moment';
+// import ModalDropdown from 'react-native-modal-dropdown';
+// import {Moment} from 'moment';
 import moment from 'moment';
 import {formatMoment} from '../../../helper';
 import {useSelector} from 'react-redux';
@@ -67,20 +67,20 @@ const TodayEarnings: React.FC = () => {
     setLoading(false);
   };
 
-  function handleChangeFilter(e: Picker) {
-    setValueType(e);
-    const start: Moment = moment().startOf(e.value);
-    const end: Moment = moment().endOf(e.value);
-    setPageIndex(1);
-    getData(
-      {
-        beginTime: formatMoment(start),
-        endTime: formatMoment(end),
-        pageIndex: 0,
-      },
-      true,
-    );
-  }
+  // function handleChangeFilter(e: Picker) {
+  //   setValueType(e);
+  //   const start: Moment = moment().startOf(e.value);
+  //   const end: Moment = moment().endOf(e.value);
+  //   setPageIndex(1);
+  //   getData(
+  //     {
+  //       beginTime: formatMoment(start),
+  //       endTime: formatMoment(end),
+  //       pageIndex: 0,
+  //     },
+  //     true,
+  //   );
+  // }
   const pullDown = () => {
     let start: any = null;
     let end: any = null;
@@ -123,7 +123,7 @@ const TodayEarnings: React.FC = () => {
       <View style={{overflow: 'hidden', flex: 1}}>
         <View style={[{width: windowWidth, padding: globalStyleVariables.MODULE_SPACE, backgroundColor: '#fff'}, globalStyles.containerLR]}>
           <Title title="今日收益" unit="元" type={'money'} value={Number(commissionToday?.commissionToday?.moneyYuan)} />
-          <ModalDropdown
+          {/* <ModalDropdown
             dropdownStyle={globalStyles.dropDownItem}
             renderRow={item => (
               <View style={[globalStyles.dropDownText]}>
@@ -137,7 +137,7 @@ const TodayEarnings: React.FC = () => {
               {valueType?.value ? <Text>{valueType?.label}</Text> : <Text>筛选</Text>}
               <AntdIcon name="caret-down" color="#030303" size="lg" style={[{marginLeft: 7}, globalStyles.fontPrimary]} />
             </View>
-          </ModalDropdown>
+          </ModalDropdown> */}
         </View>
 
         <FlatList
@@ -152,10 +152,10 @@ const TodayEarnings: React.FC = () => {
             <>
               <View style={styles.spuContainer}>
                 <View style={{flexDirection: 'row', marginBottom: globalStyleVariables.MODULE_SPACE}}>
-                  <View style={{paddingTop: 10}}>
-                    <Image source={{uri: item.poster}} style={{width: 60, height: 80}} />
+                  <View>
+                    <Image source={{uri: item.poster}} style={{width: 60, height: 60}} />
                   </View>
-                  <View style={{flex: 1, marginLeft: 10}}>
+                  <View style={{flex: 1, marginLeft: 11.5}}>
                     <View style={globalStyles.containerLR}>
                       <View style={{flexDirection: 'row'}}>
                         <AntdIcon name="shop" />

@@ -30,7 +30,7 @@ const Card: React.FC<CardProps> = props => {
         }>
         <View style={[globalStyles.borderBottom, styles.header]}>
           <View style={[styles.logo]}>
-            <Image source={{uri: merchant?.avatar}} style={{width: 40, height: 40}} />
+            <Image source={{uri: merchant?.avatar}} style={{width: 40, height: 40, borderRadius: 5}} />
           </View>
           <View style={styles.headerRight}>
             <View style={[globalStyles.flexNormal, {justifyContent: 'space-between'}]}>
@@ -45,7 +45,7 @@ const Card: React.FC<CardProps> = props => {
                   <Text style={globalStyles.tagGreen}>·合作中</Text>
                 </View>
               ) : (
-                <View style={{backgroundColor: 'rgba(255, 96, 96, 0.2)', padding: 5}}>
+                <View style={{backgroundColor: 'rgba(255, 96, 96, 0.2)', padding: 5, borderRadius: 3}}>
                   <Text style={{color: '#FF6060', fontSize: 10}}>·即将调入公海</Text>
                 </View>
               )}

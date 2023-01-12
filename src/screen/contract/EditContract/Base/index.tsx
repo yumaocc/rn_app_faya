@@ -37,6 +37,7 @@ const Base: FC<BaseProps> = ({Controller, control, watch, setValue, onNext, erro
     });
     return list;
   });
+
   //根据合同设置乙方的值
   useEffect(() => {
     if (bizUserId) {

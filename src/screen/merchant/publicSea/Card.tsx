@@ -14,12 +14,12 @@ import LinkButton from '../../../component/LinkButton';
 interface CardProps {
   merchant: MerchantF;
   style?: StylePropView;
-  update: () => void;
+  onUpdate: () => void;
 }
 
 const Card: React.FC<CardProps> = props => {
   const [loading, setLoading] = useState(false);
-  const {merchant, style, update} = props;
+  const {merchant, style, onUpdate} = props;
   const [commonDispatcher] = useCommonDispatcher();
   const [summaryDispatcher] = useSummaryDispatcher();
   const navigation = useNavigation() as FakeNavigation;
@@ -30,7 +30,7 @@ const Card: React.FC<CardProps> = props => {
       await api.merchant.drawMerchant(id);
       summaryDispatcher.loadHome();
       commonDispatcher.success('添加成功');
-      update();
+      onUpdate();
     } catch (error) {
       commonDispatcher.error((error as string) || '添加失败');
     }
@@ -57,7 +57,7 @@ const Card: React.FC<CardProps> = props => {
         <View style={[styles.container, style]}>
           <View style={[styles.header, globalStyles.borderBottom]}>
             <View style={[styles.logo]}>
-              <Image source={{uri: merchant?.avatar || 'https://fakeimg.pl/100'}} style={{width: 40, height: 40}} />
+              <Image source={{uri: merchant?.avatar || 'https://fakeimg.pl/100'}} style={{width: 40, height: 40, borderRadius: 5}} />
             </View>
             <View style={[globalStyles.moduleMarginLeft]}>
               <View>

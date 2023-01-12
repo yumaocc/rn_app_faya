@@ -4,14 +4,16 @@ import {Header} from '@react-navigation/elements';
 import {Icon} from '@ant-design/react-native';
 import {PlusButton, UnitNumber} from '../../component';
 import {globalStyles, globalStyleVariables} from '../../constants/styles';
-import {useHomeSummary, useUserDispatcher} from '../../helper/hooks';
+import {useHomeSummary, useUserAuthInfo, useUserDispatcher} from '../../helper/hooks';
 import {useNavigation} from '@react-navigation/native';
 import {ContractAction, FakeNavigation, MerchantAction, MerchantCreateType, UserInfo} from '../../models';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/reducers';
 import MyStatusBar from '../../component/MyStatusBar';
+import UnverifiedModal from '../../component/UnverifiedModal';
 
 const Home: React.FC = () => {
+  const {isShowAuthModal, onChangeAuthModal, userAuth} = useUserAuthInfo();
   const [summary, commissionToday, myContractNums] = useHomeSummary();
   const navigation = useNavigation() as FakeNavigation;
   const [userDispatcher] = useUserDispatcher();
@@ -23,6 +25,13 @@ const Home: React.FC = () => {
     }
   }, [userDispatcher, userInfo]);
 
+  const checkUserAuth = (callback: () => void) => {
+    if (!userAuth) {
+      onChangeAuthModal(true);
+      return;
+    }
+    callback();
+  };
   return (
     <>
       {/* headerLeft={() => <Icon name="bell" />} headerLeftContainerStyle={{paddingLeft: 16}} */}
@@ -53,12 +62,7 @@ const Home: React.FC = () => {
               </View>
             </TouchableOpacity>
             <View style={[globalStyles.lineHorizontal, {marginVertical: 10}]} />
-            <PlusButton
-              title="新增商品"
-              onPress={() => {
-                navigation.navigate('AddSPU');
-              }}
-            />
+            <PlusButton title="新增商品" onPress={() => checkUserAuth(() => navigation.navigate('AddSPU'))} />
           </View>
           {/* 我的合同 */}
           <View style={[globalStyles.moduleMarginLeft, styles.cardContainer, {flex: 1}]}>
@@ -72,14 +76,16 @@ const Home: React.FC = () => {
             </TouchableOpacity>
             <PlusButton
               title="新增合同"
-              onPress={() => {
-                navigation.navigate({
-                  name: 'AddContract',
-                  params: {
-                    action: ContractAction.ADD,
-                  },
-                });
-              }}
+              onPress={() =>
+                checkUserAuth(() =>
+                  navigation.navigate({
+                    name: 'AddContract',
+                    params: {
+                      action: ContractAction.ADD,
+                    },
+                  }),
+                )
+              }
             />
           </View>
         </View>
@@ -90,10 +96,12 @@ const Home: React.FC = () => {
               <TouchableOpacity
                 activeOpacity={0.5}
                 onPress={() =>
-                  navigation.navigate({
-                    name: 'Merchant',
-                    params: {tab: 'private'},
-                  })
+                  checkUserAuth(() =>
+                    navigation.navigate({
+                      name: 'Merchant',
+                      params: {tab: 'private'},
+                    }),
+                  )
                 }>
                 <View style={styles.cardTitleContainer}>
                   <Text style={[globalStyles.textColorPrimary, styles.cardTitle]}>我的私海</Text>
@@ -107,10 +115,12 @@ const Home: React.FC = () => {
               <TouchableOpacity
                 activeOpacity={0.5}
                 onPress={() =>
-                  navigation.navigate({
-                    name: 'Merchant',
-                    params: {tab: 'mine'},
-                  })
+                  checkUserAuth(() =>
+                    navigation.navigate({
+                      name: 'Merchant',
+                      params: {tab: 'mine'},
+                    }),
+                  )
                 }>
                 <View style={styles.cardTitleContainer}>
                   <Text style={[globalStyles.textColorPrimary, styles.cardTitle]}>我的商家</Text>
@@ -125,16 +135,19 @@ const Home: React.FC = () => {
             style={{justifyContent: 'center'}}
             title="新增私海商家"
             onPress={() => {
-              navigation.navigate({
-                name: 'AddMerchant',
-                params: {
-                  action: MerchantAction.ADD,
-                  identity: MerchantCreateType.PRIVATE_SEA,
-                },
-              });
+              checkUserAuth(() =>
+                navigation.navigate({
+                  name: 'AddMerchant',
+                  params: {
+                    action: MerchantAction.ADD,
+                    identity: MerchantCreateType.PRIVATE_SEA,
+                  },
+                }),
+              );
             }}
           />
         </View>
+        <UnverifiedModal open={isShowAuthModal} onChangeOpen={onChangeAuthModal} />
       </ScrollView>
     </>
   );

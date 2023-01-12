@@ -1,8 +1,8 @@
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import {useForceUpdate} from './common';
 import {useUserDispatcher} from './dispatcher';
-import {Bank, WalletInfo} from '../../models';
+import {Bank, UserInfo, UserState, WalletInfo} from '../../models';
 import {RootState} from '../../redux/reducers';
 
 export function useWallet(): [WalletInfo, () => void] {
@@ -36,4 +36,23 @@ export function useBankList(): [Bank[]] {
   }, [bankList, userDispatcher]);
 
   return [bankList];
+}
+
+export function useUserAuthInfo() {
+  const [isShowModal, setIsShowModal] = useState(false);
+  const userInfo = useSelector<RootState, UserInfo>(state => state.user.userInfo);
+  const [userDispatcher] = useUserDispatcher();
+  const onChangeAuthModal = (value: boolean) => {
+    setIsShowModal(value);
+  };
+  useEffect(() => {
+    if (!userInfo) {
+      userDispatcher.loadUserInfo();
+    }
+  }, [userDispatcher, userInfo]);
+  return {
+    isShowAuthModal: isShowModal,
+    onChangeAuthModal: onChangeAuthModal,
+    userAuth: userInfo?.status === UserState.UN_CERTIFIED ? false : true, //false 未认证 ，true  已认证
+  };
 }

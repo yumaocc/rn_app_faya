@@ -172,9 +172,11 @@ const EditSPU: React.FC = () => {
       const {bizUserId, contractId} = getValues();
       const valid = bizUserId && contractId;
       if (!bizUserId) {
+        commonDispatcher.info('请先填写基本信息');
         setError('bizUserId', {type: 'required', message: '请选择商家'});
       }
       if (!contractId) {
+        commonDispatcher.info('请先填写基本信息');
         setError('contractId', {type: 'required', message: '请选择合同'});
       }
       return valid;

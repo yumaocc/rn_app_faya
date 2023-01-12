@@ -144,5 +144,5 @@ export enum MerchantAction {
 export interface MerchantList<T> {
   status?: LoadingState;
   content: T;
-  page: PageParam;
+  page?: PageParam;
 }

@@ -12,6 +12,7 @@ export interface CommonDispatcher {
   closePreview(): void;
   setToken(token: string): void;
   loadAllSite(): void;
+  loadCity(): void;
 }
 
 export const getCommonDispatcher = (dispatch: Dispatch): CommonDispatcher => ({
@@ -38,5 +39,8 @@ export const getCommonDispatcher = (dispatch: Dispatch): CommonDispatcher => ({
   },
   loadAllSite() {
     dispatch(Actions.loadAllSites());
+  },
+  loadCity() {
+    dispatch(Actions.loadCity());
   },
 });

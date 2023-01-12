@@ -1,4 +1,3 @@
-import {useRequest} from 'ahooks';
 import {useEffect, useState, useCallback} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 
@@ -14,7 +13,6 @@ import {
 } from '../../models';
 import {getMerchantDispatcher} from '../../redux/dispatchers';
 import {RootState} from '../../redux/reducers';
-import {City} from '../../models/common';
 
 // 即时版，商家详情
 export function useMerchantDetail(id: number): [MerchantDetailF, () => void] {
@@ -73,35 +71,3 @@ export const formattingCity = (city: Site, deep = 0) => {
     label: city.name,
   };
 };
-
-//获取城市列表(三级分类)
-export function useLoadCity() {
-  const {data, error, run, runAsync} = useRequest(async () => {
-    const res = await api.merchant.cityList();
-    const data: City[] = res.map(item => {
-      let children;
-      if (Array.isArray(item.children)) {
-        children = item.children.map(e => {
-          let children;
-          if (Array.isArray(e.children)) {
-            children = e.children.map(element => {
-              return formattingCity(element, 0);
-            });
-          }
-          return {
-            ...formattingCity(e, 1),
-            children,
-          };
-        });
-      }
-      return {...formattingCity(item), value: `2_${item.id}`, children};
-    });
-    return data;
-  });
-  return {
-    cityList: data,
-    error,
-    run,
-    runAsync,
-  };
-}

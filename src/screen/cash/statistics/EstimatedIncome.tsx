@@ -8,15 +8,15 @@ import {NavigationBar} from '../../../component';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {CommissionDetail, Picker, SearchParam} from '../../../models';
 import {useCommonDispatcher, useSummaryDispatcher} from '../../../helper/hooks';
-import {date} from '../../../constants';
+// import {date} from '../../../constants';
 import Title from '../../../component/Title';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/reducers';
 import Loading from '../../../component/Loading';
 // import Icon from '../../../component/Form/Icon';
 import {formatMoment} from '../../../helper';
-import moment, {Moment} from 'moment';
-import ModalDropdown from 'react-native-modal-dropdown';
+import moment from 'moment';
+// import ModalDropdown from 'react-native-modal-dropdown';
 import {useMount, useUnmount} from 'ahooks';
 import {LoadingState} from '../../../models/common';
 import {getLoadingStatusText} from '../../../helper/util';
@@ -87,20 +87,20 @@ const EstimatedIncome: React.FC = () => {
     getData({index: pageIndex, beginTime: formatMoment(start), endTime: formatMoment(end)}, false);
   };
 
-  function handleChangeFilter(e: Picker) {
-    setValueType(e);
-    const start: Moment = moment().startOf(e.value);
-    const end: Moment = moment().endOf(e.value);
-    setPageIndex(1);
-    getData(
-      {
-        beginTime: formatMoment(start),
-        endTime: formatMoment(end),
-        pageIndex: 0,
-      },
-      true,
-    );
-  }
+  // function handleChangeFilter(e: Picker) {
+  //   setValueType(e);
+  //   const start: Moment = moment().startOf(e.value);
+  //   const end: Moment = moment().endOf(e.value);
+  //   setPageIndex(1);
+  //   getData(
+  //     {
+  //       beginTime: formatMoment(start),
+  //       endTime: formatMoment(end),
+  //       pageIndex: 0,
+  //     },
+  //     true,
+  //   );
+  // }
 
   const headerRight = (
     <View style={{width: 100}}>
@@ -124,7 +124,7 @@ const EstimatedIncome: React.FC = () => {
       <View style={{overflow: 'hidden', flex: 1}}>
         <View style={[globalStyles.containerLR, styles.header]}>
           <Title title="预计收益总额" unit="元" type={'money'} value={Number(commissionToday?.commissionExpect?.moneyYuan)} />
-          <ModalDropdown
+          {/* <ModalDropdown
             dropdownStyle={globalStyles.dropDownItem}
             renderRow={item => (
               <View style={[globalStyles.dropDownText]}>
@@ -138,7 +138,7 @@ const EstimatedIncome: React.FC = () => {
               {valueType?.value ? <Text>{valueType?.label}</Text> : <Text>筛选</Text>}
               <AntdIcon name="caret-down" color="#030303" size="lg" style={[{marginLeft: 7}, globalStyles.fontPrimary]} />
             </View>
-          </ModalDropdown>
+          </ModalDropdown> */}
         </View>
 
         <FlatList

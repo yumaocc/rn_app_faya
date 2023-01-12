@@ -3,7 +3,7 @@ import {View, StyleSheet, ScrollView, useWindowDimensions, Text, TouchableOpacit
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Cascader, Form, FormTitle, Input, SectionGroup, Select, SelfText} from '../../../../../component';
 import {globalStyles, globalStyleVariables} from '../../../../../constants/styles';
-import {useMerchantDispatcher, useLoadCity} from '../../../../../helper/hooks';
+import {useMerchantDispatcher} from '../../../../../helper/hooks';
 import {FormMerchant, MerchantFormEnum, MerchantType, BoolEnum, FakeNavigation, MerchantAgentType} from '../../../../../models'; // FormMerchant
 import {useForm, Controller, useFieldArray} from 'react-hook-form';
 import {useSelector} from 'react-redux';
@@ -13,7 +13,7 @@ import {useRequest} from 'ahooks';
 import * as api from '../../../../../apis';
 import LinkButton from '../../../../../component/LinkButton';
 import {useNavigation} from '@react-navigation/native';
-import {useLoadAllSite} from '../../../../../helper/hooks/common';
+import {useLoadAllSite, useLoadCity} from '../../../../../helper/hooks/common';
 import {getSitesIndex} from '../../../../../helper/util';
 import {FormDisabledContext} from '../../../../../component/Form/Context';
 
@@ -22,7 +22,7 @@ interface ShopInfoProps {
   locationCompanyId?: number;
 }
 const AddMerchant: React.FC<ShopInfoProps> = ({id, locationCompanyId}) => {
-  const {cityList} = useLoadCity();
+  const [cityList] = useLoadCity();
   const [sites] = useLoadAllSite();
   const {control, setValue, watch, getValues} = useForm<FormMerchant>({
     mode: 'onBlur',

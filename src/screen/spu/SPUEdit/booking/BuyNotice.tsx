@@ -5,7 +5,7 @@ import {SectionGroup, FormTitle, Form, PlusButton, Modal} from '../../../../comp
 import {useSKUBuyNotice} from '../../../../helper/hooks';
 import {Notice, NoticeItem, SKUBuyNoticeType} from '../../../../models';
 import {styles} from '../style';
-import {globalStyleVariables} from '../../../../constants/styles';
+import {globalStyles, globalStyleVariables} from '../../../../constants/styles';
 import {Control, Controller, UseFormGetValues, UseFormSetValue, UseFormWatch} from 'react-hook-form';
 import {cleanNotice} from '../../../../helper/util';
 
@@ -66,7 +66,9 @@ const BuyNotice: React.FC<BuyNoticeProps> = ({setValue, control, getValues}) => 
                   },
                 ]}>
                 <View style={{paddingVertical: 10}}>
-                  <Text numberOfLines={4}>{item.content}</Text>
+                  <Text style={globalStyles.fontPrimary} numberOfLines={4}>
+                    {item.content}
+                  </Text>
                 </View>
               </SwipeAction>
             </View>

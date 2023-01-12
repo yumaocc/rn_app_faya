@@ -31,8 +31,9 @@ const Mine: React.FC = () => {
     }
     navigation.navigate('MineDetail');
   };
+
   return (
-    <SafeAreaView style={{flex: 1}} edges={['top']}>
+    <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}} edges={['top']}>
       <ScrollView
         style={{
           flex: 1,
@@ -47,7 +48,7 @@ const Mine: React.FC = () => {
             </View>
             <View style={[styles.nameWrapper]}>
               <Text style={[globalStyles.fontPrimary, styles.name]}>{user?.name || '未认证'}</Text>
-              {user.status === UserState.CERTIFIED && (
+              {user?.status === UserState.CERTIFIED && (
                 <View style={[globalStyles.tagWrapper, styles.certWrapper]}>
                   <AntdIcon name="safety" color="#4AB87D" size={15} />
                   <Text style={[globalStyles.tag, {color: '#4AB87D'}]}>已实名认证</Text>
@@ -57,7 +58,7 @@ const Mine: React.FC = () => {
             <AntdIcon name="right" style={globalStyles.iconRight} />
           </View>
         </TouchableOpacity>
-        {user.status === UserState.CERTIFIED && (
+        {user?.status === UserState.CERTIFIED && (
           <SectionGroup>
             <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Cash')}>
               <OperateItem title="我的金库" icon={<Icon name="FYLM_mine_jinku" />} />

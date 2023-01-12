@@ -37,3 +37,11 @@ export const date = [
   },
 ];
 export {getBaseURL} from './url';
+
+//扩大点击区域
+export const hitSlop = {
+  left: 15,
+  right: 15,
+  top: 15,
+  bottom: 15,
+};

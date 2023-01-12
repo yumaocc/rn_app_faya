@@ -1,19 +1,20 @@
 import {Icon as AntdIcon} from '@ant-design/react-native';
-import {useDebounceFn, useMount} from 'ahooks';
+import {useMount} from 'ahooks';
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, FlatList, SafeAreaView, RefreshControl} from 'react-native';
 import ModalDropdown from 'react-native-modal-dropdown';
 import * as api from '../../../apis';
-import {Input} from '../../../component';
+// import {Input} from '../../../component';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {useCommonDispatcher} from '../../../helper/hooks';
 import {MyMerchantF, Options} from '../../../models';
 import Card from './Card';
-import Icon from '../../../component/Form/Icon';
+// import Icon from '../../../component/Form/Icon';
 import Empty from '../../../component/Empty';
-import {LoadingState, SearchForm} from '../../../models/common';
+import {SearchForm} from '../../../models/common';
 import Loading from '../../../component/Loading';
-import {getLoadingStatusText} from '../../../helper/util';
+import Icon from '../../../component/Form/Icon';
+// import {getLoadingStatusText} from '../../../helper/util';
 
 const options = [
   {
@@ -28,26 +29,28 @@ const options = [
 const MyList: React.FC = () => {
   const [merchantList, setMerchantList] = useState<MyMerchantF[]>([]);
   const [pageIndex, setPageIndex] = useState(1);
-  const [status, setStatus] = useState<LoadingState>('none');
+  const [footerLoading, setFooterLoading] = useState(false);
+  // const [status, setStatus] = useState<LoadingState>('none');
   const [len, setLen] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [valueType, setValueType] = useState<Options>(null);
-  const [value, setValue] = useState('');
+  const [value] = useState('');
   const [commonDispatcher] = useCommonDispatcher();
 
   const getData = async (params: SearchForm, replace?: boolean, isPullDown = false) => {
     try {
       const {index, ...param} = params;
-      setStatus('loading');
+      // setStatus('loading');
+      setFooterLoading(true);
       const pageIndex = replace ? 1 : index + 1;
       const pageSize = 10;
       if (isPullDown) {
         setLoading(true);
       }
       const res = await api.merchant.getMyMerchants({...param, pageIndex, pageSize});
-      setStatus(res.content?.length < pageSize ? 'noMore' : 'none');
-
+      // setStatus(res.content?.length < pageSize ? 'noMore' : 'none');
+      setFooterLoading(false);
       if (replace) {
         setMerchantList(res.content);
       } else {
@@ -65,7 +68,7 @@ const MyList: React.FC = () => {
     getData({index: 0}, true, true);
   });
 
-  const {run} = useDebounceFn(async (name: string) => getData({index: 1, name}, true, true));
+  // const {run} = useDebounceFn(async (name: string) => getData({index: 1, name}, true, true));
 
   const handleChangeFilter = (value: Options) => {
     setValueType(value);
@@ -102,6 +105,8 @@ const MyList: React.FC = () => {
             </View>
           </ModalDropdown>
           <View style={globalStyles.dividingLine} />
+          <Icon name="FYLM_all_search" color="#999999" />
+          {/* <View style={globalStyles.dividingLine} />
           <View style={{width: 100}}>
             <Input
               placeholder="搜索"
@@ -113,12 +118,12 @@ const MyList: React.FC = () => {
               }}
               textAlign="left"
             />
-          </View>
+          </View> */}
         </View>
       </View>
 
       <FlatList
-        data={merchantList}
+        data={merchantList || []}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         onEndReached={() => {
           getData({index: pageIndex, multiStore: valueType?.value, name: value});
@@ -127,7 +132,7 @@ const MyList: React.FC = () => {
         ListFooterComponentStyle={[{height: 40}, globalStyles.containerCenter]}
         renderItem={({item}) => <Card merchant={item} key={item.id} style={globalStyles.marginBottom} />}
         ListEmptyComponent={!loading && <Empty text="还没有商家哦" icon={'shop'} />}
-        ListFooterComponent={!!merchantList?.length && <Text style={[{textAlign: 'center'}, globalStyles.fontTertiary]}>{getLoadingStatusText(status)}</Text>}
+        ListFooterComponent={!!merchantList?.length && <Text style={[{textAlign: 'center'}, globalStyles.fontTertiary]}>{footerLoading ? '加载中...' : '没有更多了哦'}</Text>}
       />
     </SafeAreaView>
   );

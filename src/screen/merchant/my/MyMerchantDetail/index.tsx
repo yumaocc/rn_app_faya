@@ -49,7 +49,7 @@ const MyMerchantDetail: FC = () => {
           }
         />
 
-        <Tabs tabs={tabs} topBorder underline currentKey={currentKey} onChange={setCurrentKey} style={{backgroundColor: '#fff'}} />
+        <Tabs tabs={tabs} underline currentKey={currentKey} onChange={setCurrentKey} style={{backgroundColor: '#fff'}} />
 
         <ScrollView style={{backgroundColor: globalStyleVariables.COLOR_PAGE_BACKGROUND}} ref={setRef} horizontal snapToInterval={windowWidth} scrollEnabled={false}>
           <View style={{width: windowWidth}}>

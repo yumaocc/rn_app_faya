@@ -8,37 +8,38 @@ import {FakeNavigation, SPUF} from '../../../models';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import {getBookingType} from '../../../helper';
 import {useNavigation} from '@react-navigation/native';
-import {cleanTime, getLoadingStatusText, getStatusColor} from '../../../helper/util';
+import {cleanTime, getStatusColor} from '../../../helper/util';
 import {useCommonDispatcher} from '../../../helper/hooks';
-import {LoadingState} from '../../../models/common';
 import Empty from '../../../component/Empty';
 import {useMount} from 'ahooks';
 import Loading from '../../../component/Loading';
+import {MerchantList} from '../../../models/merchant';
 
 const SPUList: React.FC = () => {
   const [loading, setLoading] = useState(false);
+  const [footerLoading, setFooterLoading] = useState(false);
   const [pageIndex, setPageIndex] = useState<number>(1);
-  const [status, setStatus] = useState<LoadingState>('none');
-  const [spuList, setSpuList] = useState<SPUF[]>([]);
+  const [spuList, setSpuList] = useState<MerchantList<SPUF[]>>({status: 'none', content: []});
   const navigation = useNavigation<FakeNavigation>();
   const [commonDispatcher] = useCommonDispatcher();
+
   const {bottom} = useSafeAreaInsets();
   async function fetchData(index: number, replace?: boolean) {
     try {
       if (replace) {
         setLoading(true);
       }
-      setStatus('loading');
+      setFooterLoading(true);
       const pageSize = 10;
       const pageIndex = replace ? 1 : index + 1;
       const res = await api.sku.getSPUList({pageIndex, pageSize});
-      setStatus(res.content?.length < pageSize ? 'noMore' : 'none');
       setPageIndex(pageIndex);
       if (replace) {
-        setSpuList(res.content);
+        setSpuList({content: res.content});
       } else {
-        setSpuList([...spuList, ...res.content]);
+        setSpuList({content: [...spuList?.content, ...res.content]});
       }
+      setFooterLoading(false);
     } catch (error) {
       commonDispatcher.error(error || '哎呀，出错了~');
     }
@@ -70,10 +71,10 @@ const SPUList: React.FC = () => {
             viewDetail(item);
           }}>
           <View style={{flexDirection: 'row'}}>
-            <View style={{paddingTop: 10}}>
-              <Image source={{uri: item.poster}} style={{width: 60, height: 80, borderRadius: 5}} />
+            <View>
+              <Image source={{uri: item.poster}} style={{width: 60, height: 60, borderRadius: 5}} />
             </View>
-            <View style={{flex: 1, marginLeft: 10}}>
+            <View style={{flex: 1, marginLeft: 11.5}}>
               <View style={globalStyles.containerLR}>
                 <View style={[globalStyles.containerRow, {flex: 1, marginRight: 5}]}>
                   <Icon name="shop" />
@@ -118,29 +119,27 @@ const SPUList: React.FC = () => {
     <View style={[styles.container]}>
       <Loading active={loading} />
       <NavigationBar title="商品列表" />
-      <View style={{overflow: 'hidden', flex: 1}}>
-        <FlatList
-          style={[{flex: 1, backgroundColor: '#f4f4f4'}]}
-          refreshing={loading}
-          onRefresh={onRefresh}
-          onEndReached={onEndReached}
-          numColumns={1}
-          renderItem={renderItem}
-          ListEmptyComponent={!loading && <Empty />}
-          keyExtractor={item => 'spu' + item.id}
-          data={spuList}
-          // ListFooterComponentStyle={[{height: Platform.OS === 'ios' ? bottom * 2 : 40}, globalStyles.containerCenter]}
-          ListFooterComponent={
-            !!spuList?.length && (
-              <View style={{paddingBottom: bottom}}>
-                <View style={[{paddingVertical: 15}]}>
-                  <Text style={[{textAlign: 'center'}, globalStyles.fontTertiary]}>{getLoadingStatusText(status)}</Text>
-                </View>
+      <FlatList
+        style={[{flex: 1, backgroundColor: '#f4f4f4'}]}
+        refreshing={loading}
+        onRefresh={onRefresh}
+        onEndReached={onEndReached}
+        numColumns={1}
+        renderItem={renderItem}
+        ListEmptyComponent={!loading && <Empty />}
+        keyExtractor={item => 'spu' + item.id}
+        data={spuList?.content}
+        // ListFooterComponentStyle={[{height: Platform.OS === 'ios' ? bottom * 2 : 40}, globalStyles.containerCenter]}
+        ListFooterComponent={
+          !!spuList?.content?.length && (
+            <View style={{paddingBottom: bottom}}>
+              <View style={[{paddingVertical: 15}]}>
+                <Text style={[{textAlign: 'center'}, globalStyles.fontTertiary]}>{footerLoading ? '加载中...' : '没有更多了'}</Text>
               </View>
-            )
-          }
-        />
-      </View>
+            </View>
+          )
+        }
+      />
     </View>
   );
 };

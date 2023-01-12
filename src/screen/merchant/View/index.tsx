@@ -5,7 +5,7 @@ import {View, StyleSheet, ScrollView, useWindowDimensions, Text} from 'react-nat
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Cascader, Form, FormTitle, Input, NavigationBar, SectionGroup, Select, SelfText} from '../../../component';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
-import {useParams, useCommonDispatcher, useMerchantDispatcher, useLoadCity} from '../../../helper/hooks';
+import {useParams, useCommonDispatcher, useMerchantDispatcher} from '../../../helper/hooks';
 import {MerchantCreateType, MerchantAction, FormMerchant, MerchantFormEnum, MerchantType, BoolEnum} from '../../../models'; // FormMerchant
 import {useForm, Controller, useFieldArray} from 'react-hook-form';
 import {useSelector} from 'react-redux';
@@ -17,14 +17,14 @@ import * as api from '../../../apis';
 import {ContractAction} from '../../../models';
 import ModalDropdown from 'react-native-modal-dropdown';
 import {FormDisabledContext} from '../../../component/Form/Context';
-import {useLoadAllSite} from '../../../helper/hooks/common';
+import {useLoadAllSite, useLoadCity} from '../../../helper/hooks/common';
 import {getSitesIndex} from '../../../helper/util';
 // add 新增  edit 编辑 view 查看
 // 当id === MerchantCreateType.PRIVATE_SEA, 并且 action === view的时候不能编辑
 // 当id === MerchantCreateType.PRIVATE_SEA, 并且 action === edit 或者add的时候可以编辑
 
 const AddMerchant: React.FC = () => {
-  const {cityList} = useLoadCity();
+  const [cityList] = useLoadCity();
   const [sites] = useLoadAllSite();
   const {control, setValue} = useForm<any>({
     mode: 'onBlur',
@@ -43,6 +43,7 @@ const AddMerchant: React.FC = () => {
   });
 
   const navigation = useNavigation();
+
   const {data} = useRequest(async () => {
     const res = await api.merchant.getMerchantCategories();
 
@@ -71,6 +72,7 @@ const AddMerchant: React.FC = () => {
       });
     }
   }, [merchantDetail, setValue]);
+
   useEffect(() => {
     if (sites?.length > 0 && cityList?.length) {
       if (locationCompanyId > 0) {

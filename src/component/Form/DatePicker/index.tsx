@@ -156,7 +156,7 @@ const DatePicker: React.FC<DatePickerProps> = props => {
         }
       }
       if (hasValue) {
-        return <Text>{value.format(format)}</Text>;
+        return <Text style={globalStyles.fontPrimary}>{value.format(format)}</Text>;
       } else {
         return <Text style={[globalStyles.fontTertiary, {fontSize: 15}]}>{props.placeholder}</Text>;
       }

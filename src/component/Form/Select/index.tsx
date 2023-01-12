@@ -7,6 +7,7 @@ import Picker from '../../Picker';
 import {PickerItemProps} from '../../Picker/PickerItem';
 import Popup from '../../Popup';
 import isNil from 'lodash/isNil';
+import {hitSlop} from '../../../constants';
 
 export type RenderPickerChildren = (option: PickerItemProps, index: number) => React.ReactNode;
 
@@ -35,7 +36,7 @@ const Select: React.FC<SelectProps> = props => {
       return (
         <View style={styles.childrenWrapper}>
           {!showPlaceholder ? (
-            <Text style={{color: props.textColor ? '#666666' : 'black'}}>{foundOption?.label || value}</Text>
+            <Text style={[{color: props.textColor ? '#666666' : 'black'}, globalStyles.fontPrimary]}>{foundOption?.label || value}</Text>
           ) : (
             <Text style={styles.placeholder}>{props.placeholder}</Text>
           )}
@@ -61,6 +62,7 @@ const Select: React.FC<SelectProps> = props => {
   return (
     <>
       <TouchableOpacity
+        hitSlop={{...hitSlop, left: 30}}
         activeOpacity={props.disabled ? 1 : 0.8}
         onPress={() => {
           if (!props.disabled) {
@@ -72,11 +74,11 @@ const Select: React.FC<SelectProps> = props => {
       <Popup visible={show} onClose={handleClose}>
         <View style={styles.container}>
           <View style={[globalStyles.borderBottom, styles.headerWrapper]}>
-            <TouchableOpacity onPress={handleClose}>
+            <TouchableOpacity hitSlop={hitSlop} onPress={handleClose}>
               <Text>取消</Text>
             </TouchableOpacity>
             <Text style={styles.title}>{props.title}</Text>
-            <TouchableOpacity onPress={handleOk}>
+            <TouchableOpacity hitSlop={hitSlop} onPress={handleOk}>
               <Text style={styles.ok}>确定</Text>
             </TouchableOpacity>
           </View>

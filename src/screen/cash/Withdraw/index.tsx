@@ -65,8 +65,7 @@ const Withdraw: FC = () => {
       case BankCardStatus.unverified:
         return (
           <TouchableOpacity onPress={handleAuth} activeOpacity={0.5} style={[globalStyles.flexNormal, globalStyles.moduleMarginTop, {alignItems: 'center'}]}>
-            <Icon name="plus" color="#546DAD" style={{marginRight: globalStyleVariables.MODULE_SPACE}} />
-            <Text style={[globalStyles.fontPrimary, globalStyles.primaryColor]}>银行卡尚未认证，去认证</Text>
+            <Text style={[globalStyles.fontPrimary, globalStyles.primaryColor]}>请到pc端进行认证绑卡</Text>
           </TouchableOpacity>
         );
       case BankCardStatus.authenticated:

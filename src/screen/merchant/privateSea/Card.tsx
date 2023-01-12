@@ -6,6 +6,7 @@ import {useCommonDispatcher} from '../../../helper/hooks';
 import * as api from '../../../apis';
 import {BoolEnum, FakeNavigation, MerchantAction, MerchantCreateType, MerchantF, StylePropView} from '../../../models';
 import {cleanTime} from '../../../helper/util';
+import {Icon} from '@ant-design/react-native';
 
 interface CardProps {
   merchant: MerchantF;
@@ -53,22 +54,22 @@ const Card: React.FC<CardProps> = ({merchant, style}) => {
         <View style={[style, styles.container]}>
           <View style={[globalStyles.borderBottom, styles.header]}>
             <View style={[styles.logo]}>
-              <Image source={{uri: merchant?.avatar || 'https://fakeimg.pl/100'}} style={{width: 40, height: 40}} />
+              <Image source={{uri: merchant?.avatar || 'https://fakeimg.pl/100'}} style={{width: 40, height: 40, borderRadius: 5}} />
             </View>
-
             <View style={styles.headerRight}>
               <View style={[globalStyles.flexNormal, {justifyContent: 'space-between'}]}>
-                <View style={{flex: 1, flexDirection: 'row'}}>
-                  <Text style={[globalStyles.textColorPrimary, styles.merchantName, {flex: 1}]} numberOfLines={1}>
+                <View style={{flex: 1, flexDirection: 'row', marginBottom: globalStyleVariables.MODULE_SPACE, alignItems: 'center'}}>
+                  <Icon name="shop" color={'black'} />
+                  <Text style={[globalStyles.textColorPrimary, styles.merchantName, {flex: 1}, globalStyles.moduleMarginLeft]} numberOfLines={1}>
                     {merchant.name}
                   </Text>
                 </View>
                 {merchant?.hasAuth ? (
-                  <View style={globalStyles.tagWrapperGreen}>
+                  <View style={[globalStyles.tagWrapperGreen, {height: 20, justifyContent: 'center'}]}>
                     <Text style={globalStyles.tagGreen}>已认证</Text>
                   </View>
                 ) : (
-                  <View style={styles.tagWrapper}>
+                  <View style={[styles.tagWrapper, {height: 20, justifyContent: 'center'}]}>
                     <Text style={styles.tag}>未认证</Text>
                   </View>
                 )}
@@ -149,6 +150,7 @@ const styles = StyleSheet.create({
   },
   tagWrapper: {
     padding: 5,
+    borderRadius: 3,
     backgroundColor: '#FFB44333',
   },
   tag: {

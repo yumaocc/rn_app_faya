@@ -7,6 +7,7 @@ import {StylePropView} from '../../../models';
 import Picker from '../../Picker';
 import Popup from '../../Popup';
 import {flattenTree} from '../../../helper';
+import {hitSlop} from '../../../constants';
 
 interface BaseType {
   [name: string]: any;
@@ -62,7 +63,11 @@ const Cascader: React.FC<CascaderProps> = props => {
 
       return (
         <View style={[styles.childrenWrapper]}>
-          {value?.length ? <Text style={{color: props?.textColor ? '#666666' : 'black'}}>{labels.join('/')}</Text> : <Text style={styles.placeholder}>{props.placeholder}</Text>}
+          {value?.length ? (
+            <Text style={[{color: props?.textColor ? '#666666' : 'black'}, globalStyles.fontPrimary]}>{labels.join('/')}</Text>
+          ) : (
+            <Text style={styles.placeholder}>{props.placeholder}</Text>
+          )}
           <Icon name="caret-right" style={styles.arrow} />
         </View>
       );
@@ -93,6 +98,7 @@ const Cascader: React.FC<CascaderProps> = props => {
         renderChildren()
       ) : (
         <TouchableOpacity
+          hitSlop={{...hitSlop, left: 30}}
           onPress={() => {
             setShow(true);
           }}>
@@ -102,11 +108,11 @@ const Cascader: React.FC<CascaderProps> = props => {
       <Popup visible={show} onClose={handleClose}>
         <View style={styles.container}>
           <View style={[globalStyles.borderBottom, styles.headerWrapper]}>
-            <TouchableOpacity onPress={handleClose}>
+            <TouchableOpacity hitSlop={hitSlop} onPress={handleClose}>
               <Text>取消</Text>
             </TouchableOpacity>
             <Text style={styles.title}>{props.title}</Text>
-            <TouchableOpacity onPress={handleOk}>
+            <TouchableOpacity onPress={handleOk} hitSlop={hitSlop}>
               <Text style={styles.ok}>确定</Text>
             </TouchableOpacity>
           </View>

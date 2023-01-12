@@ -10,6 +10,7 @@ import {cache, wait} from '../../helper';
 import {ActionWithPayload} from '../types';
 import * as api from '../../apis';
 import {ErrorType, Site, UserInfo} from '../../models';
+import {cleanCity} from '../../helper/util';
 
 function* initApp(): any {
   const url = getBaseURL();
@@ -55,6 +56,15 @@ function* loadAllSites() {
     yield put(CommonActions.error(error));
   }
 }
+function* loadCity() {
+  try {
+    const res: Site[] = yield call(api.merchant.cityList);
+    const cityList = cleanCity(res);
+    yield put(Actions.loadCitySuccess(cityList));
+  } catch (error) {
+    yield put(CommonActions.error(error));
+  }
+}
 
 function* watchCommonSagas() {
   yield takeLatest(ActionType.ERROR, handleError);
@@ -63,6 +73,7 @@ function* watchCommonSagas() {
   yield takeLatest(ActionType.INIT_APP, initApp);
   yield takeLatest(ActionType.SET_TOKEN, setToken);
   yield takeLatest(ActionType.LOAD_AllSITE, loadAllSites);
+  yield takeLatest(ActionType.LOAD_CITY, loadCity);
 }
 
 export default function* commonSagas() {

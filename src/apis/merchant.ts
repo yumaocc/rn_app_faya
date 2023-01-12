@@ -22,6 +22,7 @@ export async function getPublicSeaMerchants(params: SearchParam): Promise<PagedD
 
 // 获取私海商家（分页）
 export async function getPrivateSeaMerchants(params: SearchParam): Promise<PagedData<MerchantF[]>> {
+  console.log('私海 请求体', params);
   return await getPaged<MerchantF[]>('/biz/user/my/broad/ocean/page', {
     params,
   });

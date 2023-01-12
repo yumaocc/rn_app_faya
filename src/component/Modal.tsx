@@ -1,6 +1,7 @@
 import {Button, Icon} from '@ant-design/react-native';
 import React, {useCallback, useEffect} from 'react';
 import {View, StyleSheet, Modal as RNModal, TouchableWithoutFeedback, BackHandler, useWindowDimensions, ScrollView, Text, TouchableOpacity} from 'react-native';
+import {hitSlop} from '../constants';
 import {globalStyles, globalStyleVariables} from '../constants/styles';
 import {StylePropView} from '../models';
 
@@ -80,10 +81,12 @@ const Modal: React.FC<ModalProps> = props => {
               <Text style={[globalStyles.fontPrimary, styles.titleText]}>{props.title}</Text>
             </View>
             <View style={styles.close}>
-              <TouchableOpacity onPress={handleClose} activeOpacity={0.5} style={[{width: 50, height: 50, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}]}>
-                <View style={styles.closeIconWrapper}>
-                  <Icon name="close" style={styles.closeIcon} />
-                </View>
+              <TouchableOpacity
+                hitSlop={hitSlop}
+                onPress={handleClose}
+                activeOpacity={0.5}
+                style={[{width: 50, height: 50, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}]}>
+                <Icon name="close" style={styles.closeIcon} />
               </TouchableOpacity>
             </View>
           </View>
@@ -152,8 +155,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   closeIcon: {
-    fontSize: 12,
-    color: '#fff',
+    fontSize: 24,
   },
   body: {
     borderRadius: 10,

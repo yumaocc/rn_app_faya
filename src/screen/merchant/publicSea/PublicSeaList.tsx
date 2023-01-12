@@ -1,16 +1,18 @@
 import {Icon as AntdIcon} from '@ant-design/react-native';
 import {useNavigation} from '@react-navigation/native';
-import {useDebounceFn, useMount, useUnmount} from 'ahooks';
+import {useMount, useUnmount} from 'ahooks';
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, FlatList, SafeAreaView} from 'react-native';
 import ModalDropdown from 'react-native-modal-dropdown';
 import {useSelector} from 'react-redux';
-import {Input, PlusButton} from '../../../component';
+import {PlusButton} from '../../../component';
 import Empty from '../../../component/Empty';
 import Icon from '../../../component/Form/Icon';
+// import Icon from '../../../component/Form/Icon';
 import Loading from '../../../component/Loading';
+import UnverifiedModal from '../../../component/UnverifiedModal';
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
-import {useMerchantDispatcher} from '../../../helper/hooks';
+import {useMerchantDispatcher, useUserAuthInfo} from '../../../helper/hooks';
 import {getLoadingStatusText} from '../../../helper/util';
 import {FakeNavigation, MerchantCreateType, MerchantAction, Options, MerchantF} from '../../../models';
 import {MerchantList} from '../../../models/merchant';
@@ -29,16 +31,17 @@ const options = [
 ];
 
 const PublicSeaList: React.FC = () => {
-  const [valueType, setValueType] = useState<Options>(null);
+  const [filterVal, setFilterVal] = useState<Options>(null);
+  const {isShowAuthModal, onChangeAuthModal, userAuth} = useUserAuthInfo();
   const [merchantDispatcher] = useMerchantDispatcher();
-  const [value, setValue] = useState('');
+  const [inputVal] = useState('');
   const merchantList = useSelector<RootState, MerchantList<MerchantF[]>>(state => state.merchant.merchantPublicList);
   const pageIndex = useSelector<RootState, number>(state => state.merchant?.merchantPublicList?.page?.pageIndex);
   const loading = useSelector<RootState, boolean>(state => state.merchant.merchantLoading);
   const navigation = useNavigation() as FakeNavigation;
-  const {run} = useDebounceFn(async (name: string) => {
-    merchantDispatcher.loadPublicMerchantList({index: 0, name: name, replace: true});
-  });
+  // const {run} = useDebounceFn(async (name: string) => {
+  //   merchantDispatcher.loadPublicMerchantList({index: 0, name: name, replace: true});
+  // });
 
   useMount(() => {
     if (merchantList) {
@@ -50,12 +53,20 @@ const PublicSeaList: React.FC = () => {
     merchantDispatcher.exitMerchantPage();
   });
 
-  const handleChangeFilter = (value: Options) => {
-    setValueType(value);
+  const checkUserAuth = (callback: () => void) => {
+    if (!userAuth) {
+      onChangeAuthModal(true);
+      return;
+    }
+    callback();
+  };
+
+  const onChangeFilter = (value: Options) => {
+    setFilterVal(value);
     merchantDispatcher.loadPublicMerchantList({index: 0, replace: true, multiStore: value.value});
   };
 
-  const update = () => {
+  const updateMerchantList = () => {
     merchantDispatcher.loadPublicMerchantList({index: 0, replace: true});
     merchantDispatcher.loadPrivateMerchantList({index: 0, replace: true});
   };
@@ -77,60 +88,65 @@ const PublicSeaList: React.FC = () => {
               </View>
             )}
             options={options}
-            onSelect={(item, text) => handleChangeFilter(text as Options)}>
+            onSelect={(item, text) => onChangeFilter(text as Options)}>
             <View style={{flexDirection: 'row'}}>
-              {valueType?.label ? <Text>{valueType.label}</Text> : <Text>筛选</Text>}
+              {filterVal?.label ? <Text>{filterVal.label}</Text> : <Text>筛选</Text>}
               <AntdIcon name="caret-down" color="#030303" style={[{marginLeft: 7}, globalStyles.fontPrimary]} />
             </View>
           </ModalDropdown>
           <View style={globalStyles.dividingLine} />
-          <View style={{width: 100}}>
+          <Icon name="FYLM_all_search" color="#999999" />
+          {/* <View style={globalStyles.dividingLine} /> */}
+          {/* <View style={{width: 100}}>
             <Input
               placeholder="搜索"
-              value={value}
+              value={inputVal}
               extra={<Icon name="FYLM_all_search" color="#f4f4f4" />}
               onChange={e => {
-                setValue(e);
+                setInputVal(e);
                 run(e);
               }}
               textAlign="left"
             />
-          </View>
+          </View> */}
         </View>
       </View>
       <View>
         <PlusButton
           style={[styles.createButton]}
           title="新增公海商家"
-          onPress={() => {
-            navigation.navigate({
-              name: 'AddMerchant',
-              params: {
-                action: MerchantAction.ADD,
-                publicId: MerchantCreateType.PUBLIC_SEA,
-                identity: MerchantCreateType.PUBLIC_SEA,
-              },
-            });
-          }}
+          onPress={() =>
+            checkUserAuth(() =>
+              navigation.navigate({
+                name: 'AddMerchant',
+                params: {
+                  action: MerchantAction.ADD,
+                  publicId: MerchantCreateType.PUBLIC_SEA,
+                  identity: MerchantCreateType.PUBLIC_SEA,
+                },
+              }),
+            )
+          }
         />
       </View>
       <FlatList
-        refreshing={false}
+        refreshing={loading}
         onRefresh={() => {
-          merchantDispatcher.loadPublicMerchantList({index: 0, multiStore: valueType?.value, name: value, replace: true, pull: true});
+          merchantDispatcher.loadPublicMerchantList({index: 0, replace: true, pull: true});
         }}
         onEndReached={() => {
-          merchantDispatcher.loadPublicMerchantList({index: pageIndex, multiStore: valueType?.value, name: value, replace: false, pull: true});
+          merchantDispatcher.loadPublicMerchantList({index: pageIndex, multiStore: filterVal?.value, name: inputVal, replace: false, pull: true});
         }}
         ListFooterComponentStyle={[{height: 40}, globalStyles.containerCenter]}
         data={merchantList?.content}
         onEndReachedThreshold={0.3}
-        renderItem={({item}) => <Card update={update} merchant={item} key={item.id} style={globalStyles.marginBottom} />}
+        renderItem={({item}) => <Card onUpdate={updateMerchantList} merchant={item} key={item.id} style={globalStyles.marginBottom} />}
         ListEmptyComponent={!loading && <Empty text="还没有商家哦" icon={'shop'} />}
         ListFooterComponent={
           !!merchantList?.content?.length && <Text style={[{textAlign: 'center'}, globalStyles.fontTertiary]}>{getLoadingStatusText(merchantList?.status)}</Text>
         }
       />
+      <UnverifiedModal open={isShowAuthModal} onChangeOpen={onChangeAuthModal} />
     </SafeAreaView>
   );
 };

@@ -7,7 +7,7 @@ import {SectionGroup, FormTitle, Form, Input, Select, PlusButton, Cascader, Self
 import * as api from '../../../apis';
 import {MerchantCreateType, MerchantType, FormControlC, FormErrors, FormMerchant, ShopForm} from '../../../models';
 import Upload from '../../../component/Form/Upload';
-import {useLoadCity} from '../../../helper/hooks';
+
 import {globalStyles, globalStyleVariables} from '../../../constants/styles';
 import EditShop from './EditShop';
 import {Control, useFieldArray, useForm, UseFormGetValues} from 'react-hook-form';
@@ -15,7 +15,7 @@ import {useSelector} from 'react-redux';
 import {ErrorMessage} from '@hookform/error-message';
 import {RootState} from '../../../redux/reducers';
 import {Icon, SwipeAction} from '@ant-design/react-native';
-import {useLoadAllSite} from '../../../helper/hooks/common';
+import {useLoadAllSite, useLoadCity} from '../../../helper/hooks/common';
 import {getSitesIndex} from '../../../helper/util';
 
 interface EditBaseProps {
@@ -31,7 +31,7 @@ interface EditBaseProps {
 }
 
 const EditBase: React.FC<EditBaseProps> = ({Controller, status, control, setValue, getValues, isHidden, errors, locationCompanyId}) => {
-  const {cityList} = useLoadCity();
+  const [cityList] = useLoadCity();
   const [modalIsShow, setModalIsShow] = useState(false);
   const [editShopIndex, setEditShopIndex] = useState(-1);
   const [sites] = useLoadAllSite();

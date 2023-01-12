@@ -1,17 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import {TouchableOpacity, FlatList, Platform} from 'react-native';
 import {FC} from 'react';
-import {useDebounceFn, useMount} from 'ahooks';
-import {Icon as AntdIcon} from '@ant-design/react-native';
-import {Input, NavigationBar} from '../../../component';
+import {useMount} from 'ahooks';
+import {Icon as AntdIcon, Popover} from '@ant-design/react-native';
+import {NavigationBar} from '../../../component';
 import {View, StyleSheet, Text} from 'react-native';
 import {UnitNumber} from '../../../component';
 import {globalStyleVariables, globalStyles} from '../../../constants/styles';
-import {FakeNavigation, Options, ContractAction, ContractStatus, ContractList as ContractListType, UserInfo, UserState} from '../../../models';
+import {FakeNavigation, ContractAction, ContractStatus, ContractList as ContractListType, UserInfo} from '../../../models';
 import {useNavigation} from '@react-navigation/native';
-import ModalDropdown from 'react-native-modal-dropdown';
-import {useContractDispatcher, useUserDispatcher} from '../../../helper/hooks';
-import Icon from '../../../component/Form/Icon';
+import {useContractDispatcher, useUserAuthInfo, useUserDispatcher} from '../../../helper/hooks';
+// import Icon from '../../../component/Form/Icon';
 import Loading from '../../../component/Loading';
 import {cleanTime, getLoadingStatusText} from '../../../helper/util';
 import {useSelector} from 'react-redux';
@@ -22,19 +21,20 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import UnverifiedModal from '../../../component/UnverifiedModal';
 
 const ContractList: FC = () => {
-  const navigation = useNavigation() as FakeNavigation;
-  const [valueType, setValueType] = useState<Options>(null);
-  const [isShowModal, setIsShowModal] = useState(false);
-  const [value, setValue] = useState('');
-  const {bottom} = useSafeAreaInsets();
+  const [value] = useState('');
   const [contractDispatcher] = useContractDispatcher();
+  const [userDispatcher] = useUserDispatcher();
+
+  const userInfo = useSelector<RootState, UserInfo>(state => state.user.userInfo);
   const contractData = useSelector<RootState, MerchantList<ContractListType[]>>(state => state.contract.contractList);
   const loading = useSelector<RootState, boolean>(state => state.contract.contractLoading);
-  const {run} = useDebounceFn(async (name: string) => contractDispatcher.loadContractList({index: 0, name: name, replace: true, pull: false}), {
-    wait: 500,
-  });
-  const userInfo = useSelector<RootState, UserInfo>(state => state.user.userInfo);
-  const [userDispatcher] = useUserDispatcher();
+  // const {run} = useDebounceFn(async (name: string) => contractDispatcher.loadContractList({index: 0, name: name, replace: true, pull: false}), {
+  //   wait: 500,
+  // });
+  const {bottom} = useSafeAreaInsets();
+  const navigation = useNavigation() as FakeNavigation;
+
+  const {isShowAuthModal, onChangeAuthModal, userAuth} = useUserAuthInfo();
   useEffect(() => {
     if (!userInfo) {
       userDispatcher.loadUserInfo();
@@ -47,31 +47,32 @@ const ContractList: FC = () => {
     }
   });
 
-  function handleChangeFilter(e: Options) {
-    setValueType(e);
-    if (userInfo?.status === UserState.UN_CERTIFIED) {
-      setIsShowModal(true);
+  const checkUserAuth = (callback: () => void) => {
+    if (!userAuth) {
+      onChangeAuthModal(true);
       return;
     }
-    navigation.navigate('AddContract');
-  }
+    callback();
+  };
 
   const headerRight = (
     <>
-      <ModalDropdown
-        dropdownStyle={[globalStyles.dropDownItem, {height: 40, width: 80}]}
-        renderRow={item => (
-          <View style={[globalStyles.dropDownText]}>
-            <Text>{item?.label}</Text>
-          </View>
-        )}
-        options={[{label: '新建合同', value: 1}]}
-        defaultValue={valueType?.label}
-        onSelect={(_, text) => handleChangeFilter(text)}>
+      <Popover
+        overlay={
+          <Popover.Item value={'test'}>
+            <Text>新建合同</Text>
+          </Popover.Item>
+        }
+        triggerStyle={{paddingVertical: 6}}
+        onSelect={() =>
+          checkUserAuth(() => {
+            navigation.navigate('AddContract');
+          })
+        }>
         <View style={[{flexDirection: 'row'}]}>
-          <AntdIcon name="plus-circle" style={[globalStyles.primaryColor, styles.header_icon]} />
+          <AntdIcon name="plus-circle" style={[globalStyles.primaryColor, styles.headerIcon]} />
         </View>
-      </ModalDropdown>
+      </Popover>
     </>
   );
   const getColor = (status: number) => {
@@ -126,7 +127,7 @@ const ContractList: FC = () => {
         <View>
           <UnitNumber prefix="共" value={contractData?.page?.pageTotal} unit="份" />
         </View>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <View style={{width: 100}}>
             <Input
               placeholder="搜索"
@@ -139,7 +140,7 @@ const ContractList: FC = () => {
               textAlign="left"
             />
           </View>
-        </View>
+        </View> */}
       </View>
 
       <FlatList
@@ -157,7 +158,7 @@ const ContractList: FC = () => {
           contractDispatcher.loadContractList({index: contractData?.page?.pageIndex, name: value, replace: false, pull: true});
         }}
       />
-      <UnverifiedModal open={isShowModal} changeOpen={value => setIsShowModal(value)} />
+      <UnverifiedModal open={isShowAuthModal} onChangeOpen={onChangeAuthModal} />
     </>
   );
 };
@@ -170,7 +171,7 @@ const styles = StyleSheet.create({
   freshHeader: {
     height: 40,
   },
-  header_icon: {
+  headerIcon: {
     fontSize: 25,
     color: 'black',
     marginRight: globalStyleVariables.MODULE_SPACE,

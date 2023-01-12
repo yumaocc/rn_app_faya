@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   },
   topBorder: {
     borderTopColor: 'rgba(0, 0, 0, 0.1)',
-    borderTopWidth: 1,
+    borderTopWidth: 3,
   },
   tabText: {
     fontSize: 15,

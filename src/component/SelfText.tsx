@@ -1,6 +1,7 @@
 import React from 'react';
 import {FC} from 'react';
 import {Text as RNText} from 'react-native';
+import {globalStyles} from '../constants/styles';
 
 interface TextProps {
   value?: string | number;
@@ -8,6 +9,6 @@ interface TextProps {
 }
 const Text: FC<TextProps> = props => {
   const {value, style} = props;
-  return <RNText style={style}>{value}</RNText>;
+  return <RNText style={[globalStyles.fontPrimary, style]}>{value}</RNText>;
 };
 export default Text;

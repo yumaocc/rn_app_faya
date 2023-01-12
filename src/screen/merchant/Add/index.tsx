@@ -221,7 +221,7 @@ const AddMerchant: React.FC = () => {
             {!!tabs?.length ? (
               <Tabs tabs={tabs} currentKey={currentKey} onChange={setCurrentKey} style={{backgroundColor: '#fff'}} />
             ) : (
-              <View style={{backgroundColor: '#f4f4f4', height: 2}} />
+              <View style={{backgroundColor: 'rgba(0, 0, 0, 0.1)', height: 1}} />
             )}
             <FormDisabledContext.Provider value={{disabled: identity === MerchantCreateType.PUBLIC_SEA && action !== MerchantAction.ADD && true}}>
               <ScrollView
@@ -257,10 +257,13 @@ const AddMerchant: React.FC = () => {
             <View style={styles.sectionGroup}>
               {identity === MerchantCreateType.PRIVATE_SEA && action === MerchantAction.EDIT && (
                 <View style={styles.privateView}>
-                  <Button style={{margin: 10, borderColor: globalStyleVariables.COLOR_PRIMARY}} type="ghost" onPress={() => inviteAuth(privateId)}>
+                  <Button
+                    style={{marginLeft: 15, marginRight: 10, height: 40, borderWidth: 2, borderColor: globalStyleVariables.COLOR_PRIMARY}}
+                    type="ghost"
+                    onPress={() => inviteAuth(privateId)}>
                     <Text style={{color: globalStyleVariables.COLOR_PRIMARY}}>邀请认证</Text>
                   </Button>
-                  <Button style={{margin: 10, flex: 1}} type="primary" onPress={handleSubmit(onSubmit)}>
+                  <Button style={{marginRight: 1, flex: 1, height: 40}} type="primary" onPress={handleSubmit(onSubmit)}>
                     保存
                   </Button>
                 </View>

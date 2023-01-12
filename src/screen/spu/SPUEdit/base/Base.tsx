@@ -7,7 +7,7 @@ import {ScrollView, StyleSheet, Text, View, TouchableOpacity} from 'react-native
 import {useSelector} from 'react-redux';
 import {FormTitle, SectionGroup, Form, Input, Select, DatePicker, Footer, Cascader} from '../../../../component';
 import {globalStyles, globalStyleVariables} from '../../../../constants/styles';
-import {useMerchantDispatcher, useContractDispatcher, useSPUCategories, useCommonDispatcher, useLoadCity} from '../../../../helper/hooks';
+import {useMerchantDispatcher, useContractDispatcher, useSPUCategories, useCommonDispatcher} from '../../../../helper/hooks';
 import {BoolEnum, ContractList} from '../../../../models';
 import {RootState} from '../../../../redux/reducers';
 import {styles} from '../style';
@@ -15,7 +15,7 @@ import {ErrorMessage} from '@hookform/error-message';
 import {Controller} from 'react-hook-form';
 import SelectShop from './SelectShop';
 import {findItem, getSitesIndex, momentFromDateTime} from '../../../../helper/util';
-import {useLoadAllSite} from '../../../../helper/hooks/common';
+import {useLoadAllSite, useLoadCity} from '../../../../helper/hooks/common';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 interface BaseProps {
@@ -31,12 +31,12 @@ interface BaseProps {
 interface ListProps {
   value: number[];
 }
-
 const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch, errors, setError}) => {
   const bizUserId = watch('bizUserId');
+  const [isShow, setIsShow] = useState(false);
   const contractId = watch('contractId');
   const canUseShopIds = watch('canUseShopIds');
-  const {cityList} = useLoadCity();
+  const [cityList] = useLoadCity();
   const [sites] = useLoadAllSite();
   const {bottom} = useSafeAreaInsets();
   const currentMerchant = useSelector((state: RootState) => state.merchant.currentMerchant);
@@ -221,8 +221,19 @@ const Base: React.FC<BaseProps> = ({onNext, control, getValues, setValue, watch,
           name="spuName"
           rules={{required: '请输入商品名称'}}
           render={({field: {value, onChange}}) => (
-            <Form.Item showAsterisk label="商品名称" errorElement={<ErrorMessage name={'spuName'} errors={errors} />}>
-              <Input placeholder="请输入" value={value} onChange={onChange} />
+            <Form.Item showAsterisk label="商品名称" style={{backgroundColor: isShow ? 'red' : 'white'}} errorElement={<ErrorMessage name={'spuName'} errors={errors} />}>
+              <Input
+                placeholder="请输入"
+                value={value}
+                onChange={onChange}
+                onFocus={() => {
+                  setIsShow(true);
+                  setTimeout(() => {
+                    setIsShow(false);
+                    console.log(1);
+                  }, 300);
+                }}
+              />
             </Form.Item>
           )}
         />

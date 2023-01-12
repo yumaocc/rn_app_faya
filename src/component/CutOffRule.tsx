@@ -11,7 +11,7 @@ export default CutOffRule;
 export const styles = StyleSheet.create({
   content: {
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
-    height: 1,
+    height: 0.5,
     width: '100%',
     marginBottom: 10,
     marginTop: 10,
